@@ -1,0 +1,243 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// User Management
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Navigation preferences
+  navigationMode    String  @default("traditional") // traditional, assisted, autonomous
+  aiAdoptionLevel   Int     @default(0) // 0-10
+  aiPermissions     Json    @default("{\"suggestions\": true, \"autoComplete\": false, \"proactiveActions\": false, \"autonomousExecution\": false, \"dataAnalysis\": true, \"reportGeneration\": false, \"meetingScheduling\": false, \"documentProcessing\": false}")
+  uiDensity         String  @default("comfortable") // compact, comfortable, spacious
+  showAIHints       Boolean @default(true)
+  autoSaveEnabled   Boolean @default(true)
+  notificationSettings Json @default("{\"emailNotifications\": true, \"pushNotifications\": false, \"aiRecommendations\": true, \"deadlineReminders\": true, \"teamUpdates\": true}")
+
+  // Relations
+  aiInteractions   AIInteraction[]
+  userPatterns     UserPattern[]
+  aiRecommendations AIRecommendation[]
+  dueDiligenceProjects DueDiligenceProject[]
+  deals           Deal[]
+  activities      Activity[]
+
+  @@map("users")
+}
+
+// AI Tracking Tables
+model AIInteraction {
+  id                String   @id @default(cuid())
+  userId            String
+  timestamp         DateTime @default(now())
+  interactionType   String
+  recommendationId  String?
+  userAction        String   // 'accepted', 'rejected', 'modified', 'ignored'
+  timeSavedSeconds  Int?
+  module            String
+  context           Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_interactions")
+}
+
+model UserPattern {
+  id              String   @id @default(cuid())
+  userId          String
+  patternType     String
+  patternData     Json
+  frequency       Int      @default(1)
+  lastObserved    DateTime @default(now())
+  confidenceScore Float    @default(0.0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_patterns")
+}
+
+model AIRecommendation {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // 'suggestion', 'automation', 'insight', 'warning'
+  priority    String   // 'low', 'medium', 'high', 'critical'
+  title       String
+  description String
+  actions     Json     // Array of RecommendedAction
+  confidence  Float    // 0-1
+  reasoning   String?
+  moduleContext String?
+  status      String   @default("pending") // 'pending', 'executed', 'dismissed'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_recommendations")
+}
+
+// Core Business Models
+model Deal {
+  id           String   @id @default(cuid())
+  name         String
+  status       String   // 'screening', 'due-diligence', 'structuring', 'closed', 'declined'
+  priority     String   @default("medium") // 'low', 'medium', 'high', 'critical'
+  riskLevel    String?  // 'low', 'medium', 'high'
+  lastActivity DateTime @default(now())
+  nextAction   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  createdById  String
+
+  createdBy User @relation(fields: [createdById], references: [id])
+  dueDiligenceProjects DueDiligenceProject[]
+  activities Activity[]
+  deadlines  Deadline[]
+
+  @@map("deals")
+}
+
+model DueDiligenceProject {
+  id          String   @id @default(cuid())
+  dealId      String
+  name        String
+  description String?
+  status      String   @default("active") // 'active', 'completed', 'on-hold', 'cancelled'
+  stage       String   @default("initial") // 'initial', 'detailed', 'final'
+  startDate   DateTime @default(now())
+  targetDate  DateTime?
+  completedDate DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  assignedToId String
+
+  deal       Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  assignedTo User @relation(fields: [assignedToId], references: [id])
+  findings   Finding[]
+  risks      Risk[]
+  tasks      Task[]
+  documents  Document[]
+
+  @@map("due_diligence_projects")
+}
+
+model Finding {
+  id          String   @id @default(cuid())
+  projectId   String
+  title       String
+  description String
+  severity    String   // 'low', 'medium', 'high', 'critical'
+  status      String   @default("open") // 'open', 'investigating', 'resolved', 'closed'
+  category    String?
+  assignedTo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project DueDiligenceProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("findings")
+}
+
+model Risk {
+  id          String   @id @default(cuid())
+  projectId   String
+  title       String
+  description String
+  category    String   // 'financial', 'operational', 'legal', 'market', 'technology'
+  level       String   // 'low', 'medium', 'high', 'critical'
+  probability String   // 'low', 'medium', 'high'
+  impact      String   // 'low', 'medium', 'high'
+  mitigation  String?
+  status      String   @default("identified") // 'identified', 'assessing', 'mitigating', 'resolved'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project DueDiligenceProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("risks")
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  projectId   String
+  title       String
+  description String?
+  status      String   @default("pending") // 'pending', 'in-progress', 'completed', 'overdue'
+  priority    String   @default("medium") // 'low', 'medium', 'high', 'critical'
+  assignedTo  String?
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project DueDiligenceProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  projectId   String
+  name        String
+  type        String?
+  category    String?
+  filePath    String?
+  fileSize    Int?
+  mimeType    String?
+  status      String   @default("pending") // 'pending', 'processing', 'analyzed', 'approved'
+  aiAnalyzed  Boolean  @default(false)
+  analysisData Json?
+  uploadedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project DueDiligenceProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+model Deadline {
+  id          String   @id @default(cuid())
+  dealId      String
+  title       String
+  description String?
+  dueDate     DateTime
+  priority    String   @default("medium") // 'low', 'medium', 'high', 'critical'
+  status      String   @default("pending") // 'pending', 'in-progress', 'completed', 'overdue'
+  assignedTo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@map("deadlines")
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  userId      String
+  dealId      String?
+  activityType String  // 'created', 'updated', 'completed', 'assigned', 'commented'
+  title       String
+  description String?
+  module      String   // 'dashboard', 'due-diligence', 'deals', 'portfolio', 'reports'
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal Deal? @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@map("activities")
+}
