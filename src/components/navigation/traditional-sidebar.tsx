@@ -16,11 +16,13 @@ import {
   Settings,
   Brain,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  FolderOpen
 } from 'lucide-react'
 
 interface TraditionalSidebarProps {
   enhanced?: boolean
+  collapsed?: boolean
   className?: string
 }
 
@@ -32,9 +34,10 @@ const iconMap = {
   BarChart,
   Settings,
   Brain,
+  FolderOpen,
 }
 
-export function TraditionalSidebar({ enhanced = false, className }: TraditionalSidebarProps) {
+export function TraditionalSidebar({ enhanced = false, collapsed = false, className }: TraditionalSidebarProps) {
   const { 
     navigationItems, 
     currentMode, 
@@ -78,19 +81,21 @@ export function TraditionalSidebar({ enhanced = false, className }: TraditionalS
   }
 
   return (
-    <div className={`w-64 border-r bg-background ${className}`}>
-      <div className="p-6 border-b">
-        <div className="flex items-center space-x-2">
+    <div className={`${collapsed ? 'w-16' : 'w-64'} border-r bg-background transition-all duration-300 ${className}`}>
+      <div className={`${collapsed ? 'p-4' : 'p-6'} border-b`}>
+        <div className={`flex items-center ${collapsed ? 'justify-center' : 'space-x-2'}`}>
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">DD</span>
           </div>
-          <div>
-            <h1 className="font-semibold">DD Hybrid</h1>
-            <p className="text-xs text-gray-500">Due Diligence Platform</p>
-          </div>
+          {!collapsed && (
+            <div>
+              <h1 className="font-semibold">DD Hybrid</h1>
+              <p className="text-xs text-gray-500">Due Diligence Platform</p>
+            </div>
+          )}
         </div>
         
-        {enhanced && currentMode.mode !== 'traditional' && (
+        {!collapsed && enhanced && currentMode.mode !== 'traditional' && (
           <Button
             variant={isAIPanelOpen ? "default" : "outline"}
             size="sm"
@@ -118,27 +123,40 @@ export function TraditionalSidebar({ enhanced = false, className }: TraditionalS
             <Link key={item.id} href={item.href}>
               <div
                 className={`
-                  flex items-center justify-between p-3 rounded-lg transition-colors
+                  flex items-center ${collapsed ? 'justify-center' : 'justify-between'} p-3 rounded-lg transition-colors
                   ${isActive 
                     ? 'bg-blue-50 text-blue-700 border border-blue-200' 
                     : 'hover:bg-gray-50 text-gray-700'
                   }
                 `}
+                title={collapsed ? item.label : undefined}
               >
-                <div className="flex items-center space-x-3">
+                <div className={`flex items-center ${collapsed ? 'justify-center' : 'space-x-3'}`}>
                   <div className={`${isActive ? 'text-blue-600' : 'text-gray-500'}`}>
                     {getIcon(item.icon || 'Home')}
                   </div>
-                  <span className="font-medium text-sm">{item.label}</span>
-                  {enhancement}
-                </div>
-                
-                <div className="flex items-center space-x-1">
-                  {badge}
-                  {enhanced && item.aiEnhanced && (
-                    <div className="text-xs text-purple-500">AI</div>
+                  {!collapsed && (
+                    <>
+                      <span className="font-medium text-sm">{item.label}</span>
+                      {enhancement}
+                    </>
                   )}
                 </div>
+                
+                {!collapsed && (
+                  <div className="flex items-center space-x-1">
+                    {badge}
+                    {enhanced && item.aiEnhanced && (
+                      <div className="text-xs text-purple-500">AI</div>
+                    )}
+                  </div>
+                )}
+                
+                {collapsed && badge && (
+                  <div className="absolute right-1 top-1">
+                    {badge}
+                  </div>
+                )}
               </div>
             </Link>
           )
@@ -146,26 +164,28 @@ export function TraditionalSidebar({ enhanced = false, className }: TraditionalS
       </nav>
 
       {/* Mode indicator */}
-      <div className="p-4 border-t mt-auto">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-gray-500">Navigation Mode</span>
-          <Badge 
-            variant={currentMode.mode === 'traditional' ? 'outline' : 'ai'}
-            className="text-xs"
-          >
-            {currentMode.mode}
-          </Badge>
-        </div>
-        
-        {enhanced && currentMode.mode !== 'traditional' && (
-          <div className="mt-2 text-xs text-gray-500">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span>AI assistance active</span>
-            </div>
+      {!collapsed && (
+        <div className="p-4 border-t mt-auto">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-gray-500">Navigation Mode</span>
+            <Badge 
+              variant={currentMode.mode === 'traditional' ? 'outline' : 'ai'}
+              className="text-xs"
+            >
+              {currentMode.mode}
+            </Badge>
           </div>
-        )}
-      </div>
+          
+          {enhanced && currentMode.mode !== 'traditional' && (
+            <div className="mt-2 text-xs text-gray-500">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <span>AI assistance active</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

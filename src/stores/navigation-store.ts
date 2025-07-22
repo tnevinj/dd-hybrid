@@ -8,6 +8,7 @@ import {
   UserPreferences,
   NavigationItem 
 } from '@/types/navigation'
+import { aiTrackingService, AIInteraction } from '@/services/ai-tracking-service'
 
 interface NavigationStore extends NavigationState {
   // Actions
@@ -23,6 +24,7 @@ interface NavigationStore extends NavigationState {
   setNavigationItems: (items: NavigationItem[]) => void
   executeRecommendation: (recommendationId: string) => void
   dismissRecommendation: (recommendationId: string) => void
+  trackInteraction: (interaction: Omit<AIInteraction, 'id' | 'timestamp' | 'userId'>) => void
   // Computed values
   getRecommendationsByModule: (module: string) => AIRecommendation[]
   getHighPriorityRecommendations: () => AIRecommendation[]
@@ -73,6 +75,14 @@ const defaultNavigationItems: NavigationItem[] = [
     href: '/dashboard',
     aiEnhanced: true,
     description: 'Overview of all activities and insights'
+  },
+  {
+    id: 'workspaces',
+    label: 'Workspaces',
+    icon: 'FolderOpen',
+    href: '/workspaces',
+    aiEnhanced: true,
+    description: 'Collaborative investment analysis workspaces'
   },
   {
     id: 'due-diligence',
@@ -130,6 +140,23 @@ export const useNavigationStore = create<NavigationStore>()(
 
       // Actions
       setMode: (mode: UserNavigationMode) => {
+        const currentMode = get().currentMode
+        
+        // Track mode switch
+        if (currentMode.mode !== mode.mode) {
+          aiTrackingService.trackInteraction({
+            userId: 'current-user', // In production, get from auth context
+            interactionType: `switch_to_${mode.mode}` as any,
+            userAction: 'accepted',
+            module: get().currentModule,
+            context: {
+              previousMode: currentMode.mode,
+              newMode: mode.mode,
+              timestamp: new Date()
+            }
+          })
+        }
+
         set((state) => ({
           currentMode: mode,
           preferences: {
@@ -198,7 +225,19 @@ export const useNavigationStore = create<NavigationStore>()(
         const recommendation = get().recommendations.find(r => r.id === recommendationId)
         if (recommendation) {
           // Track the execution
-          console.log('Executing recommendation:', recommendation)
+          aiTrackingService.trackInteraction({
+            userId: 'current-user',
+            interactionType: 'recommendation_accepted',
+            recommendationId,
+            userAction: 'accepted',
+            module: recommendation.moduleContext || get().currentModule,
+            context: {
+              recommendationType: recommendation.type,
+              priority: recommendation.priority,
+              confidence: recommendation.confidence
+            },
+            timeSavedSeconds: recommendation.actions[0]?.estimatedTimeSaving ? recommendation.actions[0].estimatedTimeSaving * 60 : undefined
+          })
           
           // Remove from recommendations after execution
           get().removeRecommendation(recommendationId)
@@ -218,7 +257,28 @@ export const useNavigationStore = create<NavigationStore>()(
       },
 
       dismissRecommendation: (recommendationId: string) => {
+        const recommendation = get().recommendations.find(r => r.id === recommendationId)
+        if (recommendation) {
+          aiTrackingService.trackInteraction({
+            userId: 'current-user',
+            interactionType: 'recommendation_rejected',
+            recommendationId,
+            userAction: 'rejected',
+            module: recommendation.moduleContext || get().currentModule,
+            context: {
+              recommendationType: recommendation.type,
+              priority: recommendation.priority
+            }
+          })
+        }
         get().removeRecommendation(recommendationId)
+      },
+
+      trackInteraction: (interaction: Omit<AIInteraction, 'id' | 'timestamp' | 'userId'>) => {
+        aiTrackingService.trackInteraction({
+          userId: 'current-user',
+          ...interaction
+        })
       },
 
       // Computed values

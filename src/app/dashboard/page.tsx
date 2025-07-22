@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,7 +15,11 @@ import {
   FileText,
   Users,
   DollarSign,
-  Activity
+  Activity,
+  FolderOpen,
+  Plus,
+  ArrowRight,
+  Wand2
 } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -184,6 +189,56 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Workspaces Quick Access */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center">
+            <FolderOpen className="w-5 h-5 mr-2" />
+            Active Workspaces
+          </CardTitle>
+          <Link href="/workspaces">
+            <Button variant="outline" size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              New Workspace
+            </Button>
+          </Link>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-2 h-2 bg-green-500 rounded-full" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">TechCorp DD</p>
+              <p className="text-xs text-gray-500">Due diligence • 3 work products</p>
+            </div>
+            <Link href="/workspaces/1">
+              <ArrowRight className="w-4 h-4 text-gray-400" />
+            </Link>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            <div className="w-2 h-2 bg-blue-500 rounded-full" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">HealthCo Analysis</p>
+              <p className="text-xs text-gray-500">Financial modeling • 2 work products</p>
+            </div>
+            <Link href="/workspaces/2">
+              <ArrowRight className="w-4 h-4 text-gray-400" />
+            </Link>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            <div className="w-2 h-2 bg-orange-500 rounded-full" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">RetailCo Research</p>
+              <p className="text-xs text-gray-500">Market research • 1 work product</p>
+            </div>
+            <Link href="/workspaces/3">
+              <ArrowRight className="w-4 h-4 text-gray-400" />
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

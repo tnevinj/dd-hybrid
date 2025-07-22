@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 export default function HomePage() {
   React.useEffect(() => {
-    redirect('/dashboard')
+    redirect('/workspaces')
   }, [])
   
   return null
