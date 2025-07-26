@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { useNavigationStore } from '@/stores/navigation-store'
+import { useWorkspaceContextSafe } from '@/contexts/WorkspaceContext'
 import { 
   Bot, 
   User, 
@@ -66,8 +67,21 @@ interface DecisionRequest {
   }[]
 }
 
+interface ViewContext {
+  type: 'workspace_list' | 'workspace_detail' | 'work_product_editor' | 'dashboard' | 'settings'
+  data?: {
+    workspaceId?: string
+    workspaceName?: string
+    workProductId?: string
+    workProductTitle?: string
+    activeTab?: string
+    [key: string]: any
+  }
+}
+
 interface AIConversationPanelProps {
   className?: string
+  context?: ViewContext
 }
 
 interface QuickAction {
@@ -80,14 +94,41 @@ interface QuickAction {
 
 type AIMode = 'listening' | 'working' | 'idle' | 'paused'
 
-export function AIConversationPanel({ className }: AIConversationPanelProps) {
+export function AIConversationPanel({ className, context }: AIConversationPanelProps) {
   const { currentMode, trackInteraction } = useNavigationStore()
+  const workspaceContext = useWorkspaceContextSafe()
   const [messages, setMessages] = React.useState<AIMessage[]>([])
   const [isExpanded, setIsExpanded] = React.useState(true)
   const [userInput, setUserInput] = React.useState('')
   const [aiMode, setAiMode] = React.useState<AIMode>('idle')
   const [showQuickActions, setShowQuickActions] = React.useState(true)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
+  
+  // Enhanced context with actual data when available
+  const enhancedContext = React.useMemo(() => {
+    if (!context) return context
+    
+    const enhanced = { ...context }
+    if (workspaceContext?.currentWorkspace && context.type === 'workspace_detail') {
+      enhanced.data = {
+        ...enhanced.data,
+        workspaceName: workspaceContext.currentWorkspace.name,
+        dealValue: workspaceContext.currentWorkspace.dealValue,
+        status: workspaceContext.currentWorkspace.status,
+        sector: workspaceContext.currentWorkspace.sector
+      }
+    }
+    if (workspaceContext?.currentWorkProduct && context.type === 'work_product_editor') {
+      enhanced.data = {
+        ...enhanced.data,
+        workProductTitle: workspaceContext.currentWorkProduct.title,
+        workProductType: workspaceContext.currentWorkProduct.type,
+        status: workspaceContext.currentWorkProduct.status,
+        wordCount: workspaceContext.currentWorkProduct.wordCount
+      }
+    }
+    return enhanced
+  }, [context, workspaceContext])
 
   // Sample data for demonstration
   const [completedActions] = React.useState<CompletedAction[]>([
@@ -128,43 +169,182 @@ export function AIConversationPanel({ className }: AIConversationPanelProps) {
     }
   ])
 
-  // Quick actions for faster interaction
-  const quickActions: QuickAction[] = [
-    {
-      id: 'analyze-docs',
-      label: 'Analyze Documents',
-      icon: <CheckCircle className="w-4 h-4" />,
-      description: 'Review and categorize uploaded documents',
-      onClick: () => handleQuickAction('analyze-docs')
-    },
-    {
-      id: 'check-risks',
-      label: 'Risk Review',
-      icon: <AlertTriangle className="w-4 h-4" />,
-      description: 'Identify potential risk factors',
-      onClick: () => handleQuickAction('check-risks')
-    },
-    {
-      id: 'update-status',
-      label: 'Status Update',
-      icon: <Clock className="w-4 h-4" />,
-      description: 'Get current project status',
-      onClick: () => handleQuickAction('update-status')
+  // Context-aware quick actions
+  const getContextualActions = (): QuickAction[] => {
+    if (!enhancedContext) {
+      return [
+        {
+          id: 'general-help',
+          label: 'General Help',
+          icon: <CheckCircle className="w-4 h-4" />,
+          description: 'Get general assistance',
+          onClick: () => handleQuickAction('general-help')
+        }
+      ]
     }
-  ]
 
-  // Initialize conversation with simpler greeting
+    switch (enhancedContext.type) {
+      case 'workspace_list':
+        return [
+          {
+            id: 'create-workspace',
+            label: 'Create Workspace',
+            icon: <CheckCircle className="w-4 h-4" />,
+            description: 'Help create a new due diligence workspace',
+            onClick: () => handleQuickAction('create-workspace')
+          },
+          {
+            id: 'prioritize-workspaces',
+            label: 'Prioritize Tasks',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            description: 'Identify which workspaces need attention',
+            onClick: () => handleQuickAction('prioritize-workspaces')
+          },
+          {
+            id: 'workspace-insights',
+            label: 'Portfolio Insights',
+            icon: <Clock className="w-4 h-4" />,
+            description: 'Analyze patterns across your workspaces',
+            onClick: () => handleQuickAction('workspace-insights')
+          }
+        ]
+
+      case 'workspace_detail':
+        return [
+          {
+            id: 'analyze-workspace',
+            label: 'Analyze Progress',
+            icon: <CheckCircle className="w-4 h-4" />,
+            description: `Review progress on ${enhancedContext.data?.workspaceName || 'this workspace'}`,
+            onClick: () => handleQuickAction('analyze-workspace')
+          },
+          {
+            id: 'identify-risks',
+            label: 'Risk Assessment',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            description: 'Identify potential risks and blockers',
+            onClick: () => handleQuickAction('identify-risks')
+          },
+          {
+            id: 'suggest-next-steps',
+            label: 'Next Steps',
+            icon: <Clock className="w-4 h-4" />,
+            description: 'Get recommendations for next actions',
+            onClick: () => handleQuickAction('suggest-next-steps')
+          }
+        ]
+
+      case 'work_product_editor':
+        return [
+          {
+            id: 'improve-content',
+            label: 'Improve Writing',
+            icon: <CheckCircle className="w-4 h-4" />,
+            description: 'Enhance clarity and structure of this document',
+            onClick: () => handleQuickAction('improve-content')
+          },
+          {
+            id: 'fact-check',
+            label: 'Fact Check',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            description: 'Verify data and claims in the document',
+            onClick: () => handleQuickAction('fact-check')
+          },
+          {
+            id: 'suggest-sections',
+            label: 'Missing Sections',
+            icon: <Clock className="w-4 h-4" />,
+            description: 'Identify sections that might be missing',
+            onClick: () => handleQuickAction('suggest-sections')
+          }
+        ]
+
+      case 'dashboard':
+        return [
+          {
+            id: 'daily-briefing',
+            label: 'Daily Briefing',
+            icon: <CheckCircle className="w-4 h-4" />,
+            description: 'Get summary of today\'s priorities',
+            onClick: () => handleQuickAction('daily-briefing')
+          },
+          {
+            id: 'urgent-items',
+            label: 'Urgent Items',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            description: 'Show items that need immediate attention',
+            onClick: () => handleQuickAction('urgent-items')
+          },
+          {
+            id: 'performance-insights',
+            label: 'Performance',
+            icon: <Clock className="w-4 h-4" />,
+            description: 'Analyze your productivity and patterns',
+            onClick: () => handleQuickAction('performance-insights')
+          }
+        ]
+
+      default:
+        return [
+          {
+            id: 'analyze-docs',
+            label: 'Analyze Documents',
+            icon: <CheckCircle className="w-4 h-4" />,
+            description: 'Review and categorize uploaded documents',
+            onClick: () => handleQuickAction('analyze-docs')
+          },
+          {
+            id: 'check-risks',
+            label: 'Risk Review',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            description: 'Identify potential risk factors',
+            onClick: () => handleQuickAction('check-risks')
+          },
+          {
+            id: 'update-status',
+            label: 'Status Update',
+            icon: <Clock className="w-4 h-4" />,
+            description: 'Get current project status',
+            onClick: () => handleQuickAction('update-status')
+          }
+        ]
+    }
+  }
+
+  const quickActions = getContextualActions()
+
+  // Context-aware welcome messages
+  const getWelcomeMessage = (): string => {
+    if (!enhancedContext) return 'Hi! I\'m ready to help with your due diligence work. What would you like me to focus on?'
+
+    switch (enhancedContext.type) {
+      case 'workspace_list':
+        return 'I can see you\'re viewing your workspaces. I can help prioritize tasks, create new workspaces, or analyze patterns across your deals.'
+      case 'workspace_detail':
+        return `I'm analyzing ${enhancedContext.data?.workspaceName || 'this workspace'}. I can help review progress, identify risks, or suggest next steps.`
+      case 'work_product_editor':
+        return `I can help improve "${enhancedContext.data?.workProductTitle || 'this document'}". I can enhance writing, fact-check content, or suggest missing sections.`
+      case 'dashboard':
+        return 'Welcome to your dashboard! I can provide a daily briefing, highlight urgent items, or analyze your performance trends.'
+      case 'settings':
+        return 'I can help optimize your settings and preferences for better productivity.'
+      default:
+        return 'Hi! I\'m ready to help with your due diligence work. What would you like me to focus on?'
+    }
+  }
+
+  // Initialize conversation with context-aware greeting
   React.useEffect(() => {
     if (currentMode.mode === 'autonomous' && messages.length === 0) {
       const welcomeMessage: AIMessage = {
         id: 'welcome',
         type: 'ai',
-        content: 'Hi! I\'m ready to help with your due diligence work. What would you like me to focus on?',
+        content: getWelcomeMessage(),
         timestamp: new Date()
       }
       setMessages([welcomeMessage])
     }
-  }, [currentMode.mode, messages.length])
+  }, [currentMode.mode, messages.length, enhancedContext])
 
   // Auto scroll to bottom
   React.useEffect(() => {
@@ -215,7 +395,42 @@ export function AIConversationPanel({ className }: AIConversationPanelProps) {
   }
 
   const getActionResult = (actionId: string): string => {
+    // Context-aware responses
     switch (actionId) {
+      // Workspace list actions
+      case 'create-workspace':
+        return 'I can help you create a new workspace. What type of deal are you working on? (Acquisition, Investment, Partnership, etc.)'
+      case 'prioritize-workspaces':
+        return 'Based on deadlines and progress: 1) TechCorp DD (IC meeting tomorrow), 2) HealthCo analysis (missing financials), 3) RetailCo research (early stage). Focus on TechCorp first.'
+      case 'workspace-insights':
+        return 'I noticed you have 3 tech deals and 2 healthcare deals. Tech deals average 45 days to complete, healthcare takes 60 days. Your team handles 2.3 deals simultaneously.'
+      
+      // Workspace detail actions
+      case 'analyze-workspace':
+        const workspaceName = enhancedContext?.data?.workspaceName || 'this workspace'
+        return `${workspaceName} is 70% complete. Completed: Financial model, management interviews. In progress: Legal review, reference calls. Blocked: Waiting for audited financials.`
+      case 'identify-risks':
+        return 'I found 3 risks: 1) Customer concentration 45% (high), 2) Missing SOC2 compliance (medium), 3) Key person dependency on founder (medium). Should I create risk mitigation plans?'
+      case 'suggest-next-steps':
+        return 'Next steps: 1) Schedule call with auditor for financials, 2) Complete remaining reference calls, 3) Prepare IC presentation draft. Estimated 3-5 days to completion.'
+      
+      // Work product editor actions
+      case 'improve-content':
+        return 'I can enhance this document by: 1) Strengthening the executive summary, 2) Adding more specific financial metrics, 3) Improving flow between sections. Which area first?'
+      case 'fact-check':
+        return 'Checking facts... Found: Revenue growth 45% (✓ verified), Market size $2.8B (⚠ needs source), Customer count 150+ (✓ verified). Should I find sources for market size?'
+      case 'suggest-sections':
+        return 'This document could benefit from: 1) Competitive landscape analysis, 2) Management team backgrounds, 3) Technology architecture overview. Which section is most important?'
+      
+      // Dashboard actions
+      case 'daily-briefing':
+        return 'Today\'s priorities: 1) TechCorp IC prep (high urgency), 2) Review HealthCo financials (medium), 3) RetailCo kickoff call at 3pm. You have 2 overdue tasks.'
+      case 'urgent-items':
+        return 'Urgent: 1) TechCorp presentation due tomorrow, 2) HealthCo missing signed NDA, 3) Reference call scheduled in 30 minutes. Need help with any of these?'
+      case 'performance-insights':
+        return 'This month: 3 deals advanced to IC, avg 38 days deal cycle (↓12% vs last month), 85% on-time completion rate. Your strongest area: financial analysis.'
+      
+      // Default actions
       case 'analyze-docs':
         return 'I\'ve analyzed 15 documents. Found 3 priority items that need your review. Would you like me to summarize the findings?'
       case 'check-risks':
@@ -318,6 +533,51 @@ export function AIConversationPanel({ className }: AIConversationPanelProps) {
   }
 
   const generateAIResponse = (input: string): string => {
+    const lowerInput = input.toLowerCase()
+    
+    // Context-aware responses based on current view
+    if (enhancedContext?.type === 'workspace_detail') {
+      const workspaceName = enhancedContext.data?.workspaceName || 'this workspace'
+      if (lowerInput.includes('help')) {
+        return `I can help with ${workspaceName} by analyzing documents, assessing risks, tracking progress, or preparing reports. What aspect needs attention?`
+      }
+      if (lowerInput.includes('status') || lowerInput.includes('progress')) {
+        return `${workspaceName} status: 70% complete. Financial analysis ✓, Legal review in progress, Reference calls pending. What specific update do you need?`
+      }
+      if (lowerInput.includes('risk')) {
+        return `For ${workspaceName}, I've identified customer concentration and compliance gaps as key risks. Should I analyze these further?`
+      }
+    }
+    
+    if (enhancedContext?.type === 'work_product_editor') {
+      const docTitle = enhancedContext.data?.workProductTitle || 'this document'
+      if (lowerInput.includes('help')) {
+        return `I can improve "${docTitle}" by enhancing writing quality, fact-checking content, or suggesting missing sections. What would be most helpful?`
+      }
+      if (lowerInput.includes('review') || lowerInput.includes('improve')) {
+        return `I'll review "${docTitle}" for clarity, accuracy, and completeness. Should I start with a specific section?`
+      }
+    }
+    
+    if (enhancedContext?.type === 'workspace_list') {
+      if (lowerInput.includes('help')) {
+        return 'I can help prioritize your workspaces, create new ones, or provide insights across your deal portfolio. What would be most useful?'
+      }
+      if (lowerInput.includes('priority') || lowerInput.includes('urgent')) {
+        return 'Based on deadlines: TechCorp needs attention (IC tomorrow), then HealthCo (missing docs). Should I help with TechCorp first?'
+      }
+    }
+    
+    if (enhancedContext?.type === 'dashboard') {
+      if (lowerInput.includes('help')) {
+        return 'I can provide your daily briefing, highlight urgent items, or analyze performance trends. What interests you most?'
+      }
+      if (lowerInput.includes('today') || lowerInput.includes('priority')) {
+        return 'Today\'s top priorities: TechCorp IC prep, HealthCo doc review, RetailCo kickoff call. Need help with any of these?'
+      }
+    }
+    
+    // Fallback responses
     const responses: Record<string, string> = {
       'help': 'I can help with document analysis, risk assessment, financial modeling, and creating reports. What specific area needs attention?',
       'status': 'Current progress: 65% complete. Active tasks: legal review, reference calls. Ready for next steps when you are.',
@@ -325,7 +585,6 @@ export function AIConversationPanel({ className }: AIConversationPanelProps) {
       'default': `I understand you want me to focus on "${input}". I\'ll start working on this right away. Should I proceed with my standard approach?`
     }
 
-    const lowerInput = input.toLowerCase()
     if (lowerInput.includes('help')) return responses.help
     if (lowerInput.includes('status') || lowerInput.includes('progress')) return responses.status
     if (lowerInput.includes('risk')) return responses.risks

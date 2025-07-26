@@ -9,6 +9,7 @@ export default function WorkspacesPage() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
 
   useEffect(() => {
     fetchWorkspaces();

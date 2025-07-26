@@ -14,6 +14,7 @@ export default function WorkProductEditorPage() {
   const [workProduct, setWorkProduct] = useState<WorkProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
 
   useEffect(() => {
     if (workspaceId && workProductId) {
