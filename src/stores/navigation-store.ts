@@ -85,9 +85,17 @@ const defaultNavigationItems: NavigationItem[] = [
     description: 'Collaborative investment analysis workspaces'
   },
   {
+    id: 'deal-screening',
+    label: 'Deal Screening',
+    icon: 'Search',
+    href: '/deal-screening',
+    aiEnhanced: true,
+    description: 'AI-powered deal opportunity screening and analysis'
+  },
+  {
     id: 'due-diligence',
     label: 'Due Diligence',
-    icon: 'Search',
+    icon: 'FileText',
     href: '/due-diligence',
     aiEnhanced: true,
     description: 'Comprehensive due diligence workflows'
@@ -95,7 +103,7 @@ const defaultNavigationItems: NavigationItem[] = [
   {
     id: 'deals',
     label: 'Deals',
-    icon: 'FileText',
+    icon: 'BarChart',
     href: '/deals',
     aiEnhanced: true,
     description: 'Deal pipeline and management'

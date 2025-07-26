@@ -1,36 +1,63 @@
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useMemo } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 
 export interface ViewContext {
-  type: 'workspace_list' | 'workspace_detail' | 'work_product_editor' | 'dashboard' | 'settings'
+  type: 'workspace_list' | 'workspace_detail' | 'work_product_editor' | 'dashboard' | 'settings' | 'deal_screening'
+  navigationMode: 'traditional' | 'assisted' | 'autonomous'
   data?: {
     workspaceId?: string
     workspaceName?: string
     workProductId?: string
     workProductTitle?: string
     activeTab?: string
+    opportunityId?: string
     [key: string]: any
   }
 }
 
 export function useViewContext(
   overrideData?: Partial<ViewContext['data']>
-): ViewContext {
+): ViewContext & {
+  switchNavigationMode: (mode: 'traditional' | 'assisted' | 'autonomous') => void
+} {
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const [navigationMode, setNavigationMode] = useState<'traditional' | 'assisted' | 'autonomous'>('traditional')
+
+  const switchNavigationMode = useCallback((mode: 'traditional' | 'assisted' | 'autonomous') => {
+    setNavigationMode(mode)
+  }, [])
   
-  return useMemo((): ViewContext => {
+  const viewContext = useMemo((): ViewContext => {
+    // Extract navigation mode from URL or use state
+    const urlMode = searchParams.get('mode') as 'traditional' | 'assisted' | 'autonomous'
+    const currentMode = urlMode || navigationMode
+
     // Extract context from URL
     if (pathname === '/dashboard') {
       return { 
         type: 'dashboard',
+        navigationMode: currentMode,
         data: overrideData
+      }
+    }
+
+    if (pathname.startsWith('/deal-screening')) {
+      const opportunityMatch = pathname.match(/\/deal-screening\/opportunity\/([^/]+)/)
+      return {
+        type: 'deal_screening',
+        navigationMode: currentMode,
+        data: {
+          opportunityId: opportunityMatch?.[1],
+          ...overrideData
+        }
       }
     }
     
     if (pathname === '/workspaces') {
       return { 
         type: 'workspace_list',
+        navigationMode: currentMode,
         data: overrideData
       }
     }
@@ -39,6 +66,7 @@ export function useViewContext(
       const matches = pathname.match(/\/workspaces\/([^/]+)\/work-products\/([^/]+)/)
       return {
         type: 'work_product_editor',
+        navigationMode: currentMode,
         data: {
           workspaceId: matches?.[1],
           workProductId: matches?.[2],
@@ -52,6 +80,7 @@ export function useViewContext(
       const activeTab = searchParams.get('tab') || 'overview'
       return {
         type: 'workspace_detail',
+        navigationMode: currentMode,
         data: {
           workspaceId: matches?.[1],
           activeTab,
@@ -63,6 +92,7 @@ export function useViewContext(
     if (pathname === '/settings') {
       return { 
         type: 'settings',
+        navigationMode: currentMode,
         data: overrideData
       }
     }
@@ -70,7 +100,13 @@ export function useViewContext(
     // Fallback
     return { 
       type: 'dashboard',
+      navigationMode: currentMode,
       data: overrideData
     }
-  }, [pathname, searchParams, overrideData])
+  }, [pathname, searchParams, overrideData, navigationMode])
+
+  return {
+    ...viewContext,
+    switchNavigationMode
+  }
 }
