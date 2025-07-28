@@ -93,6 +93,14 @@ const defaultNavigationItems: NavigationItem[] = [
     description: 'AI-powered deal opportunity screening and analysis'
   },
   {
+    id: 'deal-structuring',
+    label: 'Deal Structuring',
+    icon: 'PieChart',
+    href: '/deal-structuring',
+    aiEnhanced: true,
+    description: 'Financial modeling and deal structuring workflows'
+  },
+  {
     id: 'due-diligence',
     label: 'Due Diligence',
     icon: 'FileText',
