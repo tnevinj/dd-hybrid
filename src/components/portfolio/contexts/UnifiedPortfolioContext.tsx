@@ -1,0 +1,530 @@
+'use client';
+
+import React, { createContext, useContext, useReducer, useEffect, ReactNode, useCallback, useMemo } from 'react';
+import {
+  Portfolio,
+  PortfolioState,
+  PortfolioAction,
+  UnifiedAsset,
+  AssetType,
+  PortfolioConfig,
+  PortfolioAnalytics
+} from '@/types/portfolio';
+
+interface UnifiedPortfolioContextType {
+  state: PortfolioState;
+  dispatch: React.Dispatch<PortfolioAction>;
+  config: PortfolioConfig;
+  analytics: PortfolioAnalytics | null;
+  
+  // Core Actions
+  loadPortfolios: () => Promise<void>;
+  selectPortfolio: (portfolioId: string) => Promise<void>;
+  createAsset: (assetData: any) => Promise<void>;
+  updateAsset: (assetId: string, updates: Partial<UnifiedAsset>) => Promise<void>;
+  deleteAsset: (assetId: string) => Promise<void>;
+  
+  // Filter & Search
+  setFilters: (filters: Partial<PortfolioState['filters']>) => void;
+  clearFilters: () => void;
+  setSearch: (search: string) => void;
+  
+  // Selection
+  selectAssets: (assetIds: string[]) => void;
+  toggleAssetSelection: (assetId: string) => void;
+  clearSelection: () => void;
+  
+  // Analytics
+  calculateAnalytics: () => Promise<PortfolioAnalytics>;
+  getAssetsByType: (assetType: AssetType) => UnifiedAsset[];
+  getFilteredAssets: () => UnifiedAsset[];
+}
+
+const UnifiedPortfolioContext = createContext<UnifiedPortfolioContextType | undefined>(undefined);
+
+const initialState: PortfolioState = {
+  portfolios: [],
+  currentPortfolio: undefined,
+  selectedAssets: [],
+  filters: {
+    assetType: undefined,
+    status: undefined,
+    riskRating: undefined,
+    sector: undefined,
+    location: undefined,
+    search: undefined,
+  },
+  sortBy: undefined,
+  sortDirection: 'asc',
+  loading: false,
+  error: undefined,
+};
+
+function portfolioReducer(state: PortfolioState, action: PortfolioAction): PortfolioState {
+  switch (action.type) {
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload, error: undefined };
+      
+    case 'SET_ERROR':
+      return { ...state, error: action.payload, loading: false };
+      
+    case 'CLEAR_ERROR':
+      return { ...state, error: undefined };
+      
+    case 'SET_PORTFOLIOS':
+      return { 
+        ...state, 
+        portfolios: action.payload, 
+        loading: false,
+        error: undefined 
+      };
+      
+    case 'SET_CURRENT_PORTFOLIO':
+      return { 
+        ...state, 
+        currentPortfolio: action.payload,
+        selectedAssets: [] // Clear selection when switching portfolios
+      };
+      
+    case 'ADD_ASSET':
+      if (!state.currentPortfolio) return state;
+      
+      const updatedPortfolioAdd = {
+        ...state.currentPortfolio,
+        assets: [...state.currentPortfolio.assets, action.payload],
+        updatedAt: new Date().toISOString()
+      };
+      
+      return {
+        ...state,
+        currentPortfolio: updatedPortfolioAdd,
+        portfolios: state.portfolios.map(p => 
+          p.id === updatedPortfolioAdd.id ? updatedPortfolioAdd : p
+        )
+      };
+      
+    case 'UPDATE_ASSET':
+      if (!state.currentPortfolio) return state;
+      
+      const updatedPortfolioUpdate = {
+        ...state.currentPortfolio,
+        assets: state.currentPortfolio.assets.map(asset =>
+          asset.id === action.payload.id ? { ...asset, ...action.payload.updates } : asset
+        ),
+        updatedAt: new Date().toISOString()
+      };
+      
+      return {
+        ...state,
+        currentPortfolio: updatedPortfolioUpdate,
+        portfolios: state.portfolios.map(p => 
+          p.id === updatedPortfolioUpdate.id ? updatedPortfolioUpdate : p
+        )
+      };
+      
+    case 'REMOVE_ASSET':
+      if (!state.currentPortfolio) return state;
+      
+      const updatedPortfolioRemove = {
+        ...state.currentPortfolio,
+        assets: state.currentPortfolio.assets.filter(asset => asset.id !== action.payload),
+        updatedAt: new Date().toISOString()
+      };
+      
+      return {
+        ...state,
+        currentPortfolio: updatedPortfolioRemove,
+        portfolios: state.portfolios.map(p => 
+          p.id === updatedPortfolioRemove.id ? updatedPortfolioRemove : p
+        ),
+        selectedAssets: state.selectedAssets.filter(id => id !== action.payload)
+      };
+      
+    case 'SET_FILTERS':
+      return { 
+        ...state, 
+        filters: { ...state.filters, ...action.payload }
+      };
+      
+    case 'SET_SELECTED_ASSETS':
+      return { ...state, selectedAssets: action.payload };
+      
+    case 'SET_SORT':
+      return { 
+        ...state, 
+        sortBy: action.payload.sortBy,
+        sortDirection: action.payload.sortDirection 
+      };
+      
+    default:
+      return state;
+  }
+}
+
+interface UnifiedPortfolioProviderProps {
+  children: ReactNode;
+  config: PortfolioConfig;
+  initialPortfolioId?: string;
+}
+
+export function UnifiedPortfolioProvider({ 
+  children, 
+  config,
+  initialPortfolioId 
+}: UnifiedPortfolioProviderProps) {
+  const [state, dispatch] = useReducer(portfolioReducer, initialState);
+  const [analytics, setAnalytics] = React.useState<PortfolioAnalytics | null>(null);
+
+  const loadPortfolios = useCallback(async (): Promise<void> => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    
+    try {
+      const response = await fetch('/api/portfolio', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to load portfolios');
+      }
+      
+      const portfolios = await response.json();
+      dispatch({ type: 'SET_PORTFOLIOS', payload: portfolios });
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }, []);
+
+  const selectPortfolio = useCallback(async (portfolioId: string): Promise<void> => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    
+    try {
+      const response = await fetch(`/api/portfolio/${portfolioId}`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to load portfolio');
+      }
+      
+      const portfolio = await response.json();
+      dispatch({ type: 'SET_CURRENT_PORTFOLIO', payload: portfolio });
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }, []);
+
+  const createAsset = useCallback(async (assetData: any): Promise<void> => {
+    if (!state.currentPortfolio) {
+      throw new Error('No portfolio selected');
+    }
+
+    dispatch({ type: 'SET_LOADING', payload: true });
+    
+    try {
+      const response = await fetch(`/api/portfolio/${state.currentPortfolio.id}/assets`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(assetData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create asset');
+      }
+      
+      const newAsset = await response.json();
+      dispatch({ type: 'ADD_ASSET', payload: newAsset });
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  }, [state.currentPortfolio]);
+
+  const updateAsset = useCallback(async (assetId: string, updates: Partial<UnifiedAsset>): Promise<void> => {
+    if (!state.currentPortfolio) {
+      throw new Error('No portfolio selected');
+    }
+
+    try {
+      const response = await fetch(`/api/portfolio/${state.currentPortfolio.id}/assets/${assetId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(updates),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update asset');
+      }
+      
+      dispatch({ type: 'UPDATE_ASSET', payload: { id: assetId, updates } });
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }, [state.currentPortfolio]);
+
+  const deleteAsset = useCallback(async (assetId: string): Promise<void> => {
+    if (!state.currentPortfolio) {
+      throw new Error('No portfolio selected');
+    }
+
+    try {
+      const response = await fetch(`/api/portfolio/${state.currentPortfolio.id}/assets/${assetId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete asset');
+      }
+      
+      dispatch({ type: 'REMOVE_ASSET', payload: assetId });
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }, [state.currentPortfolio]);
+
+  const setFilters = useCallback((filters: Partial<PortfolioState['filters']>): void => {
+    dispatch({ type: 'SET_FILTERS', payload: filters });
+  }, []);
+
+  const clearFilters = useCallback((): void => {
+    dispatch({ type: 'SET_FILTERS', payload: initialState.filters });
+  }, []);
+
+  const setSearch = useCallback((search: string): void => {
+    dispatch({ type: 'SET_FILTERS', payload: { search } });
+  }, []);
+
+  const selectAssets = useCallback((assetIds: string[]): void => {
+    dispatch({ type: 'SET_SELECTED_ASSETS', payload: assetIds });
+  }, []);
+
+  const toggleAssetSelection = useCallback((assetId: string): void => {
+    const newSelection = state.selectedAssets.includes(assetId)
+      ? state.selectedAssets.filter(id => id !== assetId)
+      : [...state.selectedAssets, assetId];
+    
+    dispatch({ type: 'SET_SELECTED_ASSETS', payload: newSelection });
+  }, [state.selectedAssets]);
+
+  const clearSelection = useCallback((): void => {
+    dispatch({ type: 'SET_SELECTED_ASSETS', payload: [] });
+  }, []);
+
+  const calculateAnalytics = useCallback(async (): Promise<PortfolioAnalytics> => {
+    if (!state.currentPortfolio) {
+      throw new Error('No portfolio selected');
+    }
+
+    const { assets } = state.currentPortfolio;
+    
+    // Calculate basic metrics
+    const totalPortfolioValue = assets.reduce((sum, asset) => sum + asset.currentValue, 0);
+    const totalInvested = assets.reduce((sum, asset) => sum + asset.acquisitionValue, 0);
+    const totalRealized = 0; // This would come from realized exits
+    const unrealizedGains = totalPortfolioValue - totalInvested;
+
+    // Calculate weighted performance metrics
+    const weightedIRR = assets.reduce((sum, asset) => sum + (asset.performance.irr * asset.currentValue), 0) / totalPortfolioValue;
+    const weightedMOIC = assets.reduce((sum, asset) => sum + (asset.performance.moic * asset.currentValue), 0) / totalPortfolioValue;
+
+    // Calculate allocations
+    const assetAllocation = assets.reduce((acc, asset) => {
+      acc[asset.assetType] = (acc[asset.assetType] || 0) + asset.currentValue;
+      return acc;
+    }, {} as Record<AssetType, number>);
+
+    const sectorAllocation = assets.reduce((acc, asset) => {
+      if (asset.sector) {
+        acc[asset.sector] = (acc[asset.sector] || 0) + asset.currentValue;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    const geographicAllocation = assets.reduce((acc, asset) => {
+      const country = asset.location.country;
+      acc[country] = (acc[country] || 0) + asset.currentValue;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const riskDistribution = assets.reduce((acc, asset) => {
+      acc[asset.riskRating] = (acc[asset.riskRating] || 0) + asset.currentValue;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Calculate ESG score
+    const esgScore = assets.reduce((sum, asset) => sum + asset.esgMetrics.overallScore, 0) / assets.length;
+
+    const analyticsData: PortfolioAnalytics = {
+      totalPortfolioValue,
+      totalInvested,
+      totalRealized,
+      unrealizedGains,
+      weightedIRR,
+      weightedMOIC,
+      assetAllocation,
+      sectorAllocation,
+      geographicAllocation,
+      riskDistribution,
+      performanceTrend: [], // This would be populated from historical data
+      esgScore,
+      benchmarkComparison: {
+        portfolio: weightedIRR,
+        benchmark: 0.12, // This would come from actual benchmark data
+        outperformance: weightedIRR - 0.12,
+      },
+    };
+
+    return analyticsData;
+  }, [state.currentPortfolio]);
+
+  const getAssetsByType = useCallback((assetType: AssetType): UnifiedAsset[] => {
+    if (!state.currentPortfolio) return [];
+    return state.currentPortfolio.assets.filter(asset => asset.assetType === assetType);
+  }, [state.currentPortfolio]);
+
+  // Helper function to get nested object values for sorting
+  const getNestedValue = useCallback((obj: any, path: string): any => {
+    return path.split('.').reduce((current, key) => current?.[key], obj);
+  }, []);
+
+  const getFilteredAssets = useCallback((): UnifiedAsset[] => {
+    if (!state.currentPortfolio) return [];
+    
+    let filtered = [...state.currentPortfolio.assets];
+    
+    // Apply filters
+    if (state.filters.assetType?.length) {
+      filtered = filtered.filter(asset => state.filters.assetType!.includes(asset.assetType));
+    }
+    
+    if (state.filters.status?.length) {
+      filtered = filtered.filter(asset => state.filters.status!.includes(asset.status));
+    }
+    
+    if (state.filters.riskRating?.length) {
+      filtered = filtered.filter(asset => state.filters.riskRating!.includes(asset.riskRating));
+    }
+    
+    if (state.filters.sector?.length) {
+      filtered = filtered.filter(asset => asset.sector && state.filters.sector!.includes(asset.sector));
+    }
+    
+    if (state.filters.location?.length) {
+      filtered = filtered.filter(asset => state.filters.location!.includes(asset.location.country));
+    }
+    
+    if (state.filters.search) {
+      const searchTerm = state.filters.search.toLowerCase();
+      filtered = filtered.filter(asset => 
+        asset.name.toLowerCase().includes(searchTerm) ||
+        asset.description?.toLowerCase().includes(searchTerm) ||
+        asset.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+      );
+    }
+    
+    // Apply sorting
+    if (state.sortBy) {
+      filtered.sort((a, b) => {
+        const aValue = getNestedValue(a, state.sortBy!);
+        const bValue = getNestedValue(b, state.sortBy!);
+        
+        if (state.sortDirection === 'asc') {
+          return aValue > bValue ? 1 : -1;
+        } else {
+          return aValue < bValue ? 1 : -1;
+        }
+      });
+    }
+    
+    return filtered;
+  }, [state.currentPortfolio, state.filters, state.sortBy, state.sortDirection, getNestedValue]);
+
+  // Load portfolios on mount
+  useEffect(() => {
+    loadPortfolios();
+  }, [loadPortfolios]);
+
+  // Load initial portfolio if specified
+  useEffect(() => {
+    if (initialPortfolioId && state.portfolios.length > 0) {
+      selectPortfolio(initialPortfolioId);
+    }
+  }, [initialPortfolioId, state.portfolios, selectPortfolio]);
+
+  // Automatically select first portfolio if none selected and portfolios are loaded
+  useEffect(() => {
+    if (!state.currentPortfolio && state.portfolios.length > 0) {
+      selectPortfolio(state.portfolios[0].id);
+    }
+  }, [state.currentPortfolio, state.portfolios, selectPortfolio]);
+
+  // Recalculate analytics when portfolio changes
+  useEffect(() => {
+    if (state.currentPortfolio) {
+      calculateAnalytics().then(setAnalytics);
+    }
+  }, [state.currentPortfolio, calculateAnalytics]);
+
+  const contextValue = useMemo(() => ({
+    state,
+    dispatch,
+    config,
+    analytics,
+    loadPortfolios,
+    selectPortfolio,
+    createAsset,
+    updateAsset,
+    deleteAsset,
+    setFilters,
+    clearFilters,
+    setSearch,
+    selectAssets,
+    toggleAssetSelection,
+    clearSelection,
+    calculateAnalytics,
+    getAssetsByType,
+    getFilteredAssets,
+  }), [
+    state,
+    dispatch,
+    config,
+    analytics,
+    loadPortfolios,
+    selectPortfolio,
+    createAsset,
+    updateAsset,
+    deleteAsset,
+    setFilters,
+    clearFilters,
+    setSearch,
+    selectAssets,
+    toggleAssetSelection,
+    clearSelection,
+    calculateAnalytics,
+    getAssetsByType,
+    getFilteredAssets,
+  ]);
+
+  return (
+    <UnifiedPortfolioContext.Provider value={contextValue}>
+      {children}
+    </UnifiedPortfolioContext.Provider>
+  );
+}
+
+export function useUnifiedPortfolio(): UnifiedPortfolioContextType {
+  const context = useContext(UnifiedPortfolioContext);
+  if (context === undefined) {
+    throw new Error('useUnifiedPortfolio must be used within a UnifiedPortfolioProvider');
+  }
+  return context;
+}

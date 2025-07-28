@@ -2,7 +2,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { useMemo, useState, useCallback } from 'react'
 
 export interface ViewContext {
-  type: 'workspace_list' | 'workspace_detail' | 'work_product_editor' | 'dashboard' | 'settings' | 'deal_screening'
+  type: 'workspace_list' | 'workspace_detail' | 'work_product_editor' | 'dashboard' | 'settings' | 'deal_screening' | 'portfolio'
   navigationMode: 'traditional' | 'assisted' | 'autonomous'
   data?: {
     workspaceId?: string
@@ -18,7 +18,9 @@ export interface ViewContext {
 export function useViewContext(
   overrideData?: Partial<ViewContext['data']>
 ): ViewContext & {
-  switchNavigationMode: (mode: 'traditional' | 'assisted' | 'autonomous') => void
+  switchNavigationMode: (mode: 'traditional' | 'assisted' | 'autonomous') => void;
+  setCurrentView?: (view: ViewContext) => void;
+  currentView?: ViewContext;
 } {
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -96,6 +98,14 @@ export function useViewContext(
         data: overrideData
       }
     }
+
+    if (pathname === '/portfolio' || pathname.startsWith('/portfolio/')) {
+      return { 
+        type: 'portfolio',
+        navigationMode: currentMode,
+        data: overrideData
+      }
+    }
     
     // Fallback
     return { 
@@ -107,6 +117,10 @@ export function useViewContext(
 
   return {
     ...viewContext,
-    switchNavigationMode
+    switchNavigationMode,
+    currentView: viewContext,
+    setCurrentView: (view: ViewContext) => {
+      // Could be extended to handle view switching if needed
+    }
   }
 }
