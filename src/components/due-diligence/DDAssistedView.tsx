@@ -28,9 +28,25 @@ import {
 
 interface DDAssistedViewProps {
   project: any
+  projects?: any[]
+  aiRecommendations?: any[]
+  metrics?: any
+  isLoading?: boolean
+  onSelectProject?: (project: any) => void
+  onExecuteAIAction?: (actionId: string) => void
+  onDismissRecommendation?: (id: string) => void
 }
 
-export function DDAssistedView({ project }: DDAssistedViewProps) {
+export function DDAssistedView({ 
+  project, 
+  projects = [],
+  aiRecommendations = [],
+  metrics,
+  isLoading = false,
+  onSelectProject,
+  onExecuteAIAction,
+  onDismissRecommendation
+}: DDAssistedViewProps) {
   const [activeTab, setActiveTab] = React.useState('overview')
   const { recommendations, executeRecommendation } = useNavigationStore()
 
@@ -106,7 +122,7 @@ export function DDAssistedView({ project }: DDAssistedViewProps) {
   const enhancedMetrics = [
     {
       title: 'Progress Score',
-      value: `${project.progress}%`,
+      value: `${project?.progress || 0}%`,
       change: '+8% vs typical',
       trend: 'up' as const,
       aiInsight: 'Ahead of schedule due to similar deal patterns'
@@ -330,16 +346,16 @@ export function DDAssistedView({ project }: DDAssistedViewProps) {
           </div>
         )}
         {activeTab === 'findings' && (
-          <FindingsManagement projectId={project.id} />
+          <FindingsManagement projectId={project?.id} />
         )}
         {activeTab === 'risks' && (
-          <RiskAnalysisHub projectId={project.id} />
+          <RiskAnalysisHub projectId={project?.id} />
         )}
         {activeTab === 'documents' && (
-          <DocumentManagement projectId={project.id} />
+          <DocumentManagement projectId={project?.id} />
         )}
         {activeTab === 'workflows' && (
-          <RiskWorkflowAutomation projectId={project.id} />
+          <RiskWorkflowAutomation projectId={project?.id} />
         )}
         {activeTab === 'automation' && (
           <AIAutomationHub projectId={project.id} />

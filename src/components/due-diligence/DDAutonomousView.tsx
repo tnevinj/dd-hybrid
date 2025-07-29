@@ -18,13 +18,33 @@ import {
 
 interface DDAutonomousViewProps {
   project: any
+  projects?: any[]
+  automatedActions?: any[]
+  pendingApprovals?: any[]
+  aiRecommendations?: any[]
+  isProcessing?: boolean
+  onApproveAction?: (approvalId: string) => void
+  onRejectAction?: (approvalId: string) => void
+  onSwitchMode?: (mode: 'traditional' | 'assisted' | 'autonomous') => void
+  isPaused?: boolean
 }
 
-export function DDAutonomousView({ project }: DDAutonomousViewProps) {
+export function DDAutonomousView({ 
+  project,
+  projects = [],
+  automatedActions = [],
+  pendingApprovals = [],
+  aiRecommendations = [],
+  isProcessing = false,
+  onApproveAction,
+  onRejectAction,
+  onSwitchMode,
+  isPaused = false
+}: DDAutonomousViewProps) {
   const [showTraditionalView, setShowTraditionalView] = React.useState(false)
 
   // AI conversation data
-  const automatedActions = [
+  const mockAutomatedActions = [
     'Analyzed 47 documents and extracted key metrics',
     'Identified 6 potential risk areas with confidence scores',
     'Compared deal structure to 8 similar transactions',
@@ -102,7 +122,7 @@ export function DDAutonomousView({ project }: DDAutonomousViewProps) {
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-purple-800">AI Project Manager</h2>
-                <p className="text-sm text-purple-600">Managing {project.name} due diligence</p>
+                <p className="text-sm text-purple-600">Managing {project?.name || 'No Project Selected'} due diligence</p>
               </div>
             </div>
             <Badge variant="ai" className="text-sm">
@@ -112,7 +132,7 @@ export function DDAutonomousView({ project }: DDAutonomousViewProps) {
           
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-green-600">{automatedActions.length}</div>
+              <div className="text-2xl font-bold text-green-600">{mockAutomatedActions.length}</div>
               <div className="text-sm text-green-700">Actions Completed</div>
             </div>
             <div>
@@ -139,7 +159,7 @@ export function DDAutonomousView({ project }: DDAutonomousViewProps) {
               <div className="flex-1">
                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
                   <p className="text-sm mb-3">
-                    I've completed the initial analysis of {project.name}. Here's what I've accomplished and what needs your attention:
+                    I've completed the initial analysis of {project?.name || 'the selected project'}. Here's what I've accomplished and what needs your attention:
                   </p>
                 </div>
 
@@ -150,7 +170,7 @@ export function DDAutonomousView({ project }: DDAutonomousViewProps) {
                     ✅ Completed Automatically
                   </h4>
                   <div className="space-y-2">
-                    {automatedActions.map((action, index) => (
+                    {mockAutomatedActions.map((action, index) => (
                       <div key={index} className="text-sm text-green-700 flex items-center">
                         <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-3 flex-shrink-0" />
                         {action}
@@ -244,15 +264,15 @@ export function DDAutonomousView({ project }: DDAutonomousViewProps) {
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
                 <div>
-                  <div className="font-semibold">{project.tasksCompleted}/{project.tasksTotal}</div>
+                  <div className="font-semibold">{project?.tasksCompleted || 0}/{project?.tasksTotal || 0}</div>
                   <div className="text-gray-500">Tasks</div>
                 </div>
                 <div>
-                  <div className="font-semibold">{project.findingsCount}</div>
+                  <div className="font-semibold">{project?.findingsCount || 0}</div>
                   <div className="text-gray-500">Findings</div>
                 </div>
                 <div>
-                  <div className="font-semibold">{project.risksCount}</div>
+                  <div className="font-semibold">{project?.risksCount || 0}</div>
                   <div className="text-gray-500">Risks</div>
                 </div>
                 <div>

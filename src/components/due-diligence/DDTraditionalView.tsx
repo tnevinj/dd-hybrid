@@ -24,9 +24,19 @@ import {
 
 interface DDTraditionalViewProps {
   project: any // Using any for demo - replace with proper type
+  projects?: any[]
+  metrics?: any
+  isLoading?: boolean
+  onSelectProject?: (project: any) => void
 }
 
-export function DDTraditionalView({ project }: DDTraditionalViewProps) {
+export function DDTraditionalView({ 
+  project, 
+  projects = [], 
+  metrics, 
+  isLoading = false,
+  onSelectProject 
+}: DDTraditionalViewProps) {
   const [activeTab, setActiveTab] = React.useState('overview')
 
   // Sample data for traditional view
@@ -89,25 +99,25 @@ export function DDTraditionalView({ project }: DDTraditionalViewProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">{project.tasksCompleted}/{project.tasksTotal}</div>
+              <div className="text-2xl font-bold text-blue-600">{project?.tasksCompleted || 0}/{project?.tasksTotal || 0}</div>
               <div className="text-sm text-gray-600">Tasks Complete</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-orange-600">{project.findingsCount}</div>
+              <div className="text-2xl font-bold text-orange-600">{project?.findingsCount || 0}</div>
               <div className="text-sm text-gray-600">Active Findings</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-red-600">{project.risksCount}</div>
+              <div className="text-2xl font-bold text-red-600">{project?.risksCount || 0}</div>
               <div className="text-sm text-gray-600">Risk Items</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">{project.documentsCount}</div>
+              <div className="text-2xl font-bold text-green-600">{project?.documentsCount || 0}</div>
               <div className="text-sm text-gray-600">Documents</div>
             </CardContent>
           </Card>
@@ -235,19 +245,19 @@ export function DDTraditionalView({ project }: DDTraditionalViewProps) {
           </div>
         )}
         {activeTab === 'risks' && (
-          <RiskAnalysisHub projectId={project.id} />
+          <RiskAnalysisHub projectId={project?.id} />
         )}
         {activeTab === 'documents' && (
-          <DocumentManagement projectId={project.id} />
+          <DocumentManagement projectId={project?.id} />
         )}
         {activeTab === 'findings' && (
-          <FindingsManagement projectId={project.id} />
+          <FindingsManagement projectId={project?.id} />
         )}
         {activeTab === 'workflows' && (
-          <RiskWorkflowAutomation projectId={project.id} />
+          <RiskWorkflowAutomation projectId={project?.id} />
         )}
         {activeTab === 'automation' && (
-          <AIAutomationHub projectId={project.id} />
+          <AIAutomationHub projectId={project?.id} />
         )}
         {activeTab === 'analytics' && (
           <div className="text-center py-12">

@@ -42,10 +42,22 @@ export function AIPanel({ className }: AIPanelProps) {
 
   if (!isAIPanelOpen) return null
 
+  const totalRecommendations = recommendations.length
+  const completedToday = 3 // Mock data - would come from tracking
+  const timeSavedToday = 47 // Mock data - would come from tracking
+
   return (
     <div className={`w-80 border-l bg-background ${className}`}>
       <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-lg font-semibold">AI Assistant</h2>
+        <div>
+          <h2 className="text-lg font-semibold">AI Assistant</h2>
+          <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <Clock className="w-3 h-3" />
+            <span>{timeSavedToday}min saved today</span>
+            <span>•</span>
+            <span>{completedToday} completed</span>
+          </div>
+        </div>
         <Button
           variant="ghost"
           size="icon"
@@ -123,9 +135,61 @@ export function AIPanel({ className }: AIPanelProps) {
           </div>
         )}
 
+        {/* AI Learning Progress */}
+        <div>
+          <h3 className="text-sm font-medium mb-3 flex items-center">
+            <Brain className="w-4 h-4 mr-2 text-purple-600" />
+            AI Learning Progress
+          </h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-gray-600">Workflow Pattern Recognition</span>
+              <span className="text-purple-600 font-medium">87%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div className="bg-purple-500 h-1.5 rounded-full" style={{ width: '87%' }} />
+            </div>
+            
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-gray-600">Context Understanding</span>
+              <span className="text-blue-600 font-medium">73%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: '73%' }} />
+            </div>
+            
+            <div className="text-xs text-gray-500 mt-2">
+              ⚡ Learning from your work patterns to provide better assistance
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div>
+          <h3 className="text-sm font-medium mb-3">Quick Actions</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <Button size="sm" variant="outline" className="text-xs h-8">
+              <Zap className="w-3 h-3 mr-1" />
+              Optimize
+            </Button>
+            <Button size="sm" variant="outline" className="text-xs h-8">
+              <TrendingUp className="w-3 h-3 mr-1" />
+              Analyze
+            </Button>
+            <Button size="sm" variant="outline" className="text-xs h-8">
+              <Lightbulb className="w-3 h-3 mr-1" />
+              Suggest
+            </Button>
+            <Button size="sm" variant="outline" className="text-xs h-8">
+              <Info className="w-3 h-3 mr-1" />
+              Explain
+            </Button>
+          </div>
+        </div>
+
         {/* Empty State */}
         {recommendations.length === 0 && insights.length === 0 && (
-          <div className="text-center py-8">
+          <div className="text-center py-4">
             <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
               <Brain className="w-6 h-6 text-gray-400" />
             </div>
