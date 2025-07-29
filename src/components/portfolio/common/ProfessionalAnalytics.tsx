@@ -7,6 +7,21 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  PerformanceChart, 
+  AttributionChart, 
+  AllocationPieChart, 
+  RiskDecompositionChart,
+  CorrelationHeatmap,
+  ScenarioAnalysisChart 
+} from './InteractiveCharts';
+import {
+  PrivateEquityMetricsCard,
+  VintageAnalysisChart,
+  JCurveChart,
+  StageAnalysisChart,
+  SectorPerformanceChart
+} from './AdvancedPerformanceAnalytics';
 
 export function ProfessionalAnalytics() {
   const { state, analytics, professionalMetrics } = useUnifiedPortfolio();
@@ -57,8 +72,9 @@ export function ProfessionalAnalytics() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="performance">Performance</TabsTrigger>
+          <TabsTrigger value="private-equity">Private Equity</TabsTrigger>
           <TabsTrigger value="risk">Risk Metrics</TabsTrigger>
           <TabsTrigger value="attribution">Attribution</TabsTrigger>
           <TabsTrigger value="correlation">Correlation</TabsTrigger>
@@ -187,6 +203,29 @@ export function ProfessionalAnalytics() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Interactive Performance Visualization */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <PerformanceChart />
+            <AllocationPieChart />
+          </div>
+        </TabsContent>
+
+        {/* Private Equity Metrics Tab */}
+        <TabsContent value="private-equity" className="space-y-6">
+          {/* PE Core Metrics */}
+          <PrivateEquityMetricsCard />
+          
+          {/* PE Analysis Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <VintageAnalysisChart />
+            <JCurveChart />
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <StageAnalysisChart />
+            <SectorPerformanceChart />
+          </div>
         </TabsContent>
 
         {/* Risk Metrics Tab */}
@@ -286,6 +325,12 @@ export function ProfessionalAnalytics() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Interactive Risk Visualization */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RiskDecompositionChart />
+            <ScenarioAnalysisChart />
+          </div>
         </TabsContent>
 
         {/* Attribution Analysis Tab */}
@@ -367,6 +412,9 @@ export function ProfessionalAnalytics() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Interactive Attribution Visualization */}
+          <AttributionChart />
         </TabsContent>
 
         {/* Correlation Matrix Tab */}
@@ -430,6 +478,9 @@ export function ProfessionalAnalytics() {
               </div>
             </CardContent>
           </Card>
+          
+          {/* Interactive Correlation Visualization */}
+          <CorrelationHeatmap />
         </TabsContent>
 
         {/* Advanced Analytics Tab */}

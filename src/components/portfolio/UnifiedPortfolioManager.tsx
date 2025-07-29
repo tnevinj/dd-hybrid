@@ -13,6 +13,12 @@ import { PortfolioPerformance } from './common/PortfolioPerformance';
 import { VirtualizedAssetGrid } from './common/VirtualizedAssetGrid';
 import { ProfessionalAnalytics } from './common/ProfessionalAnalytics';
 import { ProfessionalReporting } from './common/ProfessionalReporting';
+import { CapitalManagement } from './common/CapitalManagement';
+import { MarketIntelligence } from './common/MarketIntelligence';
+import { PortfolioOptimization } from './common/PortfolioOptimization';
+import { RiskManagement } from './common/RiskManagement';
+import { TeamCollaboration } from './common/TeamCollaboration';
+import { CustomDashboard } from './common/CustomDashboard';
 
 // Asset-type specific components
 import { TraditionalAssetsView } from './asset-types/TraditionalAssetsView';
@@ -86,6 +92,48 @@ const defaultConfig: PortfolioConfig = {
       component: 'ProfessionalReporting',
       icon: '📄',
       order: 8,
+    },
+    {
+      id: 'capital',
+      label: 'Capital Management',
+      component: 'CapitalManagement',
+      icon: '💰',
+      order: 9,
+    },
+    {
+      id: 'market',
+      label: 'Market Intelligence',
+      component: 'MarketIntelligence',
+      icon: '📰',
+      order: 10,
+    },
+    {
+      id: 'optimization',
+      label: 'Optimization',
+      component: 'PortfolioOptimization',
+      icon: '⚡',
+      order: 11,
+    },
+    {
+      id: 'risk',
+      label: 'Risk Management',
+      component: 'RiskManagement',
+      icon: '⚠️',
+      order: 12,
+    },
+    {
+      id: 'collaboration',
+      label: 'Team',
+      component: 'TeamCollaboration',
+      icon: '👥',
+      order: 13,
+    },
+    {
+      id: 'dashboard',
+      label: 'Custom Dashboard',
+      component: 'CustomDashboard',
+      icon: '🎛️',
+      order: 14,
     },
   ],
   metricsModules: [
@@ -183,6 +231,18 @@ function PortfolioManagerContent() {
         return <ProfessionalAnalytics />;
       case 'ProfessionalReporting':
         return <ProfessionalReporting />;
+      case 'CapitalManagement':
+        return <CapitalManagement />;
+      case 'MarketIntelligence':
+        return <MarketIntelligence />;
+      case 'PortfolioOptimization':
+        return <PortfolioOptimization />;
+      case 'RiskManagement':
+        return <RiskManagement />;
+      case 'TeamCollaboration':
+        return <TeamCollaboration />;
+      case 'CustomDashboard':
+        return <CustomDashboard />;
       default:
         return <div>Component not found: {activeTabConfig.component}</div>;
     }

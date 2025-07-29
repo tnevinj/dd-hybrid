@@ -121,8 +121,8 @@ const defaultNavigationItems: NavigationItem[] = [
     label: 'Portfolio',
     icon: 'PieChart',
     href: '/portfolio',
-    aiEnhanced: false,
-    description: 'Portfolio monitoring and analytics'
+    aiEnhanced: true,
+    description: 'Comprehensive portfolio management with analytics, optimization, risk management, and team collaboration'
   },
   {
     id: 'reports',
