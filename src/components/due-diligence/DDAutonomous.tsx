@@ -22,33 +22,11 @@ interface Project {
   };
 }
 
-interface DashboardAutonomousProps {
-  dashboardData?: any;
-  activeDeals?: any[];
-  recentActivity?: any[];
-  automatedActions?: any[];
-  pendingApprovals?: any[];
-  aiRecommendations?: any[];
-  isProcessing?: boolean;
-  onApproveAction?: (actionId: string) => void;
-  onRejectAction?: (actionId: string) => void;
+interface DDAutonomousProps {
   onSwitchMode?: (mode: 'traditional' | 'assisted' | 'autonomous') => void;
-  isPaused?: boolean;
 }
 
-export function DashboardAutonomous({ 
-  dashboardData,
-  activeDeals,
-  recentActivity,
-  automatedActions,
-  pendingApprovals,
-  aiRecommendations,
-  isProcessing,
-  onApproveAction,
-  onRejectAction,
-  onSwitchMode,
-  isPaused
-}: DashboardAutonomousProps) {
+export function DDAutonomous({ onSwitchMode }: DDAutonomousProps) {
   const {
     selectedProject,
     projects,
@@ -62,15 +40,14 @@ export function DashboardAutonomous({
 
   const [showSettings, setShowSettings] = useState(false);
 
-  // Initialize project type for dashboard
+  // Initialize project type for due diligence
   React.useEffect(() => {
-    setActiveProjectType('dashboard');
+    setActiveProjectType('due-diligence');
   }, [setActiveProjectType]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
   };
-
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -89,17 +66,17 @@ export function DashboardAutonomous({
             
             <div>
               <h1 className="text-xl font-semibold text-gray-900">
-                Autonomous Dashboard
+                Autonomous Due Diligence
               </h1>
               <p className="text-sm text-gray-500">
-                {selectedProject ? selectedProject.name : 'Select a project to get started'}
+                {selectedProject ? selectedProject.name : 'Select a company to analyze'}
               </p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              AI Active
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+              AI Analyzing
             </Badge>
             
             <Button
@@ -126,7 +103,7 @@ export function DashboardAutonomous({
         {/* Project Selector Sidebar */}
         {!sidebarCollapsed && (
           <ProjectSelector
-            projectType="dashboard"
+            projectType="due-diligence"
             selectedProjectId={selectedProject?.id}
             onProjectSelect={handleProjectSelect}
           />
@@ -136,7 +113,7 @@ export function DashboardAutonomous({
         <div className="flex-1">
           <ChatInterface
             projectId={selectedProject?.id}
-            projectType="dashboard"
+            projectType="due-diligence"
           />
         </div>
 
@@ -144,7 +121,7 @@ export function DashboardAutonomous({
         {!contextPanelCollapsed && (
           <ContextPanel
             project={selectedProject || undefined}
-            projectType="dashboard"
+            projectType="due-diligence"
           />
         )}
       </div>
@@ -152,4 +129,4 @@ export function DashboardAutonomous({
   );
 }
 
-export default DashboardAutonomous
+export default DDAutonomous;
