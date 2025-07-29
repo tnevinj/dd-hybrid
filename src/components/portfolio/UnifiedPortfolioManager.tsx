@@ -10,8 +10,9 @@ import { Badge } from '@/components/ui/badge';
 // Portfolio-specific components
 import { PortfolioOverview } from './common/PortfolioOverview';
 import { PortfolioPerformance } from './common/PortfolioPerformance';
-import { AssetGrid } from './common/AssetGrid';
-import { PortfolioAnalytics } from './common/PortfolioAnalytics';
+import { VirtualizedAssetGrid } from './common/VirtualizedAssetGrid';
+import { ProfessionalAnalytics } from './common/ProfessionalAnalytics';
+import { ProfessionalReporting } from './common/ProfessionalReporting';
 
 // Asset-type specific components
 import { TraditionalAssetsView } from './asset-types/TraditionalAssetsView';
@@ -44,7 +45,7 @@ const defaultConfig: PortfolioConfig = {
     {
       id: 'assets',
       label: 'Assets',
-      component: 'AssetGrid',
+      component: 'VirtualizedAssetGrid',
       icon: '🏢',
       order: 3,
     },
@@ -75,9 +76,16 @@ const defaultConfig: PortfolioConfig = {
     {
       id: 'analytics',
       label: 'Analytics',
-      component: 'PortfolioAnalytics',
+      component: 'ProfessionalAnalytics',
       icon: '📊',
       order: 7,
+    },
+    {
+      id: 'reporting',
+      label: 'Reports',
+      component: 'ProfessionalReporting',
+      icon: '📄',
+      order: 8,
     },
   ],
   metricsModules: [
@@ -131,17 +139,15 @@ function PortfolioManagerContent() {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedAssetType, setSelectedAssetType] = useState<AssetType | 'all'>('all');
 
-  // Load portfolios on component mount
-  useEffect(() => {
-    loadPortfolios();
-  }, [loadPortfolios]);
+  console.log('PortfolioManagerContent render - state:', {
+    loading: state.loading,
+    error: state.error,
+    portfoliosCount: state.portfolios.length,
+    currentPortfolio: state.currentPortfolio?.name,
+    analytics: !!analytics
+  });
 
-  // Auto-select first portfolio if available
-  useEffect(() => {
-    if (state.portfolios.length > 0 && !state.currentPortfolio) {
-      selectPortfolio(state.portfolios[0].id);
-    }
-  }, [state.portfolios, state.currentPortfolio, selectPortfolio]);
+  // Portfolio loading and selection is handled by the context provider
 
   // Filter dashboard tabs based on available asset types in current portfolio
   const getAvailableTabs = (): DashboardTab[] => {
@@ -165,16 +171,18 @@ function PortfolioManagerContent() {
         return <PortfolioOverview />;
       case 'PortfolioPerformance':
         return <PortfolioPerformance />;
-      case 'AssetGrid':
-        return <AssetGrid assetType={selectedAssetType === 'all' ? undefined : selectedAssetType} />;
+      case 'VirtualizedAssetGrid':
+        return <VirtualizedAssetGrid assetType={selectedAssetType === 'all' ? undefined : selectedAssetType} />;
       case 'TraditionalAssetsView':
         return <TraditionalAssetsView />;
       case 'RealEstateAssetsView':
         return <RealEstateAssetsView />;
       case 'InfrastructureAssetsView':
         return <InfrastructureAssetsView />;
-      case 'PortfolioAnalytics':
-        return <PortfolioAnalytics />;
+      case 'ProfessionalAnalytics':
+        return <ProfessionalAnalytics />;
+      case 'ProfessionalReporting':
+        return <ProfessionalReporting />;
       default:
         return <div>Component not found: {activeTabConfig.component}</div>;
     }

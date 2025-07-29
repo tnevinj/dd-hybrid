@@ -239,15 +239,18 @@ mockPortfolios[0].totalInvested = mockAssets.reduce((sum, asset) => sum + asset.
 mockPortfolios[0].unrealizedValue = mockPortfolios[0].totalValue - mockPortfolios[0].totalInvested;
 
 export async function GET(request: NextRequest) {
+  console.log('Portfolio API: GET request received');
   try {
     // In a real application, this would fetch from a database
     // and include proper authentication/authorization
     
     const searchParams = request.nextUrl.searchParams;
     const managerId = searchParams.get('managerId') || 'user-1';
+    console.log('Portfolio API: Looking for portfolios for manager:', managerId);
     
     // Filter portfolios by manager
     const userPortfolios = mockPortfolios.filter(portfolio => portfolio.managerId === managerId);
+    console.log('Portfolio API: Found portfolios:', userPortfolios.length);
     
     return NextResponse.json(userPortfolios, { status: 200 });
   } catch (error) {

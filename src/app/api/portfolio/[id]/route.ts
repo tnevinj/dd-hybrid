@@ -10,6 +10,7 @@ export async function GET(
 ) {
   try {
     const { id: portfolioId } = await params;
+    console.log('Portfolio Detail API: GET request for portfolio:', portfolioId);
     
     // Mock portfolio data with assets for demonstration
     const mockPortfolio: Portfolio = {

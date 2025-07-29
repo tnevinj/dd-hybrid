@@ -10,12 +10,15 @@ import {
   PortfolioConfig,
   PortfolioAnalytics
 } from '@/types/portfolio';
+import { ProfessionalPortfolioAnalytics, ProfessionalMetrics } from '@/lib/portfolio-analytics';
+import { portfolioCache } from '@/lib/portfolio-cache';
 
 interface UnifiedPortfolioContextType {
   state: PortfolioState;
   dispatch: React.Dispatch<PortfolioAction>;
   config: PortfolioConfig;
   analytics: PortfolioAnalytics | null;
+  professionalMetrics: ProfessionalMetrics | null;
   
   // Core Actions
   loadPortfolios: () => Promise<void>;
@@ -83,7 +86,9 @@ function portfolioReducer(state: PortfolioState, action: PortfolioAction): Portf
       return { 
         ...state, 
         currentPortfolio: action.payload,
-        selectedAssets: [] // Clear selection when switching portfolios
+        selectedAssets: [], // Clear selection when switching portfolios
+        loading: false,
+        error: undefined
       };
       
     case 'ADD_ASSET':
@@ -174,6 +179,7 @@ export function UnifiedPortfolioProvider({
 }: UnifiedPortfolioProviderProps) {
   const [state, dispatch] = useReducer(portfolioReducer, initialState);
   const [analytics, setAnalytics] = React.useState<PortfolioAnalytics | null>(null);
+  const [professionalMetrics, setProfessionalMetrics] = React.useState<ProfessionalMetrics | null>(null);
 
   const loadPortfolios = useCallback(async (): Promise<void> => {
     dispatch({ type: 'SET_LOADING', payload: true });
@@ -191,6 +197,7 @@ export function UnifiedPortfolioProvider({
       const portfolios = await response.json();
       dispatch({ type: 'SET_PORTFOLIOS', payload: portfolios });
     } catch (error) {
+      console.error('Error loading portfolios:', error);
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
     }
   }, []);
@@ -211,6 +218,7 @@ export function UnifiedPortfolioProvider({
       const portfolio = await response.json();
       dispatch({ type: 'SET_CURRENT_PORTFOLIO', payload: portfolio });
     } catch (error) {
+      console.error('Error loading portfolio:', error);
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
     }
   }, []);
@@ -451,34 +459,135 @@ export function UnifiedPortfolioProvider({
   // Load portfolios on mount
   useEffect(() => {
     loadPortfolios();
-  }, [loadPortfolios]);
+  }, []); // Only run once on mount
 
   // Load initial portfolio if specified
   useEffect(() => {
-    if (initialPortfolioId && state.portfolios.length > 0) {
+    if (initialPortfolioId && state.portfolios.length > 0 && !state.currentPortfolio) {
       selectPortfolio(initialPortfolioId);
     }
-  }, [initialPortfolioId, state.portfolios, selectPortfolio]);
+  }, [initialPortfolioId, state.portfolios.length, state.currentPortfolio?.id, selectPortfolio]);
 
   // Automatically select first portfolio if none selected and portfolios are loaded
   useEffect(() => {
-    if (!state.currentPortfolio && state.portfolios.length > 0) {
+    if (!state.currentPortfolio && state.portfolios.length > 0 && !state.loading) {
       selectPortfolio(state.portfolios[0].id);
     }
-  }, [state.currentPortfolio, state.portfolios, selectPortfolio]);
+  }, [state.currentPortfolio?.id, state.portfolios.length, state.loading, selectPortfolio]);
 
-  // Recalculate analytics when portfolio changes
+  // Calculate analytics when portfolio changes with caching
   useEffect(() => {
-    if (state.currentPortfolio) {
-      calculateAnalytics().then(setAnalytics);
+    if (state.currentPortfolio && state.currentPortfolio.assets.length > 0) {
+      const portfolioId = state.currentPortfolio.id;
+      const assets = state.currentPortfolio.assets;
+
+      // Try to get cached analytics first
+      const cachedAnalytics = portfolioCache.getCachedAnalytics(portfolioId, assets);
+      const cachedProfessionalMetrics = portfolioCache.getCachedProfessionalMetrics(portfolioId, assets);
+
+      if (cachedAnalytics && cachedProfessionalMetrics) {
+        setAnalytics(cachedAnalytics);
+        setProfessionalMetrics(cachedProfessionalMetrics);
+        return;
+      }
+
+      // Calculate analytics in a requestIdleCallback for better performance
+      const calculateAnalyticsAsync = () => {
+        // Basic analytics
+        const totalPortfolioValue = assets.reduce((sum, asset) => sum + asset.currentValue, 0);
+        const totalInvested = assets.reduce((sum, asset) => sum + asset.acquisitionValue, 0);
+        const totalRealized = 0;
+        const unrealizedGains = totalPortfolioValue - totalInvested;
+
+        // Calculate weighted performance metrics
+        const weightedIRR = totalPortfolioValue > 0 
+          ? assets.reduce((sum, asset) => sum + (asset.performance.irr * asset.currentValue), 0) / totalPortfolioValue
+          : 0;
+        const weightedMOIC = totalPortfolioValue > 0
+          ? assets.reduce((sum, asset) => sum + (asset.performance.moic * asset.currentValue), 0) / totalPortfolioValue
+          : 0;
+
+        // Calculate allocations
+        const assetAllocation = assets.reduce((acc, asset) => {
+          acc[asset.assetType] = (acc[asset.assetType] || 0) + asset.currentValue;
+          return acc;
+        }, {} as Record<AssetType, number>);
+
+        const sectorAllocation = assets.reduce((acc, asset) => {
+          if (asset.sector) {
+            acc[asset.sector] = (acc[asset.sector] || 0) + asset.currentValue;
+          }
+          return acc;
+        }, {} as Record<string, number>);
+
+        const geographicAllocation = assets.reduce((acc, asset) => {
+          const country = asset.location.country;
+          acc[country] = (acc[country] || 0) + asset.currentValue;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const riskDistribution = assets.reduce((acc, asset) => {
+          acc[asset.riskRating] = (acc[asset.riskRating] || 0) + asset.currentValue;
+          return acc;
+        }, {} as Record<string, number>);
+
+        // Calculate ESG score
+        const esgScore = assets.length > 0 
+          ? assets.reduce((sum, asset) => sum + asset.esgMetrics.overallScore, 0) / assets.length
+          : 0;
+
+        const analyticsData: PortfolioAnalytics = {
+          totalPortfolioValue,
+          totalInvested,
+          totalRealized,
+          unrealizedGains,
+          weightedIRR,
+          weightedMOIC,
+          assetAllocation,
+          sectorAllocation,
+          geographicAllocation,
+          riskDistribution,
+          performanceTrend: [],
+          esgScore,
+          benchmarkComparison: {
+            portfolio: weightedIRR,
+            benchmark: 0.12,
+            outperformance: weightedIRR - 0.12,
+          },
+        };
+
+        // Professional analytics
+        const professionalAnalytics = new ProfessionalPortfolioAnalytics(assets);
+        const professionalMetricsData = professionalAnalytics.generateProfessionalMetrics();
+
+        // Cache the results
+        portfolioCache.setCachedAnalytics(portfolioId, assets, analyticsData);
+        portfolioCache.setCachedProfessionalMetrics(portfolioId, assets, professionalMetricsData);
+
+        // Update state
+        setAnalytics(analyticsData);
+        setProfessionalMetrics(professionalMetricsData);
+      };
+
+      // Use requestIdleCallback for better performance
+      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        window.requestIdleCallback(calculateAnalyticsAsync);
+      } else {
+        // Fallback for environments without requestIdleCallback
+        setTimeout(calculateAnalyticsAsync, 0);
+      }
+    } else {
+      setAnalytics(null);
+      setProfessionalMetrics(null);
     }
-  }, [state.currentPortfolio, calculateAnalytics]);
+  }, [state.currentPortfolio?.id, state.currentPortfolio?.assets]);
 
   const contextValue = useMemo(() => ({
     state,
     dispatch,
     config,
     analytics,
+    professionalMetrics,
     loadPortfolios,
     selectPortfolio,
     createAsset,
@@ -495,9 +604,9 @@ export function UnifiedPortfolioProvider({
     getFilteredAssets,
   }), [
     state,
-    dispatch,
     config,
     analytics,
+    professionalMetrics,
     loadPortfolios,
     selectPortfolio,
     createAsset,

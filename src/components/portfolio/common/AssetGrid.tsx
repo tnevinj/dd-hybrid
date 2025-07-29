@@ -13,7 +13,7 @@ interface AssetGridProps {
 }
 
 export function AssetGrid({ assetType }: AssetGridProps) {
-  const { state, getFilteredAssets, setFilters, toggleAssetSelection } = useUnifiedPortfolio();
+  const { state, getFilteredAssets, setFilters, toggleAssetSelection, selectAssets } = useUnifiedPortfolio();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [riskFilter, setRiskFilter] = useState<string>('all');
