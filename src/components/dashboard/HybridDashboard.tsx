@@ -321,31 +321,35 @@ export const HybridDashboard: React.FC = () => {
   }
 
   return (
-    <div className="w-full min-h-screen">
-      {/* Header with Mode Switcher */}
-      <HybridModeHeader
-        currentMode={currentMode.mode as HybridMode}
-        onModeChange={handleModeSwitch}
-        moduleContext="dashboard"
-        title="Executive Dashboard"
-        subtitle={dashboardData.activeDeals ? `Managing ${dashboardData.activeDeals} deals, ${dashboardData.teamMembers} team members, ${(dashboardData.totalAUM / 1000000000).toFixed(1)}B AUM • Choose your experience mode` : 'Comprehensive operations and performance management • Choose your experience mode'}
-        disabled={isLoading}
-        context={dashboardData}
-        className="sticky top-0 z-50"
-      />
-      
-      {/* Mode Explanation Banner */}
-      <div className="p-4">
-        <HybridModeExplanation
+    <div className={currentMode.mode === 'autonomous' ? 'w-full h-screen' : 'w-full min-h-screen'}>
+      {/* Header with Mode Switcher - Hidden for autonomous mode */}
+      {currentMode.mode !== 'autonomous' && (
+        <HybridModeHeader
           currentMode={currentMode.mode as HybridMode}
+          onModeChange={handleModeSwitch}
           moduleContext="dashboard"
-          statistics={{
-            efficiency: metrics.aiEfficiencyGains,
-            automation: currentMode.mode === 'traditional' ? 0 : currentMode.mode === 'assisted' ? 50 : 90,
-            accuracy: currentMode.mode === 'traditional' ? 100 : currentMode.mode === 'assisted' ? 120 : 125
-          }}
+          title="Executive Dashboard"
+          subtitle={dashboardData.activeDeals ? `Managing ${dashboardData.activeDeals} deals, ${dashboardData.teamMembers} team members, ${(dashboardData.totalAUM / 1000000000).toFixed(1)}B AUM • Choose your experience mode` : 'Comprehensive operations and performance management • Choose your experience mode'}
+          disabled={isLoading}
+          context={dashboardData}
+          className="sticky top-0 z-50"
         />
-      </div>
+      )}
+      
+      {/* Mode Explanation Banner - Hidden for autonomous mode */}
+      {currentMode.mode !== 'autonomous' && (
+        <div className="p-4">
+          <HybridModeExplanation
+            currentMode={currentMode.mode as HybridMode}
+            moduleContext="dashboard"
+            statistics={{
+              efficiency: metrics.aiEfficiencyGains,
+              automation: currentMode.mode === 'traditional' ? 0 : currentMode.mode === 'assisted' ? 50 : 90,
+              accuracy: currentMode.mode === 'traditional' ? 100 : currentMode.mode === 'assisted' ? 120 : 125
+            }}
+          />
+        </div>
+      )}
 
       {/* Mode-specific Content */}
       {currentMode.mode === 'traditional' && (
@@ -392,17 +396,7 @@ export const HybridDashboard: React.FC = () => {
           onError={(error, errorInfo) => console.error('Dashboard Autonomous View Error:', error, errorInfo)}
         >
           <DashboardAutonomous
-            dashboardData={dashboardData}
-            activeDeals={mockActiveDeals}
-            recentActivity={mockRecentActivity}
-            automatedActions={aiState.automatedActions}
-            pendingApprovals={aiState.pendingApprovals}
-            aiRecommendations={aiState.recommendations}
-            isProcessing={aiState.processingTasks.length > 0}
-            onApproveAction={handleApproveAction}
-            onRejectAction={handleRejectAction}
             onSwitchMode={handleModeSwitch}
-            isPaused={false}
           />
         </ErrorBoundary>
       )}

@@ -157,24 +157,14 @@ export function HybridNavigation({ children, className, viewContext }: HybridNav
       case 'autonomous':
         return (
           <>
-            {/* Minimal Navigation - Hidden by default */}
-            <div className="hidden lg:block">
-              <TraditionalSidebar enhanced={true} collapsed={true} />
-            </div>
+            {/* Traditional Sidebar - Still useful for top-level navigation */}
+            <TraditionalSidebar enhanced={true} />
             
-            {/* AI-First Interface */}
-            <div className="flex-1 flex">
-              {/* Conversational AI Panel - Primary Interface */}
-              <div className="w-1/3 border-r">
-                <AIConversationPanel context={detectedContext} />
-              </div>
-              
-              {/* Content Area - Secondary */}
-              <div className="flex-1 flex flex-col overflow-hidden">
-                <main className="flex-1 overflow-auto bg-gray-50">
-                  {children}
-                </main>
-              </div>
+            {/* Content Area - No redundant AI conversation panel */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <main className="flex-1 overflow-auto">
+                {children}
+              </main>
             </div>
           </>
         )

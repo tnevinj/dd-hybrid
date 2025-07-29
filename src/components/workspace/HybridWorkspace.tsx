@@ -105,33 +105,37 @@ export function HybridWorkspace({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with Mode Switcher */}
-      <HybridModeHeader
-        currentMode={workspaceMode as HybridMode}
-        onModeChange={handleModeChange}
-        moduleContext="workspace"
-        title="Hybrid Workspace Management"
-        subtitle={currentModeConfig.description + " • Choose your experience mode"}
-        disabled={isLoading}
-        className="mb-6"
-      />
-
-      {/* Mode Explanation Banner */}
-      <div className="max-w-7xl mx-auto px-6 mb-6">
-        <HybridModeExplanation
+    <div className={workspaceMode === 'autonomous' ? 'h-screen' : 'min-h-screen bg-gray-50'}>
+      {/* Header with Mode Switcher - Hidden for autonomous mode */}
+      {workspaceMode !== 'autonomous' && (
+        <HybridModeHeader
           currentMode={workspaceMode as HybridMode}
+          onModeChange={handleModeChange}
           moduleContext="workspace"
-          statistics={{
-            efficiency: workspaceMode === 'traditional' ? 0 : workspaceMode === 'assisted' ? 30 : 60,
-            automation: workspaceMode === 'traditional' ? 0 : workspaceMode === 'assisted' ? 45 : 85,
-            accuracy: workspaceMode === 'traditional' ? 100 : workspaceMode === 'assisted' ? 115 : 125
-          }}
+          title="Hybrid Workspace Management"
+          subtitle={currentModeConfig.description + " • Choose your experience mode"}
+          disabled={isLoading}
+          className="mb-6"
         />
-      </div>
+      )}
+
+      {/* Mode Explanation Banner - Hidden for autonomous mode */}
+      {workspaceMode !== 'autonomous' && (
+        <div className="max-w-7xl mx-auto px-6 mb-6">
+          <HybridModeExplanation
+            currentMode={workspaceMode as HybridMode}
+            moduleContext="workspace"
+            statistics={{
+              efficiency: workspaceMode === 'traditional' ? 0 : workspaceMode === 'assisted' ? 30 : 60,
+              automation: workspaceMode === 'traditional' ? 0 : workspaceMode === 'assisted' ? 45 : 85,
+              accuracy: workspaceMode === 'traditional' ? 100 : workspaceMode === 'assisted' ? 115 : 125
+            }}
+          />
+        </div>
+      )}
 
       {/* Mode-Specific Content */}
-      <div className="max-w-7xl mx-auto px-6">
+      <div className={workspaceMode === 'autonomous' ? '' : 'max-w-7xl mx-auto px-6'}>
         {workspaceMode === 'traditional' && (
           <ErrorBoundary
             onError={(error, errorInfo) => console.error('Workspace Traditional View Error:', error, errorInfo)}
@@ -170,16 +174,7 @@ export function HybridWorkspace({
             onError={(error, errorInfo) => console.error('Workspace Autonomous View Error:', error, errorInfo)}
           >
             <WorkspaceAutonomous
-              workspaces={workspaces}
-              chatMessages={chatMessages}
-              automatedActions={automatedActions}
-              metrics={metrics}
-              isLoading={isLoading}
-              onSendMessage={onSendMessage}
-              onApproveAction={onApproveAction}
-              onRejectAction={onRejectAction}
-              onPauseAutomation={onPauseAutomation}
-              onResumeAutomation={onResumeAutomation}
+              onSwitchMode={handleModeChange}
             />
           </ErrorBoundary>
         )}

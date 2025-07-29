@@ -313,31 +313,35 @@ export const HybridPortfolio: React.FC = () => {
 
   return (
     <UnifiedPortfolioProvider>
-      <div className="w-full min-h-screen">
-        {/* Header with Mode Switcher */}
-        <HybridModeHeader
-          currentMode={currentMode.mode as HybridMode}
-          onModeChange={handleModeSwitch}
-          moduleContext="portfolio"
-          title="Portfolio Management Hub"
-          subtitle={portfolioData.totalValue ? `Managing $${(portfolioData.totalValue / 1000000000).toFixed(1)}B across ${portfolioData.totalAssets} assets • Choose your experience mode` : 'Advanced portfolio management and optimization • Choose your experience mode'}
-          disabled={isLoading}
-          context={portfolioData}
-          className="sticky top-0 z-50"
-        />
-        
-        {/* Mode Explanation Banner */}
-        <div className="p-4">
-          <HybridModeExplanation
+      <div className={currentMode.mode === 'autonomous' ? 'w-full h-screen' : 'w-full min-h-screen'}>
+        {/* Header with Mode Switcher - Hidden for autonomous mode */}
+        {currentMode.mode !== 'autonomous' && (
+          <HybridModeHeader
             currentMode={currentMode.mode as HybridMode}
+            onModeChange={handleModeSwitch}
             moduleContext="portfolio"
-            statistics={{
-              efficiency: metrics.aiEfficiencyGains,
-              automation: currentMode.mode === 'traditional' ? 0 : currentMode.mode === 'assisted' ? 40 : 85,
-              accuracy: currentMode.mode === 'traditional' ? 100 : currentMode.mode === 'assisted' ? 115 : 120
-            }}
+            title="Portfolio Management Hub"
+            subtitle={portfolioData.totalValue ? `Managing $${(portfolioData.totalValue / 1000000000).toFixed(1)}B across ${portfolioData.totalAssets} assets • Choose your experience mode` : 'Advanced portfolio management and optimization • Choose your experience mode'}
+            disabled={isLoading}
+            context={portfolioData}
+            className="sticky top-0 z-50"
           />
-        </div>
+        )}
+        
+        {/* Mode Explanation Banner - Hidden for autonomous mode */}
+        {currentMode.mode !== 'autonomous' && (
+          <div className="p-4">
+            <HybridModeExplanation
+              currentMode={currentMode.mode as HybridMode}
+              moduleContext="portfolio"
+              statistics={{
+                efficiency: metrics.aiEfficiencyGains,
+                automation: currentMode.mode === 'traditional' ? 0 : currentMode.mode === 'assisted' ? 40 : 85,
+                accuracy: currentMode.mode === 'traditional' ? 100 : currentMode.mode === 'assisted' ? 115 : 120
+              }}
+            />
+          </div>
+        )}
 
         {/* Mode-specific Content */}
         {currentMode.mode === 'traditional' && (
@@ -380,16 +384,7 @@ export const HybridPortfolio: React.FC = () => {
             onError={(error, errorInfo) => console.error('Portfolio Autonomous View Error:', error, errorInfo)}
           >
             <PortfolioAutonomous
-              portfolioData={portfolioData}
-              assets={mockAssets}
-              automatedActions={aiState.automatedActions}
-              pendingApprovals={aiState.pendingApprovals}
-              aiRecommendations={aiState.recommendations}
-              isProcessing={aiState.processingTasks.length > 0}
-              onApproveAction={handleApproveAction}
-              onRejectAction={handleRejectAction}
               onSwitchMode={handleModeSwitch}
-              isPaused={false}
             />
           </ErrorBoundary>
         )}

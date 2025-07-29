@@ -467,29 +467,31 @@ export const HybridDealScreening: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen">
-      {/* Header with Mode Switcher */}
-      <div className="flex justify-between items-center p-4 bg-white border-b border-gray-200 sticky top-0 z-50">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Deal Screening
-        </h1>
-        
-        <div className="flex items-center space-x-4">
-          <ModeSwitcher
-            currentMode={currentMode.mode}
-            onModeChange={handleModeSwitch}
-            disabled={isLoading}
-          />
+    <div className={currentMode.mode === 'autonomous' ? 'w-full h-screen' : 'w-full min-h-screen'}>
+      {/* Header with Mode Switcher - Hidden for autonomous mode */}
+      {currentMode.mode !== 'autonomous' && (
+        <div className="flex justify-between items-center p-4 bg-white border-b border-gray-200 sticky top-0 z-50">
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Deal Screening
+          </h1>
           
-          <Button variant="ghost" size="sm" title="Help">
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-          
-          <Button variant="ghost" size="sm" title="Settings">
-            <Settings className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center space-x-4">
+            <ModeSwitcher
+              currentMode={currentMode.mode}
+              onModeChange={handleModeSwitch}
+              disabled={isLoading}
+            />
+            
+            <Button variant="ghost" size="sm" title="Help">
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+            
+            <Button variant="ghost" size="sm" title="Settings">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Mode-specific Content */}
       {currentMode.mode === 'traditional' && (
@@ -519,17 +521,7 @@ export const HybridDealScreening: React.FC = () => {
 
       {currentMode.mode === 'autonomous' && (
         <DealScreeningAutonomous
-          opportunities={opportunities}
-          automatedActions={aiState.automatedActions}
-          pendingApprovals={aiState.pendingApprovals}
-          aiRecommendations={aiState.recommendations}
-          isProcessing={aiState.processingTasks.length > 0}
-          onApproveAction={handleApproveAction}
-          onRejectAction={handleRejectAction}
           onSwitchMode={handleModeSwitch}
-          onPauseAI={handlePauseAI}
-          onResumeAI={handleResumeAI}
-          isPaused={false}
         />
       )}
 
