@@ -52,7 +52,9 @@ export function DashboardTraditional({
     activeDeals: 12,
     ddProjects: 8,
     teamMembers: 24,
-    totalAUM: 2400000000 // $2.4B
+    totalAUM: 3880000000, // $3.88B to match detailed analytics
+    irr: 17.4,
+    moic: 1.38
   },
   isLoading = false,
   onCreateWorkspace,

@@ -75,7 +75,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Proactive Actions</p>
-                  <p className="text-sm text-gray-500">AI suggests next steps</p>
+                  <p className="text-sm text-gray-500">Thando suggests next steps</p>
                 </div>
                 <Badge variant={preferences.aiPermissions.proactiveActions ? 'success' : 'outline'}>
                   {preferences.aiPermissions.proactiveActions ? 'Enabled' : 'Disabled'}

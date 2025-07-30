@@ -101,7 +101,7 @@ export const HybridPortfolio: React.FC = () => {
 
   // Mock portfolio data
   const portfolioData = {
-    totalValue: 2400000000, // $2.4B
+    totalValue: 3880000000, // $3.88B to match detailed analytics
     totalAssets: 47,
     performanceYTD: 12.5,
     topPerformer: 'TechCorp Growth Fund',

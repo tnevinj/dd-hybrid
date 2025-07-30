@@ -399,7 +399,7 @@ export function PortfolioManagement({ fundId }: PortfolioManagementProps) {
           type: 'suggestion',
           priority: 'medium',
           title: 'Portfolio Optimization Opportunities',
-          description: `AI identified ${optimizationOps} companies with growth acceleration opportunities and value creation potential.`,
+          description: `Thando identified ${optimizationOps} companies with growth acceleration opportunities and value creation potential.`,
           actions: [{
             id: 'review-opportunities',
             label: 'Review Opportunities',

@@ -167,7 +167,7 @@ const TaskManagerPanel: React.FC<TaskManagerPanelProps> = ({
               <p className="text-xs text-gray-600">
                 {mode === 'autonomous' 
                   ? 'Tasks are automatically created and prioritized based on your workflow and deadlines.'
-                  : 'AI suggests task priorities and deadlines based on your context and calendar.'
+                  : 'Thando suggests task priorities and deadlines based on your context and calendar.'
                 }
               </p>
             </div>

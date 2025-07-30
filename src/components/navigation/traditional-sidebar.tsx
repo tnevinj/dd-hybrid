@@ -103,7 +103,7 @@ export function TraditionalSidebar({ enhanced = false, collapsed = false, classN
             onClick={toggleAIPanel}
           >
             <Brain className="w-4 h-4 mr-2" />
-            AI Assistant
+            Thando
             {recommendations.length > 0 && (
               <Badge variant="ai" className="ml-2 text-xs">
                 {recommendations.length}

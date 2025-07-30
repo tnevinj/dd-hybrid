@@ -295,7 +295,7 @@ export function WorkspaceAssisted({
         { summary: 'Risk assessment automation saved 12 hours this week' }
       ],
       aiSuggestions: [
-        { label: 'Optimize', action: 'OPTIMIZE_WORKFLOW', description: 'AI suggests workflow optimization' },
+        { label: 'Optimize', action: 'OPTIMIZE_WORKFLOW', description: 'Thando suggests workflow optimization' },
         { label: 'Automate', action: 'AUTO_TASKS', description: 'Automate routine tasks' }
       ]
     },

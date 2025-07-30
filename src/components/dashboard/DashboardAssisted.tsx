@@ -43,7 +43,7 @@ const DashboardAIInsightsPanel: React.FC<{
     <CardHeader>
       <div className="flex items-center space-x-2">
         <Sparkles className="h-5 w-5 text-purple-600" />
-        <CardTitle className="text-purple-900">AI Dashboard Insights</CardTitle>
+        <CardTitle className="text-purple-900">Thando Dashboard Insights</CardTitle>
         <Badge variant="ai" className="text-xs">
           {recommendations.length} active recommendations
         </Badge>
@@ -203,7 +203,9 @@ export function DashboardAssisted({
     activeDeals: 12,
     ddProjects: 8,
     teamMembers: 24,
-    totalAUM: 2400000000,
+    totalAUM: 3880000000, // $3.88B to match detailed analytics
+    irr: 17.4,
+    moic: 1.38,
     aiOptimizationScore: 8.7,
     predictedGrowth: 15.2
   },
@@ -536,7 +538,7 @@ export function DashboardAssisted({
                       </div>
                       <div className="flex items-center space-x-2">
                         <Badge variant="ai" className="text-xs">
-                          AI: {deal.aiScore}/10
+                          Thando: {deal.aiScore}/10
                         </Badge>
                         <Badge variant={deal.riskLevel === 'low' ? 'default' : 'outline'} className="text-xs">
                           {deal.stage}
@@ -640,9 +642,9 @@ export function DashboardAssisted({
                         <p className="text-xs text-gray-500">Tomorrow, 2:00 PM</p>
                       </div>
                     </div>
-                    <Badge variant="destructive" className="text-xs">AI: Urgent</Badge>
+                    <Badge variant="destructive" className="text-xs">Thando: Urgent</Badge>
                   </div>
-                  <p className="text-xs text-purple-700">• AI suggests reviewing financial model 2h before meeting</p>
+                  <p className="text-xs text-purple-700">• Thando suggests reviewing financial model 2h before meeting</p>
                 </div>
                 
                 <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
@@ -654,7 +656,7 @@ export function DashboardAssisted({
                         <p className="text-xs text-gray-500">In 3 days</p>
                       </div>
                     </div>
-                    <Badge variant="default" className="text-xs">AI: High</Badge>
+                    <Badge variant="default" className="text-xs">Thando: High</Badge>
                   </div>
                   <p className="text-xs text-purple-700">• Draft available for review, 85% complete</p>
                 </div>
@@ -668,7 +670,7 @@ export function DashboardAssisted({
                         <p className="text-xs text-gray-500">Next week</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="text-xs">AI: Medium</Badge>
+                    <Badge variant="outline" className="text-xs">Thando: Medium</Badge>
                   </div>
                   <p className="text-xs text-purple-700">• Optimal timing based on management availability</p>
                 </div>
@@ -689,10 +691,10 @@ export function DashboardAssisted({
         <div className="flex items-start space-x-3">
           <Brain className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-purple-900 mb-1">AI-Assisted Dashboard Management Active</h4>
+            <h4 className="font-semibold text-purple-900 mb-1">Thando Dashboard Management Active</h4>
             <p className="text-sm text-purple-700">
-              AI is continuously analyzing your dashboard data for optimization opportunities, risk factors, and performance improvements. 
-              All suggestions require your approval before implementation. Current AI confidence: 94%
+              Thando is continuously analyzing your dashboard data for optimization opportunities, risk factors, and performance improvements. 
+              All suggestions require your approval before implementation. Current Thando confidence: 94%
             </p>
             <div className="flex items-center space-x-4 mt-2 text-xs text-purple-600">
               <span>• 8 deals analyzed this hour</span>

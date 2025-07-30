@@ -141,7 +141,7 @@ const AIInsightsPanel = ({ mode }: { mode: string }) => {
     {
       type: 'opportunity',
       title: 'Deal Flow Optimization',
-      description: 'AI identified 3 high-potential opportunities in Healthcare sector matching your criteria',
+      description: 'Thando identified 3 high-potential opportunities in Healthcare sector matching your criteria',
       action: 'Review Opportunities',
       confidence: 0.87
     },
@@ -165,7 +165,7 @@ const AIInsightsPanel = ({ mode }: { mode: string }) => {
     <Card className="p-4 mb-6 bg-blue-50 border-blue-200">
       <div className="flex items-center gap-2 mb-4">
         <Brain className="h-5 w-5 text-blue-600" />
-        <h3 className="font-semibold text-blue-900">AI Assistant Insights</h3>
+        <h3 className="font-semibold text-blue-900">Thando Insights</h3>
         <Badge variant="secondary" className="text-blue-700">
           {mode === 'autonomous' ? 'Autonomous' : 'Assisted'} Mode
         </Badge>
@@ -219,7 +219,7 @@ export function SecondaryEdgeDashboard({ mode = 'traditional', data }: Dashboard
           <p className="text-3xl font-bold text-gray-900">${dashboardData.aum.toFixed(0)}M</p>
           <p className="text-sm text-green-600 font-medium">+6.2% QoQ</p>
           {mode !== 'traditional' && (
-            <p className="text-xs text-blue-600 mt-1">AI: On track for targets</p>
+            <p className="text-xs text-blue-600 mt-1">Thando: On track for targets</p>
           )}
         </Card>
         <Card className="p-6">
@@ -227,7 +227,7 @@ export function SecondaryEdgeDashboard({ mode = 'traditional', data }: Dashboard
           <p className="text-3xl font-bold text-gray-900">{dashboardData.irr}%</p>
           <p className="text-sm text-green-600 font-medium">+0.3% QoQ</p>
           {mode !== 'traditional' && (
-            <p className="text-xs text-blue-600 mt-1">AI: Above benchmark</p>
+            <p className="text-xs text-blue-600 mt-1">Thando: Above benchmark</p>
           )}
         </Card>
         <Card className="p-6">
@@ -235,7 +235,7 @@ export function SecondaryEdgeDashboard({ mode = 'traditional', data }: Dashboard
           <p className="text-3xl font-bold text-gray-900">{dashboardData.moic}x</p>
           <p className="text-sm text-green-600 font-medium">+0.03x QoQ</p>
           {mode !== 'traditional' && (
-            <p className="text-xs text-blue-600 mt-1">AI: Strong performance</p>
+            <p className="text-xs text-blue-600 mt-1">Thando: Strong performance</p>
           )}
         </Card>
         <Card className="p-6">
@@ -243,7 +243,7 @@ export function SecondaryEdgeDashboard({ mode = 'traditional', data }: Dashboard
           <p className="text-3xl font-bold text-gray-900">${dashboardData.dryPowder}M</p>
           <p className="text-sm text-red-500 font-medium">-$225.4M QoQ</p>
           {mode !== 'traditional' && (
-            <p className="text-xs text-blue-600 mt-1">AI: Optimal deployment</p>
+            <p className="text-xs text-blue-600 mt-1">Thando: Optimal deployment</p>
           )}
         </Card>
       </div>

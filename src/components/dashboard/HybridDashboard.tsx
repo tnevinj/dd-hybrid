@@ -103,7 +103,7 @@ export const HybridDashboard: React.FC = () => {
     activeDeals: 12,
     ddProjects: 8,
     teamMembers: 24,
-    totalAUM: 2400000000, // $2.4B
+    totalAUM: 3880000000, // $3.88B to match detailed analytics
     performanceYTD: 12.5,
     aiOptimizationScore: 8.7,
     predictedGrowth: 15.2

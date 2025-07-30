@@ -121,7 +121,7 @@ export function HybridWorkspace({
 
       {/* Mode Explanation Banner - Hidden for autonomous mode */}
       {workspaceMode !== 'autonomous' && (
-        <div className="max-w-7xl mx-auto px-6 mb-6">
+        <div className="p-4">
           <HybridModeExplanation
             currentMode={workspaceMode as HybridMode}
             moduleContext="workspace"
@@ -135,7 +135,6 @@ export function HybridWorkspace({
       )}
 
       {/* Mode-Specific Content */}
-      <div className={workspaceMode === 'autonomous' ? '' : 'max-w-7xl mx-auto px-6'}>
         {workspaceMode === 'traditional' && (
           <ErrorBoundary
             onError={(error, errorInfo) => console.error('Workspace Traditional View Error:', error, errorInfo)}
@@ -178,7 +177,6 @@ export function HybridWorkspace({
             />
           </ErrorBoundary>
         )}
-      </div>
     </div>
   )
 }
