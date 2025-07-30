@@ -60,7 +60,9 @@ const buildThandoContext = (
       preferredChartTypes: ['line', 'bar', 'pie'],
       riskTolerance: 'medium'
     },
-    activeProjects: UnifiedWorkspaceDataService.getThandoProjects(),
+    activeProjects: projectType === 'portfolio' 
+      ? UnifiedWorkspaceDataService.getPortfolioAssetsAsProjects()
+      : UnifiedWorkspaceDataService.getThandoProjects(),
     activeDeals: UnifiedWorkspaceDataService.getThandoProjects().map(project => ({
       id: project.id.replace('proj-', 'deal-'),
       name: project.name.replace('Due Diligence', 'Acquisition').replace('Investment Committee', 'Investment'),
@@ -108,23 +110,33 @@ const buildThandoContext = (
         benchmarkComparison: 2.1
       }
     },
-    recentActivity: UnifiedWorkspaceDataService.getThandoProjects().map((project, index) => ({
+    recentActivity: (projectType === 'portfolio' 
+      ? UnifiedWorkspaceDataService.getPortfolioAssetsAsProjects()
+      : UnifiedWorkspaceDataService.getThandoProjects()
+    ).map((project, index) => ({
       id: `act-${index + 1}`,
-      type: project.type === 'due-diligence' ? 'deal_update' : 
+      type: projectType === 'portfolio' ? 'portfolio_change' : 
+            project.type === 'due-diligence' ? 'deal_update' : 
             project.type === 'ic-preparation' ? 'investment_update' : 
             project.type === 'portfolio-monitoring' ? 'portfolio_change' : 'project_update',
-      title: `${project.name} - ${project.progress}% Complete`,
-      description: project.type === 'due-diligence' ? 'Due diligence analysis in progress with latest findings' :
-                   project.type === 'ic-preparation' ? 'Investment committee preparation materials being finalized' :
-                   project.type === 'portfolio-monitoring' ? 'Portfolio performance review and optimization ongoing' :
-                   'Project analysis and recommendations being developed',
+      title: projectType === 'portfolio' 
+        ? `${project.name} - Performance Update`
+        : `${project.name} - ${project.metadata?.progress || 50}% Complete`,
+      description: projectType === 'portfolio'
+        ? `Portfolio asset showing ${project.metadata?.irr ? (project.metadata.irr * 100).toFixed(1) + '% IRR' : 'strong performance'} with ${project.metadata?.riskRating || 'medium'} risk profile`
+        : project.type === 'due-diligence' ? 'Due diligence analysis in progress with latest findings' :
+          project.type === 'ic-preparation' ? 'Investment committee preparation materials being finalized' :
+          project.type === 'portfolio-monitoring' ? 'Portfolio performance review and optimization ongoing' :
+          'Project analysis and recommendations being developed',
       timestamp: project.lastActivity,
-      userId: project.teamMembers[0]?.toLowerCase().replace(' ', '-') || 'team-lead',
+      userId: 'portfolio-manager',
       entityId: project.id,
-      entityType: project.type === 'due-diligence' ? 'deal' : 
+      entityType: projectType === 'portfolio' ? 'asset' : 
+                  project.type === 'due-diligence' ? 'deal' : 
                   project.type === 'portfolio-monitoring' ? 'portfolio' : 'project',
-      impact: project.priority === 'high' ? 'high' : project.priority === 'low' ? 'low' : 'medium',
-      actionRequired: project.status === 'active' && project.priority === 'high'
+      impact: project.priority === 'high' || project.priority === 'critical' ? 'high' : 
+              project.priority === 'low' ? 'low' : 'medium',
+      actionRequired: project.status === 'active' && (project.priority === 'high' || project.priority === 'critical')
     })),
     conversationHistory: [],
     availableActions: [], // Will be populated by API

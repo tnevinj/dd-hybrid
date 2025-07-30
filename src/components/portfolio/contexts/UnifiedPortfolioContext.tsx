@@ -59,7 +59,7 @@ const initialState: PortfolioState = {
   },
   sortBy: undefined,
   sortDirection: 'asc',
-  loading: false,
+  loading: true, // Start with loading true to prevent flash
   error: undefined,
 };
 

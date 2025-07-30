@@ -273,7 +273,7 @@ export class UnifiedWorkspaceDataService {
   }
 
   /**
-   * Get projects for Autonomous store format
+   * Get projects for Autonomous store format (legacy workspace projects)
    */
   static getAutonomousProjects() {
     return UNIFIED_WORKSPACE_PROJECTS.map(project => ({
@@ -292,6 +292,94 @@ export class UnifiedWorkspaceDataService {
         ...project.metadata
       }
     }));
+  }
+
+  /**
+   * Get portfolio assets formatted as autonomous "projects" for portfolio module
+   */
+  static getPortfolioAssetsAsProjects() {
+    return generateEnterprisePortfolioAssets().map(asset => {
+      // Convert asset status to project status
+      const getProjectStatus = (assetStatus: string) => {
+        switch (assetStatus) {
+          case 'active': return 'active';
+          case 'under_review': return 'review';
+          case 'exited': return 'completed';
+          case 'disposed': return 'completed';
+          default: return 'active';
+        }
+      };
+
+      // Convert risk rating to priority
+      const getPriority = (riskRating: string) => {
+        switch (riskRating) {
+          case 'low': return 'low';
+          case 'medium': return 'medium';
+          case 'high': return 'high';
+          case 'critical': return 'critical';
+          default: return 'medium';
+        }
+      };
+
+      // Calculate unread messages based on asset performance and risk
+      const getUnreadMessages = (asset: any) => {
+        let messages = 0;
+        if (asset.performance.irr < 0.1) messages += 2; // Low performance
+        if (asset.riskRating === 'high' || asset.riskRating === 'critical') messages += 3;
+        if (asset.esgMetrics.overallScore < 7.0) messages += 1; // ESG concerns
+        return messages;
+      };
+
+      return {
+        id: asset.id,
+        name: asset.name,
+        type: 'portfolio' as const,
+        status: getProjectStatus(asset.status),
+        lastActivity: new Date(asset.lastUpdated),
+        priority: getPriority(asset.riskRating),
+        unreadMessages: getUnreadMessages(asset),
+        metadata: {
+          // Core asset information
+          assetType: asset.assetType,
+          currentValue: asset.currentValue,
+          acquisitionValue: asset.acquisitionValue,
+          location: asset.location,
+          
+          // Performance metrics
+          irr: asset.performance.irr,
+          moic: asset.performance.moic,
+          totalReturn: asset.performance.totalReturn,
+          
+          // Risk and ESG
+          riskRating: asset.riskRating,
+          esgScore: asset.esgMetrics.overallScore,
+          
+          // Sector and classification
+          sector: asset.sector,
+          tags: asset.tags,
+          
+          // Asset-specific details based on type
+          ...(asset.assetType === 'traditional' && {
+            companyStage: asset.specificMetrics.companyStage,
+            employeeCount: asset.specificMetrics.employeeCount,
+            revenue: asset.specificMetrics.revenue,
+            ownershipPercentage: asset.specificMetrics.ownershipPercentage
+          }),
+          ...(asset.assetType === 'real_estate' && {
+            propertyType: asset.specificMetrics.propertyType,
+            totalSqFt: asset.specificMetrics.totalSqFt,
+            occupancyRate: asset.specificMetrics.occupancyRate,
+            capRate: asset.specificMetrics.capRate
+          }),
+          ...(asset.assetType === 'infrastructure' && {
+            assetCategory: asset.specificMetrics.assetCategory,
+            capacityUtilization: asset.specificMetrics.capacityUtilization,
+            availabilityRate: asset.specificMetrics.availabilityRate,
+            contractedRevenue: asset.specificMetrics.contractedRevenue
+          })
+        }
+      };
+    });
   }
 
   /**

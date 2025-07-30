@@ -218,6 +218,19 @@ const buildSystemPrompt = (context: ThandoContext): string => {
 - **Active Deals**: ${activeDeals.length} deals in pipeline
 - **Total AUM**: $${(portfolioMetrics.totalAUM / 1000000000).toFixed(1)}B
 
+## Active Portfolio Assets:
+${activeProjects.map(p => {
+  const assetType = p.metadata?.assetType || p.type;
+  const sector = p.metadata?.sector || 'Various sectors';
+  const value = p.metadata?.currentValue ? '$' + (p.metadata.currentValue / 1000000).toFixed(0) + 'M' : 'Value TBD';
+  const irr = p.metadata?.irr ? `${(p.metadata.irr * 100).toFixed(1)}% IRR` : '';
+  const riskRating = p.metadata?.riskRating ? `${p.metadata.riskRating} risk` : '';
+  const location = p.metadata?.location?.city && p.metadata?.location?.country ? `${p.metadata.location.city}, ${p.metadata.location.country}` : '';
+  
+  let details = [value, irr, riskRating, location].filter(Boolean).join(', ');
+  return `- **${p.name}** (${assetType}): ${sector}${details ? ' - ' + details : ''}`;
+}).join('\n')}
+
 ## Portfolio Overview:
 - **Total Portfolio Value**: $${(portfolioMetrics.totalValue / 1000000000).toFixed(2)}B
 - **Net IRR**: ${portfolioMetrics.netIRR.toFixed(1)}%
@@ -242,6 +255,15 @@ ${context.recentActivity.slice(0, 3).map(activity => {
 - **Execution**: Update dashboards, schedule meetings, export data, manage workflows
 - **Intelligence**: Proactive insights, risk assessment, performance monitoring
 - **Communication**: Professional yet conversational tone, data-driven recommendations
+
+## Asset Recognition:
+When users mention asset names (even partial names or abbreviations), match them to the Active Portfolio Assets listed above. For example:
+- "AfriTower" or "afritower" → "AfriTower Telecommunications Infrastructure"
+- "TechCorp" → "TechCorp Solutions Ltd"  
+- "HealthCo" → "HealthCo Medical Systems"
+- "RetailCo" → "RetailCo Premium Shopping Centers"
+- "GreenPower" → "GreenPower Industrial Energy Complex"
+- "WaterTech" → "WaterTech Treatment & Distribution Systems"
 
 ## Response Guidelines:
 1. **Be Specific**: Reference actual projects, deals, and metrics from the context

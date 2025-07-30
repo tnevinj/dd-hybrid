@@ -99,26 +99,65 @@ export function AssetGrid({ assetType }: AssetGridProps) {
     switch (asset.assetType) {
       case 'traditional':
         return (
-          <div className="text-xs text-gray-600 space-y-1">
-            <div>Stage: {asset.specificMetrics.companyStage}</div>
-            <div>Ownership: {asset.specificMetrics.ownershipPercentage.toFixed(1)}%</div>
-            <div>Employees: {asset.specificMetrics.employeeCount.toLocaleString()}</div>
+          <div className="text-sm text-gray-600 space-y-2 mb-4">
+            <div className="flex justify-between">
+              <span>Stage:</span>
+              <span className="font-medium text-gray-900">{asset.specificMetrics.companyStage.replace('_', ' ')}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Ownership:</span>
+              <span className="font-medium text-gray-900">{asset.specificMetrics.ownershipPercentage.toFixed(1)}%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Employees:</span>
+              <span className="font-medium text-gray-900">{asset.specificMetrics.employeeCount.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Revenue:</span>
+              <span className="font-medium text-gray-900">{formatCurrency(asset.specificMetrics.revenue)}</span>
+            </div>
           </div>
         );
       case 'real_estate':
         return (
-          <div className="text-xs text-gray-600 space-y-1">
-            <div>Type: {asset.specificMetrics.propertyType}</div>
-            <div>Occupancy: {asset.specificMetrics.occupancyRate.toFixed(1)}%</div>
-            <div>Size: {asset.specificMetrics.totalSqFt.toLocaleString()} sq ft</div>
+          <div className="text-sm text-gray-600 space-y-2 mb-4">
+            <div className="flex justify-between">
+              <span>Type:</span>
+              <span className="font-medium text-gray-900 capitalize">{asset.specificMetrics.propertyType}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Occupancy:</span>
+              <span className="font-medium text-gray-900">{(asset.specificMetrics.occupancyRate * 100).toFixed(1)}%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Size:</span>
+              <span className="font-medium text-gray-900">{asset.specificMetrics.totalSqFt.toLocaleString()} sq ft</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Cap Rate:</span>
+              <span className="font-medium text-gray-900">{(asset.specificMetrics.capRate * 100).toFixed(1)}%</span>
+            </div>
           </div>
         );
       case 'infrastructure':
         return (
-          <div className="text-xs text-gray-600 space-y-1">
-            <div>Category: {asset.specificMetrics.assetCategory}</div>
-            <div>Utilization: {asset.specificMetrics.capacityUtilization.toFixed(1)}%</div>
-            <div>Availability: {asset.specificMetrics.availabilityRate.toFixed(1)}%</div>
+          <div className="text-sm text-gray-600 space-y-2 mb-4">
+            <div className="flex justify-between">
+              <span>Category:</span>
+              <span className="font-medium text-gray-900 capitalize">{asset.specificMetrics.assetCategory.replace('_', ' ')}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Utilization:</span>
+              <span className="font-medium text-gray-900">{(asset.specificMetrics.capacityUtilization * 100).toFixed(1)}%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Availability:</span>
+              <span className="font-medium text-gray-900">{(asset.specificMetrics.availabilityRate * 100).toFixed(1)}%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Revenue:</span>
+              <span className="font-medium text-gray-900">{formatCurrency(asset.specificMetrics.contractedRevenue)}</span>
+            </div>
           </div>
         );
       default:
@@ -191,11 +230,11 @@ export function AssetGrid({ assetType }: AssetGridProps) {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {filteredAssets.map((asset) => (
             <Card
               key={asset.id}
-              className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+              className={`p-6 cursor-pointer transition-all hover:shadow-md min-h-[320px] ${
                 state.selectedAssets.includes(asset.id)
                   ? 'ring-2 ring-blue-500 bg-blue-50'
                   : 'hover:bg-gray-50'
@@ -203,12 +242,12 @@ export function AssetGrid({ assetType }: AssetGridProps) {
               onClick={() => toggleAssetSelection(asset.id)}
             >
               {/* Asset Header */}
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex items-start justify-between mb-4">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-gray-900 truncate">
+                  <h3 className="text-base font-semibold text-gray-900 mb-1 leading-tight">
                     {asset.name}
                   </h3>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-sm text-gray-500">
                     {asset.location.city ? `${asset.location.city}, ` : ''}{asset.location.country}
                   </p>
                 </div>
@@ -231,22 +270,22 @@ export function AssetGrid({ assetType }: AssetGridProps) {
               </div>
 
               {/* Financial Metrics */}
-              <div className="space-y-2 mb-3">
+              <div className="space-y-3 mb-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-600">Current Value</span>
+                  <span className="text-sm text-gray-600 font-medium">Current Value</span>
                   <span className="text-sm font-semibold text-gray-900">
                     {formatCurrency(asset.currentValue)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-600">IRR</span>
-                  <span className="text-sm font-semibold text-gray-900">
+                  <span className="text-sm text-gray-600 font-medium">IRR</span>
+                  <span className="text-sm font-semibold text-green-600">
                     {formatPercentage(asset.performance.irr)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-600">MOIC</span>
-                  <span className="text-sm font-semibold text-gray-900">
+                  <span className="text-sm text-gray-600 font-medium">MOIC</span>
+                  <span className="text-sm font-semibold text-blue-600">
                     {asset.performance.moic.toFixed(1)}x
                   </span>
                 </div>
@@ -256,32 +295,31 @@ export function AssetGrid({ assetType }: AssetGridProps) {
               {getAssetSpecificMetrics(asset)}
 
               {/* Risk and ESG */}
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
+              <div className="flex items-center justify-between pt-4 border-t border-gray-200 mb-3">
                 <div className="flex items-center space-x-2">
-                  <Badge className={getRiskColor(asset.riskRating)} size="sm">
-                    {asset.riskRating}
+                  <Badge className={getRiskColor(asset.riskRating)}>
+                    {asset.riskRating} risk
                   </Badge>
-                  <span className="text-xs text-gray-600">Risk</span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <span className="text-xs text-gray-600">ESG:</span>
-                  <span className="text-xs font-medium text-gray-900">
-                    {asset.esgMetrics.overallScore.toFixed(1)}
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">ESG Score:</span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {asset.esgMetrics.overallScore.toFixed(1)}/10
                   </span>
                 </div>
               </div>
 
               {/* Tags */}
               {asset.tags.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1">
-                  {asset.tags.slice(0, 3).map((tag, index) => (
-                    <Badge key={index} variant="outline" size="sm" className="text-xs">
+                <div className="flex flex-wrap gap-2">
+                  {asset.tags.slice(0, 4).map((tag, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
                       {tag}
                     </Badge>
                   ))}
-                  {asset.tags.length > 3 && (
-                    <Badge variant="outline" size="sm" className="text-xs">
-                      +{asset.tags.length - 3}
+                  {asset.tags.length > 4 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{asset.tags.length - 4} more
                     </Badge>
                   )}
                 </div>

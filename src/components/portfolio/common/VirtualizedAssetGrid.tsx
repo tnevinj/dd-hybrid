@@ -32,7 +32,7 @@ interface AssetGridFilters {
 export function VirtualizedAssetGrid({ 
   assetType, 
   pageSize = 50,
-  itemHeight = 200,
+  itemHeight = 280,
   onViewAsset,
   onEditAsset 
 }: VirtualizedAssetGridProps) {
@@ -405,16 +405,16 @@ export function VirtualizedAssetGrid({
               right: 0,
             }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
               {visibleAssets.map((asset, index) => (
                 <Card
                   key={asset.id}
-                  className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+                  className={`p-6 cursor-pointer transition-all hover:shadow-md ${
                     state.selectedAssets.includes(asset.id)
                       ? 'ring-2 ring-blue-500 bg-blue-50'
                       : 'hover:bg-gray-50'
                   }`}
-                  style={{ height: itemHeight - 16 }} // Account for gap
+                  style={{ height: itemHeight - 24 }} // Account for larger gap
                   onClick={() => {
                     if (onViewAsset) {
                       onViewAsset(asset.id);
@@ -461,13 +461,13 @@ export function VirtualizedAssetGrid({
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-gray-600">IRR</span>
-                      <span className="text-sm font-semibold text-gray-900">
+                      <span className="text-sm font-semibold text-green-600">
                         {formatPercentage(asset.performance.irr)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-gray-600">MOIC</span>
-                      <span className="text-sm font-semibold text-gray-900">
+                      <span className="text-sm font-semibold text-blue-600">
                         {asset.performance.moic.toFixed(1)}x
                       </span>
                     </div>

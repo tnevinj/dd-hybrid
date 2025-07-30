@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { InvestmentWorkspace, WorkspaceUpdateRequest, UnifiedWorkspaceView } from '@/types/workspace';
+import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
 
 // Mock workspace data - in real implementation, fetch from database
 const mockWorkspace: InvestmentWorkspace = {
@@ -321,20 +322,111 @@ export async function GET(
   try {
     const workspaceId = params.id;
     
-    // In real implementation, fetch from database
-    // const workspace = await prisma.investmentWorkspace.findUnique({
-    //   where: { id: workspaceId },
-    //   include: { participants: true, analysisComponents: true, evidence: true, comments: true, activities: true }
-    // });
+    // Get workspace from unified data service
+    const allProjects = UnifiedWorkspaceDataService.getAllProjects();
+    const targetProject = allProjects.find(p => {
+      // Try both formats: with and without 'workspace-proj-' prefix
+      return p.id === workspaceId || 
+             p.id === `workspace-proj-${workspaceId}` ||
+             p.id.replace('workspace-proj-', '') === workspaceId;
+    });
     
-    if (workspaceId !== '1') {
+    if (!targetProject) {
       return NextResponse.json(
         { error: 'Workspace not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json(mockWorkspace);
+    // Convert unified project to workspace format
+    const workspace: InvestmentWorkspace = {
+      id: workspaceId,
+      title: targetProject.name,
+      description: `${targetProject.displayType} workspace for ${targetProject.name}`,
+      type: targetProject.type === 'due-diligence' ? 'DUE_DILIGENCE' :
+            targetProject.type === 'ic-preparation' ? 'IC_PREPARATION' :
+            targetProject.type === 'deal-screening' ? 'SCREENING' :
+            targetProject.type === 'portfolio-monitoring' ? 'MONITORING' : 'UNIFIED',
+      status: targetProject.status === 'active' ? 'ACTIVE' :
+              targetProject.status === 'review' ? 'REVIEW' :
+              targetProject.status === 'draft' ? 'DRAFT' :
+              targetProject.status === 'completed' ? 'COMPLETED' : 'ACTIVE',
+      phase: 'EXECUTION',
+      dealName: `${targetProject.name} Deal`,
+      dealId: `deal-${workspaceId}`,
+      createdBy: 'user-1',
+      createdAt: new Date(targetProject.lastActivity.getTime() - 7 * 24 * 60 * 60 * 1000), // 1 week before last activity
+      updatedAt: targetProject.lastActivity,
+      targetCompletionDate: targetProject.deadline || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      overallProgress: targetProject.progress,
+      completedComponents: Math.floor(targetProject.workProducts * (targetProject.progress / 100)),
+      totalComponents: targetProject.workProducts,
+      sector: targetProject.metadata.sector || 'Technology',
+      region: targetProject.metadata.geography || 'North America',
+      investmentSize: targetProject.metadata.dealValue ? `$${(targetProject.metadata.dealValue / 1000000).toFixed(0)}M` : '$50M-100M',
+      tags: [
+        targetProject.metadata.sector?.toLowerCase() || 'technology',
+        targetProject.metadata.stage || 'growth',
+        targetProject.type.replace('-', '')
+      ],
+      participants: targetProject.teamMembers.map((member, index) => ({
+        id: `${index + 1}`,
+        userId: `user-${index + 1}`,
+        role: index === 0 ? 'LEAD' : index === 1 ? 'ANALYST' : index === 2 ? 'REVIEWER' : 'OBSERVER',
+        joinedAt: new Date(targetProject.lastActivity.getTime() - (targetProject.teamMembers.length - index) * 24 * 60 * 60 * 1000),
+        lastActive: new Date(targetProject.lastActivity.getTime() - index * 60 * 60 * 1000)
+      })),
+      analysisComponents: [
+        {
+          id: '1',
+          type: 'Financial Analysis',
+          title: 'Revenue Model Analysis',
+          description: 'Analysis of revenue streams and financial performance',
+          status: targetProject.progress > 80 ? 'COMPLETED' : targetProject.progress > 40 ? 'IN_PROGRESS' : 'NOT_STARTED',
+          progress: Math.min(targetProject.progress + 10, 100),
+          assignedTo: 'user-2',
+          ...(targetProject.progress > 80 ? { completedAt: new Date(targetProject.lastActivity.getTime() - 24 * 60 * 60 * 1000) } : {}),
+          findings: targetProject.progress > 40 ? 'Analysis shows strong fundamentals and growth potential.' : undefined,
+          evidence: []
+        },
+        {
+          id: '2',
+          type: 'Market Analysis',
+          title: 'Competitive Assessment',
+          description: 'Market positioning and competitive landscape analysis',
+          status: targetProject.progress > 60 ? 'IN_PROGRESS' : 'NOT_STARTED',
+          progress: Math.max(targetProject.progress - 20, 0),
+          assignedTo: 'user-1',
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          findings: targetProject.progress > 60 ? 'Market conditions favorable for this investment.' : undefined,
+          evidence: []
+        }
+      ],
+      evidence: [],
+      comments: [],
+      activities: [
+        {
+          id: '1',
+          type: 'CREATED',
+          description: `Workspace created for ${targetProject.name}`,
+          userId: 'user-1',
+          userName: targetProject.teamMembers[0] || 'Team Lead',
+          timestamp: new Date(targetProject.lastActivity.getTime() - 7 * 24 * 60 * 60 * 1000)
+        },
+        {
+          id: '2',
+          type: 'STATUS_CHANGED',
+          description: `Status updated to ${targetProject.displayStatus}`,
+          userId: 'user-1',
+          userName: targetProject.teamMembers[0] || 'Team Lead',
+          timestamp: targetProject.lastActivity
+        }
+      ],
+      aiRecommendations: [],
+      aiInsights: targetProject.aiData?.insights?.map(insight => insight.summary) || []
+    };
+    
+    return NextResponse.json(workspace);
     
   } catch (error) {
     console.error('Error fetching workspace:', error);

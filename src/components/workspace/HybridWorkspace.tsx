@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -68,6 +69,7 @@ export function HybridWorkspace({
   onResumeAutomation
 }: HybridWorkspaceProps) {
   const { currentMode, setMode } = useNavigationStore()
+  const router = useRouter()
 
   // Ensure currentMode is one of our valid workspace modes
   const workspaceMode: WorkspaceMode = ['traditional', 'assisted', 'autonomous'].includes(currentMode.mode as WorkspaceMode) 
@@ -93,6 +95,31 @@ export function HybridWorkspace({
     }
     setMode(newModeConfig)
   }, [setMode, currentMode.preferredDensity])
+
+  // Navigation handlers
+  const handleViewWorkspace = useCallback((id: string) => {
+    if (onViewWorkspace) {
+      onViewWorkspace(id)
+    } else {
+      router.push(`/workspaces/${id}`)
+    }
+  }, [onViewWorkspace, router])
+
+  const handleEditWorkspace = useCallback((id: string) => {
+    if (onEditWorkspace) {
+      onEditWorkspace(id)
+    } else {
+      router.push(`/workspaces/${id}?mode=edit`)
+    }
+  }, [onEditWorkspace, router])
+
+  const handleCreateWorkspace = useCallback(() => {
+    if (onCreateWorkspace) {
+      onCreateWorkspace()
+    } else {
+      router.push('/workspaces/new')
+    }
+  }, [onCreateWorkspace, router])
 
 
   if (isLoading) {
@@ -143,9 +170,9 @@ export function HybridWorkspace({
               workspaces={workspaces}
               metrics={metrics}
               isLoading={isLoading}
-              onCreateWorkspace={onCreateWorkspace}
-              onViewWorkspace={onViewWorkspace}
-              onEditWorkspace={onEditWorkspace}
+              onCreateWorkspace={handleCreateWorkspace}
+              onViewWorkspace={handleViewWorkspace}
+              onEditWorkspace={handleEditWorkspace}
             />
           </ErrorBoundary>
         )}
@@ -159,9 +186,9 @@ export function HybridWorkspace({
               aiRecommendations={aiRecommendations}
               metrics={metrics}
               isLoading={isLoading}
-              onCreateWorkspace={onCreateWorkspace}
-              onViewWorkspace={onViewWorkspace}
-              onEditWorkspace={onEditWorkspace}
+              onCreateWorkspace={handleCreateWorkspace}
+              onViewWorkspace={handleViewWorkspace}
+              onEditWorkspace={handleEditWorkspace}
               onExecuteAIAction={onExecuteAIAction}
               onDismissRecommendation={onDismissRecommendation}
             />

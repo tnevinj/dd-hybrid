@@ -85,11 +85,12 @@ type AutonomousStore = AutonomousState & AutonomousActions;
 // Generate initial projects from unified data source
 const getInitialProjects = (): Record<string, Project[]> => {
   const autonomousProjects = UnifiedWorkspaceDataService.getAutonomousProjects();
+  const portfolioAssets = UnifiedWorkspaceDataService.getPortfolioAssetsAsProjects();
   
   // Group projects by type for different sections
   const projectsByType: Record<string, Project[]> = {
     dashboard: [],
-    portfolio: [],
+    portfolio: portfolioAssets, // Use actual portfolio assets as projects
     'due-diligence': [],
     workspace: autonomousProjects, // Main workspace projects
     'deal-screening': []
@@ -97,9 +98,7 @@ const getInitialProjects = (): Record<string, Project[]> => {
   
   // Add some derived projects for other sections based on workspace projects
   autonomousProjects.forEach(project => {
-    if (project.type === 'portfolio') {
-      projectsByType.portfolio.push(project);
-    }
+    // Skip adding workspace projects to portfolio since we now use actual assets
     if (project.metadata.stage === 'growth' || project.metadata.stage === 'buyout') {
       projectsByType['due-diligence'].push({
         ...project,

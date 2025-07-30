@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Send, Bot, User, Settings, MoreHorizontal } from 'lucide-react';
 import { useAutonomousChat } from '@/hooks/use-autonomous-chat';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
   id: string;
@@ -168,7 +170,36 @@ export function ChatInterface({ projectId, projectType, className = '' }: ChatIn
                     : 'bg-gray-50'
                 }`}>
                   <CardContent className="p-3">
-                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                    {msg.role === 'assistant' ? (
+                      <div className="prose prose-sm max-w-none">
+                        <ReactMarkdown 
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            // Style headings
+                            h1: ({children}) => <h1 className="text-lg font-semibold text-gray-900 mb-2">{children}</h1>,
+                            h2: ({children}) => <h2 className="text-base font-semibold text-gray-900 mb-2">{children}</h2>,
+                            h3: ({children}) => <h3 className="text-sm font-semibold text-gray-900 mb-1">{children}</h3>,
+                            // Style lists
+                            ul: ({children}) => <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">{children}</ul>,
+                            ol: ({children}) => <ol className="list-decimal list-inside space-y-1 text-sm text-gray-700">{children}</ol>,
+                            li: ({children}) => <li className="text-sm text-gray-700">{children}</li>,
+                            // Style paragraphs
+                            p: ({children}) => <p className="text-sm text-gray-700 mb-2">{children}</p>,
+                            // Style emphasis
+                            strong: ({children}) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                            em: ({children}) => <em className="italic text-gray-700">{children}</em>,
+                            // Style code
+                            code: ({children}) => <code className="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono">{children}</code>,
+                            // Style blockquotes
+                            blockquote: ({children}) => <blockquote className="border-l-2 border-gray-300 pl-3 italic text-gray-600">{children}</blockquote>
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                    )}
                     {msg.status === 'sending' && (
                       <div className="mt-2">
                         <div className="animate-pulse text-xs opacity-60">Sending...</div>
