@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { useAutonomousStore } from '@/lib/stores/autonomousStore';
 import { 
   Search, 
   Plus, 
@@ -42,132 +43,7 @@ interface ProjectSelectorProps {
   className?: string;
 }
 
-const mockProjects: Record<string, Project[]> = {
-  dashboard: [
-    {
-      id: '1',
-      name: 'Q4 Performance Review',
-      type: 'report',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 3,
-      metadata: { progress: 75 }
-    },
-    {
-      id: '2',
-      name: 'Market Analysis Dashboard',
-      type: 'analysis',
-      status: 'active',
-      lastActivity: new Date(Date.now() - 86400000),
-      priority: 'medium',
-      metadata: { progress: 90 }
-    }
-  ],
-  portfolio: [
-    {
-      id: '1',
-      name: 'TechCorp Acquisition',
-      type: 'deal',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 5,
-      metadata: { value: '$50M', progress: 60 }
-    },
-    {
-      id: '2',
-      name: 'Healthcare Portfolio',
-      type: 'portfolio',
-      status: 'active',
-      lastActivity: new Date(Date.now() - 3600000),
-      priority: 'medium',
-      metadata: { value: '$120M', progress: 85 }
-    },
-    {
-      id: '3',
-      name: 'SaaS Investments',
-      type: 'portfolio',
-      status: 'completed',
-      lastActivity: new Date(Date.now() - 86400000 * 3),
-      priority: 'low',
-      metadata: { value: '$75M', progress: 100 }
-    }
-  ],
-  'due-diligence': [
-    {
-      id: '1',
-      name: 'GreenTech Due Diligence',
-      type: 'company',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 2,
-      metadata: { progress: 45, team: ['Legal', 'Financial', 'Technical'] }
-    },
-    {
-      id: '2',
-      name: 'RetailCorp Analysis',
-      type: 'company',
-      status: 'review',
-      lastActivity: new Date(Date.now() - 86400000),
-      priority: 'medium',
-      metadata: { progress: 80, team: ['Financial', 'Market'] }
-    }
-  ],
-  workspace: [
-    {
-      id: '1',
-      name: 'Investment Committee Prep',
-      type: 'report',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 7,
-      metadata: { progress: 30, team: ['IC Members'] }
-    },
-    {
-      id: '2',
-      name: 'LP Reporting Q4',
-      type: 'report',
-      status: 'draft',
-      lastActivity: new Date(Date.now() - 3600000 * 2),
-      priority: 'medium',
-      metadata: { progress: 15 }
-    }
-  ],
-  'deal-screening': [
-    {
-      id: '1',
-      name: 'FinTech Opportunity',
-      type: 'deal',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 4,
-      metadata: { value: '$25M', progress: 30, team: ['Investment Team'] }
-    },
-    {
-      id: '2',
-      name: 'E-commerce Platform',
-      type: 'deal',
-      status: 'review',
-      lastActivity: new Date(Date.now() - 86400000),
-      priority: 'medium',
-      metadata: { value: '$15M', progress: 70 }
-    },
-    {
-      id: '3',
-      name: 'AI Startup Screening',
-      type: 'company',
-      status: 'active',
-      lastActivity: new Date(Date.now() - 3600000),
-      priority: 'high',
-      unreadMessages: 2,
-      metadata: { value: '$10M', progress: 20 }
-    }
-  ]
-};
+// Mock projects removed - now using unified data from store
 
 export function ProjectSelector({ 
   projectType, 
@@ -177,10 +53,11 @@ export function ProjectSelector({
 }: ProjectSelectorProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  const { projects } = useAutonomousStore();
 
-  const projects = mockProjects[projectType] || [];
+  const projectsForType = projects[projectType] || [];
 
-  const filteredProjects = projects.filter(project => {
+  const filteredProjects = projectsForType.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = filterStatus === 'all' || project.status === filterStatus;
     return matchesSearch && matchesFilter;
@@ -216,9 +93,16 @@ export function ProjectSelector({
     }
   };
 
-  const formatLastActivity = (date: Date) => {
+  const formatLastActivity = (date: Date | string) => {
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    // Validate date
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return 'Unknown';
+    }
+    
+    const diff = now.getTime() - dateObj.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
 

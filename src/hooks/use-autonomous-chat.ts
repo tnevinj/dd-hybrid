@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { ThandoContext, ConversationMessage, ClaudeRequest, ClaudeResponse, AIAction } from '@/types/thando-context';
 import { useNavigationStore } from '@/stores/navigation-store';
+import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
 
 interface Message {
   id: string;
@@ -59,100 +60,35 @@ const buildThandoContext = (
       preferredChartTypes: ['line', 'bar', 'pie'],
       riskTolerance: 'medium'
     },
-    activeProjects: [
-      {
-        id: 'proj-1',
-        name: 'TechCorp Due Diligence',
-        type: 'due-diligence',
-        status: 'active',
-        priority: 'high',
-        progress: 75,
-        teamMembers: ['Sarah Chen', 'Mike Rodriguez', 'Alex Johnson'],
-        lastActivity: new Date(Date.now() - 86400000),
-        metadata: {
-          dealValue: 50000000,
-          sector: 'Technology',
-          stage: 'growth',
-          riskRating: 'medium',
-          confidenceScore: 0.85
-        }
+    activeProjects: UnifiedWorkspaceDataService.getThandoProjects(),
+    activeDeals: UnifiedWorkspaceDataService.getThandoProjects().map(project => ({
+      id: project.id.replace('proj-', 'deal-'),
+      name: project.name.replace('Due Diligence', 'Acquisition').replace('Investment Committee', 'Investment'),
+      status: project.status === 'active' ? 'due-diligence' : project.status === 'review' ? 'negotiation' : 'sourcing',
+      dealValue: project.metadata?.dealValue || 50000000,
+      equity: (project.metadata?.dealValue || 50000000) * 0.8,
+      debt: (project.metadata?.dealValue || 50000000) * 0.2,
+      sector: project.metadata?.sector || 'Technology',
+      geography: project.metadata?.geography || 'North America',
+      stage: project.metadata?.stage || 'growth',
+      targetReturns: { irr: 25, multiple: 3.2 },
+      timeline: {
+        sourceDate: new Date(project.lastActivity.getTime() - 30 * 24 * 60 * 60 * 1000),
+        ddStartDate: new Date(project.lastActivity.getTime() - 15 * 24 * 60 * 60 * 1000),
+        expectedCloseDate: project.deadline || new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
       },
-      {
-        id: 'proj-2',
-        name: 'HealthCo Investment Committee',
-        type: 'report',
-        status: 'review',
-        priority: 'high',
-        progress: 90,
-        teamMembers: ['Jennifer Park', 'David Kim'],
-        lastActivity: new Date(Date.now() - 43200000),
-        deadline: new Date(Date.now() + 604800000),
-        metadata: {
-          dealValue: 125000000,
-          sector: 'Healthcare',
-          stage: 'buyout',
-          riskRating: 'low'
-        }
-      }
-    ],
-    activeDeals: [
-      {
-        id: 'deal-1',
-        name: 'TechCorp Acquisition',
-        status: 'due-diligence',
-        dealValue: 50000000,
-        equity: 40000000,
-        debt: 10000000,
-        sector: 'Technology',
-        geography: 'North America',
-        stage: 'growth',
-        targetReturns: { irr: 25, multiple: 3.2 },
-        timeline: {
-          sourceDate: new Date('2024-09-15'),
-          ddStartDate: new Date('2024-10-01'),
-          expectedCloseDate: new Date('2024-12-15')
-        },
-        team: {
-          lead: 'Sarah Chen',
-          analyst: ['Mike Rodriguez'],
-          advisors: ['Industry Expert 1', 'Tech Consultant']
-        },
-        keyMetrics: {
-          revenue: 15000000,
-          ebitda: 4500000,
-          ebitdaMargin: 0.30,
-          growthRate: 0.45
-        }
+      team: {
+        lead: project.teamMembers[0] || 'Team Lead',
+        analyst: project.teamMembers.slice(1, 2),
+        advisors: ['Industry Expert', 'Technical Consultant']
       },
-      {
-        id: 'deal-2',
-        name: 'HealthCo Investment',
-        status: 'negotiation',
-        dealValue: 125000000,
-        equity: 100000000,
-        debt: 25000000,
-        sector: 'Healthcare',
-        geography: 'North America',
-        stage: 'buyout',
-        targetReturns: { irr: 22, multiple: 2.8 },
-        timeline: {
-          sourceDate: new Date('2024-08-01'),
-          ddStartDate: new Date('2024-09-01'),
-          expectedCloseDate: new Date('2024-11-30')
-        },
-        team: {
-          lead: 'Jennifer Park',
-          analyst: ['David Kim'],
-          advisors: ['Healthcare Expert', 'Regulatory Consultant']
-        },
-        keyMetrics: {
-          revenue: 35000000,
-          ebitda: 8750000,
-          ebitdaMargin: 0.25,
-          growthRate: 0.18
-        }
+      keyMetrics: {
+        revenue: (project.metadata?.dealValue || 50000000) * 0.3,
+        ebitda: (project.metadata?.dealValue || 50000000) * 0.09,
+        ebitdaMargin: 0.30,
+        growthRate: project.metadata?.stage === 'growth' ? 0.45 : 0.18
       }
-    ],
+    })),
     portfolioMetrics: {
       totalAUM: 3880000000,
       totalValue: 3880000000,
@@ -172,32 +108,24 @@ const buildThandoContext = (
         benchmarkComparison: 2.1
       }
     },
-    recentActivity: [
-      {
-        id: 'act-1',
-        type: 'deal_update',
-        title: 'TechCorp DD Phase 2 Complete',
-        description: 'Financial and technical due diligence completed, moving to final negotiations',
-        timestamp: new Date(Date.now() - 86400000),
-        userId: 'sarah-chen',
-        entityId: 'deal-1',
-        entityType: 'deal',
-        impact: 'high',
-        actionRequired: true
-      },
-      {
-        id: 'act-2',
-        type: 'portfolio_change',
-        title: 'Q3 Portfolio Performance Update',
-        description: 'Portfolio outperformed benchmark by 2.1%, driven by technology sector',
-        timestamp: new Date(Date.now() - 172800000),
-        userId: 'system',
-        entityId: 'portfolio-main',
-        entityType: 'portfolio',
-        impact: 'medium',
-        actionRequired: false
-      }
-    ],
+    recentActivity: UnifiedWorkspaceDataService.getThandoProjects().map((project, index) => ({
+      id: `act-${index + 1}`,
+      type: project.type === 'due-diligence' ? 'deal_update' : 
+            project.type === 'ic-preparation' ? 'investment_update' : 
+            project.type === 'portfolio-monitoring' ? 'portfolio_change' : 'project_update',
+      title: `${project.name} - ${project.progress}% Complete`,
+      description: project.type === 'due-diligence' ? 'Due diligence analysis in progress with latest findings' :
+                   project.type === 'ic-preparation' ? 'Investment committee preparation materials being finalized' :
+                   project.type === 'portfolio-monitoring' ? 'Portfolio performance review and optimization ongoing' :
+                   'Project analysis and recommendations being developed',
+      timestamp: project.lastActivity,
+      userId: project.teamMembers[0]?.toLowerCase().replace(' ', '-') || 'team-lead',
+      entityId: project.id,
+      entityType: project.type === 'due-diligence' ? 'deal' : 
+                  project.type === 'portfolio-monitoring' ? 'portfolio' : 'project',
+      impact: project.priority === 'high' ? 'high' : project.priority === 'low' ? 'low' : 'medium',
+      actionRequired: project.status === 'active' && project.priority === 'high'
+    })),
     conversationHistory: [],
     availableActions: [], // Will be populated by API
     currentCapabilities: {

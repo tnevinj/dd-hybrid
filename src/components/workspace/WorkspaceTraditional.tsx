@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data'
 import { 
   Search,
   Filter,
@@ -32,14 +33,7 @@ interface WorkspaceTraditionalProps {
 
 export function WorkspaceTraditional({
   workspaces = [],
-  metrics = {
-    totalWorkspaces: 8,
-    activeWorkspaces: 5,
-    completedWorkspaces: 2,
-    teamMembers: 12,
-    averageProgress: 58,
-    projectsThisMonth: 4
-  },
+  metrics,
   isLoading = false,
   onCreateWorkspace,
   onViewWorkspace,
@@ -50,48 +44,9 @@ export function WorkspaceTraditional({
   const [selectedType, setSelectedType] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
 
-  const mockWorkspaces = [
-    {
-      id: '1',
-      name: 'TechCorp Due Diligence',
-      type: 'Due Diligence',
-      status: 'Active',
-      workProducts: 8,
-      teamMembers: 4,
-      lastActivity: '2 hours ago',
-      progress: 75
-    },
-    {
-      id: '2',
-      name: 'HealthCo Investment Committee',
-      type: 'IC Preparation',
-      status: 'Review',
-      workProducts: 12,
-      teamMembers: 6,
-      lastActivity: '1 day ago',
-      progress: 90
-    },
-    {
-      id: '3',
-      name: 'RetailCo Deal Screening',
-      type: 'Screening',
-      status: 'Active',
-      workProducts: 5,
-      teamMembers: 3,
-      lastActivity: '3 hours ago',
-      progress: 45
-    },
-    {
-      id: '4',
-      name: 'Manufacturing Portfolio Review',
-      type: 'Monitoring',
-      status: 'Draft',
-      workProducts: 3,
-      teamMembers: 2,
-      lastActivity: '1 week ago',
-      progress: 20
-    }
-  ]
+  // Use unified data source
+  const unifiedMetrics = metrics || UnifiedWorkspaceDataService.getWorkspaceMetrics()
+  const mockWorkspaces = workspaces.length > 0 ? workspaces : UnifiedWorkspaceDataService.getTraditionalProjects()
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -164,7 +119,7 @@ export function WorkspaceTraditional({
               <FolderOpen className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Total Workspaces</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{metrics.totalWorkspaces}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.totalWorkspaces}</p>
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <Calendar className="h-4 w-4 mr-1" />
               <span>Manually tracked</span>
@@ -178,7 +133,7 @@ export function WorkspaceTraditional({
               <Clock className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Active Workspaces</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{metrics.activeWorkspaces}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.activeWorkspaces}</p>
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <User className="h-4 w-4 mr-1" />
               <span>Manual review</span>
@@ -192,7 +147,7 @@ export function WorkspaceTraditional({
               <FileText className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Completed</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{metrics.completedWorkspaces}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.completedWorkspaces}</p>
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <Users className="h-4 w-4 mr-1" />
               <span>Expert analysis</span>
@@ -206,7 +161,7 @@ export function WorkspaceTraditional({
               <Users className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Team Members</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{metrics.teamMembers}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.teamMembers}</p>
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <User className="h-4 w-4 mr-1" />
               <span>Direct management</span>

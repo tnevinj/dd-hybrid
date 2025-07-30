@@ -185,13 +185,14 @@ export function UnifiedPortfolioProvider({
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      // For development, load sample data
-      const { samplePortfolios } = await import('../data/samplePortfolioData');
-      dispatch({ type: 'SET_PORTFOLIOS', payload: samplePortfolios });
+      // Use unified data source for consistency across all modes
+      const { UnifiedWorkspaceDataService } = await import('@/lib/data/unified-workspace-data');
+      const unifiedPortfolios = UnifiedWorkspaceDataService.getUnifiedPortfolios();
+      dispatch({ type: 'SET_PORTFOLIOS', payload: unifiedPortfolios });
       
       // Also set the default portfolio as current
-      if (samplePortfolios.length > 0) {
-        dispatch({ type: 'SET_CURRENT_PORTFOLIO', payload: samplePortfolios[0] });
+      if (unifiedPortfolios.length > 0) {
+        dispatch({ type: 'SET_CURRENT_PORTFOLIO', payload: unifiedPortfolios[0] });
       }
       
       return;

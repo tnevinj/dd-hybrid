@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data'
 import { 
   Brain,
   Sparkles,
@@ -259,14 +260,7 @@ interface WorkspaceAssistedProps {
 export function WorkspaceAssisted({
   workspaces = [],
   aiRecommendations = [],
-  metrics = {
-    totalWorkspaces: 8,
-    activeWorkspaces: 5,
-    completedWorkspaces: 2,
-    teamMembers: 12,
-    aiOptimizationScore: 8.5,
-    predictedEfficiency: 25
-  },
+  metrics,
   isLoading = false,
   onCreateWorkspace,
   onViewWorkspace,
@@ -276,70 +270,9 @@ export function WorkspaceAssisted({
 }: WorkspaceAssistedProps) {
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Enhanced workspaces with AI insights
-  const enhancedWorkspaces = [
-    {
-      id: '1',
-      name: 'TechCorp Due Diligence',
-      type: 'Due Diligence',
-      status: 'Active',
-      workProducts: 8,
-      teamMembers: 4,
-      lastActivity: '2 hours ago',
-      progress: 75,
-      aiOptimizationScore: 9.2,
-      aiPrediction: 85,
-      aiEfficiency: 30,
-      aiInsights: [
-        { summary: 'Team velocity increased 25% with AI document analysis' },
-        { summary: 'Risk assessment automation saved 12 hours this week' }
-      ],
-      aiSuggestions: [
-        { label: 'Optimize', action: 'OPTIMIZE_WORKSPACE_WORKFLOW', description: 'Thando suggests workspace collaboration optimization' },
-        { label: 'Automate', action: 'AUTO_TASKS', description: 'Automate routine tasks' }
-      ]
-    },
-    {
-      id: '2',
-      name: 'HealthCo Investment Committee',
-      type: 'IC Preparation',
-      status: 'Review',
-      workProducts: 12,
-      teamMembers: 6,
-      lastActivity: '1 day ago',
-      progress: 90,
-      aiOptimizationScore: 8.8,
-      aiPrediction: 95,
-      aiEfficiency: 40,
-      aiInsights: [
-        { summary: 'IC deck auto-generated based on DD findings' },
-        { summary: 'Financial model validation shows 98% accuracy' }
-      ],
-      aiSuggestions: [
-        { label: 'Review', action: 'AI_REVIEW', description: 'AI final review recommendations' }
-      ]
-    },
-    {
-      id: '3',
-      name: 'RetailCo Deal Screening',
-      type: 'Screening',
-      status: 'Active',
-      workProducts: 5,
-      teamMembers: 3,
-      lastActivity: '3 hours ago',
-      progress: 45,
-      aiOptimizationScore: 7.5,
-      aiPrediction: 60,
-      aiEfficiency: 20,
-      aiInsights: [
-        { summary: 'Market analysis completed using AI data synthesis' },
-        { summary: 'Comparable company matching confidence: 85%' }
-      ],
-      aiSuggestions: [
-        { label: 'Accelerate', action: 'ACCELERATE_SCREENING', description: 'Speed up screening process' }
-      ]
-    }
-  ]
+  // Use unified data source
+  const unifiedMetrics = metrics || UnifiedWorkspaceDataService.getWorkspaceMetrics()
+  const enhancedWorkspaces = workspaces.length > 0 ? workspaces : UnifiedWorkspaceDataService.getAssistedProjects()
 
   if (isLoading) {
     return (
@@ -397,7 +330,7 @@ export function WorkspaceAssisted({
               <FolderOpen className="h-5 w-5 text-purple-600" />
               <p className="text-sm text-gray-600 font-medium">Smart Workspaces</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{metrics.totalWorkspaces}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.totalWorkspaces}</p>
             <div className="flex items-center text-purple-600 text-sm mt-1">
               <TrendingUp className="h-4 w-4 mr-1" />
               AI-optimized
@@ -411,7 +344,7 @@ export function WorkspaceAssisted({
               <Clock className="h-5 w-5 text-purple-600" />
               <p className="text-sm text-gray-600 font-medium">Active Projects</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{metrics.activeWorkspaces}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.activeWorkspaces}</p>
             <div className="flex items-center text-purple-600 text-sm mt-1">
               <Brain className="h-4 w-4 mr-1" />
               AI-tracked
@@ -425,7 +358,7 @@ export function WorkspaceAssisted({
               <Target className="h-5 w-5 text-purple-600" />
               <p className="text-sm text-gray-600 font-medium">AI Optimization</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{metrics.aiOptimizationScore}/10</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.aiOptimizationScore.toFixed(1)}/10</p>
             <div className="flex items-center text-purple-600 text-sm mt-1">
               <Star className="h-4 w-4 mr-1" />
               Excellent score
@@ -436,7 +369,7 @@ export function WorkspaceAssisted({
         <Card className="border-purple-200 bg-white">
           <CardContent className="p-6">
             <p className="text-sm text-gray-600 font-medium mb-2">Team Members</p>
-            <p className="text-3xl font-bold text-gray-900">{metrics.teamMembers}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.teamMembers}</p>
             <div className="flex items-center text-green-600 text-sm mt-1">
               <CheckCircle className="h-4 w-4 mr-1" />
               AI-enhanced
@@ -447,7 +380,7 @@ export function WorkspaceAssisted({
         <Card className="border-purple-200 bg-white">
           <CardContent className="p-6">
             <p className="text-sm text-gray-600 font-medium mb-2">Efficiency Gain</p>
-            <p className="text-3xl font-bold text-gray-900">+{metrics.predictedEfficiency}%</p>
+            <p className="text-3xl font-bold text-gray-900">+{unifiedMetrics.predictedEfficiency}%</p>
             <div className="flex items-center text-purple-600 text-sm mt-1">
               <Lightbulb className="h-4 w-4 mr-1" />
               AI-powered

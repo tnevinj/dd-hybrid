@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
 
 interface Project {
   id: string;
@@ -57,6 +58,7 @@ interface AutonomousActions {
   selectProject: (project: Project) => void;
   updateProject: (projectId: string, updates: Partial<Project>) => void;
   addProject: (projectType: string, project: Project) => void;
+  refreshProjectsFromUnifiedData: () => void;
   
   // Chat session actions
   createChatSession: (projectId: string) => string;
@@ -80,9 +82,35 @@ interface AutonomousActions {
 
 type AutonomousStore = AutonomousState & AutonomousActions;
 
-// Mock initial projects data
-const initialProjects: Record<string, Project[]> = {
-  dashboard: [
+// Generate initial projects from unified data source
+const getInitialProjects = (): Record<string, Project[]> => {
+  const autonomousProjects = UnifiedWorkspaceDataService.getAutonomousProjects();
+  
+  // Group projects by type for different sections
+  const projectsByType: Record<string, Project[]> = {
+    dashboard: [],
+    portfolio: [],
+    'due-diligence': [],
+    workspace: autonomousProjects, // Main workspace projects
+    'deal-screening': []
+  };
+  
+  // Add some derived projects for other sections based on workspace projects
+  autonomousProjects.forEach(project => {
+    if (project.type === 'portfolio') {
+      projectsByType.portfolio.push(project);
+    }
+    if (project.metadata.stage === 'growth' || project.metadata.stage === 'buyout') {
+      projectsByType['due-diligence'].push({
+        ...project,
+        type: 'company',
+        name: project.name.replace('Due Diligence', 'DD').replace('Investment Committee', 'Acquisition DD')
+      });
+    }
+  });
+  
+  // Add dashboard and screening projects
+  projectsByType.dashboard = [
     {
       id: 'dash-1',
       name: 'Q4 Performance Review',
@@ -92,125 +120,12 @@ const initialProjects: Record<string, Project[]> = {
       priority: 'high',
       unreadMessages: 3,
       metadata: { progress: 75 }
-    },
-    {
-      id: 'dash-2',
-      name: 'Market Analysis Dashboard',
-      type: 'analysis',
-      status: 'active',
-      lastActivity: new Date(Date.now() - 86400000),
-      priority: 'medium',
-      metadata: { progress: 90 }
     }
-  ],
-  portfolio: [
+  ];
+  
+  projectsByType['deal-screening'] = [
     {
-      id: 'port-1',
-      name: 'Growth Equity Portfolio Performance',
-      type: 'portfolio',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 5,
-      metadata: { value: '$1.2B', progress: 85 }
-    },
-    {
-      id: 'port-2',
-      name: 'Healthcare Sector Analysis',
-      type: 'analysis',
-      status: 'active',
-      lastActivity: new Date(Date.now() - 3600000),
-      priority: 'medium',
-      metadata: { value: '$850M', progress: 70 }
-    },
-    {
-      id: 'port-3',
-      name: 'Infrastructure Asset Optimization',
-      type: 'portfolio',
-      status: 'review',
-      lastActivity: new Date(Date.now() - 7200000),
-      priority: 'medium',
-      unreadMessages: 2,
-      metadata: { value: '$2.1B', progress: 90 }
-    }
-  ],
-  'due-diligence': [
-    {
-      id: 'dd-1',
-      name: 'GreenTech Energy Due Diligence',
-      type: 'company',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 8,
-      metadata: { progress: 65, team: ['Legal', 'Financial', 'Technical', 'ESG'] }
-    },
-    {
-      id: 'dd-2',
-      name: 'FinCorp Acquisition DD',
-      type: 'company',
-      status: 'active',
-      lastActivity: new Date(Date.now() - 3600000),
-      priority: 'high',
-      unreadMessages: 12,
-      metadata: { progress: 40, team: ['Legal', 'Financial', 'Regulatory'] }
-    },
-    {
-      id: 'dd-3',
-      name: 'MedDevice Startup Assessment',
-      type: 'company',
-      status: 'review',
-      lastActivity: new Date(Date.now() - 86400000),
-      priority: 'medium',
-      unreadMessages: 3,
-      metadata: { progress: 85, team: ['Technical', 'Market Research'] }
-    }
-  ],
-  workspace: [
-    {
-      id: 'work-1',
-      name: 'TechCorp Due Diligence',
-      type: 'report',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 4,
-      metadata: { progress: 75, team: ['Legal', 'Financial', 'Technical', 'Commercial'] }
-    },
-    {
-      id: 'work-2',
-      name: 'HealthCo Investment Committee',
-      type: 'report',
-      status: 'review',
-      lastActivity: new Date(Date.now() - 86400000),
-      priority: 'high',
-      unreadMessages: 6,
-      metadata: { progress: 90, team: ['IC Members', 'Portfolio Team'] }
-    },
-    {
-      id: 'work-3',
-      name: 'RetailCo Deal Screening',
-      type: 'analysis',
-      status: 'active',
-      lastActivity: new Date(Date.now() - 10800000),
-      priority: 'medium',
-      unreadMessages: 3,
-      metadata: { progress: 45, team: ['Screening Team', 'Sector Analysts'] }
-    },
-    {
-      id: 'work-4',
-      name: 'Manufacturing Portfolio Review',
-      type: 'report',
-      status: 'draft',
-      lastActivity: new Date(Date.now() - 604800000),
-      priority: 'low',
-      unreadMessages: 0,
-      metadata: { progress: 20, team: ['Portfolio Managers'] }
-    }
-  ],
-  'deal-screening': [
-    {
-      id: 'deal-1',
+      id: 'deal-screen-1',
       name: 'SaaS Startup Pipeline',
       type: 'analysis',
       status: 'active',
@@ -218,35 +133,19 @@ const initialProjects: Record<string, Project[]> = {
       priority: 'high',
       unreadMessages: 15,
       metadata: { progress: 30, team: ['Screening Team', 'Tech Analysts'] }
-    },
-    {
-      id: 'deal-2',
-      name: 'Healthcare Series B Opportunities',
-      type: 'deal',
-      status: 'active',
-      lastActivity: new Date(Date.now() - 7200000),
-      priority: 'medium',
-      unreadMessages: 8,
-      metadata: { progress: 60, team: ['Healthcare Team'] }
-    },
-    {
-      id: 'deal-3',
-      name: 'Secondary Market Screening',
-      type: 'analysis',
-      status: 'review',
-      lastActivity: new Date(Date.now() - 86400000),
-      priority: 'medium',
-      unreadMessages: 4,
-      metadata: { progress: 80, team: ['Secondary Team', 'Valuations'] }
     }
-  ]
+  ];
+  
+  return projectsByType;
 };
+
+const initialProjects = getInitialProjects();
 
 export const useAutonomousStore = create<AutonomousStore>()(
   persist(
     (set, get) => ({
       // Initial state
-      projects: initialProjects,
+      projects: getInitialProjects(),
       selectedProject: null,
       activeProjectType: 'dashboard',
       chatSessions: {},
@@ -317,6 +216,11 @@ export const useAutonomousStore = create<AutonomousStore>()(
             ...state.projects,
             [projectType]: [...(state.projects[projectType] || []), project]
           }
+        })),
+
+      refreshProjectsFromUnifiedData: () =>
+        set(() => ({
+          projects: getInitialProjects()
         })),
 
       // Chat session actions
@@ -397,7 +301,7 @@ export const useAutonomousStore = create<AutonomousStore>()(
       }
     }),
     {
-      name: 'autonomous-store',
+      name: 'autonomous-store-unified-v2', // Changed name to force refresh with new data
       // Only persist essential data, not UI state
       partialize: (state) => ({
         projects: state.projects,

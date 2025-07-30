@@ -35,15 +35,17 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
-    toggleContextPanel
+    toggleContextPanel,
+    refreshProjectsFromUnifiedData
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
 
-  // Initialize project type for portfolio
+  // Initialize project type for portfolio and refresh data
   React.useEffect(() => {
     setActiveProjectType('portfolio');
-  }, [setActiveProjectType]);
+    refreshProjectsFromUnifiedData(); // Ensure we have latest unified data
+  }, [setActiveProjectType, refreshProjectsFromUnifiedData]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);

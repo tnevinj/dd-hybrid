@@ -206,7 +206,7 @@ const getAvailableTools = (context: ThandoContext): Anthropic.Tool[] => {
 
 // Build comprehensive system prompt
 const buildSystemPrompt = (context: ThandoContext): string => {
-  const { currentModule, userRole, portfolioMetrics, activeProjects, activeDeals, platformData } = context;
+  const { currentModule, userRole, portfolioMetrics, activeProjects, activeDeals } = context;
 
   return `You are Thando, an expert private equity AI assistant integrated into a comprehensive investment management platform. You have deep expertise in private equity, venture capital, due diligence, portfolio management, and financial analysis.
 
@@ -226,9 +226,15 @@ const buildSystemPrompt = (context: ThandoContext): string => {
 - **Active Deals**: ${activeDeals.map(d => `${d.name} ($${(d.dealValue / 1000000).toFixed(0)}M)`).join(', ')}
 
 ## Recent Context:
-${context.recentActivity.slice(0, 3).map(activity => 
-  `- ${activity.title}: ${activity.description} (${activity.timestamp.toLocaleDateString()})`
-).join('\n')}
+${context.recentActivity.slice(0, 3).map(activity => {
+  try {
+    const date = new Date(activity.timestamp);
+    const dateStr = isNaN(date.getTime()) ? 'Recently' : date.toLocaleDateString();
+    return `- ${activity.title}: ${activity.description} (${dateStr})`;
+  } catch (e) {
+    return `- ${activity.title}: ${activity.description} (Recently)`;
+  }
+}).join('\n')}
 
 ## Your Capabilities:
 - **Analysis**: Deep financial analysis, market research, competitive assessment

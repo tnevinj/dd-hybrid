@@ -35,15 +35,17 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
-    toggleContextPanel
+    toggleContextPanel,
+    refreshProjectsFromUnifiedData
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
 
-  // Initialize project type for workspace
+  // Initialize project type for workspace and refresh data
   React.useEffect(() => {
     setActiveProjectType('workspace');
-  }, [setActiveProjectType]);
+    refreshProjectsFromUnifiedData(); // Ensure we have latest unified data
+  }, [setActiveProjectType, refreshProjectsFromUnifiedData]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
