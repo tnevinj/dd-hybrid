@@ -211,29 +211,6 @@ export function SecondaryEdgeDashboard({ mode = 'traditional', data }: Dashboard
       {/* AI Insights Panel - Only in assisted/autonomous modes */}
       <AIInsightsPanel mode={mode} />
 
-      {/* Header */}
-      <Card className="bg-blue-900 text-white p-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              SECONDARYEDGE™ EXECUTIVE DASHBOARD
-              {mode !== 'traditional' && (
-                <Brain className="h-6 w-6 text-blue-300" />
-              )}
-            </h1>
-            <p className="text-blue-100 mt-2">FUND MANAGEMENT | BOARD OF DIRECTORS QUARTERLY REPORT | Q1 2025</p>
-            {mode !== 'traditional' && (
-              <Badge variant="secondary" className="mt-2 bg-blue-800 text-blue-100">
-                {mode === 'autonomous' ? 'AI-Autonomous' : 'AI-Assisted'} Analytics
-              </Badge>
-            )}
-          </div>
-          <div className="text-right text-blue-100">
-            <p className="text-sm">Report Date: {new Date().toLocaleDateString()}</p>
-            <p className="text-sm">Next Reporting Date: {new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
-          </div>
-        </div>
-      </Card>
       
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -495,11 +472,11 @@ export function SecondaryEdgeDashboard({ mode = 'traditional', data }: Dashboard
       {/* Footer */}
       <Card className="bg-gray-50 p-4 text-center">
         <p className="text-xs text-gray-500">
-          SecondaryEdge™ Platform | Powered by Advanced Fund Management
+          Edge Platform | Advanced Portfolio Management
           {mode !== 'traditional' && ' & AI Intelligence'} | Data as of {new Date().toLocaleDateString()}
         </p>
         <p className="text-xs text-gray-500 mt-1">
-          Confidential: For Board of Directors Use Only
+          Confidential: For Investment Committee Use Only
         </p>
       </Card>
     </div>

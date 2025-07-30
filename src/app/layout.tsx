@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DD Hybrid - Due Diligence Platform",
-  description: "Hybrid navigation due diligence platform with AI assistance",
+  title: "Edge Platform - Intelligent Investment Management",
+  description: "Advanced portfolio management platform with AI-powered analytics and hybrid navigation capabilities",
 };
 
 export default function RootLayout({

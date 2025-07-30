@@ -85,12 +85,12 @@ export function TraditionalSidebar({ enhanced = false, collapsed = false, classN
       <div className={`${collapsed ? 'p-4' : 'p-6'} border-b`}>
         <div className={`flex items-center ${collapsed ? 'justify-center' : 'space-x-2'}`}>
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">DD</span>
+            <span className="text-white font-bold text-sm">EP</span>
           </div>
           {!collapsed && (
             <div>
-              <h1 className="font-semibold">DD Hybrid</h1>
-              <p className="text-xs text-gray-500">Due Diligence Platform</p>
+              <h1 className="font-semibold">Edge Platform</h1>
+              <p className="text-xs text-gray-500">Intelligent Investment Management</p>
             </div>
           )}
         </div>
