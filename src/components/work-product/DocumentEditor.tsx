@@ -24,6 +24,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useNavigationStore } from '@/stores/navigation-store';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface DocumentEditorProps {
   workProduct: WorkProduct;
@@ -222,12 +224,48 @@ export function DocumentEditor({ workProduct, onSave, onStatusChange, onBack }: 
       {/* Content Editor */}
       <Card className="p-6">
         {showPreview ? (
-          <div className="prose max-w-none">
-            <div
-              dangerouslySetInnerHTML={{ 
-                __html: currentSection?.content?.replace(/\n/g, '<br>') || '<p class="text-gray-500">No content yet. Click Edit to start writing.</p>' 
-              }}
-            />
+          <div className="prose prose-sm max-w-none">
+            {currentSection?.content ? (
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  // Style headings
+                  h1: ({children}) => <h1 className="text-2xl font-bold text-gray-900 mb-4 mt-6 first:mt-0">{children}</h1>,
+                  h2: ({children}) => <h2 className="text-xl font-semibold text-gray-900 mb-3 mt-5 first:mt-0">{children}</h2>,
+                  h3: ({children}) => <h3 className="text-lg font-semibold text-gray-900 mb-2 mt-4 first:mt-0">{children}</h3>,
+                  h4: ({children}) => <h4 className="text-base font-semibold text-gray-900 mb-2 mt-3 first:mt-0">{children}</h4>,
+                  // Style lists
+                  ul: ({children}) => <ul className="list-disc list-inside space-y-1 text-gray-700 mb-4">{children}</ul>,
+                  ol: ({children}) => <ol className="list-decimal list-inside space-y-1 text-gray-700 mb-4">{children}</ol>,
+                  li: ({children}) => <li className="text-gray-700">{children}</li>,
+                  // Style paragraphs
+                  p: ({children}) => <p className="text-gray-700 mb-3 leading-relaxed">{children}</p>,
+                  // Style emphasis
+                  strong: ({children}) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                  em: ({children}) => <em className="italic text-gray-700">{children}</em>,
+                  // Style code
+                  code: ({children}) => <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800">{children}</code>,
+                  pre: ({children}) => <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4">{children}</pre>,
+                  // Style blockquotes
+                  blockquote: ({children}) => <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4">{children}</blockquote>,
+                  // Style tables
+                  table: ({children}) => <table className="min-w-full border border-gray-200 mb-4">{children}</table>,
+                  thead: ({children}) => <thead className="bg-gray-50">{children}</thead>,
+                  tbody: ({children}) => <tbody>{children}</tbody>,
+                  tr: ({children}) => <tr className="border-b border-gray-200">{children}</tr>,
+                  th: ({children}) => <th className="px-4 py-2 text-left font-semibold text-gray-900">{children}</th>,
+                  td: ({children}) => <td className="px-4 py-2 text-gray-700">{children}</td>,
+                  // Style links
+                  a: ({children, href}) => <a href={href} className="text-blue-600 hover:text-blue-800 underline">{children}</a>,
+                  // Style horizontal rules
+                  hr: () => <hr className="border-gray-300 my-6" />
+                }}
+              >
+                {currentSection.content}
+              </ReactMarkdown>
+            ) : (
+              <p className="text-gray-500 italic">No content yet. Click Edit to start writing.</p>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
