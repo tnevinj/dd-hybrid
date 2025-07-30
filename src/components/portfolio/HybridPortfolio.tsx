@@ -320,8 +320,8 @@ export const HybridPortfolio: React.FC = () => {
             currentMode={currentMode.mode as HybridMode}
             onModeChange={handleModeSwitch}
             moduleContext="portfolio"
-            title="Portfolio Management Hub"
-            subtitle={portfolioData.totalValue ? `Managing $${(portfolioData.totalValue / 1000000000).toFixed(1)}B across ${portfolioData.totalAssets} assets • Choose your experience mode` : 'Advanced portfolio management and optimization • Choose your experience mode'}
+            title="Portfolio Platform"
+            subtitle="Choose your experience mode"
             disabled={isLoading}
             context={portfolioData}
             className="sticky top-0 z-50"

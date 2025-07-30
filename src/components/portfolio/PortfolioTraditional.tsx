@@ -35,18 +35,12 @@ export function PortfolioTraditional({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Traditional Mode Header */}
+      {/* Mode Indicator */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <h1 className="text-2xl font-bold text-gray-900">Portfolio Management</h1>
-            <Badge className="bg-gray-100 text-gray-800 border border-gray-300 flex items-center space-x-1">
-              <User className="h-3 w-3" />
-              <span>Traditional Mode</span>
-            </Badge>
-          </div>
-          <p className="text-gray-600">Complete manual control over all portfolio operations</p>
-        </div>
+        <Badge className="bg-gray-100 text-gray-800 border border-gray-300 flex items-center space-x-1">
+          <User className="h-3 w-3" />
+          <span>Traditional Mode</span>
+        </Badge>
       </div>
 
       {/* Unified Portfolio Manager */}

@@ -35,18 +35,12 @@ export function PortfolioAssisted({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-      {/* Assisted Mode Header */}
+      {/* Mode Indicator */}
       <div className="bg-white border-b border-purple-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <h1 className="text-2xl font-bold text-gray-900">Portfolio Management</h1>
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
-              <Brain className="h-3 w-3" />
-              <span>Assisted Mode</span>
-            </Badge>
-          </div>
-          <p className="text-gray-600">AI-powered insights with human oversight and control</p>
-        </div>
+        <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+          <Brain className="h-3 w-3" />
+          <span>Assisted Mode</span>
+        </Badge>
       </div>
 
       {/* Unified Portfolio Manager */}
