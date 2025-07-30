@@ -273,8 +273,8 @@ export const HybridDueDiligence: React.FC = () => {
           currentMode={currentMode.mode as HybridMode}
           onModeChange={handleModeSwitch}
           moduleContext="due-diligence"
-          title="Due Diligence Hybrid Platform"
-          subtitle={currentProject ? `Project: ${currentProject.name} • Choose your experience mode` : 'Select a project to begin • Choose your experience mode'}
+          title="Due Diligence Platform"
+          subtitle={currentProject ? 'Choose your experience mode' : 'Select a project to begin • Choose your experience mode'}
           disabled={isLoading}
           context={currentProject}
           className="sticky top-0 z-50"

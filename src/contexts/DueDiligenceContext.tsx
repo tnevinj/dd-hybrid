@@ -107,7 +107,7 @@ interface DueDiligenceContextType {
   
   // Project actions
   setProjects: (projects: DueDiligenceProject[]) => void
-  selectProject: (projectId: string) => void
+  selectProject: (projectId: string | undefined) => void
   setCurrentProject: (project: DueDiligenceProject | undefined) => void
   
   // UI actions
@@ -184,10 +184,10 @@ function dueDiligenceReducer(state: DueDiligenceState, action: DueDiligenceActio
       return { ...state, currentProject: action.payload }
       
     case 'SELECT_PROJECT':
-      const selectedProject = state.projects.find(p => p.id === action.payload)
+      const selectedProject = action.payload ? state.projects.find(p => p.id === action.payload) : undefined
       return { 
         ...state, 
-        selectedProjectId: action.payload,
+        selectedProjectId: action.payload || undefined,
         currentProject: selectedProject
       }
       
@@ -331,14 +331,88 @@ const DueDiligenceContext = createContext<DueDiligenceContextType | undefined>(u
 // Provider Component
 export function DueDiligenceProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(dueDiligenceReducer, initialState)
+
+  // Initialize with sample projects for demo purposes
+  React.useEffect(() => {
+    const sampleProjects: DueDiligenceProject[] = [
+      {
+        id: '1',
+        dealId: 'DEAL-001',
+        name: 'TechCorp Acquisition',
+        description: 'Due diligence for strategic technology acquisition',
+        status: 'in-progress',
+        stage: 'detailed',
+        type: 'buyout',
+        priority: 'high',
+        startDate: new Date('2025-07-15'),
+        targetDate: new Date('2025-08-15'),
+        assignedToId: 'user-1',
+        createdAt: new Date('2025-07-15'),
+        updatedAt: new Date('2025-07-30')
+      },
+      {
+        id: '2',
+        dealId: 'DEAL-002',
+        name: 'RetailCo Investment Review',
+        description: 'Commercial due diligence for retail chain investment',
+        status: 'active',
+        stage: 'preliminary',
+        type: 'growth',
+        priority: 'critical',
+        startDate: new Date('2025-07-10'),
+        targetDate: new Date('2025-08-10'),
+        assignedToId: 'user-2',
+        createdAt: new Date('2025-07-10'),
+        updatedAt: new Date('2025-07-29')
+      },
+      {
+        id: '3',
+        dealId: 'DEAL-003',
+        name: 'HealthCo Merger Analysis',
+        description: 'Healthcare sector merger due diligence',
+        status: 'completed',
+        stage: 'final',
+        type: 'buyout',
+        priority: 'medium',
+        startDate: new Date('2025-06-20'),
+        targetDate: new Date('2025-07-20'),
+        completedDate: new Date('2025-07-18'),
+        assignedToId: 'user-3',
+        createdAt: new Date('2025-06-20'),
+        updatedAt: new Date('2025-07-18')
+      },
+      {
+        id: '4',
+        dealId: 'DEAL-004',
+        name: 'FinTech Startup DD',
+        description: 'Early-stage fintech due diligence',
+        status: 'planning',
+        stage: 'initial',
+        type: 'venture',
+        priority: 'medium',
+        startDate: new Date('2025-07-25'),
+        targetDate: new Date('2025-08-25'),
+        assignedToId: 'user-4',
+        createdAt: new Date('2025-07-25'),
+        updatedAt: new Date('2025-07-28')
+      }
+    ]
+    
+    dispatch({ type: 'SET_PROJECTS', payload: sampleProjects })
+  }, [])
   
   // Actions
   const setProjects = useCallback((projects: DueDiligenceProject[]) => {
     dispatch({ type: 'SET_PROJECTS', payload: projects })
   }, [])
   
-  const selectProject = useCallback((projectId: string) => {
-    dispatch({ type: 'SELECT_PROJECT', payload: projectId })
+  const selectProject = useCallback((projectId: string | undefined) => {
+    if (projectId === undefined) {
+      dispatch({ type: 'SET_CURRENT_PROJECT', payload: undefined })
+      dispatch({ type: 'SELECT_PROJECT', payload: '' })
+    } else {
+      dispatch({ type: 'SELECT_PROJECT', payload: projectId })
+    }
   }, [])
   
   const setCurrentProject = useCallback((project: DueDiligenceProject | undefined) => {

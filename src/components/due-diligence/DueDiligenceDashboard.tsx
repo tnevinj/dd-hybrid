@@ -29,10 +29,14 @@ import {
 
 interface DueDiligenceDashboardProps {
   className?: string
+  mode?: 'traditional' | 'assisted' | 'autonomous'
 }
 
-export function DueDiligenceDashboard({ className }: DueDiligenceDashboardProps) {
+export function DueDiligenceDashboard({ className, mode }: DueDiligenceDashboardProps) {
   const { currentMode, addRecommendation, addInsight } = useNavigationStore()
+  
+  // Use passed mode or fallback to current navigation mode
+  const displayMode = mode || currentMode.mode
   const { 
     state, 
     getFilteredProjects, 
@@ -64,7 +68,7 @@ export function DueDiligenceDashboard({ className }: DueDiligenceDashboardProps)
 
   // Add AI recommendations based on the data
   React.useEffect(() => {
-    if (currentMode.mode !== 'traditional') {
+    if (displayMode !== 'traditional') {
       const recommendations = [
         {
           id: 'dd-rec-1',
@@ -109,7 +113,7 @@ export function DueDiligenceDashboard({ className }: DueDiligenceDashboardProps)
         addRecommendation(rec)
       })
     }
-  }, [currentMode.mode, addRecommendation])
+  }, [displayMode, addRecommendation])
 
   const renderTraditionalMode = () => (
     <div className="space-y-6">
@@ -388,17 +392,17 @@ export function DueDiligenceDashboard({ className }: DueDiligenceDashboardProps)
 
   return (
     <div className={`p-6 ${className}`}>
-      {currentMode.mode === 'traditional' && renderTraditionalMode()}
-      {currentMode.mode === 'assisted' && renderAssistedMode()}
-      {currentMode.mode === 'autonomous' && renderAutonomousMode()}
+      {displayMode === 'traditional' && renderTraditionalMode()}
+      {displayMode === 'assisted' && renderAssistedMode()}
+      {displayMode === 'autonomous' && renderAutonomousMode()}
       
       {/* Project List - Shown in all modes but styled differently */}
-      {currentMode.mode !== 'autonomous' && (
+      {displayMode !== 'autonomous' && (
         <Card className="mt-6">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Recent Projects</span>
-              {currentMode.mode === 'assisted' && (
+              {displayMode === 'assisted' && (
                 <Badge variant="ai" className="text-xs">AI Sorted</Badge>
               )}
             </CardTitle>
@@ -406,7 +410,7 @@ export function DueDiligenceDashboard({ className }: DueDiligenceDashboardProps)
           <CardContent>
             <ProjectsList 
               projects={projects.slice(0, 5)} 
-              mode={currentMode.mode} 
+              mode={displayMode} 
               onProjectClick={(projectId) => router.push(`/due-diligence/${projectId}`)}
             />
           </CardContent>

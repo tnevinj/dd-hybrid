@@ -10,6 +10,7 @@ import { DocumentManagement } from './DocumentManagement'
 import { FindingsManagement } from './FindingsManagement'
 import { RiskWorkflowAutomation } from './RiskWorkflowAutomation'
 import { AIAutomationHub } from './AIAutomationHub'
+import { DueDiligenceDashboard } from './DueDiligenceDashboard'
 import { useNavigationStore } from '@/stores/navigation-store'
 import { 
   Brain,
@@ -23,7 +24,8 @@ import {
   Lightbulb,
   Target,
   ArrowRight,
-  Star
+  Star,
+  ArrowLeft
 } from 'lucide-react'
 
 interface DDAssistedViewProps {
@@ -32,7 +34,7 @@ interface DDAssistedViewProps {
   aiRecommendations?: any[]
   metrics?: any
   isLoading?: boolean
-  onSelectProject?: (project: any) => void
+  onSelectProject?: (project: any | undefined) => void
   onExecuteAIAction?: (actionId: string) => void
   onDismissRecommendation?: (id: string) => void
 }
@@ -322,8 +324,22 @@ export function DDAssistedView({
     </div>
   )
 
+  // If no project is selected, show the dashboard
+  if (!project) {
+    return <DueDiligenceDashboard className="assisted-mode" mode="assisted" />
+  }
+
+  // If a project is selected, show project details with navigation
   return (
     <div className="p-6">
+      {/* Mode Indicator */}
+      <div className="mb-6">
+        <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+          <Brain className="h-3 w-3" />
+          <span>Assisted Mode</span>
+        </Badge>
+      </div>
+
       {/* AI-Enhanced Navigation Tabs */}
       <DDTabs 
         activeTab={activeTab}

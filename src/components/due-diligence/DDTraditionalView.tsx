@@ -10,6 +10,7 @@ import { DocumentManagement } from './DocumentManagement'
 import { FindingsManagement } from './FindingsManagement'
 import { RiskWorkflowAutomation } from './RiskWorkflowAutomation'
 import { AIAutomationHub } from './AIAutomationHub'
+import { DueDiligenceDashboard } from './DueDiligenceDashboard'
 import { 
   CheckSquare,
   AlertTriangle,
@@ -19,7 +20,8 @@ import {
   Calendar,
   Settings,
   Download,
-  Share
+  Share,
+  ArrowLeft
 } from 'lucide-react'
 
 interface DDTraditionalViewProps {
@@ -27,7 +29,7 @@ interface DDTraditionalViewProps {
   projects?: any[]
   metrics?: any
   isLoading?: boolean
-  onSelectProject?: (project: any) => void
+  onSelectProject?: (project: any | undefined) => void
 }
 
 export function DDTraditionalView({ 
@@ -226,8 +228,21 @@ export function DDTraditionalView({
     </div>
   )
 
+  // If no project is selected, show the dashboard
+  if (!project) {
+    return <DueDiligenceDashboard className="traditional-mode" />
+  }
+
+  // If a project is selected, show project details with navigation
   return (
     <div className="p-6">
+      {/* Mode Indicator */}
+      <div className="mb-6">
+        <Badge className="bg-gray-100 text-gray-800 border border-gray-300">
+          Traditional Mode
+        </Badge>
+      </div>
+
       {/* Traditional Navigation Tabs */}
       <DDTabs 
         activeTab={activeTab}
