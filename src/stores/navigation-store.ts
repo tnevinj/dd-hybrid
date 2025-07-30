@@ -185,8 +185,26 @@ export const useNavigationStore = create<NavigationStore>()(
           if (exists) {
             return state
           }
+
+          // Filter out conflicting recommendations from different modules
+
+          // Filter out conflicting recommendations
+          const filteredRecommendations = state.recommendations.filter(r => {
+            const similarTitle = r.title.toLowerCase().includes('workflow') && 
+                                 recommendation.title.toLowerCase().includes('workflow')
+            const similarAction = r.actions && recommendation.actions &&
+                                 r.actions.some(a1 => recommendation.actions!.some(a2 => 
+                                   a1.action.includes('WORKFLOW') && a2.action.includes('WORKFLOW')
+                                 ))
+            
+            if ((similarTitle || similarAction) && r.moduleContext !== recommendation.moduleContext) {
+              return r.moduleContext === state.currentModule
+            }
+            return true
+          })
+
           return {
-            recommendations: [...state.recommendations, recommendation]
+            recommendations: [...filteredRecommendations, recommendation]
           }
         })
       },

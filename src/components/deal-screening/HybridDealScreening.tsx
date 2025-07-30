@@ -272,8 +272,8 @@ export const HybridDealScreening: React.FC = () => {
           confidence: 0.91,
           category: 'analysis',
           actions: [
-            { label: 'Adjust Screening Criteria', action: 'ADJUST_CRITERIA' },
-            { label: 'View Analysis', action: 'VIEW_ANALYSIS' }
+            { label: 'Adjust Screening Criteria', action: 'ADJUST_DEAL_SCREENING_CRITERIA' },
+            { label: 'View Analysis', action: 'VIEW_DEAL_SCREENING_ANALYSIS' }
           ]
         },
         {
@@ -286,14 +286,14 @@ export const HybridDealScreening: React.FC = () => {
             {
               id: 'action-3',
               label: 'Process All',
-              action: 'PROCESS_BULK',
+              action: 'PROCESS_DEAL_SCREENING_BULK',
               primary: true,
               estimatedTimeSaving: 30
             },
             {
               id: 'action-4',
               label: 'Review Individual',
-              action: 'REVIEW_INDIVIDUAL'
+              action: 'REVIEW_DEAL_SCREENING_INDIVIDUAL'
             }
           ],
           confidence: 0.85,

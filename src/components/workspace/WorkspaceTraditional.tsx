@@ -36,7 +36,9 @@ export function WorkspaceTraditional({
     totalWorkspaces: 8,
     activeWorkspaces: 5,
     completedWorkspaces: 2,
-    teamMembers: 12
+    teamMembers: 12,
+    averageProgress: 58,
+    projectsThisMonth: 4
   },
   isLoading = false,
   onCreateWorkspace,

@@ -163,13 +163,13 @@ export const HybridDashboard: React.FC = () => {
           id: 'dashboard-rec-1',
           type: 'optimization' as const,
           priority: 'high' as const,
-          title: 'DD Workflow Automation Available',
-          description: 'I can automate your due diligence workflow for TechCorp, reducing manual work by 15 hours while maintaining accuracy.',
+          title: 'Dashboard DD Workflow Automation Available',
+          description: 'I can automate your executive dashboard due diligence tracking for TechCorp, reducing manual reporting by 15 hours while maintaining accuracy.',
           actions: [
             {
               id: 'action-1',
               label: 'Automate Workflow',
-              action: 'AUTOMATE_DD_WORKFLOW',
+              action: 'AUTOMATE_DASHBOARD_DD_WORKFLOW',
               primary: true,
               estimatedTimeSaving: 15
             },

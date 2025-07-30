@@ -102,8 +102,8 @@ export function ChatInterface({ projectId, projectType, className = '' }: ChatIn
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h2 className="font-semibold text-gray-900">AI Assistant</h2>
-            <p className="text-sm text-gray-500">{getProjectTypeLabel()}</p>
+            <h2 className="font-semibold text-gray-900">Thando AI Assistant</h2>
+            <p className="text-sm text-gray-500">{getProjectTypeLabel()} • Enhanced Mode</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -122,16 +122,23 @@ export function ChatInterface({ projectId, projectType, className = '' }: ChatIn
           <div className="text-center py-12">
             <Bot className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Welcome to Autonomous Mode
+              Welcome to Enhanced Thando AI
             </h3>
             <p className="text-gray-500 mb-4">
-              I can help you analyze, manage, and optimize your {projectType} projects.
+              I'm your intelligent private equity assistant with comprehensive context about your portfolio, deals, and operations. I can provide deep analysis, execute actions, and offer strategic insights.
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
-              <Badge variant="secondary">Ask questions</Badge>
-              <Badge variant="secondary">Request analysis</Badge>
-              <Badge variant="secondary">Execute actions</Badge>
-              <Badge variant="secondary">Get insights</Badge>
+              <Badge variant="secondary">Deep Analysis</Badge>
+              <Badge variant="secondary">Portfolio Insights</Badge>
+              <Badge variant="secondary">Deal Intelligence</Badge>
+              <Badge variant="secondary">Action Execution</Badge>
+              <Badge variant="secondary">Risk Assessment</Badge>
+              <Badge variant="secondary">Report Generation</Badge>
+            </div>
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-800">
+                💡 <strong>Try asking:</strong> "How is our portfolio performing?" or "Analyze the TechCorp deal" or "Generate an investment memo"
+              </p>
             </div>
           </div>
         )}

@@ -106,46 +106,138 @@ const initialProjects: Record<string, Project[]> = {
   portfolio: [
     {
       id: 'port-1',
-      name: 'TechCorp Acquisition',
-      type: 'deal',
+      name: 'Growth Equity Portfolio Performance',
+      type: 'portfolio',
       status: 'active',
       lastActivity: new Date(),
       priority: 'high',
       unreadMessages: 5,
-      metadata: { value: '$50M', progress: 60 }
+      metadata: { value: '$1.2B', progress: 85 }
     },
     {
       id: 'port-2',
-      name: 'Healthcare Portfolio',
-      type: 'portfolio',
+      name: 'Healthcare Sector Analysis',
+      type: 'analysis',
       status: 'active',
       lastActivity: new Date(Date.now() - 3600000),
       priority: 'medium',
-      metadata: { value: '$120M', progress: 85 }
+      metadata: { value: '$850M', progress: 70 }
+    },
+    {
+      id: 'port-3',
+      name: 'Infrastructure Asset Optimization',
+      type: 'portfolio',
+      status: 'review',
+      lastActivity: new Date(Date.now() - 7200000),
+      priority: 'medium',
+      unreadMessages: 2,
+      metadata: { value: '$2.1B', progress: 90 }
     }
   ],
   'due-diligence': [
     {
       id: 'dd-1',
-      name: 'GreenTech Due Diligence',
+      name: 'GreenTech Energy Due Diligence',
       type: 'company',
       status: 'active',
       lastActivity: new Date(),
       priority: 'high',
-      unreadMessages: 2,
-      metadata: { progress: 45, team: ['Legal', 'Financial', 'Technical'] }
+      unreadMessages: 8,
+      metadata: { progress: 65, team: ['Legal', 'Financial', 'Technical', 'ESG'] }
+    },
+    {
+      id: 'dd-2',
+      name: 'FinCorp Acquisition DD',
+      type: 'company',
+      status: 'active',
+      lastActivity: new Date(Date.now() - 3600000),
+      priority: 'high',
+      unreadMessages: 12,
+      metadata: { progress: 40, team: ['Legal', 'Financial', 'Regulatory'] }
+    },
+    {
+      id: 'dd-3',
+      name: 'MedDevice Startup Assessment',
+      type: 'company',
+      status: 'review',
+      lastActivity: new Date(Date.now() - 86400000),
+      priority: 'medium',
+      unreadMessages: 3,
+      metadata: { progress: 85, team: ['Technical', 'Market Research'] }
     }
   ],
   workspace: [
     {
       id: 'work-1',
-      name: 'Investment Committee Prep',
+      name: 'TechCorp Due Diligence',
       type: 'report',
       status: 'active',
       lastActivity: new Date(),
       priority: 'high',
-      unreadMessages: 7,
-      metadata: { progress: 30, team: ['IC Members'] }
+      unreadMessages: 4,
+      metadata: { progress: 75, team: ['Legal', 'Financial', 'Technical', 'Commercial'] }
+    },
+    {
+      id: 'work-2',
+      name: 'HealthCo Investment Committee',
+      type: 'report',
+      status: 'review',
+      lastActivity: new Date(Date.now() - 86400000),
+      priority: 'high',
+      unreadMessages: 6,
+      metadata: { progress: 90, team: ['IC Members', 'Portfolio Team'] }
+    },
+    {
+      id: 'work-3',
+      name: 'RetailCo Deal Screening',
+      type: 'analysis',
+      status: 'active',
+      lastActivity: new Date(Date.now() - 10800000),
+      priority: 'medium',
+      unreadMessages: 3,
+      metadata: { progress: 45, team: ['Screening Team', 'Sector Analysts'] }
+    },
+    {
+      id: 'work-4',
+      name: 'Manufacturing Portfolio Review',
+      type: 'report',
+      status: 'draft',
+      lastActivity: new Date(Date.now() - 604800000),
+      priority: 'low',
+      unreadMessages: 0,
+      metadata: { progress: 20, team: ['Portfolio Managers'] }
+    }
+  ],
+  'deal-screening': [
+    {
+      id: 'deal-1',
+      name: 'SaaS Startup Pipeline',
+      type: 'analysis',
+      status: 'active',
+      lastActivity: new Date(),
+      priority: 'high',
+      unreadMessages: 15,
+      metadata: { progress: 30, team: ['Screening Team', 'Tech Analysts'] }
+    },
+    {
+      id: 'deal-2',
+      name: 'Healthcare Series B Opportunities',
+      type: 'deal',
+      status: 'active',
+      lastActivity: new Date(Date.now() - 7200000),
+      priority: 'medium',
+      unreadMessages: 8,
+      metadata: { progress: 60, team: ['Healthcare Team'] }
+    },
+    {
+      id: 'deal-3',
+      name: 'Secondary Market Screening',
+      type: 'analysis',
+      status: 'review',
+      lastActivity: new Date(Date.now() - 86400000),
+      priority: 'medium',
+      unreadMessages: 4,
+      metadata: { progress: 80, team: ['Secondary Team', 'Valuations'] }
     }
   ]
 };
