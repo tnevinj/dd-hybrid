@@ -109,28 +109,12 @@ const defaultNavigationItems: NavigationItem[] = [
     description: 'Comprehensive due diligence workflows'
   },
   {
-    id: 'deals',
-    label: 'Deals',
-    icon: 'BarChart',
-    href: '/deals',
-    aiEnhanced: true,
-    description: 'Deal pipeline and management'
-  },
-  {
     id: 'portfolio',
     label: 'Portfolio',
     icon: 'PieChart',
     href: '/portfolio',
     aiEnhanced: true,
     description: 'Comprehensive portfolio management with analytics, optimization, risk management, and team collaboration'
-  },
-  {
-    id: 'reports',
-    label: 'Reports',
-    icon: 'BarChart',
-    href: '/reports',
-    aiEnhanced: true,
-    description: 'Generated reports and analytics'
   },
   {
     id: 'settings',

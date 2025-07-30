@@ -22,6 +22,12 @@ import {
 import DealScreeningTraditional from './DealScreeningTraditional';
 import DealScreeningAssisted from './DealScreeningAssisted';
 import DealScreeningAutonomous from './DealScreeningAutonomous';
+import { 
+  ErrorBoundary, 
+  HybridModeHeader, 
+  HybridModeExplanation,
+  type HybridMode 
+} from '@/components/shared';
 
 import { 
   DealOpportunity, 
@@ -31,90 +37,6 @@ import {
   DealScreeningAIState
 } from '@/types/deal-screening';
 
-// Mode Switcher Component
-const ModeSwitcher: React.FC<{
-  currentMode: 'traditional' | 'assisted' | 'autonomous';
-  onModeChange: (mode: 'traditional' | 'assisted' | 'autonomous') => void;
-  disabled?: boolean;
-}> = ({ currentMode, onModeChange, disabled = false }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleModeSelect = (mode: 'traditional' | 'assisted' | 'autonomous') => {
-    onModeChange(mode);
-    setIsOpen(false);
-  };
-
-  const getModeIcon = (mode: string) => {
-    switch (mode) {
-      case 'traditional': return <List className="h-4 w-4" />;
-      case 'assisted': return <Brain className="h-4 w-4" />;
-      case 'autonomous': return <Bot className="h-4 w-4" />;
-      default: return <List className="h-4 w-4" />;
-    }
-  };
-
-  const getModeColor = (mode: string) => {
-    switch (mode) {
-      case 'traditional': return 'default' as const;
-      case 'assisted': return 'ai' as const;
-      case 'autonomous': return 'secondary' as const;
-      default: return 'default' as const;
-    }
-  };
-
-  const getModeDescription = (mode: string) => {
-    switch (mode) {
-      case 'traditional': return 'Full manual control with optional AI hints';
-      case 'assisted': return 'AI helps with suggestions and automation';
-      case 'autonomous': return 'AI handles routine tasks, surfaces decisions';
-      default: return '';
-    }
-  };
-
-  return (
-    <div className="relative">
-      <Button
-        variant="outline"
-        onClick={() => setIsOpen(!isOpen)}
-        disabled={disabled}
-        className="flex items-center space-x-2 min-w-[180px]"
-      >
-        {getModeIcon(currentMode)}
-        <span>{currentMode.charAt(0).toUpperCase() + currentMode.slice(1)} Mode</span>
-        <ChevronDown className="h-4 w-4" />
-      </Button>
-      
-      {isOpen && (
-        <Card className="absolute top-full mt-1 w-80 z-50 bg-white shadow-lg">
-          <CardContent className="p-0">
-            {(['traditional', 'assisted', 'autonomous'] as const).map((mode) => (
-              <div
-                key={mode}
-                onClick={() => handleModeSelect(mode)}
-                className={`p-4 cursor-pointer hover:bg-gray-50 border-b last:border-b-0 ${
-                  mode === currentMode ? 'bg-blue-50' : ''
-                }`}
-              >
-                <div className="flex items-center space-x-2 mb-1">
-                  {getModeIcon(mode)}
-                  <span className="font-semibold text-gray-900">
-                    {mode.charAt(0).toUpperCase() + mode.slice(1)} Mode
-                  </span>
-                  {mode === currentMode && (
-                    <Badge variant={getModeColor(mode)}>Current</Badge>
-                  )}
-                </div>
-                <p className="text-sm text-gray-600">
-                  {getModeDescription(mode)}
-                </p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-};
 
 // New Opportunity Dialog
 const NewOpportunityDialog: React.FC<{
@@ -470,59 +392,74 @@ export const HybridDealScreening: React.FC = () => {
     <div className={currentMode.mode === 'autonomous' ? 'w-full h-screen' : 'w-full min-h-screen'}>
       {/* Header with Mode Switcher - Hidden for autonomous mode */}
       {currentMode.mode !== 'autonomous' && (
-        <div className="flex justify-between items-center p-4 bg-white border-b border-gray-200 sticky top-0 z-50">
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Deal Screening
-          </h1>
-          
-          <div className="flex items-center space-x-4">
-            <ModeSwitcher
-              currentMode={currentMode.mode}
-              onModeChange={handleModeSwitch}
-              disabled={isLoading}
-            />
-            
-            <Button variant="ghost" size="sm" title="Help">
-              <HelpCircle className="h-4 w-4" />
-            </Button>
-            
-            <Button variant="ghost" size="sm" title="Settings">
-              <Settings className="h-4 w-4" />
-            </Button>
-          </div>
+        <HybridModeHeader
+          currentMode={currentMode.mode as HybridMode}
+          onModeChange={handleModeSwitch}
+          moduleContext="deal-screening"
+          title="Deal Screening Platform"
+          subtitle={`AI-powered deal opportunity screening and analysis • Choose your experience mode`}
+          disabled={isLoading}
+          className="sticky top-0 z-50"
+        />
+      )}
+      
+      {/* Mode Explanation Banner - Hidden for autonomous mode */}
+      {currentMode.mode !== 'autonomous' && (
+        <div className="p-4">
+          <HybridModeExplanation
+            currentMode={currentMode.mode as HybridMode}
+            moduleContext="deal-screening"
+            statistics={{
+              efficiency: currentMode.mode === 'traditional' ? 0 : currentMode.mode === 'assisted' ? 35 : 75,
+              automation: currentMode.mode === 'traditional' ? 0 : currentMode.mode === 'assisted' ? 45 : 90,
+              accuracy: currentMode.mode === 'traditional' ? 100 : currentMode.mode === 'assisted' ? 118 : 125
+            }}
+          />
         </div>
       )}
 
       {/* Mode-specific Content */}
       {currentMode.mode === 'traditional' && (
-        <DealScreeningTraditional
-          opportunities={opportunities}
-          metrics={metrics}
-          isLoading={isLoading}
-          onCreateOpportunity={() => setNewOpportunityDialogOpen(true)}
-          onViewOpportunity={handleViewOpportunity}
-          onScreenOpportunity={handleScreenOpportunity}
-        />
+        <ErrorBoundary
+          onError={(error, errorInfo) => console.error('Deal Screening Traditional View Error:', error, errorInfo)}
+        >
+          <DealScreeningTraditional
+            opportunities={opportunities}
+            metrics={metrics}
+            isLoading={isLoading}
+            onCreateOpportunity={() => setNewOpportunityDialogOpen(true)}
+            onViewOpportunity={handleViewOpportunity}
+            onScreenOpportunity={handleScreenOpportunity}
+          />
+        </ErrorBoundary>
       )}
 
       {currentMode.mode === 'assisted' && (
-        <DealScreeningAssisted
-          opportunities={opportunities}
-          aiRecommendations={aiState.recommendations}
-          metrics={metrics}
-          isLoading={isLoading}
-          onCreateOpportunity={() => setNewOpportunityDialogOpen(true)}
-          onViewOpportunity={handleViewOpportunity}
-          onScreenOpportunity={handleScreenOpportunity}
-          onExecuteAIAction={handleExecuteAIAction}
-          onDismissRecommendation={handleDismissRecommendation}
-        />
+        <ErrorBoundary
+          onError={(error, errorInfo) => console.error('Deal Screening Assisted View Error:', error, errorInfo)}
+        >
+          <DealScreeningAssisted
+            opportunities={opportunities}
+            aiRecommendations={aiState.recommendations}
+            metrics={metrics}
+            isLoading={isLoading}
+            onCreateOpportunity={() => setNewOpportunityDialogOpen(true)}
+            onViewOpportunity={handleViewOpportunity}
+            onScreenOpportunity={handleScreenOpportunity}
+            onExecuteAIAction={handleExecuteAIAction}
+            onDismissRecommendation={handleDismissRecommendation}
+          />
+        </ErrorBoundary>
       )}
 
       {currentMode.mode === 'autonomous' && (
-        <DealScreeningAutonomous
-          onSwitchMode={handleModeSwitch}
-        />
+        <ErrorBoundary
+          onError={(error, errorInfo) => console.error('Deal Screening Autonomous View Error:', error, errorInfo)}
+        >
+          <DealScreeningAutonomous
+            onSwitchMode={handleModeSwitch}
+          />
+        </ErrorBoundary>
       )}
 
       {/* Global Dialogs */}
