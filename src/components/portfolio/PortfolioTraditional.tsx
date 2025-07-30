@@ -44,7 +44,11 @@ export function PortfolioTraditional({
       </div>
 
       {/* Unified Portfolio Manager */}
-      <UnifiedPortfolioManager />
+      <UnifiedPortfolioManager 
+        onViewAsset={onViewAsset}
+        onEditAsset={onEditAsset}
+        onCreateAsset={onCreateAsset}
+      />
 
       {/* Traditional Mode Notice */}
       <div className="mx-6 mb-6 p-4 bg-gray-100 border border-gray-200 rounded-lg">

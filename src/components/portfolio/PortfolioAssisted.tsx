@@ -44,7 +44,11 @@ export function PortfolioAssisted({
       </div>
 
       {/* Unified Portfolio Manager */}
-      <UnifiedPortfolioManager />
+      <UnifiedPortfolioManager 
+        onViewAsset={onViewAsset}
+        onEditAsset={onEditAsset}
+        onCreateAsset={onCreateAsset}
+      />
 
       {/* Assisted Mode Notice */}
       <div className="mx-6 mb-6 p-4 bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200 rounded-lg">

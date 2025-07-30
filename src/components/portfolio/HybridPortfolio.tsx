@@ -264,7 +264,9 @@ export const HybridPortfolio: React.FC = () => {
   }
 
   const handleViewAsset = (id: string) => {
-    console.log(`Viewing asset: ${id}`)
+    // Navigate to asset detail page using the current portfolio ID
+    const portfolioId = 'default' // This would come from context in a real implementation
+    router.push(`/portfolio/${portfolioId}/assets/${id}`)
   }
 
   const handleEditAsset = (id: string) => {

@@ -13,6 +13,8 @@ interface VirtualizedAssetGridProps {
   assetType?: AssetType;
   pageSize?: number;
   itemHeight?: number;
+  onViewAsset?: (assetId: string) => void;
+  onEditAsset?: (assetId: string) => void;
 }
 
 interface AssetGridFilters {
@@ -30,7 +32,9 @@ interface AssetGridFilters {
 export function VirtualizedAssetGrid({ 
   assetType, 
   pageSize = 50,
-  itemHeight = 200 
+  itemHeight = 200,
+  onViewAsset,
+  onEditAsset 
 }: VirtualizedAssetGridProps) {
   const { state, getFilteredAssets, toggleAssetSelection, selectAssets } = useUnifiedPortfolio();
   
@@ -411,7 +415,13 @@ export function VirtualizedAssetGrid({
                       : 'hover:bg-gray-50'
                   }`}
                   style={{ height: itemHeight - 16 }} // Account for gap
-                  onClick={() => toggleAssetSelection(asset.id)}
+                  onClick={() => {
+                    if (onViewAsset) {
+                      onViewAsset(asset.id);
+                    } else {
+                      toggleAssetSelection(asset.id);
+                    }
+                  }}
                 >
                   {/* Asset Header */}
                   <div className="flex items-start justify-between mb-3">

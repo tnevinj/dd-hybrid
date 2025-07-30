@@ -29,6 +29,9 @@ interface UnifiedPortfolioManagerProps {
   assetType?: AssetType;
   portfolioId?: string;
   config?: Partial<PortfolioConfig>;
+  onViewAsset?: (assetId: string) => void;
+  onEditAsset?: (assetId: string) => void;
+  onCreateAsset?: () => void;
 }
 
 // Default configuration for unified portfolio management
@@ -182,7 +185,11 @@ const defaultConfig: PortfolioConfig = {
   ],
 };
 
-function PortfolioManagerContent() {
+function PortfolioManagerContent({ onViewAsset, onEditAsset, onCreateAsset }: { 
+  onViewAsset?: (assetId: string) => void;
+  onEditAsset?: (assetId: string) => void;
+  onCreateAsset?: () => void;
+}) {
   const { state, config, analytics, loadPortfolios, selectPortfolio } = useUnifiedPortfolio();
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedAssetType, setSelectedAssetType] = useState<AssetType | 'all'>('all');
@@ -220,7 +227,11 @@ function PortfolioManagerContent() {
       case 'PortfolioPerformance':
         return <PortfolioPerformance />;
       case 'VirtualizedAssetGrid':
-        return <VirtualizedAssetGrid assetType={selectedAssetType === 'all' ? undefined : selectedAssetType} />;
+        return <VirtualizedAssetGrid 
+          assetType={selectedAssetType === 'all' ? undefined : selectedAssetType} 
+          onViewAsset={onViewAsset}
+          onEditAsset={onEditAsset}
+        />;
       case 'TraditionalAssetsView':
         return <TraditionalAssetsView />;
       case 'RealEstateAssetsView':
@@ -403,7 +414,10 @@ function PortfolioManagerContent() {
 export function UnifiedPortfolioManager({ 
   assetType, 
   portfolioId, 
-  config = {} 
+  config = {},
+  onViewAsset,
+  onEditAsset,
+  onCreateAsset
 }: UnifiedPortfolioManagerProps) {
   const mergedConfig: PortfolioConfig = {
     ...defaultConfig,
@@ -413,7 +427,11 @@ export function UnifiedPortfolioManager({
 
   return (
     <UnifiedPortfolioProvider config={mergedConfig} initialPortfolioId={portfolioId}>
-      <PortfolioManagerContent />
+      <PortfolioManagerContent 
+        onViewAsset={onViewAsset}
+        onEditAsset={onEditAsset}
+        onCreateAsset={onCreateAsset}
+      />
     </UnifiedPortfolioProvider>
   );
 }

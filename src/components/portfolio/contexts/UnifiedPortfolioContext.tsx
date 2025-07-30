@@ -185,6 +185,19 @@ export function UnifiedPortfolioProvider({
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
+      // For development, load sample data
+      const { samplePortfolios } = await import('../data/samplePortfolioData');
+      dispatch({ type: 'SET_PORTFOLIOS', payload: samplePortfolios });
+      
+      // Also set the default portfolio as current
+      if (samplePortfolios.length > 0) {
+        dispatch({ type: 'SET_CURRENT_PORTFOLIO', payload: samplePortfolios[0] });
+      }
+      
+      return;
+      
+      // Production code (commented out for development)
+      /*
       const response = await fetch('/api/portfolio', {
         method: 'GET',
         credentials: 'include',
@@ -196,6 +209,7 @@ export function UnifiedPortfolioProvider({
       
       const portfolios = await response.json();
       dispatch({ type: 'SET_PORTFOLIOS', payload: portfolios });
+      */
     } catch (error) {
       console.error('Error loading portfolios:', error);
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
