@@ -70,24 +70,15 @@ export async function POST(
     // Calculate total score
     const totalScore = scores?.reduce((sum: number, score: DealScore) => sum + score.weightedScore, 0) || 0;
 
-    // Determine recommendation based on score and mode
+    // Determine recommendation based on score - use consistent thresholds across all modes
+    // Mode affects interaction/process, not investment decision criteria
     let recommendation: 'highly_recommended' | 'recommended' | 'neutral' | 'not_recommended' | 'rejected';
     
-    if (mode === 'autonomous') {
-      // AI-driven recommendation logic
-      if (totalScore >= 85) recommendation = 'highly_recommended';
-      else if (totalScore >= 70) recommendation = 'recommended';
-      else if (totalScore >= 50) recommendation = 'neutral';
-      else if (totalScore >= 30) recommendation = 'not_recommended';
-      else recommendation = 'rejected';
-    } else {
-      // Human-driven or assisted recommendation
-      if (totalScore >= 80) recommendation = 'highly_recommended';
-      else if (totalScore >= 65) recommendation = 'recommended';
-      else if (totalScore >= 45) recommendation = 'neutral';
-      else if (totalScore >= 25) recommendation = 'not_recommended';
-      else recommendation = 'rejected';
-    }
+    if (totalScore >= 80) recommendation = 'highly_recommended';
+    else if (totalScore >= 65) recommendation = 'recommended';
+    else if (totalScore >= 45) recommendation = 'neutral';
+    else if (totalScore >= 25) recommendation = 'not_recommended';
+    else recommendation = 'rejected';
 
     // Create screening result
     const screeningResult: DealScreeningResult = {

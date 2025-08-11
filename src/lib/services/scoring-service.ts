@@ -130,28 +130,22 @@ export class ScoringService {
   }
 
   /**
-   * Calculate recommendation based on total score and mode
+   * Calculate recommendation based on total score
+   * NOTE: Mode parameter kept for backward compatibility but doesn't affect thresholds
+   * All modes use identical decision criteria to ensure consistent results
    */
   static calculateRecommendation(
     totalScore: number, 
     mode: 'traditional' | 'assisted' | 'autonomous'
   ): 'highly_recommended' | 'recommended' | 'neutral' | 'not_recommended' | 'rejected' {
     
-    if (mode === 'autonomous') {
-      // AI-driven recommendation logic (more aggressive thresholds)
-      if (totalScore >= 85) return 'highly_recommended';
-      else if (totalScore >= 70) return 'recommended';
-      else if (totalScore >= 50) return 'neutral';
-      else if (totalScore >= 30) return 'not_recommended';
-      else return 'rejected';
-    } else {
-      // Human-driven or assisted recommendation (more conservative)
-      if (totalScore >= 80) return 'highly_recommended';
-      else if (totalScore >= 65) return 'recommended';
-      else if (totalScore >= 45) return 'neutral';
-      else if (totalScore >= 25) return 'not_recommended';
-      else return 'rejected';
-    }
+    // Use consistent thresholds across all modes to ensure identical results for same scores
+    // Mode affects interaction/process, not investment decision criteria
+    if (totalScore >= 80) return 'highly_recommended';
+    else if (totalScore >= 65) return 'recommended';  
+    else if (totalScore >= 45) return 'neutral';
+    else if (totalScore >= 25) return 'not_recommended';
+    else return 'rejected';
   }
 
   /**

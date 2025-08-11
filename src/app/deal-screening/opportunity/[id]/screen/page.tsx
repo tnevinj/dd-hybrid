@@ -495,7 +495,7 @@ const AssistedScoringInterface: React.FC<{
   onScoreUpdate: (criterionId: string, score: number, notes?: string, aiGenerated?: boolean, confidence?: number) => void;
   onComplete: () => void;
 }> = ({ template, workflow, opportunity, onScoreUpdate, onComplete }) => {
-  const [scores, setScores] = useState<Record<string, { value: number; notes: string; aiSuggestion?: number; confidence?: number }>>({});
+  const [scores, setScores] = useState<Record<string, CriterionScore>>({});
   const [currentCriterionIndex, setCurrentCriterionIndex] = useState(0);
   const [aiSuggestions, setAiSuggestions] = useState<Record<string, AISuggestion>>({});
   const [showAiPanel, setShowAiPanel] = useState(true);
@@ -522,25 +522,32 @@ const AssistedScoringInterface: React.FC<{
   const handleScoreChange = (score: number) => {
     setScores(prev => ({
       ...prev,
-      [currentCriterion.id]: { ...prev[currentCriterion.id], value: score }
+      [currentCriterion.id]: { 
+        ...prev[currentCriterion.id],
+        criterionId: currentCriterion.id,
+        value: score,
+        notes: prev[currentCriterion.id]?.notes || '',
+        aiGenerated: false
+      }
     }));
-    onScoreUpdate(currentCriterion.id, score, scores[currentCriterion.id]?.notes || '');
+    onScoreUpdate(currentCriterion.id, score, scores[currentCriterion.id]?.notes || '', false);
   };
 
   const handleAcceptAiSuggestion = () => {
     const suggestion = aiSuggestions[currentCriterion.id];
     if (suggestion) {
-      // Update local scores state
-      handleScoreChange(suggestion.score);
-      
-      // Update notes with AI reasoning
+      // Create proper CriterionScore structure for consistency with autonomous mode
+      const aiScore: CriterionScore = {
+        criterionId: currentCriterion.id,
+        value: suggestion.score,
+        notes: suggestion.reasoning,
+        aiGenerated: true,
+        confidence: suggestion.confidence
+      };
+
       setScores(prev => ({
         ...prev,
-        [currentCriterion.id]: { 
-          ...prev[currentCriterion.id], 
-          value: suggestion.score,
-          notes: suggestion.reasoning 
-        }
+        [currentCriterion.id]: aiScore
       }));
       
       // Notify parent component with AI flag
@@ -553,7 +560,13 @@ const AssistedScoringInterface: React.FC<{
   const handleNotesChange = (notes: string) => {
     setScores(prev => ({
       ...prev,
-      [currentCriterion.id]: { ...prev[currentCriterion.id], notes }
+      [currentCriterion.id]: { 
+        ...prev[currentCriterion.id],
+        criterionId: currentCriterion.id,
+        notes,
+        value: prev[currentCriterion.id]?.value || 0,
+        aiGenerated: prev[currentCriterion.id]?.aiGenerated || false
+      }
     }));
   };
 
@@ -832,7 +845,7 @@ const AutonomousScoringInterface: React.FC<{
   onComplete: () => void;
 }> = ({ template, workflow, opportunity, onScoreUpdate, onComplete }) => {
   const [aiProcessingStatus, setAiProcessingStatus] = useState<'processing' | 'completed' | 'pending_approval'>('processing');
-  const [autoScores, setAutoScores] = useState<Record<string, { value: number; confidence: number; reasoning: string; needsApproval: boolean }>>({});
+  const [autoScores, setAutoScores] = useState<Record<string, CriterionScore & { needsApproval: boolean }>>({});
   const [pendingApprovals, setPendingApprovals] = useState<string[]>([]);
   const [currentProcessingStep, setCurrentProcessingStep] = useState(0);
 
@@ -859,10 +872,12 @@ const AutonomousScoringInterface: React.FC<{
       if (suggestion) {
         const needsApproval = suggestion.confidence < 0.80; // Low confidence scores need approval
         
-        const scoringResult = {
+        const scoringResult: CriterionScore & { needsApproval: boolean } = {
+          criterionId: criterion.id,
           value: suggestion.score,
           confidence: suggestion.confidence,
-          reasoning: suggestion.reasoning,
+          notes: suggestion.reasoning,
+          aiGenerated: true,
           needsApproval,
         };
 
@@ -874,7 +889,7 @@ const AutonomousScoringInterface: React.FC<{
         if (needsApproval) {
           setPendingApprovals(prev => [...prev, criterion.id]);
         } else {
-          onScoreUpdate(criterion.id, scoringResult.value, scoringResult.reasoning, true, scoringResult.confidence);
+          onScoreUpdate(criterion.id, scoringResult.value, scoringResult.notes, true, scoringResult.confidence);
         }
       }
     }
@@ -893,7 +908,7 @@ const AutonomousScoringInterface: React.FC<{
   const handleApproveScore = (criterionId: string) => {
     const score = autoScores[criterionId];
     if (score) {
-      onScoreUpdate(criterionId, score.value, score.reasoning, true, score.confidence);
+      onScoreUpdate(criterionId, score.value, score.notes, true, score.confidence);
       setPendingApprovals(prev => prev.filter(id => id !== criterionId));
       
       if (pendingApprovals.length === 1) { // This was the last one
