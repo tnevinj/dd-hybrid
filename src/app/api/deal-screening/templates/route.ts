@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DealScreeningTemplate, DealScreeningCriterion } from '@/types/deal-screening';
 
 // Mock templates data - in real app this would come from database
-const mockTemplates: DealScreeningTemplate[] = [
+export const mockTemplates: DealScreeningTemplate[] = [
   {
     id: 'template-fund-default',
     name: 'Fund Investment (Default)',

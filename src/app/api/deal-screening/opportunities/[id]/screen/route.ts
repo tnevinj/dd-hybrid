@@ -119,9 +119,16 @@ export async function POST(
       };
     }
 
-    // Generate AI insights for assisted and autonomous modes
+    // Generate AI insights and initialize post-screening workflow
     let aiInsights = {};
+    let postScreeningWorkflow = null;
+    
     if (mode === 'assisted' || mode === 'autonomous') {
+      // Import services dynamically to avoid circular dependencies
+      const { PostScreeningWorkflowService } = await import('@/lib/services/post-screening-workflow-service');
+      const { DocumentGenerationService } = await import('@/lib/services/document-generation-service');
+      
+      // Generate enhanced AI insights
       aiInsights = {
         processingTime: screeningResult.aiProcessingTime || 8.3,
         confidence: Math.random() * 0.2 + 0.8, // 0.8-1.0
@@ -132,7 +139,7 @@ export async function POST(
         },
         riskFactors: [
           'Management team transition in progress',
-          'Market competition intensifying',
+          'Market competition intensifying', 
           'Regulatory environment changing',
         ].slice(0, Math.floor(Math.random() * 3) + 1),
         opportunities: [
@@ -141,6 +148,45 @@ export async function POST(
           'Experienced management team',
         ].slice(0, Math.floor(Math.random() * 3) + 1),
       };
+
+      // Initialize post-screening workflow if auto-complete is enabled
+      if (autoComplete) {
+        try {
+          postScreeningWorkflow = await PostScreeningWorkflowService.createWorkflow(
+            opportunity,
+            screeningResult,
+            mode as 'traditional' | 'assisted' | 'autonomous'
+          );
+          
+          // Update opportunity status based on workflow routing
+          const workflowStage = postScreeningWorkflow.currentStage;
+          let newStatus = opportunity.status;
+          
+          if (workflowStage === 'committee_review') {
+            newStatus = 'pending_committee_review';
+          } else if (workflowStage === 'due_diligence') {
+            newStatus = 'in_due_diligence';
+          } else if (workflowStage === 'approval') {
+            newStatus = 'awaiting_approval';
+          }
+          
+          // Update opportunity status
+          const opportunityIndex = opportunities.findIndex(opp => opp.id === id);
+          if (opportunityIndex !== -1) {
+            opportunities[opportunityIndex] = {
+              ...opportunities[opportunityIndex],
+              status: newStatus,
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          
+          console.log(`Post-screening workflow initiated for ${opportunity.name}: ${workflowStage} stage`);
+          
+        } catch (workflowError) {
+          console.error('Error creating post-screening workflow:', workflowError);
+          // Continue without workflow if there's an error
+        }
+      }
     }
 
     return NextResponse.json({
@@ -148,6 +194,10 @@ export async function POST(
         screeningResult,
         updatedOpportunity: opportunities[opportunityIndex],
         aiInsights: Object.keys(aiInsights).length > 0 ? aiInsights : undefined,
+        postScreeningWorkflow,
+        workflowInitiated: !!postScreeningWorkflow,
+        nextSteps: postScreeningWorkflow?.nextSteps?.slice(0, 3) || [],
+        notifications: postScreeningWorkflow?.notifications?.filter(n => n.actionRequired) || []
       },
       success: true,
     }, { status: 201 });

@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X } from 'lucide-react';
 import { DealOpportunity, AIRecommendation, AutomatedAction, PendingApproval } from '@/types/deal-screening';
+import { WorkProductCreator } from '@/components/work-product';
+import { WorkProduct, WorkProductCreateRequest } from '@/types/work-product';
 
 interface Project {
   id: string;
@@ -46,6 +48,7 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
     projects,
     selectProject,
     setActiveProjectType,
+    setDealScreeningProjects,
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
@@ -53,14 +56,107 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
+  const [showWorkProductCreator, setShowWorkProductCreator] = useState(false);
+  const [showWorkProductViewer, setShowWorkProductViewer] = useState(false);
+  const [currentWorkProduct, setCurrentWorkProduct] = useState<WorkProduct | null>(null);
 
-  // Initialize project type for deal screening
+  // Initialize project type for deal screening and load data
   React.useEffect(() => {
     setActiveProjectType('deal-screening');
-  }, [setActiveProjectType]);
+    
+    // Fetch deal screening opportunities from API and convert to projects
+    const fetchDealScreeningData = async () => {
+      try {
+        const response = await fetch('/api/deal-screening/opportunities');
+        if (response.ok) {
+          const data = await response.json();
+          const opportunities = data.opportunities || [];
+          
+          // Convert opportunities to autonomous projects format
+          const projects: Project[] = opportunities.map((opp: DealOpportunity) => ({
+            id: opp.id,
+            name: opp.name,
+            type: 'analysis' as const,
+            status: opp.status === 'screening' ? 'active' : 
+                   opp.status === 'approved' ? 'review' : 
+                   opp.status === 'new' ? 'draft' : 'active',
+            lastActivity: new Date(opp.updatedAt || opp.createdAt),
+            priority: opp.expectedIRR > 20 ? 'high' : opp.expectedIRR > 15 ? 'medium' : 'low',
+            unreadMessages: opp.aiRecommendations?.length || 0,
+            metadata: {
+              progress: opp.status === 'approved' ? 95 : opp.status === 'screening' ? 65 : 25,
+              team: ['Alex Thompson', 'Rachel Martinez', 'Kevin Liu', 'Sarah Park'], // Default team
+              dealValue: opp.askPrice,
+              sector: opp.sector,
+              geography: opp.geography,
+              stage: opp.vintage,
+              riskRating: opp.expectedRisk > 0.15 ? 'high' : opp.expectedRisk > 0.1 ? 'medium' : 'low',
+              confidenceScore: opp.aiConfidence || 0.5,
+              workProductId: opp.id === '1' ? 'wp-techcorp' : opp.id === '2' ? 'wp-healthtech' : `wp-${opp.id}`,
+              workProductTitle: `${opp.name} Screening Report`
+            }
+          }));
+          
+          setDealScreeningProjects(projects);
+        }
+      } catch (error) {
+        console.error('Error fetching deal screening data:', error);
+        // Fallback to default behavior if API fails
+      }
+    };
+    
+    fetchDealScreeningData();
+  }, [setActiveProjectType, setDealScreeningProjects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
+  };
+
+  const handleViewWorkProduct = async (workProductId: string) => {
+    if (!selectedProject) return;
+    
+    try {
+      const response = await fetch(`/api/workspaces/${selectedProject.id}/work-products/${workProductId}`);
+      if (response.ok) {
+        const workProduct = await response.json();
+        setCurrentWorkProduct(workProduct);
+        setShowWorkProductViewer(true);
+      }
+    } catch (error) {
+      console.error('Error fetching work product:', error);
+    }
+  };
+
+  const handleCreateWorkProduct = (project: Project) => {
+    selectProject(project); // Ensure project is selected
+    setShowWorkProductCreator(true);
+  };
+
+  const handleGenerateReport = (project: Project) => {
+    // This could trigger AI assistant action or open work product creator
+    selectProject(project);
+    setShowWorkProductCreator(true);
+  };
+
+  const handleWorkProductCreated = async (request: WorkProductCreateRequest) => {
+    if (!selectedProject) return;
+    
+    try {
+      const response = await fetch(`/api/workspaces/${selectedProject.id}/work-products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+      });
+      
+      if (response.ok) {
+        const newWorkProduct = await response.json();
+        setCurrentWorkProduct(newWorkProduct);
+        setShowWorkProductCreator(false);
+        setShowWorkProductViewer(true);
+      }
+    } catch (error) {
+      console.error('Error creating work product:', error);
+    }
   };
 
   return (
@@ -136,9 +232,71 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
           <ContextPanel
             project={selectedProject || undefined}
             projectType="deal-screening"
+            onViewWorkProduct={handleViewWorkProduct}
+            onCreateWorkProduct={handleCreateWorkProduct}
+            onGenerateReport={handleGenerateReport}
           />
         )}
       </div>
+
+      {/* Work Product Creator Modal */}
+      {showWorkProductCreator && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-semibold">Create Work Product - {selectedProject.name}</h2>
+              <Button variant="ghost" size="sm" onClick={() => setShowWorkProductCreator(false)}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="overflow-y-auto max-h-[calc(90vh-80px)]">
+              <WorkProductCreator
+                workspaceId={selectedProject.id}
+                onCreateWorkProduct={handleWorkProductCreated}
+                onCancel={() => setShowWorkProductCreator(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Work Product Viewer Modal */}
+      {showWorkProductViewer && currentWorkProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[95vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-semibold">{currentWorkProduct.title}</h2>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline">{currentWorkProduct.type}</Badge>
+                <Badge className={
+                  currentWorkProduct.status === 'DRAFT' ? 'bg-yellow-100 text-yellow-700' :
+                  currentWorkProduct.status === 'IN_REVIEW' ? 'bg-orange-100 text-orange-700' :
+                  currentWorkProduct.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
+                  'bg-gray-100 text-gray-700'
+                }>
+                  {currentWorkProduct.status}
+                </Badge>
+                <Button variant="ghost" size="sm" onClick={() => setShowWorkProductViewer(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="overflow-y-auto max-h-[calc(95vh-80px)] p-4">
+              <div className="prose prose-sm max-w-none">
+                {currentWorkProduct.sections.map((section, index) => (
+                  <div key={section.id} className="mb-6">
+                    <h3 className="text-lg font-semibold mb-2">{section.title}</h3>
+                    <div className="whitespace-pre-wrap text-gray-700">
+                      {section.content}
+                    </div>
+                    {index < currentWorkProduct.sections.length - 1 && <hr className="my-6" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

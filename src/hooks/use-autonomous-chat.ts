@@ -363,6 +363,30 @@ The executive dashboard now reflects the most current portfolio performance and 
 
 📊 Full analysis integrates with workspace project data and team assignments.`;
           break;
+
+        case 'screen_investment_opportunity':
+          confirmationContent = `✅ **Deal Screening Complete**
+
+**Opportunity Analyzed:**
+• SaaS Startup Pipeline: $25M Series A, Technology sector
+• Screening Criteria: Series A, North America, Technology focus
+• Team: Alex Thompson, Rachel Martinez, Kevin Liu, Sarah Park
+
+**Screening Results:**
+• **Score**: 75/100 (Medium-High potential)
+• **Risk Rating**: Medium
+• **Sector Fit**: Strong (Technology focus area)
+• **Stage Alignment**: Series A target range
+• **Geographic Fit**: North America preferred
+
+**Key Findings:**
+• Strong revenue growth (45% YoY)
+• Competitive SaaS metrics (LTV/CAC ratio)
+• Experienced management team
+• Moderate competition risk
+
+📄 Screening report has been added to SaaS Pipeline project (wp-6) and shared with screening team members.`;
+          break;
           
         default:
           confirmationContent = `✅ **Action "${action.label}" Completed Successfully**

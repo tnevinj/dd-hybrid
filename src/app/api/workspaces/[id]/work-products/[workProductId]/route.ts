@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { WorkProduct, WorkProductUpdateRequest } from '@/types/work-product';
 
 // Mock work product data - extend with the detailed work product
-const mockWorkProduct: WorkProduct = {
-  id: 'wp-1',
-  workspaceId: '1',
-  title: 'TechCorp Due Diligence Report',
+const mockWorkProducts: Record<string, WorkProduct> = {
+  'wp-1': {
+    id: 'wp-1',
+    workspaceId: '1',
+    title: 'TechCorp Due Diligence Report',
   type: 'DD_REPORT',
   status: 'IN_REVIEW',
   templateId: 'dd_report-standard',
@@ -224,6 +225,329 @@ Based on our comprehensive analysis, we recommend proceeding with the investment
   collaboratorCount: 3,
   commentCount: 8,
   editCount: 24
+  },
+  'wp-6': {
+    id: 'wp-6',
+    workspaceId: '6',
+    title: 'SaaS Pipeline Screening Report',
+    type: 'SCREENING_REPORT',
+    status: 'IN_REVIEW',
+    templateId: 'screening_report-standard',
+    sections: [
+      {
+        id: 'exec-summary',
+        title: 'Executive Summary',
+        order: 1,
+        content: `# Executive Summary
+
+Our SaaS Startup Pipeline screening has identified 12 high-potential opportunities in the Series A space, with a combined addressable market of $850M and average revenue growth of 145% YoY.
+
+## Key Screening Highlights
+
+1. **Strong Pipeline Quality**: 75% of opportunities meet our core investment criteria
+2. **Sector Focus**: Technology SaaS companies with B2B focus and scalable platforms
+3. **Geographic Distribution**: Primarily North America (85%) with selective European opportunities
+4. **Average Deal Size**: $25M Series A rounds with 15-18 month runway
+
+Our screening process has filtered 120 initial opportunities down to 12 qualified prospects ready for deep due diligence evaluation.`,
+        type: 'text',
+        required: true
+      },
+      {
+        id: 'screening-criteria',
+        title: 'Screening Criteria & Methodology',
+        order: 2,
+        content: `# Screening Criteria & Methodology
+
+## Primary Screening Filters
+
+### Financial Criteria
+- **Revenue Range**: $2M - $15M ARR
+- **Growth Rate**: Minimum 100% YoY growth
+- **Unit Economics**: LTV/CAC ratio >3x
+- **Gross Margin**: >70% for software, >60% for services
+
+### Market & Product Criteria
+- **TAM Size**: Minimum $1B addressable market
+- **Product-Market Fit**: Evidence of organic growth and customer retention >90%
+- **Competitive Position**: Differentiated offering with defensible moats
+- **Technology Stack**: Scalable architecture and modern tech foundation
+
+### Team & Leadership
+- **Management Experience**: Previous startup or scaling experience preferred
+- **Technical Leadership**: Strong CTO/engineering leadership
+- **Market Knowledge**: Deep domain expertise in target vertical
+- **Growth Mindset**: Demonstrated ability to execute rapid scaling plans`,
+        type: 'text',
+        required: true
+      },
+      {
+        id: 'pipeline-analysis',
+        title: 'Pipeline Analysis & Results',
+        order: 3,
+        content: `# Pipeline Analysis & Results
+
+## Screening Results Summary
+
+**Total Opportunities Evaluated**: 120
+**Passed Initial Screen**: 35 (29.2%)
+**Advanced to Deep Screen**: 18 (15.0%)
+**Qualified for Due Diligence**: 12 (10.0%)
+
+## Top Qualified Opportunities
+
+### Tier 1 - High Priority (Score 85-95)
+1. **CloudAnalytics Pro** - $8M ARR, 180% growth, Marketing Analytics
+2. **SecureAPI Hub** - $12M ARR, 145% growth, Developer Security Tools
+3. **WorkflowAI** - $6M ARR, 220% growth, AI-Powered Business Automation
+
+### Tier 2 - Strong Candidates (Score 75-84)
+4. **DataVault Solutions** - $5M ARR, 165% growth, Enterprise Data Management
+5. **ConnectCRM Plus** - $9M ARR, 125% growth, Vertical CRM for Healthcare
+6. **DevOps Central** - $7M ARR, 190% growth, CI/CD Platform
+
+### Tier 3 - Qualified Pipeline (Score 65-74)
+7. **SupplyChain Insights** - $4M ARR, 155% growth, Supply Chain Analytics
+8. **CustomerSuccess Hub** - $6M ARR, 135% growth, CS Platform
+9. **FinanceFlow** - $8M ARR, 110% growth, SMB Financial Management
+
+## Geographic Distribution
+- **North America**: 10 opportunities (83%)
+- **Europe**: 2 opportunities (17%)
+- **Primary Markets**: San Francisco, Austin, Toronto, London`,
+        type: 'text',
+        required: true
+      }
+    ],
+    tags: ['screening', 'saas', 'series-a', 'pipeline'],
+    visibility: 'WORKSPACE',
+    collaborators: [
+      { id: 'alex-thompson', name: 'Alex Thompson', role: 'lead', permissions: ['read', 'write', 'comment'] },
+      { id: 'rachel-martinez', name: 'Rachel Martinez', role: 'analyst', permissions: ['read', 'write', 'comment'] },
+      { id: 'kevin-liu', name: 'Kevin Liu', role: 'contributor', permissions: ['read', 'comment'] },
+      { id: 'sarah-park', name: 'Sarah Park', role: 'reviewer', permissions: ['read', 'comment'] }
+    ],
+    version: '1.2',
+    versionHistory: [
+      {
+        id: 'v1',
+        version: '1.0',
+        createdBy: 'alex-thompson',
+        createdAt: new Date('2024-01-20'),
+        changeLog: 'Initial screening report creation',
+        snapshot: []
+      },
+      {
+        id: 'v2',
+        version: '1.1',
+        createdBy: 'rachel-martinez', 
+        createdAt: new Date('2024-01-23'),
+        changeLog: 'Added pipeline analysis and tier rankings',
+        snapshot: []
+      }
+    ],
+    wordCount: 1245,
+    readingTime: 6,
+    collaboratorCount: 4,
+    commentCount: 12,
+    editCount: 18
+  },
+  'wp-3': {
+    id: 'wp-3',
+    workspaceId: '3',
+    title: 'RetailCo Deal Screening Report',
+    type: 'SCREENING_REPORT',
+    status: 'DRAFT',
+    templateId: 'screening_report-standard',
+    sections: [
+      {
+        id: 'exec-summary',
+        title: 'Executive Summary',
+        order: 1,
+        content: `# Executive Summary\n\nRetailCo represents a solid growth opportunity in the European retail market, with strong fundamentals but moderate growth potential. The company shows steady performance with 25% year-over-year revenue growth.\n\n## Key Screening Results\n\n1. **Market Position**: Established player in specialty retail with regional dominance\n2. **Financial Health**: €35M revenue with improving margins and cash flow\n3. **Growth Potential**: Moderate expansion opportunities through digital transformation\n4. **Management Team**: Experienced leadership with strong operational background`,
+        type: 'text',
+        required: true
+      }
+    ],
+    metadata: {
+      dealName: 'RetailCo Growth Investment',
+      sector: 'Retail',
+      investmentSize: '€35M',
+      confidentialityLevel: 'Confidential',
+      documentClassification: 'Internal Use Only'
+    },
+    createdBy: 'tom-anderson',
+    lastEditedBy: 'maria-rodriguez',
+    assignedReviewers: ['james-lee'],
+    currentReviewer: 'james-lee',
+    createdAt: new Date('2024-01-18'),
+    updatedAt: new Date('2024-01-22'),
+    lastEditedAt: new Date('2024-01-22'),
+    reviewDueDate: new Date('2024-01-28'),
+    version: '1.1',
+    versionHistory: [
+      {
+        id: 'v1',
+        version: '1.0',
+        createdBy: 'tom-anderson',
+        createdAt: new Date('2024-01-18'),
+        changeLog: 'Initial screening report creation',
+        snapshot: []
+      }
+    ],
+    wordCount: 456,
+    readingTime: 3,
+    collaboratorCount: 3,
+    commentCount: 5,
+    editCount: 8
+  },
+  'wp-4': {
+    id: 'wp-4',
+    workspaceId: '4',
+    title: 'Manufacturing Portfolio Review Report',
+    type: 'PORTFOLIO_REPORT',
+    status: 'DRAFT',
+    templateId: 'portfolio_report-standard',
+    sections: [
+      {
+        id: 'exec-summary',
+        title: 'Executive Summary',
+        order: 1,
+        content: `# Executive Summary\n\nOur manufacturing portfolio shows stable performance with opportunities for operational improvements and ESG enhancements. Portfolio value of $80M across 3 manufacturing assets.\n\n## Portfolio Highlights\n\n1. **Stable Returns**: Consistent cash flow generation across all assets\n2. **Operational Excellence**: Strong management teams with deep industry expertise\n3. **ESG Opportunities**: Significant potential for sustainability improvements\n4. **Market Position**: Well-positioned in defensive industrial sectors`,
+        type: 'text',
+        required: true
+      }
+    ],
+    metadata: {
+      dealName: 'Manufacturing Portfolio Review',
+      sector: 'Manufacturing',
+      investmentSize: '$80M',
+      confidentialityLevel: 'Internal',
+      documentClassification: 'Portfolio Review'
+    },
+    createdBy: 'kevin-zhang',
+    lastEditedBy: 'sophie-miller',
+    assignedReviewers: ['kevin-zhang'],
+    currentReviewer: 'kevin-zhang',
+    createdAt: new Date('2024-01-10'),
+    updatedAt: new Date('2024-01-15'),
+    lastEditedAt: new Date('2024-01-15'),
+    reviewDueDate: new Date('2024-02-01'),
+    version: '1.0',
+    versionHistory: [
+      {
+        id: 'v1',
+        version: '1.0',
+        createdBy: 'kevin-zhang',
+        createdAt: new Date('2024-01-10'),
+        changeLog: 'Initial portfolio review creation',
+        snapshot: []
+      }
+    ],
+    wordCount: 324,
+    readingTime: 2,
+    collaboratorCount: 2,
+    commentCount: 2,
+    editCount: 3
+  },
+  'wp-techcorp': {
+    id: 'wp-techcorp',
+    workspaceId: '1',
+    title: 'TechCorp Series B Screening Report',
+    type: 'SCREENING_REPORT',
+    status: 'IN_PROGRESS',
+    templateId: 'screening_report-standard',
+    sections: [
+      {
+        id: 'exec-summary',
+        title: 'Executive Summary',
+        order: 1,
+        content: `# Executive Summary\n\nTechCorp Series B represents a high-potential investment opportunity in the enterprise AI software market. The company demonstrates exceptional growth metrics with 180% YoY revenue growth and strong market position.\n\n## Key Screening Highlights\n\n1. **Market Leadership**: AI-powered enterprise software with defensible moats\n2. **Financial Strength**: $50M Series B, strong unit economics, LTV/CAC of 5.2x\n3. **Growth Trajectory**: Rapid customer acquisition and expanding market presence\n4. **Technical Excellence**: Proprietary AI algorithms with patent protection\n\n**Recommendation**: PROCEED - High confidence investment opportunity with strong fundamentals and growth potential.`,
+        type: 'text',
+        required: true
+      }
+    ],
+    metadata: {
+      dealName: 'TechCorp Series B Investment',
+      sector: 'Technology',
+      investmentSize: '$50M',
+      confidentialityLevel: 'Highly Confidential',
+      documentClassification: 'Deal Screening'
+    },
+    createdBy: 'alex-thompson',
+    lastEditedBy: 'rachel-martinez',
+    assignedReviewers: ['kevin-liu'],
+    currentReviewer: 'kevin-liu',
+    createdAt: new Date('2024-01-20'),
+    updatedAt: new Date('2024-01-24'),
+    lastEditedAt: new Date('2024-01-24'),
+    reviewDueDate: new Date('2024-01-30'),
+    version: '1.3',
+    versionHistory: [
+      {
+        id: 'v1',
+        version: '1.0',
+        createdBy: 'alex-thompson',
+        createdAt: new Date('2024-01-20'),
+        changeLog: 'Initial TechCorp screening report',
+        snapshot: []
+      }
+    ],
+    wordCount: 678,
+    readingTime: 4,
+    collaboratorCount: 3,
+    commentCount: 15,
+    editCount: 22
+  },
+  'wp-healthtech': {
+    id: 'wp-healthtech',
+    workspaceId: '2',
+    title: 'HealthTech Solutions Screening Report',
+    type: 'SCREENING_REPORT',
+    status: 'APPROVED',
+    templateId: 'screening_report-standard',
+    sections: [
+      {
+        id: 'exec-summary',
+        title: 'Executive Summary',
+        order: 1,
+        content: `# Executive Summary\n\nHealthTech Solutions presents a compelling investment in emerging market digital health infrastructure. Strong patient outcomes and sustainable business model with significant social impact.\n\n## Key Screening Results\n\n1. **Market Impact**: Digital health platform serving 500K+ patients across Africa\n2. **Financial Performance**: $25M revenue with 95% patient retention rates\n3. **Scalability**: Technology platform ready for rapid geographic expansion\n4. **ESG Alignment**: Strong social impact with measurable health outcomes\n\n**Recommendation**: APPROVED - Excellent strategic fit with high impact potential and solid financial returns.`,
+        type: 'text',
+        required: true
+      }
+    ],
+    metadata: {
+      dealName: 'HealthTech Solutions Investment',
+      sector: 'Healthcare',
+      investmentSize: '$25M',
+      confidentialityLevel: 'Confidential',
+      documentClassification: 'Deal Screening'
+    },
+    createdBy: 'sarah-park',
+    lastEditedBy: 'michael-chen',
+    assignedReviewers: ['sarah-park'],
+    currentReviewer: 'sarah-park',
+    createdAt: new Date('2024-01-16'),
+    updatedAt: new Date('2024-01-22'),
+    lastEditedAt: new Date('2024-01-22'),
+    reviewDueDate: new Date('2024-01-26'),
+    version: '2.0',
+    versionHistory: [
+      {
+        id: 'v1',
+        version: '1.0',
+        createdBy: 'sarah-park',
+        createdAt: new Date('2024-01-16'),
+        changeLog: 'Initial HealthTech screening report',
+        snapshot: []
+      }
+    ],
+    wordCount: 542,
+    readingTime: 3,
+    collaboratorCount: 2,
+    commentCount: 8,
+    editCount: 14
+  }
 };
 
 export async function GET(
@@ -235,14 +559,16 @@ export async function GET(
     const workProductId = params.workProductId;
     
     // In real implementation, fetch from database
-    if (workProductId !== 'wp-1' || workspaceId !== '1') {
+    const workProduct = mockWorkProducts[workProductId];
+    
+    if (!workProduct || workProduct.workspaceId !== workspaceId) {
       return NextResponse.json(
         { error: 'Work product not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json(mockWorkProduct);
+    return NextResponse.json(workProduct);
     
   } catch (error) {
     console.error('Error fetching work product:', error);
@@ -263,7 +589,9 @@ export async function PUT(
     const updates: WorkProductUpdateRequest = await request.json();
     
     // In real implementation, update in database
-    if (workProductId !== 'wp-1' || workspaceId !== '1') {
+    const workProduct = mockWorkProducts[workProductId];
+    
+    if (!workProduct || workProduct.workspaceId !== workspaceId) {
       return NextResponse.json(
         { error: 'Work product not found' },
         { status: 404 }
@@ -272,13 +600,13 @@ export async function PUT(
     
     // Mock update
     const updatedWorkProduct = {
-      ...mockWorkProduct,
+      ...workProduct,
       ...updates,
       updatedAt: new Date(),
       lastEditedAt: new Date(),
       lastEditedBy: 'current-user',
-      editCount: mockWorkProduct.editCount + 1,
-      version: updates.sections ? '1.3' : mockWorkProduct.version
+      editCount: workProduct.editCount + 1,
+      version: updates.sections ? '1.3' : workProduct.version
     };
     
     // Update word count if sections changed

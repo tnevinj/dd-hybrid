@@ -59,6 +59,7 @@ interface AutonomousActions {
   updateProject: (projectId: string, updates: Partial<Project>) => void;
   addProject: (projectType: string, project: Project) => void;
   refreshProjectsFromUnifiedData: () => void;
+  setDealScreeningProjects: (projects: Project[]) => void;
   
   // Chat session actions
   createChatSession: (projectId: string) => string;
@@ -122,18 +123,8 @@ const getInitialProjects = (): Record<string, Project[]> => {
     }
   ];
   
-  projectsByType['deal-screening'] = [
-    {
-      id: '6',
-      name: 'SaaS Startup Pipeline',
-      type: 'analysis',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 15,
-      metadata: { progress: 30, team: ['Screening Team', 'Tech Analysts'] }
-    }
-  ];
+  // Deal screening projects will be loaded dynamically from API
+  projectsByType['deal-screening'] = [];
   
   return projectsByType;
 };
@@ -220,6 +211,14 @@ export const useAutonomousStore = create<AutonomousStore>()(
       refreshProjectsFromUnifiedData: () =>
         set(() => ({
           projects: getInitialProjects()
+        })),
+
+      setDealScreeningProjects: (projects) =>
+        set((state) => ({
+          projects: {
+            ...state.projects,
+            'deal-screening': projects
+          }
         })),
 
       // Chat session actions

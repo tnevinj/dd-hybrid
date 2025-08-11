@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DealScreeningTemplate, DealOpportunity } from '@/types/deal-screening';
 
-// This would typically be imported from the templates route or database
+// Mock templates data - import directly to avoid fetch issues
+import { mockTemplates } from '../route';
+
 const getTemplates = async (): Promise<DealScreeningTemplate[]> => {
-  // In real app, this would be a database query
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/deal-screening/templates`);
-  const data = await response.json();
-  return data.templates;
+  // Use imported mock templates directly instead of HTTP fetch
+  return mockTemplates;
 };
 
 export async function POST(request: NextRequest) {
@@ -21,11 +21,14 @@ export async function POST(request: NextRequest) {
     }
 
     const templates = await getTemplates();
+    console.log(`Template recommendation for ${opportunity.name} (${opportunity.assetType}) in ${mode} mode`);
+    console.log(`Found ${templates.length} total templates`);
     
     // AI-powered template recommendation logic
     const recommendedTemplates = templates
       .filter(template => {
         // Primary filter: asset type match
+        console.log(`Checking template ${template.name}: ${template.assetTypeSpecific?.assetType} vs opportunity ${opportunity.assetType}`);
         if (template.assetTypeSpecific?.assetType !== opportunity.assetType) {
           return false;
         }
@@ -81,6 +84,26 @@ export async function POST(request: NextRequest) {
       })
       .sort((a, b) => b.score - a.score)
       .slice(0, 3); // Return top 3 recommendations
+
+    console.log(`Filtered to ${recommendedTemplates.length} matching templates`);
+
+    // If no templates match, provide fallback recommendations
+    if (recommendedTemplates.length === 0) {
+      console.log(`No templates found for asset type: ${opportunity.assetType}, providing fallback`);
+      // Return all templates as potential matches with lower scores
+      const fallbackTemplates = templates.map(template => ({
+        template,
+        score: 50, // Lower base score for non-matching templates
+        reasons: [
+          `Generic template adaptable for ${opportunity.assetType} investments`,
+          `${Math.round((template.analytics?.successRate || 0) * 100)}% historical success rate`,
+          'Can be customized for this asset type',
+          template.aiEnhanced ? 'AI-enhanced scoring available' : 'Manual scoring only',
+        ],
+      })).slice(0, 3);
+
+      recommendedTemplates.push(...fallbackTemplates);
+    }
 
     // Generate AI insights for the opportunity
     const aiInsights = {

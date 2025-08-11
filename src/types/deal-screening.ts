@@ -69,7 +69,7 @@ export interface DealOpportunity {
   workspaceId?: string; // Link to workspace system
   
   scores: DealScore[];
-  status: 'new' | 'screening' | 'analyzed' | 'approved' | 'rejected' | 'closed';
+  status: 'new' | 'screening' | 'analyzed' | 'pending_committee_review' | 'in_due_diligence' | 'awaiting_approval' | 'conditional_approval' | 'investment_approved' | 'documentation_pending' | 'approved' | 'rejected' | 'closed';
   
   // AI Enhancement fields
   aiConfidence?: number; // 0-1, AI confidence in analysis
@@ -108,6 +108,73 @@ export interface RecommendedAction {
   action: string;
   params?: Record<string, any>;
   timeEstimate?: number; // minutes saved
+}
+
+// Post-screening workflow interfaces
+export interface PostScreeningWorkflow {
+  id: string;
+  opportunityId: string;
+  screeningResultId: string;
+  currentStage: 'routing' | 'committee_review' | 'due_diligence' | 'approval' | 'documentation' | 'completed';
+  nextSteps: WorkflowStep[];
+  assignments: StakeholderAssignment[];
+  notifications: NotificationRecord[];
+  documents: GeneratedDocument[];
+  createdAt: string;
+  updatedAt: string;
+  automationLevel: 'manual' | 'assisted' | 'autonomous';
+}
+
+export interface WorkflowStep {
+  id: string;
+  type: 'review' | 'approval' | 'due_diligence' | 'document_generation' | 'meeting' | 'notification';
+  title: string;
+  description: string;
+  assignedTo: string[];
+  dueDate?: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: 'pending' | 'in_progress' | 'completed' | 'skipped' | 'blocked';
+  dependencies?: string[]; // IDs of prerequisite steps
+  estimatedDuration?: number; // minutes
+  aiGenerated?: boolean;
+  completedAt?: string;
+  completedBy?: string;
+}
+
+export interface StakeholderAssignment {
+  userId: string;
+  role: 'analyst' | 'senior_analyst' | 'director' | 'committee_member' | 'legal' | 'ops';
+  responsibilities: string[];
+  notificationPreferences: {
+    email: boolean;
+    slack: boolean;
+    dashboard: boolean;
+  };
+}
+
+export interface NotificationRecord {
+  id: string;
+  type: 'screening_complete' | 'review_required' | 'approval_needed' | 'deadline_approaching' | 'status_update';
+  recipientId: string;
+  title: string;
+  message: string;
+  sent: boolean;
+  sentAt?: string;
+  readAt?: string;
+  actionRequired: boolean;
+  actionUrl?: string;
+}
+
+export interface GeneratedDocument {
+  id: string;
+  type: 'investment_summary' | 'committee_memo' | 'due_diligence_plan' | 'risk_assessment' | 'benchmark_analysis';
+  title: string;
+  content: string;
+  format: 'pdf' | 'docx' | 'html' | 'markdown';
+  generatedBy: 'ai' | 'template' | 'user';
+  createdAt: string;
+  downloadUrl?: string;
+  templateId?: string;
 }
 
 export interface DealScreeningResult {

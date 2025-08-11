@@ -29,6 +29,9 @@ import {
   Eye,
   ChevronRight,
   ChevronLeft,
+  Users,
+  Bell,
+  ArrowRight,
   Sparkles,
   Target,
   BarChart3,
@@ -44,6 +47,8 @@ import {
   DealScore,
   TemplateSelection
 } from '@/types/deal-screening';
+import { AIScreeningService, AISuggestion } from '@/lib/services/ai-screening-service';
+import { ScoringService, CriterionScore, ScoringResult } from '@/lib/services/scoring-service';
 
 // Template Selection Step Component
 const TemplateSelectionStep: React.FC<{
@@ -293,7 +298,7 @@ const TemplateSelectionStep: React.FC<{
 const TraditionalScoringInterface: React.FC<{
   template: DealScreeningTemplate;
   workflow: ScreeningWorkflow;
-  onScoreUpdate: (criterionId: string, score: number, notes?: string) => void;
+  onScoreUpdate: (criterionId: string, score: number, notes?: string, aiGenerated?: boolean, confidence?: number) => void;
   onComplete: () => void;
 }> = ({ template, workflow, onScoreUpdate, onComplete }) => {
   const [scores, setScores] = useState<Record<string, { value: number; notes: string }>>({});
@@ -486,66 +491,32 @@ const TraditionalScoringInterface: React.FC<{
 const AssistedScoringInterface: React.FC<{
   template: DealScreeningTemplate;
   workflow: ScreeningWorkflow;
-  onScoreUpdate: (criterionId: string, score: number, notes?: string) => void;
+  opportunity: DealOpportunity;
+  onScoreUpdate: (criterionId: string, score: number, notes?: string, aiGenerated?: boolean, confidence?: number) => void;
   onComplete: () => void;
-}> = ({ template, workflow, onScoreUpdate, onComplete }) => {
+}> = ({ template, workflow, opportunity, onScoreUpdate, onComplete }) => {
   const [scores, setScores] = useState<Record<string, { value: number; notes: string; aiSuggestion?: number; confidence?: number }>>({});
   const [currentCriterionIndex, setCurrentCriterionIndex] = useState(0);
-  const [aiSuggestions, setAiSuggestions] = useState<Record<string, { score: number; confidence: number; reasoning: string }>>({});
+  const [aiSuggestions, setAiSuggestions] = useState<Record<string, AISuggestion>>({});
   const [showAiPanel, setShowAiPanel] = useState(true);
 
   const currentCriterion = template.criteria[currentCriterionIndex];
   const progress = (workflow.completedCriteria.length / template.criteria.length) * 100;
 
-  // Generate AI suggestions on mount
+  // Generate intelligent AI suggestions on mount
   useEffect(() => {
-    generateAiSuggestions();
-  }, [template]);
+    generateIntelligentAiSuggestions();
+  }, [template, opportunity]);
 
-  const generateAiSuggestions = () => {
-    const suggestions: Record<string, { score: number; confidence: number; reasoning: string }> = {};
+  const generateIntelligentAiSuggestions = () => {
+    console.log('Generating intelligent AI suggestions for:', opportunity.name);
     
-    template.criteria.forEach(criterion => {
-      // Mock AI suggestion generation
-      const baseScore = Math.random() * (criterion.maxValue - criterion.minValue) + criterion.minValue;
-      const confidence = 0.7 + Math.random() * 0.25; // 70-95% confidence
-      
-      suggestions[criterion.id] = {
-        score: Math.round(baseScore * 10) / 10,
-        confidence,
-        reasoning: generateReasoningForCriterion(criterion),
-      };
-    });
-    
+    // Use the new AI service to generate suggestions based on actual opportunity data
+    const suggestions = AIScreeningService.generateBatchSuggestions(opportunity, template);
     setAiSuggestions(suggestions);
-  };
-
-  const generateReasoningForCriterion = (criterion: any) => {
-    const reasoningTemplates = {
-      financial: [
-        "Based on sector benchmarks, this metric aligns with top quartile performance.",
-        "Historical data suggests this range indicates strong financial health.",
-        "Comparable deals in portfolio show similar patterns with positive outcomes.",
-      ],
-      operational: [
-        "Management team profile matches successful investments in our portfolio.",
-        "Operational metrics indicate efficient execution capabilities.",
-        "Industry analysis suggests strong competitive positioning.",
-      ],
-      strategic: [
-        "Market dynamics favor this strategic positioning.",
-        "Portfolio synergies could enhance value creation opportunities.",
-        "Strategic alignment with market trends shows positive indicators.",
-      ],
-      risk: [
-        "Risk profile is within acceptable parameters based on portfolio standards.",
-        "Mitigation strategies address key identified risk factors.",
-        "Historical precedent suggests manageable risk exposure.",
-      ],
-    };
-
-    const templates = reasoningTemplates[criterion.category as keyof typeof reasoningTemplates] || reasoningTemplates.financial;
-    return templates[Math.floor(Math.random() * templates.length)];
+    
+    // In assisted mode, DON'T automatically populate scores - let user accept suggestions
+    console.log('AI suggestions generated:', Object.keys(suggestions).length, 'criteria');
   };
 
   const handleScoreChange = (score: number) => {
@@ -559,7 +530,23 @@ const AssistedScoringInterface: React.FC<{
   const handleAcceptAiSuggestion = () => {
     const suggestion = aiSuggestions[currentCriterion.id];
     if (suggestion) {
+      // Update local scores state
       handleScoreChange(suggestion.score);
+      
+      // Update notes with AI reasoning
+      setScores(prev => ({
+        ...prev,
+        [currentCriterion.id]: { 
+          ...prev[currentCriterion.id], 
+          value: suggestion.score,
+          notes: suggestion.reasoning 
+        }
+      }));
+      
+      // Notify parent component with AI flag
+      onScoreUpdate(currentCriterion.id, suggestion.score, suggestion.reasoning, true, suggestion.confidence);
+      
+      console.log(`Accepted AI suggestion for ${currentCriterion.name}: ${suggestion.score} (${Math.round(suggestion.confidence * 100)}% confidence)`);
     }
   };
 
@@ -722,31 +709,76 @@ const AssistedScoringInterface: React.FC<{
               </CardContent>
             </Card>
 
-            {/* Benchmarking Data */}
-            <Card className="mt-4">
-              <CardHeader>
-                <CardTitle className="text-sm flex items-center space-x-2">
-                  <BarChart3 className="h-4 w-4" />
-                  <span>Benchmark Data</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Portfolio Average:</span>
-                    <span className="font-medium">{(Math.random() * 3 + 6).toFixed(1)}</span>
+            {/* Intelligent Benchmarking Data */}
+            {currentSuggestion && (
+              <Card className="mt-4">
+                <CardHeader>
+                  <CardTitle className="text-sm flex items-center space-x-2">
+                    <BarChart3 className="h-4 w-4" />
+                    <span>Benchmark Data</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Portfolio Average:</span>
+                      <span className="font-medium">{currentSuggestion.benchmarkData.portfolioAverage}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Industry Median:</span>
+                      <span className="font-medium">{currentSuggestion.benchmarkData.industryMedian}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Top Quartile:</span>
+                      <span className="font-medium">{currentSuggestion.benchmarkData.topQuartile}</span>
+                    </div>
+                    <div className="pt-2 border-t">
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>Sample Size:</span>
+                        <span>{currentSuggestion.benchmarkData.sampleSize} deals</span>
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {currentSuggestion.benchmarkData.dataSource}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Industry Median:</span>
-                    <span className="font-medium">{(Math.random() * 2 + 7).toFixed(1)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Top Quartile:</span>
-                    <span className="font-medium">{(Math.random() * 1 + 8.5).toFixed(1)}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Risk Factors and Opportunities */}
+            {currentSuggestion && (currentSuggestion.riskFactors.length > 0 || currentSuggestion.opportunities.length > 0) && (
+              <Card className="mt-4">
+                <CardHeader>
+                  <CardTitle className="text-sm">Key Considerations</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {currentSuggestion.riskFactors.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-medium text-red-700 mb-2 flex items-center">
+                        <AlertTriangle className="h-3 w-3 mr-1" />
+                        Risk Factors
+                      </h4>
+                      {currentSuggestion.riskFactors.map((risk, index) => (
+                        <div key={index} className="text-xs text-red-600 mb-1">• {risk}</div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {currentSuggestion.opportunities.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-medium text-green-700 mb-2 flex items-center">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Opportunities
+                      </h4>
+                      {currentSuggestion.opportunities.map((opportunity, index) => (
+                        <div key={index} className="text-xs text-green-600 mb-1">• {opportunity}</div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
       </div>
@@ -795,9 +827,10 @@ const AssistedScoringInterface: React.FC<{
 const AutonomousScoringInterface: React.FC<{
   template: DealScreeningTemplate;
   workflow: ScreeningWorkflow;
-  onScoreUpdate: (criterionId: string, score: number, notes?: string) => void;
+  opportunity: DealOpportunity;
+  onScoreUpdate: (criterionId: string, score: number, notes?: string, aiGenerated?: boolean, confidence?: number) => void;
   onComplete: () => void;
-}> = ({ template, workflow, onScoreUpdate, onComplete }) => {
+}> = ({ template, workflow, opportunity, onScoreUpdate, onComplete }) => {
   const [aiProcessingStatus, setAiProcessingStatus] = useState<'processing' | 'completed' | 'pending_approval'>('processing');
   const [autoScores, setAutoScores] = useState<Record<string, { value: number; confidence: number; reasoning: string; needsApproval: boolean }>>({});
   const [pendingApprovals, setPendingApprovals] = useState<string[]>([]);
@@ -810,54 +843,57 @@ const AutonomousScoringInterface: React.FC<{
   const simulateAiProcessing = async () => {
     setAiProcessingStatus('processing');
     
-    // Simulate AI processing each criterion
+    console.log('Starting intelligent autonomous processing for:', opportunity.name);
+    
+    // Generate all AI suggestions using the intelligent service
+    const aiSuggestions = AIScreeningService.generateBatchSuggestions(opportunity, template);
+    
+    // Process each criterion with realistic timing
     for (let i = 0; i < template.criteria.length; i++) {
       setCurrentProcessingStep(i);
-      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 600)); // Simulate processing time
       
       const criterion = template.criteria[i];
-      const score = Math.random() * (criterion.maxValue - criterion.minValue) + criterion.minValue;
-      const confidence = 0.6 + Math.random() * 0.35; // 60-95% confidence
-      const needsApproval = confidence < 0.8; // Low confidence scores need approval
+      const suggestion = aiSuggestions[criterion.id];
       
-      const scoringResult = {
-        value: Math.round(score * 10) / 10,
-        confidence,
-        reasoning: generateAiReasoning(criterion),
-        needsApproval,
-      };
+      if (suggestion) {
+        const needsApproval = suggestion.confidence < 0.80; // Low confidence scores need approval
+        
+        const scoringResult = {
+          value: suggestion.score,
+          confidence: suggestion.confidence,
+          reasoning: suggestion.reasoning,
+          needsApproval,
+        };
 
-      setAutoScores(prev => ({
-        ...prev,
-        [criterion.id]: scoringResult
-      }));
+        setAutoScores(prev => ({
+          ...prev,
+          [criterion.id]: scoringResult
+        }));
 
-      if (needsApproval) {
-        setPendingApprovals(prev => [...prev, criterion.id]);
-      } else {
-        onScoreUpdate(criterion.id, scoringResult.value, scoringResult.reasoning);
+        if (needsApproval) {
+          setPendingApprovals(prev => [...prev, criterion.id]);
+        } else {
+          onScoreUpdate(criterion.id, scoringResult.value, scoringResult.reasoning, true, scoringResult.confidence);
+        }
       }
     }
     
-    setAiProcessingStatus(pendingApprovals.length > 0 ? 'pending_approval' : 'completed');
+    // Check if we have pending approvals after processing all criteria
+    const finalPendingApprovals = template.criteria
+      .map(c => c.id)
+      .filter(id => aiSuggestions[id] && aiSuggestions[id].confidence < 0.80);
+    
+    setAiProcessingStatus(finalPendingApprovals.length > 0 ? 'pending_approval' : 'completed');
+    
+    console.log('Autonomous processing complete. Pending approvals:', finalPendingApprovals.length);
   };
 
-  const generateAiReasoning = (criterion: any) => {
-    const reasoningTemplates = {
-      financial: "AI analysis of financial metrics using portfolio benchmarks and market data.",
-      operational: "Automated assessment based on management profiles and operational KPIs.",
-      strategic: "Strategic positioning analysis using market intelligence and competitive data.",
-      risk: "Risk evaluation using proprietary risk models and historical patterns.",
-    };
-    
-    return reasoningTemplates[criterion.category as keyof typeof reasoningTemplates] || 
-           "AI-generated score based on comprehensive deal analysis.";
-  };
 
   const handleApproveScore = (criterionId: string) => {
     const score = autoScores[criterionId];
     if (score) {
-      onScoreUpdate(criterionId, score.value, score.reasoning);
+      onScoreUpdate(criterionId, score.value, score.reasoning, true, score.confidence);
       setPendingApprovals(prev => prev.filter(id => id !== criterionId));
       
       if (pendingApprovals.length === 1) { // This was the last one
@@ -1051,7 +1087,10 @@ export default function DealScreeningPage() {
   const opportunityId = params.id as string;
   
   const [opportunity, setOpportunity] = useState<DealOpportunity | null>(null);
-  const [currentStep, setCurrentStep] = useState<'template_selection' | 'scoring' | 'review'>('template_selection');
+  const [currentStep, setCurrentStep] = useState<'template_selection' | 'scoring' | 'review' | 'workflow_summary'>('template_selection');
+  const [workflowData, setWorkflowData] = useState<any>(null);
+  const [scores, setScores] = useState<Record<string, CriterionScore>>({});
+  const [scoringResult, setScoringResult] = useState<ScoringResult | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<DealScreeningTemplate | null>(null);
   const [workflow, setWorkflow] = useState<ScreeningWorkflow | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1085,6 +1124,10 @@ export default function DealScreeningPage() {
   const handleTemplateSelected = (template: DealScreeningTemplate, customizations?: any[]) => {
     setSelectedTemplate(template);
     
+    // Initialize empty score record
+    const emptyScores = ScoringService.createEmptyScoreRecord(template);
+    setScores(emptyScores);
+    
     // Create workflow
     const newWorkflow: ScreeningWorkflow = {
       id: `workflow-${Date.now()}`,
@@ -1102,7 +1145,19 @@ export default function DealScreeningPage() {
     setCurrentStep('scoring');
   };
 
-  const handleScoreUpdate = (criterionId: string, score: number, notes?: string) => {
+  const handleScoreUpdate = (criterionId: string, score: number, notes?: string, aiGenerated?: boolean, confidence?: number) => {
+    // Update scores state
+    setScores(prev => ({
+      ...prev,
+      [criterionId]: {
+        criterionId,
+        value: score,
+        notes: notes || '',
+        aiGenerated: aiGenerated || false,
+        confidence
+      }
+    }));
+
     // Update workflow progress
     if (workflow && !workflow.completedCriteria.includes(criterionId)) {
       setWorkflow(prev => prev ? {
@@ -1112,7 +1167,59 @@ export default function DealScreeningPage() {
     }
   };
 
-  const handleScoringComplete = () => {
+  const handleScoringComplete = async () => {
+    if (!selectedTemplate) {
+      console.error('No template selected');
+      return;
+    }
+
+    // Calculate final scores using the scoring service
+    const finalScoringResult = ScoringService.calculateFinalScores(scores, selectedTemplate);
+    setScoringResult(finalScoringResult);
+
+    // Validate scoring completeness
+    const validation = ScoringService.validateScoring(scores, selectedTemplate, mode === 'autonomous');
+    
+    if (!validation.valid) {
+      console.error('Scoring validation failed:', validation.errors);
+      // In a real app, show these errors to the user
+      alert(`Scoring incomplete:\n${validation.errors.join('\n')}`);
+      return;
+    }
+
+    // Convert scores to API format
+    const apiScores = ScoringService.convertScoresForAPI(scores, selectedTemplate);
+
+    // Check if we should show workflow summary for assisted/autonomous modes
+    if (mode !== 'traditional') {
+      try {
+        const response = await fetch(`/api/deal-screening/opportunities/${opportunityId}/screen`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            templateId: selectedTemplate.id,
+            scores: apiScores, // Now sending actual calculated scores
+            notes: `Screening completed with ${Math.round(finalScoringResult.completionRate * 100)}% criteria completion. Final score: ${finalScoringResult.totalScore}/100`,
+            mode,
+            autoComplete: true
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.data.workflowInitiated) {
+          setWorkflowData({
+            ...data.data,
+            localScoringResult: finalScoringResult // Add our calculated scores for display
+          });
+          setCurrentStep('workflow_summary');
+          return;
+        }
+      } catch (error) {
+        console.error('Error completing screening:', error);
+      }
+    }
+    
     setCurrentStep('review');
   };
 
@@ -1179,29 +1286,30 @@ export default function DealScreeningPage() {
                 {currentStep === 'template_selection' && 'Select screening template'}
                 {currentStep === 'scoring' && 'Score investment criteria'}
                 {currentStep === 'review' && 'Review and finalize screening'}
+                {currentStep === 'workflow_summary' && 'Workflow initiated and next steps assigned'}
               </p>
             </div>
             
             {/* Step Progress */}
             <div className="flex items-center space-x-2">
-              {['template_selection', 'scoring', 'review'].map((step, index) => (
+              {['template_selection', 'scoring', 'review', 'workflow_summary'].map((step, index) => (
                 <div key={step} className="flex items-center">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                     currentStep === step 
                       ? 'bg-blue-600 text-white' 
-                      : index < ['template_selection', 'scoring', 'review'].indexOf(currentStep)
+                      : index < ['template_selection', 'scoring', 'review', 'workflow_summary'].indexOf(currentStep)
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-200 text-gray-600'
                   }`}>
-                    {index < ['template_selection', 'scoring', 'review'].indexOf(currentStep) ? (
+                    {index < ['template_selection', 'scoring', 'review', 'workflow_summary'].indexOf(currentStep) ? (
                       <CheckCircle className="h-4 w-4" />
                     ) : (
                       index + 1
                     )}
                   </div>
-                  {index < 2 && (
+                  {index < 3 && (
                     <div className={`w-8 h-0.5 ${
-                      index < ['template_selection', 'scoring', 'review'].indexOf(currentStep)
+                      index < ['template_selection', 'scoring', 'review', 'workflow_summary'].indexOf(currentStep)
                         ? 'bg-green-500'
                         : 'bg-gray-200'
                     }`} />
@@ -1238,6 +1346,7 @@ export default function DealScreeningPage() {
               <AssistedScoringInterface
                 template={selectedTemplate}
                 workflow={workflow}
+                opportunity={opportunity}
                 onScoreUpdate={handleScoreUpdate}
                 onComplete={handleScoringComplete}
               />
@@ -1246,6 +1355,7 @@ export default function DealScreeningPage() {
               <AutonomousScoringInterface
                 template={selectedTemplate}
                 workflow={workflow}
+                opportunity={opportunity}
                 onScoreUpdate={handleScoreUpdate}
                 onComplete={handleScoringComplete}
               />
@@ -1263,6 +1373,260 @@ export default function DealScreeningPage() {
                 View Opportunity
               </Button>
               <Button onClick={() => router.push('/deal-screening')}>
+                Back to Dashboard
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {currentStep === 'workflow_summary' && workflowData && (
+          <div className="space-y-6">
+            {/* Success Header */}
+            <div className="text-center py-8">
+              <div className="flex items-center justify-center mb-4">
+                <CheckCircle className="h-12 w-12 text-green-500 mr-3" />
+                <Zap className="h-8 w-8 text-purple-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Screening Complete & Workflow Initiated!
+              </h2>
+              <p className="text-gray-600 mb-2">
+                {opportunity?.name} has been screened and automatically routed for next steps.
+              </p>
+              <Badge className="bg-green-100 text-green-800 px-3 py-1">
+                Score: {workflowData.localScoringResult?.totalScore || workflowData.screeningResult?.totalScore}/100 • {workflowData.screeningResult?.recommendation?.replace('_', ' ')}
+              </Badge>
+            </div>
+
+            {/* Workflow Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Next Stage */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg">
+                    <ArrowRight className="h-5 w-5 text-blue-600 mr-2" />
+                    Next Stage
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Badge className={`${
+                      workflowData.postScreeningWorkflow?.currentStage === 'committee_review' 
+                        ? 'bg-orange-100 text-orange-800' 
+                        : workflowData.postScreeningWorkflow?.currentStage === 'due_diligence'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-purple-100 text-purple-800'
+                    }`}>
+                      {workflowData.postScreeningWorkflow?.currentStage?.replace('_', ' ').toUpperCase() || 'COMMITTEE REVIEW'}
+                    </Badge>
+                    <p className="text-sm text-gray-600">
+                      Automatically routed based on screening score and deal characteristics.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Immediate Actions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg">
+                    <Clock className="h-5 w-5 text-orange-600 mr-2" />
+                    Immediate Actions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="text-lg font-semibold text-gray-900">
+                      {workflowData.nextSteps?.length || 0} tasks
+                    </div>
+                    <div className="space-y-1">
+                      {workflowData.nextSteps?.slice(0, 2).map((step: any, index: number) => (
+                        <div key={index} className="flex items-center text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                          {step.title}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Notifications */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg">
+                    <Bell className="h-5 w-5 text-purple-600 mr-2" />
+                    Notifications
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="text-lg font-semibold text-gray-900">
+                      {workflowData.notifications?.length || 0} sent
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Stakeholders have been notified and assignments distributed.
+                    </p>
+                    {workflowData.postScreeningWorkflow?.assignments?.length > 0 && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Users className="h-4 w-4 mr-1" />
+                        {workflowData.postScreeningWorkflow.assignments.length} team members assigned
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Workflow Details */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <FileText className="h-5 w-5 text-gray-600 mr-2" />
+                  Workflow Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Process Overview */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Process Overview</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Automation Level:</span>
+                        <Badge variant="outline">{workflowData.postScreeningWorkflow?.automationLevel || mode}</Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Total Steps:</span>
+                        <span className="font-medium">{workflowData.postScreeningWorkflow?.nextSteps?.length || 0}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Est. Timeline:</span>
+                        <span className="font-medium">
+                          {workflowData.postScreeningWorkflow?.currentStage === 'committee_review' ? '1-2 weeks' :
+                           workflowData.postScreeningWorkflow?.currentStage === 'due_diligence' ? '3-4 weeks' : '2-3 weeks'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Scoring Details */}
+                  {workflowData.localScoringResult && (
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-3">Scoring Breakdown</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Total Score:</span>
+                          <span className="font-medium">{workflowData.localScoringResult.totalScore}/100</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Criteria Completed:</span>
+                          <span className="font-medium">{Math.round(workflowData.localScoringResult.completionRate * 100)}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Weighted Average:</span>
+                          <span className="font-medium">{workflowData.localScoringResult.weightedAverage}/100</span>
+                        </div>
+                      </div>
+                      
+                      {/* Category Scores */}
+                      <div className="mt-3 space-y-1">
+                        <div className="text-xs font-medium text-gray-700 uppercase tracking-wide">Category Scores:</div>
+                        {Object.entries(workflowData.localScoringResult.scoreBreakdown).map(([category, score]) => (
+                          <div key={category} className="flex justify-between text-xs">
+                            <span className="text-gray-600 capitalize">{category}:</span>
+                            <span className={`font-medium ${ScoringService.getScoreColorClass(score as number)}`}>
+                              {score}/100
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* AI Insights */}
+                  {workflowData.aiInsights && (
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-3">AI Analysis</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Confidence:</span>
+                          <span className="font-medium">{Math.round((workflowData.aiInsights.confidence || 0.85) * 100)}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Sector Percentile:</span>
+                          <span className="font-medium">{workflowData.aiInsights.benchmarkComparison?.percentile || 75}th</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Processing Time:</span>
+                          <span className="font-medium">{workflowData.aiInsights.processingTime?.toFixed(1) || '8.3'}s</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Risk Factors & Opportunities */}
+                {workflowData.aiInsights && (workflowData.aiInsights.riskFactors?.length > 0 || workflowData.aiInsights.opportunities?.length > 0) && (
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {workflowData.aiInsights.riskFactors?.length > 0 && (
+                      <div>
+                        <h5 className="font-medium text-gray-900 mb-2 flex items-center">
+                          <AlertTriangle className="h-4 w-4 text-yellow-500 mr-1" />
+                          Key Risks
+                        </h5>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                          {workflowData.aiInsights.riskFactors.map((risk: string, index: number) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                              {risk}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {workflowData.aiInsights.opportunities?.length > 0 && (
+                      <div>
+                        <h5 className="font-medium text-gray-900 mb-2 flex items-center">
+                          <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                          Opportunities
+                        </h5>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                          {workflowData.aiInsights.opportunities.map((opp: string, index: number) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                              {opp}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-6">
+              <Button 
+                onClick={() => router.push(`/deal-screening/opportunity/${opportunityId}/workflow`)}
+                className="flex items-center"
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Workflow Details
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => router.push(`/deal-screening/opportunity/${opportunityId}`)}
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                View Opportunity
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => router.push('/deal-screening')}
+              >
                 Back to Dashboard
               </Button>
             </div>

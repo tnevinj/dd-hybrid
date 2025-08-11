@@ -169,7 +169,9 @@ export const UNIFIED_WORKSPACE_PROJECTS: UnifiedWorkspaceProject[] = [
       geography: 'Europe',
       stage: 'growth',
       riskRating: 'medium',
-      confidenceScore: 0.72
+      confidenceScore: 0.72,
+      workProductId: 'wp-3',
+      workProductTitle: 'RetailCo Deal Screening Report'
     },
     aiData: {
       optimizationScore: 7.5,
@@ -209,7 +211,9 @@ export const UNIFIED_WORKSPACE_PROJECTS: UnifiedWorkspaceProject[] = [
       geography: 'North America',
       stage: 'mature',
       riskRating: 'low',
-      confidenceScore: 0.65
+      confidenceScore: 0.65,
+      workProductId: 'wp-4',
+      workProductTitle: 'Manufacturing Portfolio Review Report'
     },
     aiData: {
       optimizationScore: 6.8,
@@ -244,7 +248,7 @@ export class UnifiedWorkspaceDataService {
    */
   static getTraditionalProjects() {
     return UNIFIED_WORKSPACE_PROJECTS.map(project => ({
-      id: project.id.replace('workspace-proj-', ''), // Use simple numeric ID for UI
+      id: project.id,
       name: project.name,
       type: project.displayType,
       status: project.displayStatus,
@@ -260,7 +264,7 @@ export class UnifiedWorkspaceDataService {
    */
   static getAssistedProjects() {
     return UNIFIED_WORKSPACE_PROJECTS.map(project => ({
-      id: project.id.replace('workspace-proj-', ''), // Use simple numeric ID for UI
+      id: project.id,
       name: project.name,
       type: project.displayType,
       status: project.displayStatus,
@@ -293,6 +297,10 @@ export class UnifiedWorkspaceDataService {
       metadata: {
         progress: project.progress,
         team: project.teamMembers,
+        dealValue: project.metadata.dealValue,
+        sector: project.metadata.sector,
+        workProductId: project.metadata.workProductId,
+        workProductTitle: project.metadata.workProductTitle,
         ...project.metadata
       }
     }));
