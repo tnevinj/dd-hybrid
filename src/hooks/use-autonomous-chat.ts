@@ -43,8 +43,16 @@ const buildThandoContext = (
   projectId?: string,
   navigationStore?: any
 ): ThandoContext => {
-  // This would typically be populated from actual app state
-  // For now, providing realistic demo data
+  // Get all projects first
+  const allProjects = projectType === 'portfolio' 
+    ? UnifiedWorkspaceDataService.getPortfolioAssetsAsProjects()
+    : UnifiedWorkspaceDataService.getThandoProjects();
+
+  // Filter to selected project if projectId is provided, otherwise use all projects
+  const contextProjects = projectId 
+    ? allProjects.filter(project => project.id === projectId)
+    : allProjects;
+
   return {
     currentModule: projectType as any,
     currentPage: window.location.pathname,
@@ -60,11 +68,9 @@ const buildThandoContext = (
       preferredChartTypes: ['line', 'bar', 'pie'],
       riskTolerance: 'medium'
     },
-    activeProjects: projectType === 'portfolio' 
-      ? UnifiedWorkspaceDataService.getPortfolioAssetsAsProjects()
-      : UnifiedWorkspaceDataService.getThandoProjects(),
-    activeDeals: UnifiedWorkspaceDataService.getThandoProjects().map(project => ({
-      id: project.id.replace('proj-', 'deal-'),
+    activeProjects: contextProjects,
+    activeDeals: contextProjects.map(project => ({
+      id: project.id + '-deal',
       name: project.name.replace('Due Diligence', 'Acquisition').replace('Investment Committee', 'Investment'),
       status: project.status === 'active' ? 'due-diligence' : project.status === 'review' ? 'negotiation' : 'sourcing',
       dealValue: project.metadata?.dealValue || 50000000,
@@ -110,10 +116,7 @@ const buildThandoContext = (
         benchmarkComparison: 2.1
       }
     },
-    recentActivity: (projectType === 'portfolio' 
-      ? UnifiedWorkspaceDataService.getPortfolioAssetsAsProjects()
-      : UnifiedWorkspaceDataService.getThandoProjects()
-    ).map((project, index) => ({
+    recentActivity: contextProjects.map((project, index) => ({
       id: `act-${index + 1}`,
       type: projectType === 'portfolio' ? 'portfolio_change' : 
             project.type === 'due-diligence' ? 'deal_update' : 
@@ -323,19 +326,22 @@ The executive dashboard now reflects the most current portfolio performance and 
           confirmationContent = `✅ **Investment Memo Generated**
 
 **Memo Details:**
-• **Deal**: ${action.inputSchema?.deal_id || 'Selected Deal'}
-• **Type**: ${action.inputSchema?.template_type || 'Full Memo'}
+• **Deal**: TechCorp Due Diligence ($50M Technology sector)
+• **Type**: ${action.inputSchema?.template_type || 'Due Diligence Report'}
 • **Pages**: 15-20 pages with comprehensive analysis
+• **Work Product ID**: wp-1
 
 **Sections Included:**
-• Executive Summary
-• Investment Thesis
-• Market Analysis
-• Financial Projections
-• Risk Assessment
-• Investment Committee Recommendation
+• Executive Summary (TechCorp growth potential)
+• Investment Thesis (Mid-market CRM leadership)
+• Market Analysis (Technology sector)
+• Financial Projections ($50M deal value)
+• Risk Assessment (Medium risk rating)
+• Team Recommendations (4 team members)
 
-📄 The memo has been saved to the workspace and shared with relevant team members.`;
+📄 The memo has been linked to TechCorp Due Diligence project and shared with Sarah Chen, Mike Rodriguez, Alex Johnson, and Lisa Park.
+
+💡 **You can now view this document in the Documents section of the right panel, or click "View Work Product" to open it.`;
           break;
           
         case 'analyze_portfolio_performance':
@@ -343,19 +349,19 @@ The executive dashboard now reflects the most current portfolio performance and 
 
 **Analysis Period**: ${action.inputSchema?.time_period || 'Q4 2024'}
 
+**Active Projects Analyzed:**
+• TechCorp Due Diligence: $50M, Technology, 75% complete, Medium risk
+• HealthCo Investment Committee: $125M, Healthcare, 90% complete, Low risk
+• RetailCo Deal Screening: $35M, Retail, 45% complete, Medium risk
+• Manufacturing Portfolio Review: $80M, Manufacturing, 20% complete, Low risk
+
 **Key Findings:**
-• Net IRR: 18.5% (vs 16.2% benchmark)
-• Technology sector leading with 24% returns
-• Healthcare showing strong resilience
-• 3 deals ready for potential exit in Q1 2025
+• Total deal pipeline: $290M across 4 active projects
+• Technology and Healthcare sectors leading
+• Average completion: 57.5% across all projects
+• Team utilization: 21 members across projects
 
-**Report Generated:**
-• 25-page detailed analysis
-• Sector performance breakdown
-• Individual asset analysis
-• Risk assessment summary
-
-📊 Full analysis report is available in the portfolio dashboard.`;
+📊 Full analysis integrates with workspace project data and team assignments.`;
           break;
           
         default:

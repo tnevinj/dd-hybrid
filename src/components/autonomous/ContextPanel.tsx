@@ -32,10 +32,20 @@ interface Project {
   status: 'active' | 'completed' | 'draft' | 'review';
   lastActivity: Date;
   priority: 'high' | 'medium' | 'low';
+  unreadMessages?: number;
   metadata?: {
     value?: string;
     progress?: number;
     team?: string[];
+    dealValue?: number;
+    sector?: string;
+    geography?: string;
+    stage?: string;
+    riskRating?: string;
+    confidenceScore?: number;
+    workProductId?: string;
+    workProductTitle?: string;
+    workProducts?: number;
   };
 }
 
@@ -43,6 +53,9 @@ interface ContextPanelProps {
   project?: Project;
   projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening';
   className?: string;
+  onViewWorkProduct?: (workProductId: string) => void;
+  onCreateWorkProduct?: (project: Project) => void;
+  onGenerateReport?: (project: Project) => void;
 }
 
 interface ProjectMetrics {
@@ -73,37 +86,77 @@ interface ProjectMetrics {
   };
 }
 
-const mockMetrics: Record<string, ProjectMetrics> = {
-  '1': {
+// Generate project-specific metrics based on actual project data
+const generateProjectMetrics = (project: Project): ProjectMetrics => {
+  // Use actual project metadata when available
+  const dealValue = project.metadata?.dealValue || 50000000;
+  const sector = project.metadata?.sector || project.type;
+  const stage = project.metadata?.stage || 'growth';
+  const riskRating = project.metadata?.riskRating || 'medium';
+  const teamMembers = project.metadata?.team || ['Team Lead', 'Analyst', 'Associate'];
+  const progress = project.metadata?.progress || 50;
+  const workProducts = project.metadata?.workProducts || 8;
+
+  // Calculate derived metrics
+  const currentValue = `$${Math.floor(dealValue / 1000000)}M`;
+  const targetValue = `$${Math.floor(dealValue * 1.5 / 1000000)}M`;
+  const irr = stage === 'growth' ? '18.5%' : stage === 'buyout' ? '22.3%' : '15.2%';
+  const multiple = stage === 'growth' ? '2.3x' : stage === 'buyout' ? '2.8x' : '2.0x';
+
+  // Generate timeline based on project status
+  const startDate = new Date(2024, 0, 15 + parseInt(project.id) * 10).toISOString().split('T')[0];
+  const targetDays = project.status === 'active' ? 180 : project.status === 'review' ? 30 : 240;
+  const targetClose = new Date(Date.now() + targetDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const daysPending = Math.floor((Date.now() - new Date(startDate).getTime()) / (24 * 60 * 60 * 1000));
+
+  // Generate sector-specific risks
+  const risksBySector: Record<string, string[]> = {
+    'Technology': ['Market disruption', 'Regulatory changes', 'Tech obsolescence'],
+    'Healthcare': ['Regulatory approval', 'Clinical trials', 'Compliance risks'],
+    'Retail': ['Consumer trends', 'Supply chain', 'Economic downturn'],
+    'Manufacturing': ['Supply costs', 'Labor issues', 'Environmental regs'],
+    'report': ['Data accuracy', 'Timeline pressure', 'Stakeholder alignment'],
+    'analysis': ['Market volatility', 'Assumption validity', 'Competition']
+  };
+
+  return {
     financial: {
-      currentValue: '$50M',
-      targetValue: '$75M',
-      irr: '18.5%',
-      multiple: '2.3x'
+      currentValue,
+      targetValue,
+      irr,
+      multiple
     },
     timeline: {
-      startDate: '2024-01-15',
-      targetClose: '2024-08-30',
-      daysPending: 45
+      startDate,
+      targetClose,
+      daysPending: Math.max(daysPending, 1)
     },
     team: {
-      lead: 'Sarah Chen',
-      members: ['Mike Johnson', 'Lisa Wang', 'David Brown'],
-      lastUpdate: '2 hours ago'
+      lead: teamMembers[0] || 'Team Lead',
+      members: teamMembers.slice(1) || ['Analyst', 'Associate'],
+      lastUpdate: project.status === 'active' ? '2 hours ago' : 
+                   project.status === 'review' ? '1 day ago' : '1 week ago'
     },
     risks: {
-      level: 'medium',
-      items: ['Market volatility', 'Regulatory changes', 'Competition']
+      level: riskRating as 'low' | 'medium' | 'high',
+      items: risksBySector[sector] || risksBySector[project.type] || ['General market risk', 'Execution risk', 'Timeline risk']
     },
     documents: {
-      total: 156,
-      pending: 23,
-      completed: 133
+      total: workProducts * 18 + 20,
+      pending: Math.floor(workProducts * (100 - progress) / 100 * 5),
+      completed: workProducts * 15 + Math.floor(progress / 10 * 15)
     }
-  }
+  };
 };
 
-export function ContextPanel({ project, projectType, className = '' }: ContextPanelProps) {
+export function ContextPanel({ 
+  project, 
+  projectType, 
+  className = '',
+  onViewWorkProduct,
+  onCreateWorkProduct,
+  onGenerateReport
+}: ContextPanelProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['overview']));
   
   if (!project) {
@@ -117,7 +170,7 @@ export function ContextPanel({ project, projectType, className = '' }: ContextPa
     );
   }
 
-  const metrics = mockMetrics[project.id] || mockMetrics['1'];
+  const metrics = generateProjectMetrics(project);
 
   const toggleSection = (section: string) => {
     const newExpanded = new Set(expandedSections);
@@ -332,6 +385,27 @@ export function ContextPanel({ project, projectType, className = '' }: ContextPa
         {/* Documents */}
         <CollapsibleSection title="Documents" id="documents" icon={FileText}>
           <div className="space-y-2">
+            {project.metadata?.workProductTitle && (
+              <div className="p-2 bg-blue-50 rounded border border-blue-200">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-xs font-medium text-blue-900">Active Work Product</div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-6 px-2 text-xs"
+                    onClick={() => onViewWorkProduct?.(project.metadata!.workProductId!)}
+                  >
+                    <Eye className="w-3 h-3 mr-1" />
+                    View
+                  </Button>
+                </div>
+                <div className="text-xs text-blue-700">{project.metadata.workProductTitle}</div>
+                <Badge variant="outline" className="text-xs mt-1">
+                  ID: {project.metadata.workProductId}
+                </Badge>
+              </div>
+            )}
+            
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="p-2 bg-gray-100 rounded">
                 <div className="text-sm font-semibold">{metrics.documents.total}</div>
@@ -360,9 +434,23 @@ export function ContextPanel({ project, projectType, className = '' }: ContextPa
             <CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <Button variant="outline" size="sm" className="w-full justify-start text-xs">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start text-xs"
+              onClick={() => onGenerateReport?.(project)}
+            >
               <BarChart3 className="w-3 h-3 mr-2" />
               Generate Report
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start text-xs"
+              onClick={() => onCreateWorkProduct?.(project)}
+            >
+              <FileText className="w-3 h-3 mr-2" />
+              Create Work Product
             </Button>
             <Button variant="outline" size="sm" className="w-full justify-start text-xs">
               <Users className="w-3 h-3 mr-2" />

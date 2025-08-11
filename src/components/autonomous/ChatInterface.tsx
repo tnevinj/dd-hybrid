@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Send, Bot, User, Settings, MoreHorizontal } from 'lucide-react';
 import { useAutonomousChat } from '@/hooks/use-autonomous-chat';
+import { useAutonomousStore } from '@/lib/stores/autonomousStore';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -45,6 +46,9 @@ export function ChatInterface({ projectId, projectType, className = '' }: ChatIn
     executeAction,
     isLoading
   } = useAutonomousChat(projectId, projectType);
+
+  // Get the selected project for context
+  const { selectedProject } = useAutonomousStore();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -127,19 +131,37 @@ export function ChatInterface({ projectId, projectType, className = '' }: ChatIn
               Welcome to Enhanced Thando AI
             </h3>
             <p className="text-gray-500 mb-4">
-              I'm your intelligent private equity assistant with comprehensive context about your portfolio, deals, and operations. I can provide deep analysis, execute actions, and offer strategic insights.
+              {selectedProject ? (
+                <>I'm focused on <strong>{selectedProject.name}</strong> - a {selectedProject.metadata?.sector || selectedProject.type} project with {selectedProject.metadata?.team?.length || 'your'} team members. I can provide specific analysis, generate work products, and offer targeted insights.</>
+              ) : (
+                <>I have access to your active projects including TechCorp Due Diligence ($50M, Technology sector), HealthCo Investment Committee ($125M, Healthcare), and others. Select a project on the left to get specific analysis and insights.</>
+              )}
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
-              <Badge variant="secondary">Deep Analysis</Badge>
-              <Badge variant="secondary">Portfolio Insights</Badge>
-              <Badge variant="secondary">Deal Intelligence</Badge>
-              <Badge variant="secondary">Action Execution</Badge>
-              <Badge variant="secondary">Risk Assessment</Badge>
-              <Badge variant="secondary">Report Generation</Badge>
+              {selectedProject ? (
+                <>
+                  <Badge variant="secondary">{selectedProject.name.split(' ')[0]}</Badge>
+                  <Badge variant="secondary">{selectedProject.metadata?.sector || selectedProject.type}</Badge>
+                  <Badge variant="secondary">{selectedProject.metadata?.dealValue ? `$${(selectedProject.metadata.dealValue / 1000000).toFixed(0)}M` : selectedProject.status}</Badge>
+                  <Badge variant="secondary">{selectedProject.metadata?.progress ? `${selectedProject.metadata.progress}%` : selectedProject.priority} Complete</Badge>
+                  <Badge variant="secondary">Team: {selectedProject.metadata?.team?.length || 'TBD'}</Badge>
+                </>
+              ) : (
+                <>
+                  <Badge variant="secondary">Project Selection</Badge>
+                  <Badge variant="secondary">Multi-Project View</Badge>
+                  <Badge variant="secondary">Portfolio Overview</Badge>
+                  <Badge variant="secondary">Team Coordination</Badge>
+                </>
+              )}
             </div>
             <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-sm text-blue-800">
-                💡 <strong>Try asking:</strong> "How is our portfolio performing?" or "Analyze the TechCorp deal" or "Generate an investment memo"
+                💡 <strong>Try asking:</strong> {selectedProject ? (
+                  `"Update me on ${selectedProject.name}" or "Generate work product for ${selectedProject.name.split(' ')[0]}" or "Show ${selectedProject.name.split(' ')[0]} team progress"`
+                ) : (
+                  `"Update me on TechCorp Due Diligence" or "Generate HealthCo investment memo" or "Show all project progress"`
+                )}
               </p>
             </div>
           </div>

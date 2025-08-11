@@ -59,7 +59,7 @@ export interface UnifiedWorkspaceProject {
 // Unified workspace projects data
 export const UNIFIED_WORKSPACE_PROJECTS: UnifiedWorkspaceProject[] = [
   {
-    id: 'workspace-proj-1',
+    id: '1',
     name: 'TechCorp Due Diligence',
     type: 'due-diligence',
     displayType: 'Due Diligence',
@@ -79,7 +79,9 @@ export const UNIFIED_WORKSPACE_PROJECTS: UnifiedWorkspaceProject[] = [
       geography: 'North America',
       stage: 'growth',
       riskRating: 'medium',
-      confidenceScore: 0.85
+      confidenceScore: 0.85,
+      workProductId: 'wp-1',
+      workProductTitle: 'TechCorp Due Diligence Report'
     },
     aiData: {
       optimizationScore: 9.2,
@@ -104,7 +106,7 @@ export const UNIFIED_WORKSPACE_PROJECTS: UnifiedWorkspaceProject[] = [
     }
   },
   {
-    id: 'workspace-proj-2',
+    id: '2',
     name: 'HealthCo Investment Committee',
     type: 'ic-preparation',
     displayType: 'IC Preparation',
@@ -125,7 +127,9 @@ export const UNIFIED_WORKSPACE_PROJECTS: UnifiedWorkspaceProject[] = [
       geography: 'North America',
       stage: 'buyout',
       riskRating: 'low',
-      confidenceScore: 0.94
+      confidenceScore: 0.94,
+      workProductId: 'wp-2',
+      workProductTitle: 'HealthCo Investment Committee Memo'
     },
     aiData: {
       optimizationScore: 8.8,
@@ -145,7 +149,7 @@ export const UNIFIED_WORKSPACE_PROJECTS: UnifiedWorkspaceProject[] = [
     }
   },
   {
-    id: 'workspace-proj-3',
+    id: '3',
     name: 'RetailCo Deal Screening',
     type: 'deal-screening',
     displayType: 'Screening',
@@ -185,7 +189,7 @@ export const UNIFIED_WORKSPACE_PROJECTS: UnifiedWorkspaceProject[] = [
     }
   },
   {
-    id: 'workspace-proj-4',
+    id: '4',
     name: 'Manufacturing Portfolio Review',
     type: 'portfolio-monitoring',
     displayType: 'Monitoring',
@@ -387,7 +391,7 @@ export class UnifiedWorkspaceDataService {
    */
   static getThandoProjects() {
     return UNIFIED_WORKSPACE_PROJECTS.map(project => ({
-      id: project.id.replace('workspace-', ''), // proj-1, proj-2, etc.
+      id: project.id, // Keep consistent with workspace API: '1', '2', etc.
       name: project.name,
       type: project.type,
       status: project.status,

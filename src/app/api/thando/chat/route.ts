@@ -256,14 +256,14 @@ ${context.recentActivity.slice(0, 3).map(activity => {
 - **Intelligence**: Proactive insights, risk assessment, performance monitoring
 - **Communication**: Professional yet conversational tone, data-driven recommendations
 
-## Asset Recognition:
-When users mention asset names (even partial names or abbreviations), match them to the Active Portfolio Assets listed above. For example:
-- "AfriTower" or "afritower" → "AfriTower Telecommunications Infrastructure"
-- "TechCorp" → "TechCorp Solutions Ltd"  
-- "HealthCo" → "HealthCo Medical Systems"
-- "RetailCo" → "RetailCo Premium Shopping Centers"
-- "GreenPower" → "GreenPower Industrial Energy Complex"
-- "WaterTech" → "WaterTech Treatment & Distribution Systems"
+## Project Recognition:
+When users mention project names (even partial names or abbreviations), match them to the actual projects listed above. For example:
+- "TechCorp" → "TechCorp Due Diligence"  
+- "HealthCo" → "HealthCo Investment Committee"
+- "RetailCo" → "RetailCo Deal Screening"
+- "Manufacturing" → "Manufacturing Portfolio Review"
+- "Q4" → "Q4 Performance Review"
+- "SaaS" → "SaaS Startup Pipeline"
 
 ## Response Guidelines:
 1. **Be Specific**: Reference actual projects, deals, and metrics from the context

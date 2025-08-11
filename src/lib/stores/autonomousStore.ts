@@ -111,7 +111,7 @@ const getInitialProjects = (): Record<string, Project[]> => {
   // Add dashboard and screening projects
   projectsByType.dashboard = [
     {
-      id: 'dash-1',
+      id: '5',
       name: 'Q4 Performance Review',
       type: 'report',
       status: 'active',
@@ -124,7 +124,7 @@ const getInitialProjects = (): Record<string, Project[]> => {
   
   projectsByType['deal-screening'] = [
     {
-      id: 'deal-screen-1',
+      id: '6',
       name: 'SaaS Startup Pipeline',
       type: 'analysis',
       status: 'active',

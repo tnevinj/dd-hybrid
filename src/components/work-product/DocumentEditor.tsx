@@ -75,8 +75,8 @@ export function DocumentEditor({ workProduct, onSave, onStatusChange, onBack }: 
               <div className="space-y-2">
                 <div className="p-3 bg-white rounded border border-violet-200">
                   <p className="text-sm text-gray-700">
-                    💡 I can help generate content for the "{currentSection?.title}" section using your workspace data.
-                    This will save approximately 15-20 minutes.
+                    💡 I can help generate content for the "{currentSection?.title}" section using TechCorp Due Diligence data.
+                    This includes $50M deal metrics, Technology sector analysis, and 75% project completion status.
                   </p>
                   <div className="flex gap-2 mt-2">
                     <Button size="sm" variant="outline">Generate Content</Button>
@@ -86,8 +86,8 @@ export function DocumentEditor({ workProduct, onSave, onStatusChange, onBack }: 
                 
                 <div className="p-3 bg-white rounded border border-violet-200">
                   <p className="text-sm text-gray-700">
-                    📊 I can insert financial metrics from your analysis components automatically.
-                    Current data: Revenue growth (45% YoY), Gross margin (82%).
+                    📊 I can insert TechCorp financial metrics from your due diligence analysis.
+                    Available: Deal value ($50M), Sector (Technology), Team size (4 members), Risk rating (Medium).
                   </p>
                   <Button size="sm" variant="outline" className="mt-2">Insert Metrics</Button>
                 </div>
@@ -98,18 +98,18 @@ export function DocumentEditor({ workProduct, onSave, onStatusChange, onBack }: 
               <div className="space-y-2">
                 <div className="p-3 bg-white rounded border border-purple-200">
                   <p className="text-sm text-gray-700">
-                    🔄 I'm continuously updating document sections as new evidence is added to the workspace.
-                    Last update: 2 minutes ago (Financial Analysis section).
+                    🔄 I monitor TechCorp Due Diligence workspace for updates and will refresh document sections when new data becomes available.
+                    Current status: Active project (75% complete), 4 team members, 8 work products.
                   </p>
-                  <Button size="sm" variant="outline" className="mt-2">View Recent Changes</Button>
+                  <Button size="sm" variant="outline" className="mt-2">View Project Status</Button>
                 </div>
                 
                 <div className="p-3 bg-white rounded border border-purple-200">
                   <p className="text-sm text-gray-700">
-                    ✍️ I can complete the remaining sections based on established patterns and data.
-                    Estimated completion time: 8 minutes for 4 remaining sections.
+                    ✍️ I can auto-generate remaining sections using TechCorp's established due diligence data.
+                    Available data: $50M deal value, Technology sector, Medium risk rating, North America geography.
                   </p>
-                  <Button size="sm" variant="outline" className="mt-2">Auto-Complete Document</Button>
+                  <Button size="sm" variant="outline" className="mt-2">Generate Sections</Button>
                 </div>
               </div>
             )}
@@ -309,10 +309,10 @@ export function DocumentEditor({ workProduct, onSave, onStatusChange, onBack }: 
                 <h4 className="text-sm font-medium text-blue-900 mb-2">💡 AI Content Suggestions</h4>
                 <div className="space-y-2">
                   <button className="text-left p-2 bg-white rounded border border-blue-200 hover:border-blue-300 transition-colors w-full">
-                    <p className="text-sm text-gray-700">"Based on the financial analysis, TechCorp demonstrates strong growth potential with..."</p>
+                    <p className="text-sm text-gray-700">"TechCorp Due Diligence shows strong fundamentals: $50M deal value, Technology sector, 75% completion with medium risk rating..."</p>
                   </button>
                   <button className="text-left p-2 bg-white rounded border border-blue-200 hover:border-blue-300 transition-colors w-full">
-                    <p className="text-sm text-gray-700">"Key investment highlights include: 1) Proven market leadership 2) Scalable platform..."</p>
+                    <p className="text-sm text-gray-700">"Team of 4 members (Sarah Chen, Mike Rodriguez, Alex Johnson, Lisa Park) has delivered 8 work products to date..."</p>
                   </button>
                 </div>
               </div>
