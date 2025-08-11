@@ -329,9 +329,8 @@ export const HybridDashboard: React.FC = () => {
           onModeChange={handleModeSwitch}
           moduleContext="dashboard"
           title="Executive Dashboard"
-          subtitle={dashboardData.activeDeals ? `Managing ${dashboardData.activeDeals} deals, ${dashboardData.teamMembers} team members, ${(dashboardData.totalAUM / 1000000000).toFixed(1)}B AUM • Choose your experience mode` : 'Comprehensive operations and performance management • Choose your experience mode'}
+          subtitle="Comprehensive operations and performance management • Choose your experience mode"
           disabled={isLoading}
-          context={dashboardData}
           className="sticky top-0 z-50"
         />
       )}

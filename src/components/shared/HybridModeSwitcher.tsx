@@ -235,7 +235,7 @@ export function HybridModeSwitcher({
       </Button>
       
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+        <div className="absolute right-0 mt-2 w-[28rem] max-w-[90vw] bg-white rounded-lg shadow-xl border border-gray-200 z-50">
           <div className="p-2">
             {modes.map((mode) => (
               <button
@@ -259,18 +259,47 @@ export function HybridModeSwitcher({
                     
                     {showFeatures && (
                       <div className="space-y-1">
-                        {mode.features.map((feature, index) => (
-                          <div key={index} className="flex items-center text-xs text-gray-500">
-                            <div className="w-1 h-1 bg-gray-400 rounded-full mr-2" />
-                            {feature}
+                        {mode.features.slice(0, 3).map((feature, index) => (
+                          <div key={index} className="flex items-center text-xs text-gray-500 leading-relaxed">
+                            <div className="w-1 h-1 bg-gray-400 rounded-full mr-2 flex-shrink-0" />
+                            <span>{feature}</span>
                           </div>
                         ))}
+                        {mode.features.length > 3 && (
+                          <div className="text-xs text-gray-400 italic">
+                            +{mode.features.length - 3} more features
+                          </div>
+                        )}
                       </div>
                     )}
                     
                     {context && (
-                      <div className="mt-2 text-xs text-gray-500">
-                        Context: {typeof context === 'string' ? context : JSON.stringify(context)}
+                      <div className="mt-2 p-2 bg-gray-50 rounded text-xs">
+                        <div className="font-medium text-gray-700 mb-1">Current Context</div>
+                        {typeof context === 'string' ? (
+                          <div className="text-gray-600">{context}</div>
+                        ) : (
+                          <div className="space-y-1">
+                            {context.activeDeals && (
+                              <div className="text-gray-600">• {context.activeDeals} active deals</div>
+                            )}
+                            {context.teamMembers && (
+                              <div className="text-gray-600">• {context.teamMembers} team members</div>
+                            )}
+                            {context.totalAUM && (
+                              <div className="text-gray-600">• ${(context.totalAUM / 1000000000).toFixed(1)}B AUM</div>
+                            )}
+                            {context.totalAssets && (
+                              <div className="text-gray-600">• {context.totalAssets} portfolio assets</div>
+                            )}
+                            {context.totalWorkspaces && (
+                              <div className="text-gray-600">• {context.totalWorkspaces} workspaces</div>
+                            )}
+                            {!context.activeDeals && !context.teamMembers && !context.totalAUM && !context.totalAssets && !context.totalWorkspaces && (
+                              <div className="text-gray-500 italic">Additional context available</div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
