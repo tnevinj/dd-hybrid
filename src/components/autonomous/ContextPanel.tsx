@@ -51,11 +51,17 @@ interface Project {
 
 interface ContextPanelProps {
   project?: Project;
-  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening';
+  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' | 'deal-structuring';
   className?: string;
   onViewWorkProduct?: (workProductId: string) => void;
   onCreateWorkProduct?: (project: Project) => void;
   onGenerateReport?: (project: Project) => void;
+  onToggle?: () => void;
+  customSections?: Array<{
+    id: string;
+    title: string;
+    content: React.ReactNode;
+  }>;
 }
 
 interface ProjectMetrics {
@@ -104,7 +110,8 @@ const generateProjectMetrics = (project: Project): ProjectMetrics => {
   const multiple = stage === 'growth' ? '2.3x' : stage === 'buyout' ? '2.8x' : '2.0x';
 
   // Generate timeline based on project status
-  const startDate = new Date(2024, 0, 15 + parseInt(project.id) * 10).toISOString().split('T')[0];
+  const projectIdNum = parseInt(project.id) || 1; // Default to 1 if parsing fails
+  const startDate = new Date(2024, 0, 15 + projectIdNum * 10).toISOString().split('T')[0];
   const targetDays = project.status === 'active' ? 180 : project.status === 'review' ? 30 : 240;
   const targetClose = new Date(Date.now() + targetDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
   const daysPending = Math.floor((Date.now() - new Date(startDate).getTime()) / (24 * 60 * 60 * 1000));
@@ -155,7 +162,9 @@ export function ContextPanel({
   className = '',
   onViewWorkProduct,
   onCreateWorkProduct,
-  onGenerateReport
+  onGenerateReport,
+  onToggle,
+  customSections = []
 }: ContextPanelProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['overview']));
   
@@ -427,6 +436,13 @@ export function ContextPanel({
             </Button>
           </div>
         </CollapsibleSection>
+
+        {/* Custom Sections */}
+        {customSections.map((section) => (
+          <CollapsibleSection key={section.id} title={section.title} id={section.id} icon={FileText}>
+            {section.content}
+          </CollapsibleSection>
+        ))}
 
         {/* Quick Actions */}
         <Card>

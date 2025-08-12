@@ -16,7 +16,14 @@ import {
   Clock,
   Search,
   Plus,
-  Filter
+  Filter,
+  FileText,
+  Calculator,
+  BarChart,
+  Settings,
+  BookOpen,
+  Download,
+  Upload
 } from 'lucide-react';
 import { useDealStructuring } from '@/hooks/use-deal-structuring';
 import { DealStructuringProject } from '@/types/deal-structuring';
@@ -69,11 +76,17 @@ const DealStructuringTraditional: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* Header */}
+      {/* Action Bar */}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Deal Structuring Dashboard</h1>
-          <p className="text-gray-600 mt-1">Monitor and manage deal structuring activities</p>
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <BookOpen className="h-4 w-4 mr-2" />
+            Templates
+          </Button>
+          <Button variant="outline">
+            <Calculator className="h-4 w-4 mr-2" />
+            Tools
+          </Button>
         </div>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
@@ -132,13 +145,11 @@ const DealStructuringTraditional: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Upcoming Deadlines</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {metrics?.upcomingDeadlines || 0}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">Next 30 days</p>
+                <p className="text-sm font-medium text-gray-600">Manual Tools</p>
+                <p className="text-2xl font-bold text-gray-900">8</p>
+                <p className="text-xs text-gray-500 mt-1">Available templates</p>
               </div>
-              <Calendar className="h-8 w-8 text-blue-600" />
+              <FileText className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
@@ -227,13 +238,19 @@ const DealStructuringTraditional: React.FC = () => {
                       <p className="text-xs text-gray-500">
                         Updated {deal.lastUpdated.toLocaleDateString()}
                       </p>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => window.location.href = `/deal-structuring/${deal.id}`}
-                      >
-                        View Details
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="sm">
+                          <Calculator className="h-3 w-3 mr-1" />
+                          Manual Model
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => window.location.href = `/deal-structuring/${deal.id}`}
+                        >
+                          View Details
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -244,6 +261,59 @@ const DealStructuringTraditional: React.FC = () => {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Manual Tools */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Calculator className="h-4 w-4 text-blue-500" />
+                <h3 className="text-lg font-semibold">Manual Tools</h3>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center gap-2 mb-1">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium">DCF Model Template</span>
+                </div>
+                <p className="text-xs text-gray-600 mb-2">
+                  Standard discounted cash flow analysis template
+                </p>
+                <Button size="sm" className="h-6 text-xs">
+                  <Download className="h-3 w-3 mr-1" />
+                  Download
+                </Button>
+              </div>
+
+              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center gap-2 mb-1">
+                  <BarChart className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium">LBO Analysis</span>
+                </div>
+                <p className="text-xs text-gray-600 mb-2">
+                  Leveraged buyout structure modeling
+                </p>
+                <Button size="sm" variant="outline" className="h-6 text-xs">
+                  <Download className="h-3 w-3 mr-1" />
+                  Download
+                </Button>
+              </div>
+
+              <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+                <div className="flex items-center gap-2 mb-1">
+                  <Settings className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm font-medium">Risk Calculator</span>
+                </div>
+                <p className="text-xs text-gray-600 mb-2">
+                  Manual risk assessment spreadsheet
+                </p>
+                <Button size="sm" variant="outline" className="h-6 text-xs">
+                  <Download className="h-3 w-3 mr-1" />
+                  Download
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Recent Activities */}
           <Card>
             <CardHeader>
@@ -253,7 +323,9 @@ const DealStructuringTraditional: React.FC = () => {
               {activities.map((activity) => (
                 <div key={activity.id} className="flex items-start gap-3">
                   <div className="flex gap-1">
-                    {getStatusIcon(activity.status)}
+                    {activity.status === 'completed' && <CheckCircle className="h-4 w-4 text-green-500" />}
+                    {activity.status === 'in_progress' && <Clock className="h-4 w-4 text-yellow-500" />}
+                    {activity.status === 'pending' && <AlertTriangle className="h-4 w-4 text-red-500" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">

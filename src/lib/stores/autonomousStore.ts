@@ -36,7 +36,7 @@ interface AutonomousState {
   // Project management
   projects: Record<string, Project[]>;
   selectedProject: Project | null;
-  activeProjectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening';
+  activeProjectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' | 'deal-structuring';
   
   // Chat sessions
   chatSessions: Record<string, ChatSession>;
@@ -60,6 +60,7 @@ interface AutonomousActions {
   addProject: (projectType: string, project: Project) => void;
   refreshProjectsFromUnifiedData: () => void;
   setDealScreeningProjects: (projects: Project[]) => void;
+  setDealStructuringProjects: (projects: Project[]) => void;
   
   // Chat session actions
   createChatSession: (projectId: string) => string;
@@ -94,7 +95,8 @@ const getInitialProjects = (): Record<string, Project[]> => {
     portfolio: portfolioAssets, // Use actual portfolio assets as projects
     'due-diligence': [],
     workspace: autonomousProjects, // Main workspace projects
-    'deal-screening': []
+    'deal-screening': [],
+    'deal-structuring': []
   };
   
   // Add some derived projects for other sections based on workspace projects
@@ -218,6 +220,14 @@ export const useAutonomousStore = create<AutonomousStore>()(
           projects: {
             ...state.projects,
             'deal-screening': projects
+          }
+        })),
+
+      setDealStructuringProjects: (projects) =>
+        set((state) => ({
+          projects: {
+            ...state.projects,
+            'deal-structuring': projects
           }
         })),
 

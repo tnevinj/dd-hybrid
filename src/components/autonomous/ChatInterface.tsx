@@ -28,13 +28,32 @@ interface ChatAction {
   data?: any;
 }
 
+interface AvailableAction {
+  id: string;
+  label: string;
+  description: string;
+  category: 'modeling' | 'analysis' | 'research' | 'optimization' | 'workflow' | 'reporting';
+}
+
 interface ChatInterfaceProps {
   projectId?: string;
-  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening';
+  projectName?: string;
+  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' | 'deal-structuring';
+  contextData?: any;
+  systemPrompt?: string;
+  availableActions?: AvailableAction[];
   className?: string;
 }
 
-export function ChatInterface({ projectId, projectType, className = '' }: ChatInterfaceProps) {
+export function ChatInterface({ 
+  projectId, 
+  projectName,
+  projectType, 
+  contextData,
+  systemPrompt,
+  availableActions = [],
+  className = '' 
+}: ChatInterfaceProps) {
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -95,8 +114,22 @@ export function ChatInterface({ projectId, projectType, className = '' }: ChatIn
       case 'portfolio': return 'Portfolio Management';
       case 'due-diligence': return 'Due Diligence';
       case 'workspace': return 'Workspace';
+      case 'deal-screening': return 'Deal Screening';
+      case 'deal-structuring': return 'Deal Structuring';
       default: return 'AI Assistant';
     }
+  };
+
+  const handleQuickAction = async (actionId: string) => {
+    if (!projectId) return;
+    
+    const action = availableActions.find(a => a.id === actionId);
+    if (!action) return;
+
+    // Create a user message for the action
+    const actionMessage = `Execute action: ${action.label}`;
+    setMessage(actionMessage);
+    await handleSendMessage();
   };
 
   return (
@@ -164,6 +197,32 @@ export function ChatInterface({ projectId, projectType, className = '' }: ChatIn
                 )}
               </p>
             </div>
+            
+            {/* Quick Actions */}
+            {availableActions.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-medium text-gray-900 mb-3">Quick Actions</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {availableActions.slice(0, 6).map((action) => (
+                    <Button
+                      key={action.id}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleQuickAction(action.id)}
+                      className="text-left h-auto p-3 justify-start"
+                    >
+                      <div>
+                        <div className="text-sm font-medium">{action.label}</div>
+                        <div className="text-xs text-gray-500 mt-1">{action.description}</div>
+                        <Badge variant="secondary" className="mt-1 text-xs">
+                          {action.category}
+                        </Badge>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

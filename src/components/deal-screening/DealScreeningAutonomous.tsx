@@ -223,7 +223,45 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
         <div className="flex-1">
           <ChatInterface
             projectId={selectedProject?.id}
+            projectName={selectedProject?.name}
             projectType="deal-screening"
+            contextData={selectedProject?.metadata}
+            systemPrompt={selectedProject ? `You are an AI assistant specializing in deal screening and investment analysis. You're working on ${selectedProject.name}, a ${selectedProject.metadata?.sector} opportunity worth ${selectedProject.metadata?.dealValue ? `$${(selectedProject.metadata.dealValue / 1000000).toFixed(1)}M` : 'TBD'}.
+
+Your capabilities include:
+- Deal screening and initial assessment
+- Financial analysis and valuation
+- Risk evaluation and mitigation strategies
+- Market comparison and benchmarking
+- Investment committee preparation
+
+Provide actionable insights while maintaining transparency about your reasoning and confidence levels.` : undefined}
+            availableActions={[
+              {
+                id: 'screen-opportunity',
+                label: 'Screen Opportunity',
+                description: 'Comprehensive deal screening analysis',
+                category: 'analysis'
+              },
+              {
+                id: 'financial-analysis',
+                label: 'Financial Analysis',
+                description: 'Detailed financial metrics evaluation',
+                category: 'analysis'
+              },
+              {
+                id: 'market-comparison',
+                label: 'Market Comparison',
+                description: 'Compare with similar deals',
+                category: 'research'
+              },
+              {
+                id: 'generate-report',
+                label: 'Generate Report',
+                description: 'Create screening summary report',
+                category: 'reporting'
+              }
+            ]}
           />
         </div>
 

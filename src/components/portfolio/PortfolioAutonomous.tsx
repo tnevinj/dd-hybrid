@@ -115,7 +115,39 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
         <div className="flex-1">
           <ChatInterface
             projectId={selectedProject?.id}
+            projectName={selectedProject?.name}
             projectType="portfolio"
+            contextData={selectedProject?.metadata}
+            systemPrompt={selectedProject ? `You are an AI assistant specializing in portfolio management. You're working on ${selectedProject.name}, focusing on performance optimization and strategic asset allocation.
+
+Your capabilities include:
+- Portfolio performance analysis and optimization
+- Asset allocation recommendations
+- Risk assessment and diversification strategies
+- Market trend analysis and insights
+- Performance benchmarking and reporting
+
+Provide actionable insights while maintaining transparency about your reasoning and confidence levels.` : undefined}
+            availableActions={[
+              {
+                id: 'portfolio-analysis',
+                label: 'Portfolio Analysis',
+                description: 'Comprehensive portfolio performance review',
+                category: 'analysis'
+              },
+              {
+                id: 'risk-assessment',
+                label: 'Risk Assessment',
+                description: 'Evaluate portfolio risk metrics',
+                category: 'analysis'
+              },
+              {
+                id: 'rebalancing',
+                label: 'Rebalancing Recommendations',
+                description: 'Optimize asset allocation',
+                category: 'optimization'
+              }
+            ]}
           />
         </div>
 

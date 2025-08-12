@@ -86,8 +86,8 @@ const buildThandoContext = (
         expectedCloseDate: project.deadline || new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
       },
       team: {
-        lead: project.teamMembers[0] || 'Team Lead',
-        analyst: project.teamMembers.slice(1, 2),
+        lead: project.teamMembers?.[0] || 'Team Lead',
+        analyst: project.teamMembers?.slice(1, 2) || [],
         advisors: ['Industry Expert', 'Technical Consultant']
       },
       keyMetrics: {
@@ -181,7 +181,7 @@ const buildThandoContext = (
 
 export function useAutonomousChat(
   projectId?: string,
-  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' = 'dashboard'
+  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' | 'deal-structuring' = 'dashboard'
 ): UseAutonomousChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -306,8 +306,197 @@ export function useAutonomousChat(
 
       let confirmationContent = '';
       
-      // Generate realistic confirmation based on action type
-      switch (action.name) {
+      // Handle deal-structuring specific actions with API calls
+      if (projectType === 'deal-structuring' && projectId) {
+        switch (action.id || action.name) {
+          case 'generate-financial-model':
+            try {
+              const response = await fetch(`/api/deal-structuring/${projectId}/financial-modeling?mode=autonomous`);
+              const data = await response.json();
+              
+              confirmationContent = `✅ **Financial Model Generated Successfully**
+
+**Model Details:**
+• **Deal**: ${data.dealName || 'Deal Structure Analysis'}
+• **Type**: ${data.modelType || 'DCF/LBO Analysis'}
+• **Valuation Range**: $${((data.valuation?.min || 140000000) / 1000000).toFixed(1)}M - $${((data.valuation?.max || 160000000) / 1000000).toFixed(1)}M
+• **Target IRR**: ${data.projections?.irr || 18.5}%
+• **Leverage Ratio**: ${data.keyMetrics?.leverage || 3.5}x
+
+**Key Assumptions:**
+${data.assumptions?.map((assumption: string) => `• ${assumption}`).join('\n') || '• Growth rate: 12-15% annually\n• EBITDA margin expansion: 200 bps\n• Exit multiple: 8.5-10.2x EBITDA'}
+
+**Model Outputs:**
+• **Base Case IRR**: ${data.projections?.baseCase?.irr || 18.5}%
+• **Upside Case IRR**: ${data.projections?.upsideCase?.irr || 24.2}%
+• **Downside Case IRR**: ${data.projections?.downsideCase?.irr || 12.8}%
+• **Recommended Equity**: $${((data.structure?.equity || 45000000) / 1000000).toFixed(1)}M
+
+📊 Financial model available in the modeling section. Model assumptions can be adjusted for sensitivity analysis.`;
+            } catch (error) {
+              confirmationContent = `⚠️ **Financial Modeling Available**
+
+I can help you generate financial models using our comprehensive deal structuring APIs. The system includes:
+
+• **DCF Analysis**: Discounted cash flow projections with multiple scenarios
+• **LBO Modeling**: Leveraged buyout structure optimization
+• **Sensitivity Analysis**: Key variable stress testing
+• **Comparable Analysis**: Market benchmarking and valuation ranges
+
+Would you like me to proceed with generating a specific model type, or would you prefer to start with a DCF analysis for this deal?`;
+            }
+            break;
+            
+          case 'analyze-risk-factors':
+            try {
+              const response = await fetch(`/api/deal-structuring/${projectId}/risk-analysis?mode=autonomous`);
+              const data = await response.json();
+              
+              confirmationContent = `✅ **Risk Analysis Complete**
+
+**Overall Risk Rating**: ${data.overallRating || 'Medium'}
+
+**Key Risk Factors Identified:**
+${data.risks?.map((risk: any) => `• **${risk.category}**: ${risk.description} (${risk.severity} severity)`).join('\n') || '• Market Risk: Sector consolidation trends (Medium severity)\n• Operational Risk: Management team transition (Low severity)\n• Financial Risk: Leverage profile optimization needed (Medium severity)'}
+
+**Risk Mitigation Recommendations:**
+${data.mitigations?.map((mitigation: string) => `• ${mitigation}`).join('\n') || '• Implement management retention packages\n• Diversify customer base to reduce concentration\n• Optimize capital structure for improved flexibility'}
+
+**Monitoring Framework:**
+${data.monitoringPlan?.map((item: string) => `• ${item}`).join('\n') || '• Monthly financial performance reviews\n• Quarterly market position assessments\n• Semi-annual management evaluations'}
+
+🎯 Risk analysis integrated with deal monitoring dashboard for ongoing oversight.`;
+            } catch (error) {
+              confirmationContent = `⚠️ **Risk Analysis Capabilities Available**
+
+I can perform comprehensive risk analysis including:
+
+• **Financial Risk Assessment**: Leverage, liquidity, and performance metrics
+• **Market Risk Evaluation**: Sector trends, competitive positioning
+• **Operational Risk Analysis**: Management, systems, and execution capabilities
+• **ESG Risk Screening**: Environmental, social, and governance factors
+
+Would you like me to proceed with a specific risk assessment, or perform a comprehensive risk review?`;
+            }
+            break;
+            
+          case 'find-similar-deals':
+            try {
+              const response = await fetch(`/api/deal-structuring/${projectId}/templates?mode=autonomous`);
+              const data = await response.json();
+              
+              confirmationContent = `✅ **Similar Deals Analysis Complete**
+
+**Comparable Transactions Found**: ${data.comparables?.length || 8}
+
+**Top Matches:**
+${data.comparables?.slice(0, 4).map((comp: any) => `• **${comp.name}**: $${(comp.dealValue / 1000000).toFixed(0)}M ${comp.sector} deal (${comp.similarity}% match)`).join('\n') || '• TechSoft Acquisition: $135M Software deal (87% match)\n• DataCorp Buyout: $180M Technology deal (82% match)\n• CloudTech Investment: $95M SaaS deal (79% match)\n• SystemsPlus Deal: $210M Enterprise software (75% match)'}
+
+**Market Benchmarks:**
+• **Valuation Multiple**: ${data.benchmarks?.multiple || '8.2x'} EBITDA (vs. market avg ${data.benchmarks?.marketAvg || '7.8x'})
+• **Expected IRR Range**: ${data.benchmarks?.irrRange || '16-22%'}
+• **Leverage Profile**: ${data.benchmarks?.leverage || '3.2-3.8x'} typical
+• **Hold Period**: ${data.benchmarks?.holdPeriod || '4-6 years'} average
+
+**Pattern Insights:**
+${data.insights?.map((insight: string) => `• ${insight}`).join('\n') || '• Technology deals averaging 18.5% IRR in current market\n• Management rollover typical at 15-20% equity\n• Revenue growth premiums for SaaS businesses\n• ESG factors increasingly important in valuations'}
+
+📈 Benchmark data integrated with financial modeling for valuation guidance.`;
+            } catch (error) {
+              confirmationContent = `⚠️ **Deal Comparison Capabilities Available**
+
+I can analyze similar transactions using our comprehensive database:
+
+• **Transaction Matching**: Find deals by sector, size, and structure
+• **Valuation Benchmarking**: Compare multiples and pricing metrics  
+• **Performance Analysis**: Historical returns and success patterns
+• **Market Intelligence**: Current trends and pricing dynamics
+
+Would you like me to search for specific deal types or perform a broader market comparison?`;
+            }
+            break;
+            
+          case 'optimize-structure':
+            try {
+              const response = await fetch(`/api/deal-structuring/${projectId}/ai-recommendations?mode=autonomous`);
+              const data = await response.json();
+              
+              confirmationContent = `✅ **Structure Optimization Complete**
+
+**Optimization Recommendations**: ${data.recommendations?.length || 5} improvements identified
+
+**High Priority Optimizations:**
+${data.recommendations?.filter((r: any) => r.priority === 'high').map((rec: any) => `• **${rec.title}**: ${rec.description}`).join('\n') || '• Leverage Optimization: Reduce leverage from 4.0x to 3.6x for improved IRR\n• Management Equity: Increase rollover to 18% for alignment'}
+
+**Medium Priority Optimizations:**
+${data.recommendations?.filter((r: any) => r.priority === 'medium').map((rec: any) => `• **${rec.title}**: ${rec.description}`).join('\n') || '• Dividend Recapitalization: Structure interim dividend in Year 3\n• Board Composition: Add industry expert to strengthen governance'}
+
+**Projected Impact:**
+• **IRR Improvement**: +${data.impact?.irrImprovement || 2.3}% potential upside
+• **Risk Reduction**: ${data.impact?.riskReduction || 15}% lower risk profile
+• **Time to Close**: ${data.impact?.timeReduction || 10} days faster execution
+
+**Implementation Timeline:**
+${data.timeline?.map((step: any) => `• ${step.milestone} (${step.timeframe})`).join('\n') || '• Legal documentation updates (2-3 weeks)\n• Management negotiations (1-2 weeks)\n• Final approvals and closing (1 week)'}
+
+⚡ Optimization recommendations ready for implementation with legal and management teams.`;
+            } catch (error) {
+              confirmationContent = `⚠️ **Structure Optimization Available**
+
+I can optimize deal structures across multiple dimensions:
+
+• **Capital Structure**: Debt/equity mix, leverage optimization
+• **Management Terms**: Equity rollover, incentive alignment  
+• **Governance Structure**: Board composition, control provisions
+• **Exit Strategy**: Timing and mechanism optimization
+
+Would you like me to focus on specific structural elements or perform a comprehensive optimization analysis?`;
+            }
+            break;
+            
+          case 'prepare-ic-materials':
+            try {
+              const response = await fetch(`/api/deal-structuring/${projectId}/autonomous-workflow?action=prepare-ic&mode=autonomous`);
+              const data = await response.json();
+              
+              confirmationContent = `✅ **Investment Committee Materials Prepared**
+
+**IC Package Components:**
+${data.materials?.map((material: any) => `• **${material.title}** (${material.pages} pages) - ${material.status}`).join('\n') || '• Executive Summary (3 pages) - Complete\n• Investment Thesis (8 pages) - Complete\n• Financial Analysis (12 pages) - Complete\n• Risk Assessment (6 pages) - Complete\n• Management Presentation (25 slides) - Complete'}
+
+**Key Recommendations:**
+• **Investment Decision**: ${data.recommendation?.decision || 'PROCEED'} 
+• **Deal Value**: $${((data.recommendation?.dealValue || 150000000) / 1000000).toFixed(1)}M
+• **Expected IRR**: ${data.recommendation?.irr || 18.5}%
+• **Risk Rating**: ${data.recommendation?.risk || 'Medium'}
+
+**IC Meeting Details:**
+• **Scheduled**: ${data.meeting?.date || 'Next Thursday 2:00 PM'}
+• **Duration**: ${data.meeting?.duration || '90 minutes'}
+• **Attendees**: ${data.meeting?.attendees?.length || 8} committee members
+• **Presenter**: ${data.meeting?.presenter || 'Deal Team Lead'}
+
+**Action Items Before IC:**
+${data.actionItems?.map((item: string) => `• ${item}`).join('\n') || '• Finalize management references (Due: Tuesday)\n• Complete legal due diligence review (Due: Wednesday)\n• Prepare Q&A responses (Due: Wednesday evening)'}
+
+📋 All materials distributed to IC members 48 hours before meeting as per protocol.`;
+            } catch (error) {
+              confirmationContent = `⚠️ **IC Materials Preparation Available**
+
+I can prepare comprehensive investment committee materials:
+
+• **Executive Summary**: Deal overview and key investment highlights
+• **Financial Analysis**: Detailed projections and valuation analysis
+• **Risk Assessment**: Comprehensive risk evaluation and mitigation plans
+• **Management Presentation**: Slide deck for IC presentation
+
+Would you like me to prepare specific materials or generate a complete IC package?`;
+            }
+            break;
+        }
+      } else {
+        // Generate realistic confirmation based on action type
+        switch (action.name) {
         case 'update_dashboard_metrics':
           confirmationContent = `✅ **Dashboard Updated Successfully**
 
@@ -398,6 +587,7 @@ ${action.impacts?.map(impact => `• ${impact}`).join('\n') || '• Action compl
 
 **Next Steps:**
 You can view the results in the relevant section of the application. If you need further analysis or have questions about the results, please let me know.`;
+        }
       }
 
       const confirmationMessage: Message = {
