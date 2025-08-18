@@ -314,6 +314,8 @@ export function ContentAssembler({
   const [showPreview, setShowPreview] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(navigationMode !== 'traditional');
+  const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState<string>('');
   
   // Refs for drag and drop
   const dragEndTimeout = useRef<NodeJS.Timeout>();
@@ -452,6 +454,17 @@ export function ContentAssembler({
         }
       });
 
+      // Auto-expand the section after content generation
+      setSelectedSection(sectionId);
+
+      // Scroll to the section
+      setTimeout(() => {
+        const sectionElement = document.getElementById(`section-${sectionId}`);
+        if (sectionElement) {
+          sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+
       // Add follow-up suggestions
       addFollowUpSuggestions(sectionId, generatedContent);
 
@@ -471,68 +484,93 @@ export function ContentAssembler({
     setIsGenerating(true);
     
     try {
-      const request: ContentGenerationRequest = {
-        templateId: template?.id || 'default',
-        workspaceId: projectContext.projectId,
-        projectContext,
-        generationMode: navigationMode,
-        options: {
-          includeDataBindings: true,
-          generateAllSections: true,
-          validateContent: true,
-          optimizeForReadability: true
+      // Get all sections that don't have content yet
+      const sectionsToGenerate = state.sections.filter(section => 
+        !section.content && 
+        !section.isGenerating && 
+        !state.pendingGenerations.has(section.id)
+      );
+      
+      if (sectionsToGenerate.length === 0) {
+        console.log('All sections already have content');
+        setIsGenerating(false);
+        return;
+      }
+
+      console.log(`Generating content for ${sectionsToGenerate.length} sections...`);
+
+      // Generate content for each section sequentially to avoid overwhelming the API
+      let successCount = 0;
+      let failureCount = 0;
+
+      for (const section of sectionsToGenerate) {
+        try {
+          await handleGenerateSection(section.id);
+          successCount++;
+          
+          // Small delay between generations to prevent rate limiting
+          if (sectionsToGenerate.length > 1) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        } catch (error) {
+          console.error(`Failed to generate section ${section.id}:`, error);
+          failureCount++;
         }
-      };
+      }
 
-      const response = await fetch('/api/content-transformation/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(request)
-      });
+      // Add completion suggestion
+      const completionMessage = failureCount === 0 
+        ? `Successfully generated content for all ${successCount} sections`
+        : `Generated ${successCount} sections successfully, ${failureCount} failed`;
 
-      if (!response.ok) throw new Error('Generation failed');
-
-      const result = await response.json();
-      const generatedWorkProduct = result.data.workProduct;
-
-      // Update sections with generated content
-      const updatedSections = generatedWorkProduct.sections.map((section: DocumentSection) => ({
-        id: section.id,
-        title: section.title,
-        content: section.content,
-        type: section.type,
-        generationStrategy: section.generationStrategy,
-        isGenerating: false,
-        quality: section.qualityScore || 0.85,
-        wordCount: section.content.split(/\s+/).length,
-        estimatedTime: Math.ceil(section.content.split(/\s+/).length / 200),
-        createdAt: state.sections.find(s => s.id === section.id)?.createdAt || createTimestamp(),
-        lastModified: createTimestamp()
-      }));
-
-      dispatch({ type: 'SET_SECTIONS', payload: updatedSections });
-      setWorkProduct(prev => ({ ...prev, ...generatedWorkProduct }));
-
-      // Add success suggestion
-      const successSuggestion: AISuggestion = {
-        id: `suggestion-${Date.now()}-success`,
+      const completionSuggestion: AISuggestion = {
+        id: `suggestion-${Date.now()}-bulk-complete`,
         type: 'optimization',
-        title: 'Content Generated Successfully',
-        description: `Generated ${updatedSections.length} sections with ${Math.round(result.data.generationMetrics.qualityScore * 100)}% quality score`,
-        confidence: 1.0,
+        title: 'Bulk Generation Complete',
+        description: completionMessage,
+        confidence: failureCount === 0 ? 0.95 : 0.7,
         action: () => setShowPreview(true),
-        previewable: true,
+        previewable: false,
         createdAt: createTimestamp()
       };
 
-      dispatch({ type: 'ADD_AI_SUGGESTION', payload: successSuggestion });
+      dispatch({ type: 'ADD_AI_SUGGESTION', payload: completionSuggestion });
+
+      // If there were failures, suggest retry
+      if (failureCount > 0) {
+        const retryFailuresSuggestion: AISuggestion = {
+          id: `suggestion-${Date.now()}-retry-failures`,
+          type: 'optimization',
+          title: 'Retry Failed Sections',
+          description: `${failureCount} sections failed to generate. Click to retry.`,
+          confidence: 0.8,
+          action: () => handleGenerateAllContent(),
+          previewable: false,
+          createdAt: createTimestamp()
+        };
+
+        dispatch({ type: 'ADD_AI_SUGGESTION', payload: retryFailuresSuggestion });
+      }
 
     } catch (error) {
-      console.error('Content generation failed:', error);
+      console.error('Bulk generation failed:', error);
+      
+      const errorSuggestion: AISuggestion = {
+        id: `suggestion-${Date.now()}-bulk-error`,
+        type: 'optimization',
+        title: 'Generation Error',
+        description: 'Bulk generation encountered an error. Try generating sections individually.',
+        confidence: 0.6,
+        action: () => console.log('Bulk generation error'),
+        previewable: false,
+        createdAt: createTimestamp()
+      };
+
+      dispatch({ type: 'ADD_AI_SUGGESTION', payload: errorSuggestion });
     } finally {
       setIsGenerating(false);
     }
-  }, [template, projectContext, navigationMode, state.sections]);
+  }, [state.sections, state.pendingGenerations, handleGenerateSection]);
 
   // Section management
   const handleAddSection = useCallback((sectionType: DocumentSection['type']) => {
@@ -678,6 +716,36 @@ export function ContentAssembler({
     console.log('Validating section order');
   };
 
+  // Content editing functions
+  const handleStartEdit = (sectionId: string) => {
+    const section = state.sections.find(s => s.id === sectionId);
+    if (section) {
+      setEditingSection(sectionId);
+      setEditContent(section.content);
+    }
+  };
+
+  const handleSaveEdit = (sectionId: string) => {
+    dispatch({
+      type: 'UPDATE_SECTION',
+      payload: {
+        id: sectionId,
+        updates: {
+          content: editContent,
+          wordCount: editContent.split(/\s+/).filter(word => word.length > 0).length,
+          lastModified: createTimestamp()
+        }
+      }
+    });
+    setEditingSection(null);
+    setEditContent('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingSection(null);
+    setEditContent('');
+  };
+
   // Helper functions
   const generateSectionContent = async (section: SectionPreview, context: ProjectContext) => {
     try {
@@ -812,7 +880,8 @@ export function ContentAssembler({
   return (
     <div className={`flex h-full bg-gray-50 ${className}`}>
       {/* Main Content Assembly Area */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 flex flex-col h-full overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-6">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -875,6 +944,7 @@ export function ContentAssembler({
                   <Draggable key={section.id} draggableId={section.id} index={index}>
                     {(provided, snapshot) => (
                       <Card
+                        id={`section-${section.id}`}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         className={`transition-shadow ${
@@ -935,15 +1005,32 @@ export function ContentAssembler({
                               ) : (
                                 <>
                                   {section.content && (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => setSelectedSection(
-                                        selectedSection === section.id ? null : section.id
-                                      )}
-                                    >
-                                      <Edit3 className="w-4 h-4" />
-                                    </Button>
+                                    <>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setSelectedSection(
+                                          selectedSection === section.id ? null : section.id
+                                        )}
+                                        title="Toggle preview"
+                                      >
+                                        {selectedSection === section.id ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          if (editingSection === section.id) {
+                                            handleCancelEdit();
+                                          } else {
+                                            handleStartEdit(section.id);
+                                          }
+                                        }}
+                                        title="Edit content"
+                                      >
+                                        <Edit3 className="w-4 h-4" />
+                                      </Button>
+                                    </>
                                   )}
                                   {(navigationMode === 'assisted' || navigationMode === 'autonomous') && (
                                     <Button
@@ -968,15 +1055,43 @@ export function ContentAssembler({
                           </div>
                         </CardHeader>
                         
-                        {(selectedSection === section.id || showPreview) && (
+                        {(selectedSection === section.id || showPreview || editingSection === section.id) && (
                           <CardContent className="pt-0">
-                            {section.content ? (
+                            {editingSection === section.id ? (
+                              // Edit mode
+                              <div className="space-y-4">
+                                <textarea
+                                  value={editContent}
+                                  onChange={(e) => setEditContent(e.target.value)}
+                                  className="w-full h-64 p-3 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                                  placeholder="Enter your content here... (Markdown supported)"
+                                />
+                                <div className="flex justify-end space-x-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleCancelEdit}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleSaveEdit(section.id)}
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    Save Changes
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : section.content ? (
+                              // Preview mode
                               <div className="prose prose-sm max-w-none">
                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                   {section.content}
                                 </ReactMarkdown>
                               </div>
                             ) : (
+                              // Empty state
                               <div className="text-center py-8 text-gray-500">
                                 <FileText className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                                 <p>No content generated yet</p>
@@ -1072,6 +1187,7 @@ export function ContentAssembler({
               Save Document
             </Button>
           </div>
+        </div>
         </div>
       </div>
 
