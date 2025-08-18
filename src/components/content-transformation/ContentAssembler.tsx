@@ -82,7 +82,8 @@ export function ContentAssembler({
   onCancel,
   className = ''
 }: ContentAssemblerProps) {
-  const { navigationMode } = useNavigationStore();
+  const { currentMode } = useNavigationStore();
+  const navigationMode = currentMode?.mode || 'traditional';
   
   // State management
   const [workProduct, setWorkProduct] = useState<Partial<WorkProduct>>({
@@ -226,6 +227,13 @@ export function ContentAssembler({
 
   // Content generation handlers
   const handleGenerateSection = useCallback(async (sectionId: string) => {
+    // Check if section exists first
+    const sectionExists = sections.some(s => s.id === sectionId);
+    if (!sectionExists) {
+      console.error(`Cannot generate content for section ${sectionId}: section not found`);
+      return;
+    }
+
     setSections(prev => prev.map(section => 
       section.id === sectionId 
         ? { ...section, isGenerating: true }
@@ -341,23 +349,34 @@ export function ContentAssembler({
       estimatedTime: 2
     };
 
-    setSections(prev => [...prev, newSection]);
+    setSections(prev => {
+      const updatedSections = [...prev, newSection];
+      
+      // Add AI suggestion for new section after state update
+      if (navigationMode !== 'traditional') {
+        // Use setTimeout to ensure the state has been updated
+        setTimeout(() => {
+          const addSuggestion: AISuggestion = {
+            id: `populate-${newSection.id}-${Math.random().toString(36).substr(2, 9)}`,
+            type: 'content',
+            title: `Populate ${newSection.title}`,
+            description: 'Generate content for the new section',
+            confidence: 0.8,
+            action: () => handleGenerateSection(newSection.id),
+            previewable: true
+          };
 
-    // Add AI suggestion for new section
-    if (navigationMode !== 'traditional') {
-      const addSuggestion: AISuggestion = {
-        id: `populate-${newSection.id}`,
-        type: 'content',
-        title: `Populate ${newSection.title}`,
-        description: 'Generate content for the new section',
-        confidence: 0.8,
-        action: () => handleGenerateSection(newSection.id),
-        previewable: true
-      };
-
-      setAISuggestions(prev => [addSuggestion, ...prev.slice(0, 4)]);
-    }
-  }, [navigationMode]);
+          setAISuggestions(prev => {
+            // Remove any existing suggestions for the same section
+            const filteredSuggestions = prev.filter(s => !s.id.includes(`populate-${newSection.id}`));
+            return [addSuggestion, ...filteredSuggestions.slice(0, 4)];
+          });
+        }, 100);
+      }
+      
+      return updatedSections;
+    });
+  }, [navigationMode, handleGenerateSection]);
 
   const handleRemoveSection = useCallback((sectionId: string) => {
     setSections(prev => prev.filter(section => section.id !== sectionId));
@@ -439,24 +458,67 @@ export function ContentAssembler({
 
   // Helper functions
   const generateSectionContent = async (sectionId: string, context: ProjectContext) => {
-    // Mock content generation - in real implementation, this would call the API
-    const section = sections.find(s => s.id === sectionId);
-    if (!section) throw new Error('Section not found');
+    // Get the current sections state to find the section
+    const currentSections = sections;
+    let section = currentSections.find(s => s.id === sectionId);
+    
+    // If not found, this might be a new section that hasn't been added to state yet
+    // Create a default section object for generation
+    if (!section) {
+      console.warn(`Section ${sectionId} not found in current state, using defaults`);
+      section = {
+        id: sectionId,
+        title: sectionId.includes('custom-section') ? 'Custom Section' : 'New Section',
+        content: '',
+        type: 'text' as const,
+        generationStrategy: 'ai-generated' as const,
+        isGenerating: false,
+        quality: 0,
+        wordCount: 0,
+        estimatedTime: 2
+      };
+    }
 
-    const mockContent = {
-      'exec-summary': `# Executive Summary\n\n${context.projectName} represents a compelling investment opportunity in the ${context.sector} sector. With a deal value of $${(context.dealValue || 0) / 1000000}M, this ${context.stage} stage investment aligns with our strategic focus areas.\n\n**Key Investment Highlights:**\n- Strong market position in growing ${context.sector} market\n- Experienced management team with proven track record\n- Clear value creation opportunities through operational improvements\n- Attractive risk-adjusted return profile\n\n**Recommendation:** Proceed to detailed due diligence with target investment of $${(context.dealValue || 0) / 1000000}M.`,
-      'investment-thesis': `# Investment Thesis\n\n## Market Opportunity\nThe ${context.sector} market represents a significant growth opportunity driven by digital transformation trends and increasing demand for innovative solutions.\n\n## Competitive Advantages\n${context.projectName} maintains strong competitive positioning through:\n- Proprietary technology platform\n- Strong customer relationships\n- Operational excellence\n- Strategic market positioning\n\n## Value Creation Plan\nOur investment thesis centers on accelerating growth through:\n- Market expansion initiatives\n- Product development and innovation\n- Operational efficiency improvements\n- Strategic partnerships and acquisitions`,
-      'financial-analysis': `# Financial Analysis\n\n## Revenue Analysis\n**Current Revenue:** $${((context.dealValue || 0) * 0.3) / 1000000}M\n**Growth Rate:** 25% CAGR\n**Revenue Mix:** Diversified across key segments\n\n## Profitability\n**EBITDA:** $${((context.dealValue || 0) * 0.09) / 1000000}M\n**EBITDA Margin:** 30%\n**Free Cash Flow:** Strong and growing\n\n## Projections\n**Year 1-3:** Continued growth driven by market expansion\n**Year 4-5:** Margin improvement through operational leverage\n**Exit Scenarios:** Strategic sale or IPO in 4-6 years`
-    };
+    try {
+      // Call the real AI generation API
+      const response = await fetch('/api/content/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sectionId,
+          sectionTitle: section.title,
+          sectionType: section.type,
+          projectContext: context,
+          generationStrategy: section.generationStrategy || 'ai-generated',
+          existingContent: section.content
+        }),
+      });
 
-    const content = mockContent[sectionId as keyof typeof mockContent] || 
-                   `# ${section.title}\n\nAI-generated content for ${section.title} section based on ${context.projectName} analysis.\n\nThis section provides comprehensive analysis relevant to the ${context.sector} sector investment opportunity.`;
+      if (!response.ok) {
+        throw new Error(`Failed to generate content: ${response.statusText}`);
+      }
 
-    return {
-      content,
-      quality: 0.85 + Math.random() * 0.1,
-      wordCount: content.split(/\s+/).length
-    };
+      const result = await response.json();
+      
+      return {
+        content: result.content,
+        quality: result.quality,
+        wordCount: result.wordCount
+      };
+    } catch (error) {
+      console.error('Error generating content:', error);
+      
+      // Fallback to basic generated content if API fails
+      const fallbackContent = `# ${section.title}\n\nAI-generated content for ${section.title} section based on ${context.projectName} analysis.\n\nThis section provides comprehensive analysis relevant to the ${context.sector} sector investment opportunity.\n\n*Note: This is fallback content due to generation service unavailability.*`;
+      
+      return {
+        content: fallbackContent,
+        quality: 0.65,
+        wordCount: fallbackContent.split(/\s+/).length
+      };
+    }
   };
 
   const addFollowUpSuggestions = (sectionId: string, generatedContent: any) => {

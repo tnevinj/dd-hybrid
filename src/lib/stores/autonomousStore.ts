@@ -58,6 +58,7 @@ interface AutonomousActions {
   selectProject: (project: Project) => void;
   updateProject: (projectId: string, updates: Partial<Project>) => void;
   addProject: (projectType: string, project: Project) => void;
+  setProjectsForType: (projectType: string, projects: Project[]) => void;
   refreshProjectsFromUnifiedData: () => void;
   setDealScreeningProjects: (projects: Project[]) => void;
   setDealStructuringProjects: (projects: Project[]) => void;
@@ -203,10 +204,28 @@ export const useAutonomousStore = create<AutonomousStore>()(
         }),
 
       addProject: (projectType, project) =>
+        set((state) => {
+          // Check if project already exists to avoid duplicates
+          const existingProjects = state.projects[projectType] || [];
+          const projectExists = existingProjects.some(p => p.id === project.id);
+          
+          if (projectExists) {
+            return state; // Don't add duplicate
+          }
+          
+          return {
+            projects: {
+              ...state.projects,
+              [projectType]: [...existingProjects, project]
+            }
+          };
+        }),
+
+      setProjectsForType: (projectType, projects) =>
         set((state) => ({
           projects: {
             ...state.projects,
-            [projectType]: [...(state.projects[projectType] || []), project]
+            [projectType]: projects
           }
         })),
 

@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data'
 import { 
   Brain,
   Sparkles,
@@ -271,8 +270,13 @@ export function WorkspaceAssisted({
   const [searchTerm, setSearchTerm] = useState('')
 
   // Use unified data source
-  const unifiedMetrics = metrics || UnifiedWorkspaceDataService.getWorkspaceMetrics()
-  const enhancedWorkspaces = workspaces.length > 0 ? workspaces : UnifiedWorkspaceDataService.getAssistedProjects()
+  const unifiedMetrics = metrics || {
+    totalWorkspaces: 0,
+    activeWorkspaces: 0,
+    completedWorkspaces: 0,
+    teamMembers: 0
+  }
+  const enhancedWorkspaces = workspaces || []
 
   if (isLoading) {
     return (

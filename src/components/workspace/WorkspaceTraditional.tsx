@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data'
 import { 
   Search,
   Filter,
@@ -44,9 +43,16 @@ export function WorkspaceTraditional({
   const [selectedType, setSelectedType] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('')
 
-  // Use unified data source
-  const unifiedMetrics = metrics || UnifiedWorkspaceDataService.getWorkspaceMetrics()
-  const mockWorkspaces = workspaces.length > 0 ? workspaces : UnifiedWorkspaceDataService.getTraditionalProjects()
+  // Use provided data or show empty state
+  const unifiedMetrics = metrics || {
+    total: 0,
+    active: 0,
+    completed: 0,
+    inReview: 0,
+    teamMembers: 0,
+    avgProgress: 0
+  }
+  const displayWorkspaces = workspaces || []
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -177,7 +183,7 @@ export function WorkspaceTraditional({
             <CardTitle className="text-xl text-gray-900">Manual Search & Filter Controls</CardTitle>
             <div className="flex items-center space-x-2">
               <Badge variant="outline" className="text-gray-600">
-                {mockWorkspaces.length} workspaces
+                {displayWorkspaces.length} workspaces
               </Badge>
             </div>
           </div>
@@ -254,7 +260,7 @@ export function WorkspaceTraditional({
 
       {/* Workspace Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        {mockWorkspaces.map((workspace) => (
+        {displayWorkspaces.map((workspace) => (
           <Card key={workspace.id} className="border-gray-200 hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">

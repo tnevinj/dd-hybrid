@@ -5,9 +5,10 @@ import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/auton
 import { useAutonomousStore } from '@/lib/stores/autonomousStore';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Settings, Menu, X } from 'lucide-react';
+import { Settings, Menu, X, Wand2 } from 'lucide-react';
 import { WorkProductCreator } from '@/components/work-product';
-import { WorkProduct, WorkProductCreateRequest } from '@/types/work-product';
+import { ContentAssembler } from '@/components/content-transformation/ContentAssembler';
+import { WorkProduct, WorkProductCreateRequest, ProjectContext } from '@/types/work-product';
 
 interface Project {
   id: string;
@@ -43,14 +44,61 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
 
   const [showSettings, setShowSettings] = useState(false);
   const [showWorkProductCreator, setShowWorkProductCreator] = useState(false);
+  const [showContentAssembler, setShowContentAssembler] = useState(false);
   const [showWorkProductViewer, setShowWorkProductViewer] = useState(false);
   const [currentWorkProduct, setCurrentWorkProduct] = useState<WorkProduct | null>(null);
+  const [creationMode, setCreationMode] = useState<'traditional' | 'assembler'>('assembler');
+  const [realWorkspaces, setRealWorkspaces] = useState<Project[]>([]);
+
+  // Load real workspaces from database
+  const loadRealWorkspaces = async () => {
+    try {
+      const response = await fetch('/api/workspaces');
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Convert workspace data to Project format for compatibility
+        const workspaceProjects: Project[] = data.data.map((workspace: any) => ({
+          id: workspace.id,
+          name: workspace.name,
+          type: workspace.type as Project['type'],
+          status: workspace.status as Project['status'],
+          lastActivity: new Date(workspace.updatedAt),
+          priority: workspace.priority || 'medium' as Project['priority'],
+          metadata: {
+            value: workspace.dealValue ? `$${Math.round(workspace.dealValue / 100 / 1000000)}M` : undefined,
+            progress: workspace.progress || 0,
+            team: workspace.team || [],
+            sector: workspace.sector,
+            stage: workspace.stage,
+            geography: workspace.geography,
+            riskRating: workspace.riskRating,
+            dealValueCents: workspace.dealValue, // Keep original cents value for calculations
+            dbMetadata: workspace.metadata || {} // Include any additional metadata
+          }
+        }));
+
+        setRealWorkspaces(workspaceProjects);
+        
+        // Update the autonomous store with real workspace projects
+        const { useAutonomousStore } = await import('@/lib/stores/autonomousStore');
+        const store = useAutonomousStore.getState();
+        
+        // Replace workspace projects in the store to avoid duplicates
+        store.setProjectsForType('workspace', workspaceProjects);
+      }
+    } catch (error) {
+      console.error('Failed to load real workspaces:', error);
+      // Fallback to existing unified data
+      refreshProjectsFromUnifiedData();
+    }
+  };
 
   // Initialize project type for workspace and refresh data
   React.useEffect(() => {
     setActiveProjectType('workspace');
-    refreshProjectsFromUnifiedData(); // Ensure we have latest unified data
-  }, [setActiveProjectType, refreshProjectsFromUnifiedData]);
+    loadRealWorkspaces(); // Load real workspaces from database
+  }, [setActiveProjectType]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
@@ -73,7 +121,11 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
 
   const handleCreateWorkProduct = (project: Project) => {
     selectProject(project); // Ensure project is selected
-    setShowWorkProductCreator(true);
+    if (creationMode === 'assembler') {
+      setShowContentAssembler(true);
+    } else {
+      setShowWorkProductCreator(true);
+    }
   };
 
   const handleGenerateReport = (project: Project) => {
@@ -101,6 +153,30 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
     } catch (error) {
       console.error('Error creating work product:', error);
     }
+  };
+
+  const handleWorkProductSaved = (workProduct: WorkProduct) => {
+    setCurrentWorkProduct(workProduct);
+    setShowContentAssembler(false);
+    setShowWorkProductViewer(true);
+  };
+
+  const convertProjectToContext = (project: Project): ProjectContext => {
+    return {
+      projectId: project.id,
+      projectName: project.name,
+      projectType: project.type === 'deal' ? 'due-diligence' : 'analysis',
+      sector: project.metadata?.sector || 'Technology', // Use real sector from database
+      dealValue: project.metadata?.dealValueCents || undefined, // Use raw cents value from database
+      stage: project.metadata?.stage || (project.status === 'active' ? 'due-diligence' : 'analysis'), // Use real stage
+      geography: project.metadata?.geography || 'North America', // Use real geography
+      riskRating: project.metadata?.riskRating || (project.priority === 'high' ? 'high' : project.priority === 'low' ? 'low' : 'medium'), // Use real risk rating
+      progress: project.metadata?.progress || 0,
+      metadata: {
+        ...(project.metadata || {}),
+        ...(project.metadata?.dbMetadata || {}) // Include database metadata
+      }
+    };
   };
 
   return (
@@ -132,6 +208,16 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
             <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
               AI Managing
             </Badge>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCreationMode(creationMode === 'assembler' ? 'traditional' : 'assembler')}
+              className="flex items-center gap-2"
+            >
+              <Wand2 className="w-4 h-4" />
+              {creationMode === 'assembler' ? 'AI Creator' : 'Traditional'}
+            </Button>
             
             <Button
               variant="outline"
@@ -198,6 +284,31 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
                 workspaceId={selectedProject.id}
                 onCreateWorkProduct={handleWorkProductCreated}
                 onCancel={() => setShowWorkProductCreator(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Content Assembler Modal */}
+      {showContentAssembler && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-7xl w-full max-h-[95vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-violet-50 to-purple-50">
+              <div className="flex items-center gap-3">
+                <Wand2 className="w-5 h-5 text-violet-600" />
+                <h2 className="text-lg font-semibold text-gray-900">AI Content Assembler - {selectedProject.name}</h2>
+                <Badge variant="outline" className="bg-purple-100 text-purple-700">Smart Creation</Badge>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setShowContentAssembler(false)}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="h-[calc(95vh-80px)]">
+              <ContentAssembler
+                projectContext={convertProjectToContext(selectedProject)}
+                onSave={handleWorkProductSaved}
+                onCancel={() => setShowContentAssembler(false)}
               />
             </div>
           </div>

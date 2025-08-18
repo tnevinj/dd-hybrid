@@ -185,20 +185,7 @@ export function UnifiedPortfolioProvider({
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      // Use unified data source for consistency across all modes
-      const { UnifiedWorkspaceDataService } = await import('@/lib/data/unified-workspace-data');
-      const unifiedPortfolios = UnifiedWorkspaceDataService.getUnifiedPortfolios();
-      dispatch({ type: 'SET_PORTFOLIOS', payload: unifiedPortfolios });
-      
-      // Also set the default portfolio as current
-      if (unifiedPortfolios.length > 0) {
-        dispatch({ type: 'SET_CURRENT_PORTFOLIO', payload: unifiedPortfolios[0] });
-      }
-      
-      return;
-      
-      // Production code (commented out for development)
-      /*
+      // Use actual API endpoint instead of mock data
       const response = await fetch('/api/portfolio', {
         method: 'GET',
         credentials: 'include',
@@ -208,9 +195,14 @@ export function UnifiedPortfolioProvider({
         throw new Error('Failed to load portfolios');
       }
       
-      const portfolios = await response.json();
+      const data = await response.json();
+      const portfolios = data.portfolios || [];
       dispatch({ type: 'SET_PORTFOLIOS', payload: portfolios });
-      */
+      
+      // Set the first portfolio as current if available
+      if (portfolios.length > 0) {
+        dispatch({ type: 'SET_CURRENT_PORTFOLIO', payload: portfolios[0] });
+      }
     } catch (error) {
       console.error('Error loading portfolios:', error);
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });

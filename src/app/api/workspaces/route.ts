@@ -206,9 +206,30 @@ export async function GET(request: NextRequest) {
       filters.assignedToMe = true;
     }
     
-    // Apply filters to mock data
-    let filteredWorkspaces = mockWorkspaces;
+    // Get workspaces from SQLite database
+    const { WorkspaceService } = await import('@/lib/services/database');
+    const dbWorkspaces = WorkspaceService.getAll();
     
+    // Convert database workspaces to API format
+    let filteredWorkspaces = dbWorkspaces.map(ws => ({
+      id: ws.id,
+      name: ws.name,
+      type: ws.type,
+      status: ws.status,
+      sector: ws.sector,
+      geography: ws.geography,
+      stage: ws.stage,
+      priority: ws.priority || 'medium',
+      dealValue: ws.deal_value, // In cents
+      progress: ws.progress,
+      team: ws.team_members,
+      riskRating: ws.risk_rating,
+      updatedAt: ws.updated_at,
+      createdAt: ws.created_at,
+      metadata: ws.metadata // Include metadata from database
+    }));
+    
+    // Apply filters
     if (filters.status?.length) {
       filteredWorkspaces = filteredWorkspaces.filter(w => 
         filters.status!.includes(w.status)
@@ -224,14 +245,14 @@ export async function GET(request: NextRequest) {
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       filteredWorkspaces = filteredWorkspaces.filter(w => 
-        w.title.toLowerCase().includes(searchLower) ||
-        w.description?.toLowerCase().includes(searchLower) ||
-        w.dealName?.toLowerCase().includes(searchLower)
+        w.name.toLowerCase().includes(searchLower) ||
+        w.sector?.toLowerCase().includes(searchLower) ||
+        w.stage?.toLowerCase().includes(searchLower)
       );
     }
     
     return NextResponse.json({
-      workspaces: filteredWorkspaces,
+      data: filteredWorkspaces,
       total: filteredWorkspaces.length,
       filters: filters
     });

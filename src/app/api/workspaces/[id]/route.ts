@@ -317,12 +317,95 @@ const mockWorkspace: InvestmentWorkspace = {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const workspaceId = params.id;
+    const { id: workspaceId } = await params;
     
-    // Get workspace from unified data service
+    // Try to get workspace from SQLite database first
+    const { WorkspaceService } = await import('@/lib/services/database');
+    const dbWorkspace = WorkspaceService.getById(workspaceId);
+    
+    if (dbWorkspace) {
+      // Convert database workspace to InvestmentWorkspace format
+      const workspace: InvestmentWorkspace = {
+        id: dbWorkspace.id,
+        title: dbWorkspace.name,
+        description: `${dbWorkspace.sector || 'General'} ${dbWorkspace.type} project`,
+        type: dbWorkspace.type === 'deal' ? 'DUE_DILIGENCE' :
+              dbWorkspace.type === 'portfolio' ? 'MONITORING' :
+              dbWorkspace.type === 'analysis' ? 'SCREENING' : 'UNIFIED',
+        status: dbWorkspace.status === 'active' ? 'ACTIVE' :
+                dbWorkspace.status === 'review' ? 'REVIEW' :
+                dbWorkspace.status === 'draft' ? 'DRAFT' :
+                dbWorkspace.status === 'completed' ? 'COMPLETED' : 'ACTIVE',
+        phase: 'EXECUTION',
+        dealName: `${dbWorkspace.name}`,
+        dealId: `deal-${dbWorkspace.id}`,
+        createdBy: 'user-1',
+        createdAt: new Date(dbWorkspace.created_at),
+        updatedAt: new Date(dbWorkspace.updated_at),
+        targetCompletionDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        overallProgress: dbWorkspace.progress || 0,
+        completedComponents: Math.floor((dbWorkspace.team_members?.length || 1) * ((dbWorkspace.progress || 0) / 100)),
+        totalComponents: dbWorkspace.team_members?.length || 3,
+        sector: dbWorkspace.sector || 'Technology',
+        region: dbWorkspace.geography || 'North America',
+        investmentSize: dbWorkspace.deal_value ? `$${Math.round((dbWorkspace.deal_value / 100) / 1000000)}M` : '$50M-100M',
+        tags: [
+          dbWorkspace.sector?.toLowerCase() || 'technology',
+          dbWorkspace.stage || 'growth',
+          dbWorkspace.type.replace('-', '')
+        ],
+        participants: (dbWorkspace.team_members || ['Team Lead']).map((member, index) => ({
+          id: `${index + 1}`,
+          userId: `user-${index + 1}`,
+          role: index === 0 ? 'LEAD' : index === 1 ? 'ANALYST' : index === 2 ? 'REVIEWER' : 'OBSERVER',
+          joinedAt: new Date(dbWorkspace.created_at),
+          lastActive: new Date(dbWorkspace.updated_at)
+        })),
+        analysisComponents: [
+          {
+            id: '1',
+            type: 'Financial Analysis',
+            title: 'Financial Model Analysis',
+            description: 'Analysis of financial performance and projections',
+            status: (dbWorkspace.progress || 0) > 80 ? 'COMPLETED' : (dbWorkspace.progress || 0) > 40 ? 'IN_PROGRESS' : 'NOT_STARTED',
+            progress: Math.min((dbWorkspace.progress || 0) + 10, 100),
+            assignedTo: 'user-2',
+            evidence: []
+          },
+          {
+            id: '2', 
+            type: 'Market Analysis',
+            title: 'Market Assessment',
+            description: 'Market size and competitive analysis',
+            status: (dbWorkspace.progress || 0) > 60 ? 'IN_PROGRESS' : 'NOT_STARTED',
+            progress: Math.max((dbWorkspace.progress || 0) - 20, 0),
+            assignedTo: 'user-1',
+            evidence: []
+          }
+        ],
+        evidence: [],
+        comments: [],
+        activities: [
+          {
+            id: '1',
+            type: 'CREATED',
+            description: `Workspace created for ${dbWorkspace.name}`,
+            userId: 'user-1',
+            userName: dbWorkspace.team_members?.[0] || 'Team Lead',
+            timestamp: new Date(dbWorkspace.created_at)
+          }
+        ],
+        aiRecommendations: [],
+        aiInsights: []
+      };
+      
+      return NextResponse.json(workspace);
+    }
+    
+    // Fallback to unified data service for backward compatibility
     const allProjects = UnifiedWorkspaceDataService.getAllProjects();
     const targetProject = allProjects.find(p => {
       // Try both formats: with and without 'workspace-proj-' prefix
@@ -439,10 +522,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const workspaceId = params.id;
+    const { id: workspaceId } = await params;
     const updates: WorkspaceUpdateRequest = await request.json();
     
     // In real implementation, update in database
@@ -478,10 +561,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const workspaceId = params.id;
+    const { id: workspaceId } = await params;
     
     // In real implementation, soft delete or hard delete
     // await prisma.investmentWorkspace.update({
