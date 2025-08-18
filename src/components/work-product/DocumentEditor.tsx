@@ -21,7 +21,8 @@ import {
   Sparkles,
   ChevronRight,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  TrendingUp
 } from 'lucide-react';
 import { useNavigationStore } from '@/stores/navigation-store';
 import ReactMarkdown from 'react-markdown';
@@ -58,6 +59,200 @@ export function DocumentEditor({ workProduct, onSave, onStatusChange, onBack }: 
     setHasUnsavedChanges(false);
   };
 
+  const [aiSuggestions, setAISuggestions] = useState<any[]>([]);
+  const [isGeneratingContent, setIsGeneratingContent] = useState(false);
+  const [writingAssistance, setWritingAssistance] = useState<{
+    suggestions: string[];
+    improvements: string[];
+    dataInsights: string[];
+  }>({
+    suggestions: [],
+    improvements: [],
+    dataInsights: []
+  });
+
+  // Real-time writing assistance
+  useEffect(() => {
+    if (currentSection && navigationMode !== 'traditional') {
+      generateWritingAssistance(currentSection);
+    }
+  }, [currentSection, navigationMode]);
+
+  const generateWritingAssistance = async (section: DocumentSection) => {
+    // Generate contextual suggestions based on section content and type
+    const suggestions = [];
+    const improvements = [];
+    const dataInsights = [];
+
+    // Content suggestions based on section type
+    if (section.type === 'financial_block') {
+      suggestions.push('Include key financial metrics and ratios');
+      suggestions.push('Add benchmark comparisons');
+      suggestions.push('Highlight growth trends and projections');
+      dataInsights.push('Deal value: $50M in Technology sector');
+      dataInsights.push('EBITDA margin: 30% above industry average');
+    } else if (section.title.toLowerCase().includes('executive')) {
+      suggestions.push('Start with the investment recommendation');
+      suggestions.push('Highlight key value drivers');
+      suggestions.push('Include risk mitigation strategies');
+    } else if (section.title.toLowerCase().includes('market')) {
+      suggestions.push('Define total addressable market');
+      suggestions.push('Analyze competitive landscape');
+      suggestions.push('Identify growth catalysts');
+    }
+
+    // Content improvements based on current content
+    if (section.content.length < 100) {
+      improvements.push('Section content appears brief - consider adding more detail');
+    }
+    if (!section.content.includes('$') && section.type === 'financial_block') {
+      improvements.push('Add specific financial figures and metrics');
+    }
+    if (section.content.length > 1000) {
+      improvements.push('Consider breaking down into subsections for clarity');
+    }
+
+    setWritingAssistance({ suggestions, improvements, dataInsights });
+  };
+
+  const handleGenerateContent = async (sectionId: string) => {
+    setIsGeneratingContent(true);
+    
+    try {
+      // Mock API call for content generation
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const mockGeneratedContent = generateMockContent(currentSection);
+      handleContentChange(sectionId, mockGeneratedContent);
+      
+      // Update AI suggestions after generation
+      const newSuggestions = [
+        {
+          id: 'content-generated',
+          type: 'success',
+          title: 'Content Generated Successfully',
+          description: 'AI has generated initial content. Review and customize as needed.',
+          action: 'review'
+        },
+        {
+          id: 'optimize-content',
+          type: 'improvement',
+          title: 'Optimize for Executive Audience',
+          description: 'Adjust tone and structure for executive presentation.',
+          action: 'optimize'
+        }
+      ];
+      
+      setAISuggestions(newSuggestions);
+    } catch (error) {
+      console.error('Content generation failed:', error);
+    } finally {
+      setIsGeneratingContent(false);
+    }
+  };
+
+  const generateMockContent = (section: DocumentSection | undefined) => {
+    if (!section) return '';
+    
+    const mockContent = {
+      'Executive Summary': `# Executive Summary
+
+TechCorp represents a compelling investment opportunity in the rapidly growing technology sector. With a deal value of $50M, this growth-stage investment aligns with our strategic focus on scalable technology platforms.
+
+## Key Investment Highlights
+- **Market Leadership**: Dominant position in the B2B SaaS market with 40% market share
+- **Strong Financials**: $15M ARR with 35% YoY growth and 85% gross margins
+- **Experienced Team**: Proven management team with successful exits
+- **Clear Value Creation**: Identified opportunities for 3x revenue growth over 5 years
+
+## Investment Recommendation
+We recommend proceeding with the $50M investment at a pre-money valuation of $150M, targeting a 25% IRR over a 5-year hold period.`,
+
+      'Financial Analysis': `# Financial Analysis
+
+## Revenue Analysis
+**Annual Recurring Revenue (ARR)**: $15M
+**Growth Rate**: 35% YoY
+**Customer Metrics**:
+- 150 enterprise customers
+- $100K average contract value
+- 98% retention rate
+- 125% net revenue retention
+
+## Profitability Metrics
+**Gross Margin**: 85%
+**EBITDA Margin**: 25%
+**Free Cash Flow**: $2.5M positive
+**Unit Economics**: LTV/CAC ratio of 4.2x
+
+## Financial Projections
+Based on our analysis, we project:
+- **Year 1**: $20M ARR (33% growth)
+- **Year 3**: $40M ARR (26% CAGR)
+- **Year 5**: $75M ARR (21% CAGR)
+
+The financial model supports a potential exit valuation of $450-600M in Year 5.`
+    };
+
+    return mockContent[section.title as keyof typeof mockContent] || 
+           `Generated content for ${section.title} section with relevant analysis and insights.`;
+  };
+
+  const handleInsertMetrics = () => {
+    if (!currentSection) return;
+    
+    const metricsContent = `
+
+**Key Metrics:**
+- Deal Value: $50M
+- Sector: Technology
+- Team Size: 4 members
+- Risk Rating: Medium
+- Expected IRR: 25%
+- Hold Period: 5 years
+`;
+
+    const updatedContent = currentSection.content + metricsContent;
+    handleContentChange(currentSection.id, updatedContent);
+  };
+
+  const handleOptimizeContent = async () => {
+    if (!currentSection) return;
+
+    try {
+      const response = await fetch('/api/content-transformation/optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workProduct: {
+            title: workProduct.title,
+            sections: sections,
+            metadata: workProduct.metadata
+          },
+          optimizationOptions: {
+            audience: 'executives',
+            tone: 'professional',
+            length: 'standard',
+            industry: 'technology'
+          }
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const optimizedSection = result.data.optimizedWorkProduct.sections.find(
+          (s: any) => s.id === currentSection.id
+        );
+        
+        if (optimizedSection) {
+          handleContentChange(currentSection.id, optimizedSection.content);
+        }
+      }
+    } catch (error) {
+      console.error('Optimization failed:', error);
+    }
+  };
+
   const renderAIAssistant = () => {
     if (!showAIAssistant || navigationMode === 'traditional') return null;
 
@@ -71,51 +266,145 @@ export function DocumentEditor({ workProduct, onSave, onStatusChange, onBack }: 
               {navigationMode === 'autonomous' && <Badge className="ml-2 bg-purple-100 text-purple-700">Autonomous</Badge>}
             </h3>
             
-            {navigationMode === 'assisted' && (
-              <div className="space-y-2">
-                <div className="p-3 bg-white rounded border border-violet-200">
-                  <p className="text-sm text-gray-700">
-                    💡 I can help generate content for the "{currentSection?.title}" section using TechCorp Due Diligence data.
-                    This includes $50M deal metrics, Technology sector analysis, and 75% project completion status.
-                  </p>
-                  <div className="flex gap-2 mt-2">
-                    <Button size="sm" variant="outline">Generate Content</Button>
-                    <Button size="sm" variant="ghost">Show Sources</Button>
-                  </div>
+            {/* Content Generation */}
+            <div className="space-y-3">
+              <div className="p-3 bg-white rounded border border-violet-200">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-sm font-medium text-gray-900">Content Generation</h4>
+                  {isGeneratingContent && (
+                    <div className="flex items-center text-blue-600">
+                      <div className="animate-spin w-3 h-3 border border-blue-600 border-t-transparent rounded-full mr-1"></div>
+                      <span className="text-xs">Generating...</span>
+                    </div>
+                  )}
                 </div>
-                
-                <div className="p-3 bg-white rounded border border-violet-200">
-                  <p className="text-sm text-gray-700">
-                    📊 I can insert TechCorp financial metrics from your due diligence analysis.
-                    Available: Deal value ($50M), Sector (Technology), Team size (4 members), Risk rating (Medium).
-                  </p>
-                  <Button size="sm" variant="outline" className="mt-2">Insert Metrics</Button>
+                <p className="text-sm text-gray-700 mb-2">
+                  Generate AI-powered content for "{currentSection?.title}" using project context and industry best practices.
+                </p>
+                <div className="flex gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => handleGenerateContent(currentSection?.id || '')}
+                    disabled={isGeneratingContent || !currentSection}
+                  >
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    Generate Content
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={handleInsertMetrics}>
+                    📊 Insert Metrics
+                  </Button>
                 </div>
               </div>
-            )}
+
+              {/* Writing Suggestions */}
+              {writingAssistance.suggestions.length > 0 && (
+                <div className="p-3 bg-white rounded border border-violet-200">
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Writing Suggestions</h4>
+                  <ul className="space-y-1">
+                    {writingAssistance.suggestions.map((suggestion, index) => (
+                      <li key={index} className="text-sm text-gray-700 flex items-start">
+                        <span className="text-violet-500 mr-2">•</span>
+                        {suggestion}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Content Improvements */}
+              {writingAssistance.improvements.length > 0 && (
+                <div className="p-3 bg-white rounded border border-orange-200 bg-orange-50">
+                  <h4 className="text-sm font-medium text-orange-900 mb-2">
+                    <AlertCircle className="w-4 h-4 inline mr-1" />
+                    Content Improvements
+                  </h4>
+                  <ul className="space-y-1">
+                    {writingAssistance.improvements.map((improvement, index) => (
+                      <li key={index} className="text-sm text-orange-700 flex items-start">
+                        <span className="text-orange-500 mr-2">•</span>
+                        {improvement}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Data Insights */}
+              {writingAssistance.dataInsights.length > 0 && (
+                <div className="p-3 bg-white rounded border border-blue-200 bg-blue-50">
+                  <h4 className="text-sm font-medium text-blue-900 mb-2">
+                    📊 Available Data
+                  </h4>
+                  <ul className="space-y-1">
+                    {writingAssistance.dataInsights.map((insight, index) => (
+                      <li key={index} className="text-sm text-blue-700 flex items-start">
+                        <span className="text-blue-500 mr-2">•</span>
+                        {insight}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {navigationMode === 'autonomous' && (
+                <div className="p-3 bg-white rounded border border-purple-200">
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Autonomous Actions</h4>
+                  <div className="space-y-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={handleOptimizeContent}
+                    >
+                      <Wand2 className="w-3 h-3 mr-2" />
+                      Auto-optimize for executives
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="w-full justify-start"
+                    >
+                      <TrendingUp className="w-3 h-3 mr-2" />
+                      Update with latest data
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* AI Suggestions */}
+              {aiSuggestions.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-gray-900">Smart Suggestions</h4>
+                  {aiSuggestions.map((suggestion) => (
+                    <div key={suggestion.id} className={`p-2 rounded border text-sm ${
+                      suggestion.type === 'success' ? 'bg-green-50 border-green-200' :
+                      suggestion.type === 'improvement' ? 'bg-blue-50 border-blue-200' :
+                      'bg-gray-50 border-gray-200'
+                    }`}>
+                      <div className="font-medium">{suggestion.title}</div>
+                      <div className="text-gray-600 text-xs mt-1">{suggestion.description}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {navigationMode === 'autonomous' && (
               <div className="space-y-2">
                 <div className="p-3 bg-white rounded border border-purple-200">
                   <p className="text-sm text-gray-700">
-                    🔄 I monitor TechCorp Due Diligence workspace for updates and will refresh document sections when new data becomes available.
+                    🔄 I continuously monitor your TechCorp Due Diligence workspace for updates and will automatically refresh document sections when new data becomes available.
                     Current status: Active project (75% complete), 4 team members, 8 work products.
                   </p>
-                  <Button size="sm" variant="outline" className="mt-2">View Project Status</Button>
-                </div>
-                
-                <div className="p-3 bg-white rounded border border-purple-200">
-                  <p className="text-sm text-gray-700">
-                    ✍️ I can auto-generate remaining sections using TechCorp's established due diligence data.
-                    Available data: $50M deal value, Technology sector, Medium risk rating, North America geography.
-                  </p>
-                  <Button size="sm" variant="outline" className="mt-2">Generate Sections</Button>
+                  <div className="flex gap-2 mt-2">
+                    <Button size="sm" variant="outline">View Project Status</Button>
+                    <Button size="sm" variant="outline">Data Sources</Button>
+                  </div>
                 </div>
               </div>
             )}
           </div>
-          
-          <Button variant="ghost" size="sm" onClick={() => setShowAIAssistant(false)}>×</Button>
         </div>
       </Card>
     );

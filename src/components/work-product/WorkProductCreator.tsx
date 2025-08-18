@@ -12,7 +12,7 @@ import {
 import { 
   Plus, 
   FileText, 
-  PresentationChart, 
+  BarChart3 as PresentationChart, 
   Calculator, 
   Shield, 
   TrendingUp,
@@ -22,6 +22,8 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useNavigationStore } from '@/stores/navigation-store';
+import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
+import { dealScoringEngine } from '@/lib/services/deal-scoring-engine';
 
 interface WorkProductCreatorProps {
   workspaceId: string;
@@ -93,13 +95,40 @@ export function WorkProductCreator({ workspaceId, onCreateWorkProduct, onCancel 
   const [customizeTemplate, setCustomizeTemplate] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(navigationMode !== 'traditional');
 
+  // Get workspace data for intelligent recommendations
+  const workspaceProject = UnifiedWorkspaceDataService.getAllProjects().find(p => p.id === workspaceId);
+  const dealScore = workspaceProject ? dealScoringEngine.scoreDeal(workspaceProject) : null;
+
   const handleQuickCreate = (type: WorkProductType) => {
     const typeConfig = workProductTypes.find(t => t.type === type);
+    
+    // Generate intelligent title based on workspace data
+    let intelligentTitle = title;
+    if (!title && workspaceProject) {
+      const projectName = workspaceProject.name.split(' ')[0]; // e.g., "TechCorp" from "TechCorp Due Diligence"
+      intelligentTitle = `${projectName} ${typeConfig?.title} - ${new Date().toLocaleDateString()}`;
+    } else if (!title) {
+      intelligentTitle = `${typeConfig?.title} - ${new Date().toLocaleDateString()}`;
+    }
+    
     const request: WorkProductCreateRequest = {
       workspaceId,
-      title: title || `${typeConfig?.title} - ${new Date().toLocaleDateString()}`,
+      title: intelligentTitle,
       type,
-      templateId: `${type.toLowerCase()}-standard`
+      templateId: `${type.toLowerCase()}-standard`,
+      // Include workspace context for AI-powered content generation
+      context: workspaceProject ? {
+        projectName: workspaceProject.name,
+        sector: workspaceProject.metadata.sector,
+        dealValue: workspaceProject.metadata.dealValue,
+        geography: workspaceProject.metadata.geography,
+        stage: workspaceProject.metadata.stage,
+        progress: workspaceProject.progress,
+        teamSize: workspaceProject.teamSize,
+        riskRating: workspaceProject.metadata.riskRating,
+        dealScore: dealScore,
+        aiInsights: workspaceProject.aiData?.insights || []
+      } : undefined
     };
     
     onCreateWorkProduct(request);
@@ -108,11 +137,32 @@ export function WorkProductCreator({ workspaceId, onCreateWorkProduct, onCancel 
   const handleCustomCreate = () => {
     if (!selectedType) return;
     
+    // Generate intelligent title if not provided
+    let intelligentTitle = title;
+    if (!title && workspaceProject) {
+      const projectName = workspaceProject.name.split(' ')[0];
+      const typeConfig = workProductTypes.find(t => t.type === selectedType);
+      intelligentTitle = `${projectName} ${typeConfig?.title} - ${new Date().toLocaleDateString()}`;
+    }
+    
     const request: WorkProductCreateRequest = {
       workspaceId,
-      title: title,
+      title: intelligentTitle,
       type: selectedType,
-      templateId: `${selectedType.toLowerCase()}-standard`
+      templateId: `${selectedType.toLowerCase()}-standard`,
+      // Include workspace context for AI-powered content generation
+      context: workspaceProject ? {
+        projectName: workspaceProject.name,
+        sector: workspaceProject.metadata.sector,
+        dealValue: workspaceProject.metadata.dealValue,
+        geography: workspaceProject.metadata.geography,
+        stage: workspaceProject.metadata.stage,
+        progress: workspaceProject.progress,
+        teamSize: workspaceProject.teamSize,
+        riskRating: workspaceProject.metadata.riskRating,
+        dealScore: dealScore,
+        aiInsights: workspaceProject.aiData?.insights || []
+      } : undefined
     };
     
     onCreateWorkProduct(request);
@@ -133,57 +183,163 @@ export function WorkProductCreator({ workspaceId, onCreateWorkProduct, onCancel 
               )}
             </h3>
             
-            {navigationMode === 'assisted' && (
+{navigationMode === 'assisted' && workspaceProject && (
               <div className="space-y-2">
                 <div className="p-3 bg-white rounded border border-indigo-200">
                   <p className="text-sm text-gray-700">
-                    💡 Based on your workspace analysis, I recommend starting with a <strong>Due Diligence Report</strong>.
-                    I can populate it with your existing evidence and findings.
+                    💡 Based on <strong>{workspaceProject.name}</strong> analysis ({workspaceProject.progress}% complete), I recommend:
                   </p>
-                  <div className="flex gap-2 mt-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => {
-                        setSelectedType('DD_REPORT');
-                        setTitle('Due Diligence Report - AI Generated');
-                      }}
-                    >
-                      Use Recommendation
-                    </Button>
-                    <Button size="sm" variant="ghost">Show Data Sources</Button>
+                  <div className="mt-2">
+                    {workspaceProject.type === 'due-diligence' && (
+                      <div className="space-y-2">
+                        <p className="text-xs text-gray-600">Best match: <strong>Due Diligence Report</strong> with {workspaceProject.metadata.sector} sector insights</p>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => {
+                            setSelectedType('DD_REPORT');
+                            setTitle(`${workspaceProject.name.split(' ')[0]} Due Diligence Report`);
+                          }}
+                        >
+                          Create DD Report
+                        </Button>
+                      </div>
+                    )}
+                    {workspaceProject.type === 'ic-preparation' && (
+                      <div className="space-y-2">
+                        <p className="text-xs text-gray-600">Best match: <strong>IC Memo</strong> with ${(workspaceProject.metadata.dealValue! / 1000000).toFixed(0)}M deal analysis</p>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => {
+                            setSelectedType('IC_MEMO');
+                            setTitle(`${workspaceProject.name.split(' ')[0]} Investment Committee Memo`);
+                          }}
+                        >
+                          Create IC Memo
+                        </Button>
+                      </div>
+                    )}
+                    {dealScore && dealScore.categories.risk.score < 70 && (
+                      <div className="space-y-2">
+                        <p className="text-xs text-gray-600">Risk factors detected: <strong>Risk Assessment</strong> recommended</p>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => {
+                            setSelectedType('RISK_ASSESSMENT');
+                            setTitle(`${workspaceProject.name.split(' ')[0]} Risk Assessment`);
+                          }}
+                        >
+                          Create Risk Assessment
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
                 <div className="p-3 bg-white rounded border border-indigo-200">
                   <p className="text-sm text-gray-700">
-                    ⚡ I can automatically generate document sections using your workspace data.
-                    This includes financial metrics, risk analysis, and market insights.
+                    ⚡ I can auto-populate with real data:
                   </p>
-                  <div className="flex gap-2 mt-2">
-                    <Button size="sm" variant="outline">Auto-Generate Content</Button>
-                    <Button size="sm" variant="ghost">Preview Sections</Button>
+                  <div className="grid grid-cols-2 gap-1 mt-2 text-xs text-gray-600">
+                    <div>• Deal Value: ${(workspaceProject.metadata.dealValue! / 1000000).toFixed(0)}M</div>
+                    <div>• Sector: {workspaceProject.metadata.sector}</div>
+                    <div>• Geography: {workspaceProject.metadata.geography}</div>
+                    <div>• Team: {workspaceProject.teamSize} members</div>
+                    {dealScore && (
+                      <>
+                        <div>• Overall Score: {dealScore.overallScore}/100</div>
+                        <div>• Risk Rating: {workspaceProject.metadata.riskRating}</div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
             )}
 
-            {navigationMode === 'autonomous' && (
+            {navigationMode === 'assisted' && !workspaceProject && (
+              <div className="space-y-2">
+                <div className="p-3 bg-white rounded border border-indigo-200">
+                  <p className="text-sm text-gray-700">
+                    💡 I can help you create intelligent work products with auto-generated content.
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    <Button size="sm" variant="outline">Browse Templates</Button>
+                    <Button size="sm" variant="ghost">View Examples</Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+{navigationMode === 'autonomous' && workspaceProject && (
               <div className="space-y-2">
                 <div className="p-3 bg-white rounded border border-purple-200">
                   <p className="text-sm text-gray-700">
-                    🔄 I've pre-selected the optimal document types for your workspace stage.
-                    Ready to create: DD Report (recommended), Risk Assessment (supplementary).
+                    🔄 Optimal documents for <strong>{workspaceProject.name}</strong> ({workspaceProject.progress}% complete):
                   </p>
-                  <Button size="sm" variant="outline" className="mt-2">Create Recommended Set</Button>
+                  <div className="mt-2 space-y-1">
+                    {workspaceProject.type === 'due-diligence' && (
+                      <>
+                        <div className="text-xs text-gray-600">• DD Report (Priority 1) - {workspaceProject.metadata.sector} analysis</div>
+                        <div className="text-xs text-gray-600">• Risk Assessment (Priority 2) - {workspaceProject.metadata.riskRating} risk factors</div>
+                        {dealScore && dealScore.categories.financial.score > 75 && (
+                          <div className="text-xs text-gray-600">• Financial Model (Priority 3) - Strong financials detected</div>
+                        )}
+                      </>
+                    )}
+                    {workspaceProject.type === 'ic-preparation' && (
+                      <>
+                        <div className="text-xs text-gray-600">• IC Memo (Priority 1) - ${(workspaceProject.metadata.dealValue! / 1000000).toFixed(0)}M recommendation</div>
+                        <div className="text-xs text-gray-600">• Investment Summary (Priority 2) - Executive overview</div>
+                      </>
+                    )}
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="mt-2"
+                    onClick={() => {
+                      // Auto-select primary document type
+                      if (workspaceProject.type === 'due-diligence') {
+                        setSelectedType('DD_REPORT');
+                        setTitle(`${workspaceProject.name.split(' ')[0]} Due Diligence Report - AI Generated`);
+                      } else if (workspaceProject.type === 'ic-preparation') {
+                        setSelectedType('IC_MEMO');
+                        setTitle(`${workspaceProject.name.split(' ')[0]} IC Memo - AI Generated`);
+                      }
+                    }}
+                  >
+                    Create Primary Document
+                  </Button>
                 </div>
                 
                 <div className="p-3 bg-white rounded border border-purple-200">
                   <p className="text-sm text-gray-700">
-                    📊 I can create all documents simultaneously and maintain cross-references between them.
-                    This ensures consistency across your work product suite.
+                    📊 AI will auto-generate with real scoring data:
                   </p>
-                  <Button size="sm" variant="outline" className="mt-2">Create Document Suite</Button>
+                  <div className="mt-2 text-xs text-gray-600">
+                    {dealScore && (
+                      <>
+                        <div>• Overall Score: {dealScore.overallScore}/100 with {dealScore.recommendations.length} recommendations</div>
+                        <div>• Financial Analysis: {dealScore.categories.financial.score}/100</div>
+                        <div>• Risk Assessment: {dealScore.categories.risk.score}/100</div>
+                        <div>• Strategic Fit: {dealScore.categories.strategic.score}/100</div>
+                      </>
+                    )}
+                  </div>
+                  <Button size="sm" variant="outline" className="mt-2">Create Complete Suite</Button>
+                </div>
+              </div>
+            )}
+
+            {navigationMode === 'autonomous' && !workspaceProject && (
+              <div className="space-y-2">
+                <div className="p-3 bg-white rounded border border-purple-200">
+                  <p className="text-sm text-gray-700">
+                    🔄 AI will analyze workspace context and pre-select optimal document types.
+                  </p>
+                  <Button size="sm" variant="outline" className="mt-2">Analyze & Recommend</Button>
                 </div>
               </div>
             )}

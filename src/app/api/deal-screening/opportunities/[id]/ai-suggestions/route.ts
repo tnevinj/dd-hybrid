@@ -56,7 +56,7 @@ const opportunities: DealOpportunity[] = [
 ];
 
 // Import templates from the templates route
-import { mockTemplates } from '../../templates/route';
+import { mockTemplates } from '../../../templates/route';
 
 // GET /api/deal-screening/opportunities/[id]/ai-suggestions
 export async function GET(

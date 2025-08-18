@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { ThandoContext, ClaudeRequest, ClaudeResponse, AIAction } from '@/types/thando-context';
 import { demoScenariosService } from '@/lib/services/demo-scenarios-service';
+import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
+import { dealScoringEngine } from '@/lib/services/deal-scoring-engine';
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
@@ -150,63 +152,134 @@ const getAvailableTools = (context: ThandoContext): Anthropic.Tool[] => {
 
   // Add module-specific tools
   if (context.currentModule === 'deal-screening') {
-    baseTools.push({
-      name: 'screen_investment_opportunity',
-      description: 'Screen new investment opportunity against criteria',
-      input_schema: {
-        type: 'object',
-        properties: {
-          opportunity_data: {
-            type: 'object',
-            description: 'Investment opportunity details'
+    baseTools.push(
+      {
+        name: 'screen_investment_opportunity',
+        description: 'Screen investment opportunity using real scoring engine',
+        input_schema: {
+          type: 'object',
+          properties: {
+            project_id: {
+              type: 'string',
+              description: 'ID of the project to screen'
+            },
+            generate_report: {
+              type: 'boolean',
+              description: 'Whether to generate screening report'
+            },
+            deep_analysis: {
+              type: 'boolean',
+              description: 'Whether to perform deep scoring analysis'
+            }
           },
-          screening_criteria: {
-            type: 'object',
-            description: 'Screening criteria to apply'
+          required: ['project_id']
+        }
+      },
+      {
+        name: 'get_deal_scores',
+        description: 'Get comprehensive scoring breakdown for a deal',
+        input_schema: {
+          type: 'object',
+          properties: {
+            project_id: {
+              type: 'string',
+              description: 'ID of the project to analyze'
+            },
+            include_factors: {
+              type: 'boolean',
+              description: 'Include detailed scoring factors'
+            }
           },
-          generate_report: {
-            type: 'boolean',
-            description: 'Whether to generate screening report'
-          }
-        },
-        required: ['opportunity_data']
+          required: ['project_id']
+        }
+      },
+      {
+        name: 'compare_deals',
+        description: 'Compare multiple deals using scoring engine',
+        input_schema: {
+          type: 'object',
+          properties: {
+            project_ids: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'IDs of projects to compare'
+            },
+            comparison_criteria: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Criteria for comparison (financial, strategic, risk, overall)'
+            }
+          },
+          required: ['project_ids']
+        }
       }
-    });
+    );
   }
 
-  if (context.currentModule === 'due-diligence') {
-    baseTools.push({
-      name: 'create_dd_checklist',
-      description: 'Create due diligence checklist for specific deal',
-      input_schema: {
-        type: 'object',
-        properties: {
-          deal_type: {
-            type: 'string',
-            enum: ['growth_equity', 'buyout', 'venture', 'secondary'],
-            description: 'Type of deal'
+  if (context.currentModule === 'due-diligence' || context.currentModule === 'workspace') {
+    baseTools.push(
+      {
+        name: 'create_work_product',
+        description: 'Create intelligent work product with real data',
+        input_schema: {
+          type: 'object',
+          properties: {
+            project_id: {
+              type: 'string',
+              description: 'ID of the project for context'
+            },
+            document_type: {
+              type: 'string',
+              enum: ['DD_REPORT', 'IC_MEMO', 'INVESTMENT_SUMMARY', 'RISK_ASSESSMENT', 'MARKET_ANALYSIS', 'FINANCIAL_MODEL'],
+              description: 'Type of work product to create'
+            },
+            title: {
+              type: 'string',
+              description: 'Document title (auto-generated if not provided)'
+            },
+            populate_with_data: {
+              type: 'boolean',
+              description: 'Whether to auto-populate with project data and scores'
+            }
           },
-          industry: {
-            type: 'string',
-            description: 'Industry sector'
+          required: ['project_id', 'document_type']
+        }
+      },
+      {
+        name: 'analyze_project_data',
+        description: 'Analyze comprehensive project data including scoring',
+        input_schema: {
+          type: 'object',
+          properties: {
+            project_id: {
+              type: 'string',
+              description: 'ID of the project to analyze'
+            },
+            analysis_type: {
+              type: 'array',
+              items: { 
+                type: 'string',
+                enum: ['financial', 'operational', 'strategic', 'risk', 'team', 'progress']
+              },
+              description: 'Types of analysis to perform'
+            }
           },
-          custom_items: {
-            type: 'array',
-            items: { type: 'string' },
-            description: 'Custom due diligence items'
-          }
-        },
-        required: ['deal_type']
+          required: ['project_id']
+        }
       }
-    });
+    );
   }
 
   return baseTools;
 };
 
-// Build comprehensive system prompt
+// Build comprehensive system prompt with real scoring data
 const buildSystemPrompt = (context: ThandoContext): string => {
   const { currentModule, userRole, portfolioMetrics, activeProjects, activeDeals } = context;
+
+  // Get real scoring data for all projects
+  const allProjects = UnifiedWorkspaceDataService.getAllProjects();
+  const scoredOpportunities = dealScoringEngine.scoreAllOpportunities();
 
   return `You are Thando, an expert private equity AI assistant integrated into a comprehensive investment management platform. You have deep expertise in private equity, venture capital, due diligence, portfolio management, and financial analysis.
 
@@ -218,17 +291,21 @@ const buildSystemPrompt = (context: ThandoContext): string => {
 - **Active Deals**: ${activeDeals.length} deals in pipeline
 - **Total AUM**: $${(portfolioMetrics.totalAUM / 1000000000).toFixed(1)}B
 
-## Active Portfolio Assets:
-${activeProjects.map(p => {
-  const assetType = p.metadata?.assetType || p.type;
-  const sector = p.metadata?.sector || 'Various sectors';
-  const value = p.metadata?.currentValue ? '$' + (p.metadata.currentValue / 1000000).toFixed(0) + 'M' : 'Value TBD';
-  const irr = p.metadata?.irr ? `${(p.metadata.irr * 100).toFixed(1)}% IRR` : '';
-  const riskRating = p.metadata?.riskRating ? `${p.metadata.riskRating} risk` : '';
-  const location = p.metadata?.location?.city && p.metadata?.location?.country ? `${p.metadata.location.city}, ${p.metadata.location.country}` : '';
+## Active Projects with Real-Time Scoring:
+${allProjects.map(p => {
+  const score = scoredOpportunities.find(s => s.id === p.id);
+  const dealValue = p.metadata?.dealValue ? '$' + (p.metadata.dealValue / 1000000).toFixed(0) + 'M' : 'Value TBD';
+  const scoring = score ? `Score: ${score.overallScore}/100 (${score.recommendation.toUpperCase()})` : '';
+  const progress = `${p.progress}% complete`;
+  const team = `${p.teamSize} team members`;
   
-  let details = [value, irr, riskRating, location].filter(Boolean).join(', ');
-  return `- **${p.name}** (${assetType}): ${sector}${details ? ' - ' + details : ''}`;
+  let details = [dealValue, scoring, progress, team, `${p.metadata.riskRating} risk`].filter(Boolean).join(', ');
+  return `- **${p.name}**: ${p.metadata?.sector} ${p.type} - ${details}`;
+}).join('\n')}
+
+## Real-Time Deal Scoring Analysis:
+${scoredOpportunities.map(opp => {
+  return `- **${opp.name}**: ${opp.overallScore}/100 overall (Financial: ${opp.financialScore}, Strategic: ${opp.strategicFit}, Risk: ${opp.riskScore}) | Expected IRR: ${opp.expectedIRR.toFixed(1)}% | Recommendation: ${opp.recommendation.toUpperCase()}`;
 }).join('\n')}
 
 ## Portfolio Overview:
@@ -384,10 +461,12 @@ export async function POST(request: NextRequest) {
     const startTime = Date.now();
     const enableRealAI = process.env.ENABLE_REAL_AI === 'true';
     const fallbackToMock = process.env.FALLBACK_TO_MOCK === 'true';
+    const hasApiKey = process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY.length > 0;
 
     let response: ClaudeResponse;
 
-    if (enableRealAI && process.env.ANTHROPIC_API_KEY) {
+    // Prioritize real Claude API if we have API key (user said it's configured)
+    if (hasApiKey && (enableRealAI || enableRealAI !== false)) {
       try {
         // Real Claude API integration
         const systemPrompt = options.systemPromptOverride || buildSystemPrompt(context);

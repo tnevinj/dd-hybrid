@@ -30,6 +30,13 @@ export interface DocumentSection {
   required: boolean;
   template?: string;
   metadata?: Record<string, any>;
+  // Enhanced content transformation features
+  generationStrategy?: 'static' | 'ai-generated' | 'data-driven' | 'hybrid';
+  dataBindings?: DataBinding[];
+  validationRules?: SectionValidationRule[];
+  aiPrompt?: string;
+  lastGenerated?: Date;
+  qualityScore?: number;
 }
 
 export interface WorkProduct {
@@ -268,6 +275,18 @@ export interface WorkProductCreateRequest {
   assignedReviewers?: string[];
   reviewDueDate?: Date;
   metadata?: Record<string, any>;
+  context?: {
+    projectName?: string;
+    sector?: string;
+    dealValue?: number;
+    geography?: string;
+    stage?: string;
+    progress?: number;
+    teamSize?: number;
+    riskRating?: string;
+    dealScore?: any;
+    aiInsights?: any[];
+  };
 }
 
 export interface WorkProductUpdateRequest {
@@ -291,4 +310,193 @@ export interface DocumentSearchFilters {
   };
   tags?: string[];
   search?: string;
+}
+
+// Enhanced content transformation types
+export interface DataBinding {
+  id: string;
+  sourceType: 'deal-metrics' | 'financial-model' | 'risk-assessment' | 'market-data' | 'team-data' | 'external-api';
+  sourceId: string;
+  fieldMapping: Record<string, string>;
+  transformationRules: TransformationRule[];
+  refreshPolicy: 'static' | 'on-demand' | 'real-time';
+  lastUpdated?: Date;
+}
+
+export interface TransformationRule {
+  id: string;
+  type: 'format' | 'calculate' | 'filter' | 'aggregate' | 'validate';
+  sourceField: string;
+  targetField: string;
+  operation: string;
+  parameters: Record<string, any>;
+}
+
+export interface SectionValidationRule {
+  id: string;
+  type: 'completeness' | 'accuracy' | 'consistency' | 'compliance' | 'readability';
+  description: string;
+  severity: 'error' | 'warning' | 'info';
+  validationFunction: string; // Function name or validation expression
+  parameters: Record<string, any>;
+}
+
+export interface SmartTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: 'due-diligence' | 'investment-memo' | 'risk-assessment' | 'financial-analysis' | 'market-research' | 'legal-docs';
+  industryFocus: string[];
+  dealStages: string[];
+  workProductType: WorkProductType;
+  
+  // Template structure
+  sections: TemplateSection[];
+  dynamicFields: TemplateField[];
+  conditionalLogic: ConditionalRule[];
+  
+  // AI capabilities
+  aiGenerationPrompts: Record<string, string>;
+  dataIntegrationPoints: DataConnection[];
+  contentValidationRules: ValidationRule[];
+  
+  // Metadata
+  version: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+  usageCount: number;
+  successRate: number;
+  averageQualityScore: number;
+  tags: string[];
+}
+
+export interface TemplateSection {
+  id: string;
+  title: string;
+  description?: string;
+  order: number;
+  required: boolean;
+  type: DocumentSection['type'];
+  generationStrategy: DocumentSection['generationStrategy'];
+  aiPrompt?: string;
+  dataBindings: DataBinding[];
+  validationRules: SectionValidationRule[];
+  estimatedLength?: number;
+  dependencies?: string[];
+}
+
+export interface TemplateField {
+  id: string;
+  name: string;
+  type: 'text' | 'number' | 'date' | 'select' | 'multiselect' | 'boolean' | 'currency' | 'percentage';
+  required: boolean;
+  defaultValue?: any;
+  options?: string[];
+  validation?: FieldValidation;
+  description?: string;
+  placeholder?: string;
+}
+
+export interface FieldValidation {
+  min?: number;
+  max?: number;
+  pattern?: string;
+  customValidation?: string;
+}
+
+export interface ConditionalRule {
+  id: string;
+  condition: string; // Boolean expression
+  actions: ConditionalAction[];
+  description?: string;
+}
+
+export interface ConditionalAction {
+  type: 'show' | 'hide' | 'require' | 'populate' | 'validate';
+  target: string; // Section or field ID
+  value?: any;
+}
+
+export interface DataConnection {
+  id: string;
+  sourceType: DataBinding['sourceType'];
+  connectionString: string;
+  queryTemplate: string;
+  parameters: Record<string, any>;
+  cacheDuration?: number;
+}
+
+export interface ValidationRule {
+  id: string;
+  type: SectionValidationRule['type'];
+  scope: 'section' | 'document' | 'template';
+  implementation: string;
+  parameters: Record<string, any>;
+}
+
+export interface ContentGenerationRequest {
+  templateId: string;
+  workspaceId: string;
+  projectContext: ProjectContext;
+  customFields?: Record<string, any>;
+  generationMode: 'traditional' | 'assisted' | 'autonomous';
+  options?: {
+    includeDataBindings?: boolean;
+    generateAllSections?: boolean;
+    validateContent?: boolean;
+    optimizeForReadability?: boolean;
+  };
+}
+
+export interface ProjectContext {
+  projectId: string;
+  projectName: string;
+  projectType: string;
+  dealValue?: number;
+  sector?: string;
+  geography?: string;
+  stage?: string;
+  riskRating?: string;
+  teamSize?: number;
+  progress?: number;
+  deadline?: Date;
+  metadata?: Record<string, any>;
+}
+
+export interface ContentGenerationResult {
+  workProduct: WorkProduct;
+  generationMetrics: {
+    totalSections: number;
+    generatedSections: number;
+    automationLevel: number;
+    qualityScore: number;
+    generationTime: number;
+    dataBindingsApplied: number;
+    validationsPassed: number;
+    validationsFailed: number;
+  };
+  suggestions?: ContentSuggestion[];
+  warnings?: ContentWarning[];
+}
+
+export interface ContentSuggestion {
+  id: string;
+  type: 'improvement' | 'addition' | 'formatting' | 'data-update';
+  sectionId?: string;
+  title: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high';
+  effort: 'minimal' | 'moderate' | 'significant';
+  impact: 'low' | 'medium' | 'high';
+  suggestedAction: string;
+}
+
+export interface ContentWarning {
+  id: string;
+  type: 'missing-data' | 'validation-failed' | 'quality-concern' | 'compliance-issue';
+  sectionId?: string;
+  severity: 'info' | 'warning' | 'error';
+  message: string;
+  suggestedFix?: string;
 }
