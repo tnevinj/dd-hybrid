@@ -15,6 +15,11 @@ import {
   WorkProductType
 } from '@/types/work-product';
 import { 
+  SMART_TEMPLATES,
+  getTemplatesByIndustry,
+  getTemplatesByStage
+} from '@/lib/templates/smart-templates';
+import { 
   DragDropContext, 
   Droppable, 
   Draggable,
@@ -55,6 +60,7 @@ interface ContentAssemblerProps {
   projectContext: ProjectContext;
   onSave: (workProduct: WorkProduct) => void;
   onCancel: () => void;
+  onTemplateChange?: (template: SmartTemplate) => void;
   className?: string;
 }
 
@@ -118,6 +124,8 @@ const createTimestamp = (): string => new Date().toISOString();
 const assemblerReducer = (state: AssemblerState, action: AssemblerAction): AssemblerState => {
   switch (action.type) {
     case 'INITIALIZE_SECTIONS':
+      console.log('INITIALIZE_SECTIONS reducer called with:', action.payload.length, 'sections');
+      console.log('Section titles:', action.payload.map(s => s.title));
       return {
         ...state,
         sections: action.payload,
@@ -285,6 +293,7 @@ export function ContentAssembler({
   projectContext,
   onSave,
   onCancel,
+  onTemplateChange,
   className = ''
 }: ContentAssemblerProps) {
   const { currentMode } = useNavigationStore();
@@ -303,9 +312,10 @@ export function ContentAssembler({
   const [state, dispatch] = useReducer(assemblerReducer, initialState);
   
   // Additional component state
+  const [currentTemplate, setCurrentTemplate] = useState<SmartTemplate | undefined>(template);
   const [workProduct, setWorkProduct] = useState<Partial<WorkProduct>>({
     title: `${projectContext.projectName} - Document`,
-    type: template?.workProductType || 'INVESTMENT_SUMMARY',
+    type: currentTemplate?.workProductType || 'INVESTMENT_SUMMARY',
     sections: [],
     metadata: { projectContext }
   });
@@ -316,35 +326,42 @@ export function ContentAssembler({
   const [showAISuggestions, setShowAISuggestions] = useState(navigationMode !== 'traditional');
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [editContent, setEditContent] = useState<string>('');
+  const [showTemplateSelector, setShowTemplateSelector] = useState<boolean>(!currentTemplate);
+  const [availableTemplates, setAvailableTemplates] = useState<SmartTemplate[]>([]);
   
   // Refs for drag and drop
   const dragEndTimeout = useRef<NodeJS.Timeout>();
 
-  // Initialize sections from template
+  // Load available templates based on project context
   useEffect(() => {
-    if (template) {
-      const initialSections: SectionPreview[] = template.sections.map(templateSection => ({
-        id: templateSection.id,
-        title: templateSection.title,
-        content: '',
-        type: templateSection.type,
-        generationStrategy: templateSection.generationStrategy,
-        isGenerating: false,
-        quality: 0,
-        wordCount: 0,
-        estimatedTime: templateSection.estimatedLength ? Math.ceil(templateSection.estimatedLength / 200) : 2,
-        createdAt: createTimestamp(),
-        lastModified: createTimestamp()
-      }));
-      
-      dispatch({ type: 'INITIALIZE_SECTIONS', payload: initialSections });
-      
-      // Generate initial AI suggestions asynchronously
-      if (navigationMode !== 'traditional') {
-        setTimeout(() => generateInitialAISuggestions(template, projectContext), 100);
+    let templates = [...SMART_TEMPLATES];
+
+    // Filter by industry if available
+    if (projectContext.sector) {
+      const industryTemplates = getTemplatesByIndustry(projectContext.sector);
+      if (industryTemplates.length > 0) {
+        templates = industryTemplates;
       }
     }
-  }, [template, projectContext, navigationMode]);
+
+    // Filter by stage if available
+    if (projectContext.stage) {
+      const stageTemplates = getTemplatesByStage(projectContext.stage);
+      if (stageTemplates.length > 0) {
+        templates = templates.filter(t => stageTemplates.includes(t));
+      }
+    }
+
+    setAvailableTemplates(templates);
+  }, [projectContext]);
+
+  // Initialize sections from external template prop (if provided)
+  useEffect(() => {
+    if (template && !currentTemplate) {
+      setCurrentTemplate(template);
+      setShowTemplateSelector(false);
+    }
+  }, [template, currentTemplate]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -746,9 +763,171 @@ export function ContentAssembler({
     setEditContent('');
   };
 
+  // Template selection handlers
+  const handleTemplateSelect = (selectedTemplate: SmartTemplate) => {
+    console.log('Template selected:', selectedTemplate.name);
+    console.log('Template sections count:', selectedTemplate.sections.length);
+    console.log('Template sections:', selectedTemplate.sections.map(s => ({ id: s.id, title: s.title })));
+    
+    // Update local template state
+    setCurrentTemplate(selectedTemplate);
+    
+    // Update work product type
+    setWorkProduct(prev => ({
+      ...prev,
+      type: selectedTemplate.workProductType,
+      title: `${projectContext.projectName} - ${selectedTemplate.name}`
+    }));
+    
+    // Initialize sections from the selected template
+    const initialSections: SectionPreview[] = selectedTemplate.sections.map(templateSection => ({
+      id: templateSection.id,
+      title: templateSection.title,
+      content: '',
+      type: templateSection.type,
+      generationStrategy: templateSection.generationStrategy,
+      isGenerating: false,
+      quality: 0,
+      wordCount: 0,
+      estimatedTime: templateSection.estimatedLength ? Math.ceil(templateSection.estimatedLength / 200) : 2,
+      createdAt: createTimestamp(),
+      lastModified: createTimestamp()
+    }));
+    
+    console.log('Created sections:', initialSections.map(s => ({ id: s.id, title: s.title })));
+    
+    dispatch({ type: 'INITIALIZE_SECTIONS', payload: initialSections });
+    
+    // Hide template selector
+    setShowTemplateSelector(false);
+    
+    // Notify parent if callback provided
+    if (onTemplateChange) {
+      onTemplateChange(selectedTemplate);
+    }
+    
+    // Generate initial AI suggestions asynchronously
+    if (navigationMode !== 'traditional') {
+      setTimeout(() => generateInitialAISuggestions(selectedTemplate, projectContext), 100);
+    }
+  };
+
+  const handleShowTemplateSelector = () => {
+    setShowTemplateSelector(true);
+  };
+
+  const handleGenerateAIStructure = async () => {
+    setIsGenerating(true);
+    try {
+      // Determine document type based on project context
+      const documentType = getDocumentTypeFromProject(projectContext);
+      
+      const response = await fetch('/api/ai/generate-document-structure', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          documentType,
+          projectContext,
+          availableData: {}, // TODO: Get real data summary
+          dataMetadata: {
+            sources: ['project-context'],
+            dataQuality: 0.7,
+            completeness: 0.6
+          }
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const structure = result.structure;
+        
+        // Convert AI structure to sections
+        const aiSections: SectionPreview[] = structure.sections.map((section: any, index: number) => ({
+          id: section.id || `ai-section-${index}`,
+          title: section.title,
+          content: section.content || '',
+          type: section.id.includes('exec') ? 'text' : 'text',
+          generationStrategy: 'ai-generated' as const,
+          isGenerating: false,
+          quality: 0,
+          wordCount: 0,
+          estimatedTime: section.estimatedLength === 'short' ? 2 : section.estimatedLength === 'medium' ? 5 : 8,
+          createdAt: createTimestamp(),
+          lastModified: createTimestamp()
+        }));
+
+        // Update work product title with AI suggestion
+        setWorkProduct(prev => ({
+          ...prev,
+          title: structure.title
+        }));
+
+        // Initialize sections with AI structure
+        dispatch({ type: 'INITIALIZE_SECTIONS', payload: aiSections });
+        
+        // Create a custom template from the AI structure
+        const aiTemplate: SmartTemplate = {
+          id: `ai-generated-${Date.now()}`,
+          name: structure.title,
+          description: structure.description,
+          category: documentType,
+          industryFocus: [projectContext.sector || 'General'],
+          dealStages: [projectContext.stage || 'All'],
+          sections: structure.sections.map((section: any) => ({
+            id: section.id,
+            title: section.title,
+            type: 'text' as const,
+            required: section.priority === 'critical',
+            estimatedTime: section.estimatedTime || 5,
+            generationStrategy: 'ai-generated' as const,
+            dataBindings: [],
+            transformationRules: []
+          })),
+          dataBindings: [],
+          successRate: 0.95,
+          tags: [documentType, projectContext.sector || 'general'],
+          createdAt: new Date(),
+          lastUpdated: new Date()
+        };
+
+        setCurrentTemplate(aiTemplate);
+        setShowTemplateSelector(false);
+        
+      } else {
+        throw new Error('Failed to generate AI structure');
+      }
+    } catch (error) {
+      console.error('Error generating AI structure:', error);
+      // TODO: Show error message to user
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const getDocumentTypeFromProject = (context: ProjectContext): string => {
+    switch (context.projectType) {
+      case 'ic-preparation':
+        return 'ic-memo';
+      case 'due-diligence':
+        return 'due-diligence';
+      case 'deal-screening':
+        return 'screening-report';
+      case 'portfolio-monitoring':
+        return 'portfolio-review';
+      default:
+        // Default based on sector or general due diligence
+        return 'due-diligence';
+    }
+  };
+
   // Helper functions
   const generateSectionContent = async (section: SectionPreview, context: ProjectContext) => {
     try {
+      // Determine document type from current template
+      const documentType = currentTemplate ? getDocumentTypeFromTemplate(currentTemplate) : undefined;
+      
       const response = await fetch('/api/content/generate', {
         method: 'POST',
         headers: {
@@ -758,6 +937,7 @@ export function ContentAssembler({
           sectionId: section.id,
           sectionTitle: section.title,
           sectionType: section.type,
+          documentType: documentType,
           projectContext: context,
           generationStrategy: section.generationStrategy,
           existingContent: section.content
@@ -835,7 +1015,7 @@ export function ContentAssembler({
       title: workProduct.title || `${projectContext.projectName} - Document`,
       type: workProduct.type || 'INVESTMENT_SUMMARY',
       status: 'DRAFT',
-      templateId: template?.id,
+      templateId: currentTemplate?.id,
       sections: state.sections.map(section => ({
         id: section.id,
         title: section.title,
@@ -875,6 +1055,39 @@ export function ContentAssembler({
     if (quality >= 0.9) return 'text-green-600';
     if (quality >= 0.7) return 'text-yellow-600';
     return 'text-red-600';
+  };
+
+  const getDocumentTypeFromTemplate = (template: SmartTemplate): string => {
+    // Map template names/categories to document types
+    if (template.name.toLowerCase().includes('ic memo') || template.name.toLowerCase().includes('investment committee')) {
+      return 'ic-memo';
+    }
+    if (template.name.toLowerCase().includes('due diligence') || template.category === 'due-diligence') {
+      return 'due-diligence';
+    }
+    if (template.name.toLowerCase().includes('screening') || template.category === 'screening') {
+      return 'screening-report';
+    }
+    if (template.name.toLowerCase().includes('portfolio') || template.category === 'portfolio') {
+      return 'portfolio-review';
+    }
+    if (template.name.toLowerCase().includes('risk') || template.category === 'risk') {
+      return 'risk-assessment';
+    }
+    
+    // Default based on project type
+    switch (projectContext.projectType) {
+      case 'ic-preparation':
+        return 'ic-memo';
+      case 'due-diligence':
+        return 'due-diligence';
+      case 'deal-screening':
+        return 'screening-report';
+      case 'portfolio-monitoring':
+        return 'portfolio-review';
+      default:
+        return 'due-diligence';
+    }
   };
 
   return (
@@ -920,10 +1133,28 @@ export function ContentAssembler({
                     className="text-lg font-semibold border-none shadow-none text-gray-900 p-0"
                     placeholder="Document title..."
                   />
-                  <p className="text-sm text-gray-500 mt-1">
-                    {projectContext.projectName} • {projectContext.sector} • $
-                    {(projectContext.dealValue || 0) / 1000000}M
-                  </p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-sm text-gray-500">
+                      {projectContext.projectName} • {projectContext.sector} • $
+                      {(projectContext.dealValue || 0) / 1000000}M
+                    </p>
+                    {currentTemplate && (
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="outline" className="text-xs">
+                          {currentTemplate.name}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleShowTemplateSelector}
+                          className="text-xs h-6 px-2"
+                        >
+                          <Settings className="w-3 h-3 mr-1" />
+                          Change
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                   <span>{state.sections.reduce((total, section) => total + section.wordCount, 0)} words</span>
@@ -933,9 +1164,240 @@ export function ContentAssembler({
               </div>
             </CardContent>
           </Card>
+
+          {/* Template Selector */}
+          {showTemplateSelector && (
+            <Card className="mb-6 bg-blue-50 border-blue-200">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-blue-900">Choose Document Template</h3>
+                    <p className="text-sm text-blue-700">
+                      Select a template optimized for {projectContext.projectName} ({projectContext.sector})
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowTemplateSelector(false)}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {availableTemplates.map((availableTemplate) => {
+                    const IconComponent = getSectionIcon('text'); // Default icon
+                    const isRecommended = availableTemplate.industryFocus.includes(projectContext.sector || '') ||
+                                        availableTemplate.dealStages.includes(projectContext.stage || '');
+
+                    return (
+                      <Card
+                        key={availableTemplate.id}
+                        className={`cursor-pointer transition-all relative hover:shadow-md ${
+                          currentTemplate?.id === availableTemplate.id ? 'ring-2 ring-blue-500 bg-blue-100' : 'bg-white'
+                        }`}
+                        onClick={() => handleTemplateSelect(availableTemplate)}
+                      >
+                        {isRecommended && (
+                          <div className="absolute -top-2 -right-2 bg-yellow-500 text-white rounded-full p-1">
+                            <Sparkles className="w-3 h-3" />
+                          </div>
+                        )}
+                        
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center space-x-3">
+                              <div className="p-2 rounded-lg bg-gray-100">
+                                <IconComponent className="w-4 h-4 text-gray-600" />
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-gray-900 text-sm">{availableTemplate.name}</h4>
+                                <Badge className="text-xs bg-gray-100 text-gray-700 border-gray-300">
+                                  {availableTemplate.category.replace('-', ' ')}
+                                </Badge>
+                              </div>
+                            </div>
+                            {currentTemplate?.id === availableTemplate.id && (
+                              <CheckCircle className="w-4 h-4 text-blue-600" />
+                            )}
+                          </div>
+
+                          <p className="text-xs text-gray-600 mb-3">{availableTemplate.description}</p>
+                          
+                          <div className="grid grid-cols-2 gap-3 mb-3">
+                            <div className="text-center p-2 bg-gray-50 rounded">
+                              <div className="text-sm font-semibold text-gray-900">
+                                {availableTemplate.sections.length}
+                              </div>
+                              <div className="text-xs text-gray-500">Sections</div>
+                            </div>
+                            <div className="text-center p-2 bg-gray-50 rounded">
+                              <div className="text-sm font-semibold text-green-600">
+                                {Math.round(availableTemplate.successRate * 100)}%
+                              </div>
+                              <div className="text-xs text-gray-500">Success</div>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-1">
+                            {availableTemplate.tags.slice(0, 2).map(tag => (
+                              <Badge key={tag} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                            {availableTemplate.tags.length > 2 && (
+                              <Badge variant="secondary" className="text-xs">
+                                +{availableTemplate.tags.length - 2}
+                              </Badge>
+                            )}
+                          </div>
+
+                          {isRecommended && (
+                            <div className="mt-2 text-xs text-yellow-600 font-medium flex items-center">
+                              <Sparkles className="w-3 h-3 mr-1" />
+                              Recommended for your project
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+
+                {availableTemplates.length === 0 && (
+                  <div className="text-center py-8">
+                    <FileText className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                    <p className="text-gray-600">No templates available for this project type.</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => setAvailableTemplates(SMART_TEMPLATES)}
+                    >
+                      Show All Templates
+                    </Button>
+                  </div>
+                )}
+
+                {!currentTemplate && availableTemplates.length > 0 && (
+                  <div className="mt-4 p-3 bg-white border border-blue-200 rounded-lg">
+                    <div className="flex items-center space-x-2 text-sm text-blue-700">
+                      <AlertCircle className="w-4 h-4" />
+                      <span>Select a template to get started with structured content generation.</span>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Data Availability Preview */}
+          {currentTemplate && (
+            <Card className="mb-6 bg-green-50 border-green-200">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-green-900">Data Availability Preview</h3>
+                    <p className="text-sm text-green-700">
+                      Real data sources connected to your content generation
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
+                    Real Data Only
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="bg-white p-3 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Project Data</span>
+                      {projectContext.projectName ? (
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <AlertCircle className="w-4 h-4 text-orange-500" />
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      {projectContext.projectName ? (
+                        <>Name, sector, geography available</>
+                      ) : (
+                        <>Limited project details</>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Financial Data</span>
+                      {projectContext.dealValue ? (
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <AlertCircle className="w-4 h-4 text-orange-500" />
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      {projectContext.dealValue ? (
+                        <>Deal value: ${(projectContext.dealValue / 1000000).toFixed(0)}M</>
+                      ) : (
+                        <>No financial metrics available</>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Team Data</span>
+                      <AlertCircle className="w-4 h-4 text-orange-500" />
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      Team data will be extracted from workspace
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-white p-3 rounded-lg border border-green-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Shield className="w-4 h-4 text-green-600" />
+                    <span className="text-sm font-medium text-gray-700">Data Policy</span>
+                  </div>
+                  <p className="text-xs text-gray-600">
+                    Content generation uses only real data from connected sources. No placeholder or synthetic content will be generated. 
+                    Sections without sufficient real data will show "Data Not Available" instead of fabricated content.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* No Template Selected State */}
+          {!currentTemplate && !showTemplateSelector && (
+            <Card className="mb-6 text-center py-8">
+              <CardContent>
+                <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Template Selected</h3>
+                <p className="text-gray-600 mb-4">
+                  Choose a smart template to get started with data-driven content generation.
+                </p>
+                <div className="flex space-x-3">
+                  <Button onClick={handleShowTemplateSelector}>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Choose Template
+                  </Button>
+                  <Button variant="outline" onClick={handleGenerateAIStructure}>
+                    <Wand2 className="w-4 h-4 mr-2" />
+                    AI Structure
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
-        {/* Sections List */}
+        {/* Sections List - only show if template is selected */}
+        {currentTemplate && (
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="sections">
             {(provided) => (
@@ -1156,14 +1618,21 @@ export function ContentAssembler({
             )}
           </Droppable>
         </DragDropContext>
+        )}
 
-        {/* Action Buttons */}
+        {/* Action Buttons - show even without template for template selection */}
         <div className="flex justify-between items-center mt-8 pt-6 border-t">
           <Button variant="outline" onClick={onCancel}>
             Cancel
           </Button>
           <div className="flex space-x-3">
-            {(navigationMode === 'assisted' || navigationMode === 'autonomous') && (
+            {!currentTemplate && (
+              <Button onClick={handleShowTemplateSelector}>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Choose Template
+              </Button>
+            )}
+            {currentTemplate && (navigationMode === 'assisted' || navigationMode === 'autonomous') && (
               <Button
                 variant="outline"
                 onClick={handleGenerateAllContent}
@@ -1182,10 +1651,12 @@ export function ContentAssembler({
                 )}
               </Button>
             )}
-            <Button onClick={handleSaveWorkProduct}>
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Save Document
-            </Button>
+            {currentTemplate && (
+              <Button onClick={handleSaveWorkProduct}>
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Save Document
+              </Button>
+            )}
           </div>
         </div>
         </div>
