@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useReducer, useCallback, useRef, useEffect, useState } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,11 +44,6 @@ import {
 import { useNavigationStore } from '@/stores/navigation-store';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { 
-  isSuccessResponse, 
-  validateContentGenerationResponse,
-  ContentGenerationErrorCodes 
-} from '@/types/api-responses';
 
 interface ContentAssemblerProps {
   template?: SmartTemplate;
@@ -68,8 +63,6 @@ interface SectionPreview {
   quality: number;
   wordCount: number;
   estimatedTime: number;
-  createdAt: string;
-  lastModified: string;
 }
 
 interface AISuggestion {
@@ -80,205 +73,7 @@ interface AISuggestion {
   confidence: number;
   action: () => void;
   previewable: boolean;
-  sectionId?: string; // Link to specific section
-  createdAt: string;
 }
-
-interface AssemblerState {
-  sections: SectionPreview[];
-  aiSuggestions: AISuggestion[];
-  pendingGenerations: Set<string>;
-  errors: Record<string, string>;
-  lastOperation: string | null;
-  sectionCounter: number;
-}
-
-type AssemblerAction = 
-  | { type: 'INITIALIZE_SECTIONS'; payload: SectionPreview[] }
-  | { type: 'ADD_SECTION'; payload: Omit<SectionPreview, 'id' | 'createdAt' | 'lastModified'> }
-  | { type: 'UPDATE_SECTION'; payload: { id: string; updates: Partial<SectionPreview> } }
-  | { type: 'REMOVE_SECTION'; payload: string }
-  | { type: 'REORDER_SECTIONS'; payload: { sourceIndex: number; destinationIndex: number } }
-  | { type: 'START_GENERATION'; payload: string }
-  | { type: 'COMPLETE_GENERATION'; payload: { id: string; content: string; quality: number; wordCount: number } }
-  | { type: 'FAIL_GENERATION'; payload: { id: string; error: string } }
-  | { type: 'ADD_AI_SUGGESTION'; payload: AISuggestion }
-  | { type: 'REMOVE_AI_SUGGESTION'; payload: string }
-  | { type: 'CLEAR_ERROR'; payload: string }
-  | { type: 'SET_SECTIONS'; payload: SectionPreview[] };
-
-// Utility functions
-const generateSectionId = (counter: number): string => {
-  return `section-${Date.now()}-${counter}-${Math.random().toString(36).substr(2, 9)}`;
-};
-
-const createTimestamp = (): string => new Date().toISOString();
-
-// Reducer for atomic state management
-const assemblerReducer = (state: AssemblerState, action: AssemblerAction): AssemblerState => {
-  switch (action.type) {
-    case 'INITIALIZE_SECTIONS':
-      return {
-        ...state,
-        sections: action.payload,
-        lastOperation: 'initialize',
-        errors: {}
-      };
-
-    case 'ADD_SECTION': {
-      const newSection: SectionPreview = {
-        ...action.payload,
-        id: generateSectionId(state.sectionCounter),
-        createdAt: createTimestamp(),
-        lastModified: createTimestamp()
-      };
-      
-      return {
-        ...state,
-        sections: [...state.sections, newSection],
-        sectionCounter: state.sectionCounter + 1,
-        lastOperation: `add_section_${newSection.id}`,
-        errors: { ...state.errors, [newSection.id]: undefined } // Clear any existing errors
-      };
-    }
-
-    case 'UPDATE_SECTION': {
-      const updatedSections = state.sections.map(section =>
-        section.id === action.payload.id
-          ? { 
-              ...section, 
-              ...action.payload.updates, 
-              lastModified: createTimestamp(),
-              wordCount: action.payload.updates.content 
-                ? action.payload.updates.content.split(/\s+/).length 
-                : section.wordCount
-            }
-          : section
-      );
-
-      return {
-        ...state,
-        sections: updatedSections,
-        lastOperation: `update_section_${action.payload.id}`,
-        errors: { ...state.errors, [action.payload.id]: undefined }
-      };
-    }
-
-    case 'REMOVE_SECTION': {
-      return {
-        ...state,
-        sections: state.sections.filter(section => section.id !== action.payload),
-        pendingGenerations: new Set([...state.pendingGenerations].filter(id => id !== action.payload)),
-        aiSuggestions: state.aiSuggestions.filter(suggestion => suggestion.sectionId !== action.payload),
-        lastOperation: `remove_section_${action.payload}`,
-        errors: { ...state.errors, [action.payload]: undefined }
-      };
-    }
-
-    case 'REORDER_SECTIONS': {
-      const newSections = Array.from(state.sections);
-      const [reorderedSection] = newSections.splice(action.payload.sourceIndex, 1);
-      newSections.splice(action.payload.destinationIndex, 0, reorderedSection);
-
-      return {
-        ...state,
-        sections: newSections,
-        lastOperation: 'reorder_sections'
-      };
-    }
-
-    case 'START_GENERATION': {
-      const updatedSections = state.sections.map(section =>
-        section.id === action.payload
-          ? { ...section, isGenerating: true, lastModified: createTimestamp() }
-          : section
-      );
-
-      return {
-        ...state,
-        sections: updatedSections,
-        pendingGenerations: new Set([...state.pendingGenerations, action.payload]),
-        lastOperation: `start_generation_${action.payload}`,
-        errors: { ...state.errors, [action.payload]: undefined }
-      };
-    }
-
-    case 'COMPLETE_GENERATION': {
-      const updatedSections = state.sections.map(section =>
-        section.id === action.payload.id
-          ? {
-              ...section,
-              content: action.payload.content,
-              quality: action.payload.quality,
-              wordCount: action.payload.wordCount,
-              isGenerating: false,
-              lastModified: createTimestamp()
-            }
-          : section
-      );
-
-      const newPendingGenerations = new Set(state.pendingGenerations);
-      newPendingGenerations.delete(action.payload.id);
-
-      return {
-        ...state,
-        sections: updatedSections,
-        pendingGenerations: newPendingGenerations,
-        lastOperation: `complete_generation_${action.payload.id}`,
-        errors: { ...state.errors, [action.payload.id]: undefined }
-      };
-    }
-
-    case 'FAIL_GENERATION': {
-      const updatedSections = state.sections.map(section =>
-        section.id === action.payload.id
-          ? { ...section, isGenerating: false, lastModified: createTimestamp() }
-          : section
-      );
-
-      const newPendingGenerations = new Set(state.pendingGenerations);
-      newPendingGenerations.delete(action.payload.id);
-
-      return {
-        ...state,
-        sections: updatedSections,
-        pendingGenerations: newPendingGenerations,
-        lastOperation: `fail_generation_${action.payload.id}`,
-        errors: { ...state.errors, [action.payload.id]: action.payload.error }
-      };
-    }
-
-    case 'ADD_AI_SUGGESTION':
-      return {
-        ...state,
-        aiSuggestions: [action.payload, ...state.aiSuggestions.slice(0, 4)], // Keep max 5 suggestions
-        lastOperation: `add_suggestion_${action.payload.id}`
-      };
-
-    case 'REMOVE_AI_SUGGESTION':
-      return {
-        ...state,
-        aiSuggestions: state.aiSuggestions.filter(suggestion => suggestion.id !== action.payload),
-        lastOperation: `remove_suggestion_${action.payload}`
-      };
-
-    case 'CLEAR_ERROR':
-      return {
-        ...state,
-        errors: { ...state.errors, [action.payload]: undefined }
-      };
-
-    case 'SET_SECTIONS':
-      return {
-        ...state,
-        sections: action.payload,
-        lastOperation: 'set_sections'
-      };
-
-    default:
-      return state;
-  }
-};
 
 export function ContentAssembler({
   template,
@@ -290,19 +85,7 @@ export function ContentAssembler({
   const { currentMode } = useNavigationStore();
   const navigationMode = currentMode?.mode || 'traditional';
   
-  // Initialize reducer state
-  const initialState: AssemblerState = {
-    sections: [],
-    aiSuggestions: [],
-    pendingGenerations: new Set(),
-    errors: {},
-    lastOperation: null,
-    sectionCounter: 0
-  };
-
-  const [state, dispatch] = useReducer(assemblerReducer, initialState);
-  
-  // Additional component state
+  // State management
   const [workProduct, setWorkProduct] = useState<Partial<WorkProduct>>({
     title: `${projectContext.projectName} - Document`,
     type: template?.workProductType || 'INVESTMENT_SUMMARY',
@@ -310,6 +93,8 @@ export function ContentAssembler({
     metadata: { projectContext }
   });
   
+  const [sections, setSections] = useState<SectionPreview[]>([]);
+  const [aiSuggestions, setAISuggestions] = useState<AISuggestion[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
@@ -330,28 +115,13 @@ export function ContentAssembler({
         isGenerating: false,
         quality: 0,
         wordCount: 0,
-        estimatedTime: templateSection.estimatedLength ? Math.ceil(templateSection.estimatedLength / 200) : 2,
-        createdAt: createTimestamp(),
-        lastModified: createTimestamp()
+        estimatedTime: templateSection.estimatedLength ? Math.ceil(templateSection.estimatedLength / 200) : 2
       }));
       
-      dispatch({ type: 'INITIALIZE_SECTIONS', payload: initialSections });
-      
-      // Generate initial AI suggestions asynchronously
-      if (navigationMode !== 'traditional') {
-        setTimeout(() => generateInitialAISuggestions(template, projectContext), 100);
-      }
+      setSections(initialSections);
+      generateInitialAISuggestions(template, projectContext);
     }
-  }, [template, projectContext, navigationMode]);
-
-  // Cleanup timeouts on unmount
-  useEffect(() => {
-    return () => {
-      if (dragEndTimeout.current) {
-        clearTimeout(dragEndTimeout.current);
-      }
-    };
-  }, []);
+  }, [template, projectContext]);
 
   // Generate AI suggestions based on context
   const generateInitialAISuggestions = useCallback(async (
@@ -363,109 +133,143 @@ export function ContentAssembler({
     // Content generation suggestions
     if (navigationMode === 'autonomous' || navigationMode === 'assisted') {
       suggestions.push({
-        id: `suggestion-${Date.now()}-generate-all`,
+        id: 'generate-all-content',
         type: 'content',
         title: 'Generate All Content',
         description: `Use AI to generate all sections based on ${context.projectName} data`,
         confidence: 0.9,
         action: () => handleGenerateAllContent(),
-        previewable: true,
-        createdAt: createTimestamp()
+        previewable: true
       });
 
       suggestions.push({
-        id: `suggestion-${Date.now()}-optimize`,
+        id: 'optimize-for-audience',
         type: 'optimization',
         title: 'Optimize for Executives',
         description: 'Adjust content tone and structure for executive audience',
         confidence: 0.85,
         action: () => handleOptimizeForAudience('executives'),
-        previewable: true,
-        createdAt: createTimestamp()
+        previewable: true
       });
     }
 
     // Structural suggestions
     if (context.sector === 'Technology') {
       suggestions.push({
-        id: `suggestion-${Date.now()}-tech`,
+        id: 'add-tech-sections',
         type: 'section',
         title: 'Add Technology Sections',
         description: 'Include technology-specific analysis sections',
         confidence: 0.8,
         action: () => handleAddTechSections(),
-        previewable: false,
-        createdAt: createTimestamp()
+        previewable: false
       });
     }
 
     if (context.dealValue && context.dealValue > 100000000) {
       suggestions.push({
-        id: `suggestion-${Date.now()}-regulatory`,
+        id: 'add-regulatory-section',
         type: 'section',
         title: 'Add Regulatory Analysis',
         description: 'Large deals require enhanced regulatory considerations',
         confidence: 0.75,
         action: () => handleAddRegulatorySection(),
-        previewable: false,
-        createdAt: createTimestamp()
+        previewable: false
       });
     }
 
-    // Add suggestions to state
-    suggestions.forEach(suggestion => {
-      dispatch({ type: 'ADD_AI_SUGGESTION', payload: suggestion });
+    // Data integration suggestions
+    suggestions.push({
+      id: 'integrate-financial-data',
+      type: 'content',
+      title: 'Integrate Financial Data',
+      description: 'Pull live financial metrics from deal data',
+      confidence: 0.9,
+      action: () => handleIntegrateFinancialData(),
+      previewable: true
     });
+
+    setAISuggestions(suggestions);
   }, [navigationMode]);
+
+  // Handle drag and drop reordering
+  const handleDragEnd = useCallback((result: DropResult) => {
+    if (!result.destination) return;
+
+    const newSections = Array.from(sections);
+    const [reorderedSection] = newSections.splice(result.source.index, 1);
+    newSections.splice(result.destination.index, 0, reorderedSection);
+
+    setSections(newSections);
+
+    // Clear any existing timeout
+    if (dragEndTimeout.current) {
+      clearTimeout(dragEndTimeout.current);
+    }
+
+    // Add AI suggestion for reordering if in assisted/autonomous mode
+    if (navigationMode !== 'traditional') {
+      dragEndTimeout.current = setTimeout(() => {
+        const reorderSuggestion: AISuggestion = {
+          id: 'validate-reorder',
+          type: 'structure',
+          title: 'Validate Section Order',
+          description: 'Review if new section order improves document flow',
+          confidence: 0.7,
+          action: () => handleValidateOrder(newSections),
+          previewable: true
+        };
+        
+        setAISuggestions(prev => [reorderSuggestion, ...prev.slice(0, 4)]);
+      }, 1000);
+    }
+  }, [sections, navigationMode]);
 
   // Content generation handlers
   const handleGenerateSection = useCallback(async (sectionId: string) => {
-    // Check if section exists in current state
-    const section = state.sections.find(s => s.id === sectionId);
-    if (!section) {
+    // Check if section exists first
+    const sectionExists = sections.some(s => s.id === sectionId);
+    if (!sectionExists) {
       console.error(`Cannot generate content for section ${sectionId}: section not found`);
-      dispatch({ 
-        type: 'FAIL_GENERATION', 
-        payload: { id: sectionId, error: 'Section not found. Please try again.' }
-      });
       return;
     }
 
-    // Check if already generating
-    if (state.pendingGenerations.has(sectionId)) {
-      console.warn(`Generation already in progress for section ${sectionId}`);
-      return;
-    }
-
-    dispatch({ type: 'START_GENERATION', payload: sectionId });
+    setSections(prev => prev.map(section => 
+      section.id === sectionId 
+        ? { ...section, isGenerating: true }
+        : section
+    ));
 
     try {
-      const generatedContent = await generateSectionContent(section, projectContext);
+      // Simulate AI content generation
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      dispatch({ 
-        type: 'COMPLETE_GENERATION', 
-        payload: {
-          id: sectionId,
-          content: generatedContent.content,
-          quality: generatedContent.quality,
-          wordCount: generatedContent.wordCount
-        }
-      });
+      const generatedContent = await generateSectionContent(sectionId, projectContext);
+      
+      setSections(prev => prev.map(section => 
+        section.id === sectionId 
+          ? { 
+              ...section, 
+              content: generatedContent.content,
+              isGenerating: false,
+              quality: generatedContent.quality,
+              wordCount: generatedContent.wordCount
+            }
+          : section
+      ));
 
       // Add follow-up suggestions
       addFollowUpSuggestions(sectionId, generatedContent);
 
     } catch (error) {
+      setSections(prev => prev.map(section => 
+        section.id === sectionId 
+          ? { ...section, isGenerating: false }
+          : section
+      ));
       console.error('Section generation failed:', error);
-      dispatch({ 
-        type: 'FAIL_GENERATION', 
-        payload: { 
-          id: sectionId, 
-          error: error instanceof Error ? error.message : 'Generation failed. Please try again.' 
-        }
-      });
     }
-  }, [state.sections, state.pendingGenerations, projectContext]);
+  }, [projectContext]);
 
   const handleGenerateAllContent = useCallback(async () => {
     setIsGenerating(true);
@@ -505,148 +309,117 @@ export function ContentAssembler({
         isGenerating: false,
         quality: section.qualityScore || 0.85,
         wordCount: section.content.split(/\s+/).length,
-        estimatedTime: Math.ceil(section.content.split(/\s+/).length / 200),
-        createdAt: state.sections.find(s => s.id === section.id)?.createdAt || createTimestamp(),
-        lastModified: createTimestamp()
+        estimatedTime: Math.ceil(section.content.split(/\s+/).length / 200)
       }));
 
-      dispatch({ type: 'SET_SECTIONS', payload: updatedSections });
+      setSections(updatedSections);
       setWorkProduct(prev => ({ ...prev, ...generatedWorkProduct }));
 
       // Add success suggestion
       const successSuggestion: AISuggestion = {
-        id: `suggestion-${Date.now()}-success`,
+        id: 'generation-complete',
         type: 'optimization',
         title: 'Content Generated Successfully',
         description: `Generated ${updatedSections.length} sections with ${Math.round(result.data.generationMetrics.qualityScore * 100)}% quality score`,
         confidence: 1.0,
         action: () => setShowPreview(true),
-        previewable: true,
-        createdAt: createTimestamp()
+        previewable: true
       };
 
-      dispatch({ type: 'ADD_AI_SUGGESTION', payload: successSuggestion });
+      setAISuggestions(prev => [successSuggestion, ...prev]);
 
     } catch (error) {
       console.error('Content generation failed:', error);
     } finally {
       setIsGenerating(false);
     }
-  }, [template, projectContext, navigationMode, state.sections]);
+  }, [template, projectContext, navigationMode]);
 
   // Section management
   const handleAddSection = useCallback((sectionType: DocumentSection['type']) => {
-    const newSectionData = {
+    const newSection: SectionPreview = {
+      id: `custom-section-${Date.now()}`,
       title: `New ${sectionType.replace('_', ' ')} Section`,
       content: '',
       type: sectionType,
-      generationStrategy: 'ai-generated' as const,
+      generationStrategy: 'ai-generated',
       isGenerating: false,
       quality: 0,
       wordCount: 0,
       estimatedTime: 2
     };
 
-    dispatch({ type: 'ADD_SECTION', payload: newSectionData });
-
-    // Add AI suggestion for new section in next tick
-    if (navigationMode !== 'traditional') {
-      setTimeout(() => {
-        // Get the most recently added section (will have highest counter)
-        const sections = state.sections;
-        if (sections.length > 0) {
-          const latestSection = sections[sections.length - 1];
-          
+    setSections(prev => {
+      const updatedSections = [...prev, newSection];
+      
+      // Add AI suggestion for new section after state update
+      if (navigationMode !== 'traditional') {
+        // Use setTimeout to ensure the state has been updated
+        setTimeout(() => {
           const addSuggestion: AISuggestion = {
-            id: `suggestion-${Date.now()}-populate-${latestSection.id}`,
+            id: `populate-${newSection.id}-${Math.random().toString(36).substr(2, 9)}`,
             type: 'content',
-            title: `Populate ${latestSection.title}`,
+            title: `Populate ${newSection.title}`,
             description: 'Generate content for the new section',
             confidence: 0.8,
-            action: () => handleGenerateSection(latestSection.id),
-            previewable: true,
-            sectionId: latestSection.id,
-            createdAt: createTimestamp()
+            action: () => handleGenerateSection(newSection.id),
+            previewable: true
           };
 
-          dispatch({ type: 'ADD_AI_SUGGESTION', payload: addSuggestion });
-        }
-      }, 100);
-    }
-  }, [navigationMode, state.sections, handleGenerateSection]);
+          setAISuggestions(prev => {
+            // Remove any existing suggestions for the same section
+            const filteredSuggestions = prev.filter(s => !s.id.includes(`populate-${newSection.id}`));
+            return [addSuggestion, ...filteredSuggestions.slice(0, 4)];
+          });
+        }, 100);
+      }
+      
+      return updatedSections;
+    });
+  }, [navigationMode, handleGenerateSection]);
 
   const handleRemoveSection = useCallback((sectionId: string) => {
-    dispatch({ type: 'REMOVE_SECTION', payload: sectionId });
+    setSections(prev => prev.filter(section => section.id !== sectionId));
   }, []);
 
   const handleSectionEdit = useCallback((sectionId: string, newContent: string) => {
-    dispatch({ 
-      type: 'UPDATE_SECTION', 
-      payload: { 
-        id: sectionId, 
-        updates: { content: newContent }
-      }
-    });
+    setSections(prev => prev.map(section => 
+      section.id === sectionId 
+        ? { 
+            ...section, 
+            content: newContent,
+            wordCount: newContent.split(/\s+/).length,
+            estimatedTime: Math.ceil(newContent.split(/\s+/).length / 200)
+          }
+        : section
+    ));
   }, []);
-
-  // Handle drag and drop reordering
-  const handleDragEnd = useCallback((result: DropResult) => {
-    if (!result.destination) return;
-
-    dispatch({ 
-      type: 'REORDER_SECTIONS', 
-      payload: { 
-        sourceIndex: result.source.index, 
-        destinationIndex: result.destination.index 
-      }
-    });
-
-    // Clear any existing timeout
-    if (dragEndTimeout.current) {
-      clearTimeout(dragEndTimeout.current);
-    }
-
-    // Add AI suggestion for reordering if in assisted/autonomous mode
-    if (navigationMode !== 'traditional') {
-      dragEndTimeout.current = setTimeout(() => {
-        const reorderSuggestion: AISuggestion = {
-          id: `suggestion-${Date.now()}-validate-order`,
-          type: 'structure',
-          title: 'Validate Section Order',
-          description: 'Review if new section order improves document flow',
-          confidence: 0.7,
-          action: () => handleValidateOrder(state.sections),
-          previewable: true,
-          createdAt: createTimestamp()
-        };
-        
-        dispatch({ type: 'ADD_AI_SUGGESTION', payload: reorderSuggestion });
-      }, 1000);
-    }
-  }, [navigationMode, state.sections]);
 
   // AI suggestion handlers
   const handleOptimizeForAudience = async (audience: string) => {
+    // Implementation for audience optimization
     console.log(`Optimizing for ${audience}`);
   };
 
   const handleAddTechSections = () => {
-    const techSections = [
+    const techSections: SectionPreview[] = [
       {
+        id: 'tech-stack-analysis',
         title: 'Technology Stack Analysis',
         content: '',
-        type: 'text' as const,
-        generationStrategy: 'ai-generated' as const,
+        type: 'text',
+        generationStrategy: 'ai-generated',
         isGenerating: false,
         quality: 0,
         wordCount: 0,
         estimatedTime: 3
       },
       {
+        id: 'digital-transformation',
         title: 'Digital Transformation Potential',
         content: '',
-        type: 'text' as const,
-        generationStrategy: 'ai-generated' as const,
+        type: 'text',
+        generationStrategy: 'ai-generated',
         isGenerating: false,
         quality: 0,
         wordCount: 0,
@@ -654,90 +427,96 @@ export function ContentAssembler({
       }
     ];
 
-    techSections.forEach(section => {
-      dispatch({ type: 'ADD_SECTION', payload: section });
-    });
+    setSections(prev => [...prev, ...techSections]);
   };
 
   const handleAddRegulatorySection = () => {
-    const regulatorySection = {
+    const regulatorySection: SectionPreview = {
+      id: 'regulatory-analysis',
       title: 'Regulatory and Compliance Analysis',
       content: '',
-      type: 'text' as const,
-      generationStrategy: 'ai-generated' as const,
+      type: 'text',
+      generationStrategy: 'ai-generated',
       isGenerating: false,
       quality: 0,
       wordCount: 0,
       estimatedTime: 5
     };
 
-    dispatch({ type: 'ADD_SECTION', payload: regulatorySection });
+    setSections(prev => [...prev, regulatorySection]);
+  };
+
+  const handleIntegrateFinancialData = async () => {
+    // Implementation for financial data integration
+    console.log('Integrating financial data');
   };
 
   const handleValidateOrder = (sections: SectionPreview[]) => {
+    // Implementation for section order validation
     console.log('Validating section order');
   };
 
   // Helper functions
-  const generateSectionContent = async (section: SectionPreview, context: ProjectContext) => {
+  const generateSectionContent = async (sectionId: string, context: ProjectContext) => {
+    // Get the current sections state to find the section
+    const currentSections = sections;
+    let section = currentSections.find(s => s.id === sectionId);
+    
+    // If not found, this might be a new section that hasn't been added to state yet
+    // Create a default section object for generation
+    if (!section) {
+      console.warn(`Section ${sectionId} not found in current state, using defaults`);
+      section = {
+        id: sectionId,
+        title: sectionId.includes('custom-section') ? 'Custom Section' : 'New Section',
+        content: '',
+        type: 'text' as const,
+        generationStrategy: 'ai-generated' as const,
+        isGenerating: false,
+        quality: 0,
+        wordCount: 0,
+        estimatedTime: 2
+      };
+    }
+
     try {
+      // Call the real AI generation API
       const response = await fetch('/api/content/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          sectionId: section.id,
+          sectionId,
           sectionTitle: section.title,
           sectionType: section.type,
           projectContext: context,
-          generationStrategy: section.generationStrategy,
+          generationStrategy: section.generationStrategy || 'ai-generated',
           existingContent: section.content
         }),
       });
 
-      const result = await response.json();
-      
-      // Handle standardized API response
-      if (!isSuccessResponse(result)) {
-        const errorMessage = result.error || 'Unknown error occurred';
-        console.error('API Error:', result);
-        
-        // Handle specific error types
-        if (result.data?.validationErrors) {
-          throw new Error(`Validation failed: ${result.data.validationErrors.map(e => e.message).join(', ')}`);
-        }
-        
-        throw new Error(errorMessage);
+      if (!response.ok) {
+        throw new Error(`Failed to generate content: ${response.statusText}`);
       }
 
-      // Validate response structure
-      if (!validateContentGenerationResponse(result)) {
-        throw new Error('Invalid response format from content generation API');
-      }
+      const result = await response.json();
       
       return {
-        content: result.data.content,
-        quality: result.data.quality,
-        wordCount: result.data.wordCount,
-        metadata: result.data.metadata
+        content: result.content,
+        quality: result.quality,
+        wordCount: result.wordCount
       };
     } catch (error) {
       console.error('Error generating content:', error);
       
-      // Enhanced fallback with error context
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      const fallbackContent = `# ${section.title}\n\n*⚠️ Content generation temporarily unavailable*\n\n**Error:** ${errorMessage}\n\nAI-generated content for ${section.title} section based on ${context.projectName} analysis will be available once the service is restored.\n\nThis section would provide comprehensive analysis relevant to the ${context.sector} sector investment opportunity.\n\n*Please try regenerating this section or contact support if the issue persists.*`;
+      // Fallback to basic generated content if API fails
+      const fallbackContent = `# ${section.title}\n\nAI-generated content for ${section.title} section based on ${context.projectName} analysis.\n\nThis section provides comprehensive analysis relevant to the ${context.sector} sector investment opportunity.\n\n*Note: This is fallback content due to generation service unavailability.*`;
       
       return {
         content: fallbackContent,
-        quality: 0.4, // Lower quality for fallback content
-        wordCount: fallbackContent.split(/\s+/).length,
-        metadata: {
-          isFallback: true,
-          error: errorMessage,
-          generationTime: 0
-        }
+        quality: 0.65,
+        wordCount: fallbackContent.split(/\s+/).length
       };
     }
   };
@@ -745,18 +524,16 @@ export function ContentAssembler({
   const addFollowUpSuggestions = (sectionId: string, generatedContent: any) => {
     if (generatedContent.quality < 0.8) {
       const improveSuggestion: AISuggestion = {
-        id: `suggestion-${Date.now()}-improve-${sectionId}`,
+        id: `improve-${sectionId}`,
         type: 'optimization',
         title: 'Improve Section Quality',
         description: 'Content quality could be enhanced with additional data',
         confidence: 0.7,
         action: () => handleGenerateSection(sectionId),
-        previewable: true,
-        sectionId: sectionId,
-        createdAt: createTimestamp()
+        previewable: true
       };
 
-      dispatch({ type: 'ADD_AI_SUGGESTION', payload: improveSuggestion });
+      setAISuggestions(prev => [improveSuggestion, ...prev.slice(0, 4)]);
     }
   };
 
@@ -768,10 +545,10 @@ export function ContentAssembler({
       type: workProduct.type || 'INVESTMENT_SUMMARY',
       status: 'DRAFT',
       templateId: template?.id,
-      sections: state.sections.map(section => ({
+      sections: sections.map(section => ({
         id: section.id,
         title: section.title,
-        order: state.sections.indexOf(section),
+        order: sections.indexOf(section),
         content: section.content,
         type: section.type,
         required: true,
@@ -784,8 +561,8 @@ export function ContentAssembler({
       updatedAt: new Date(),
       version: '1.0',
       versionHistory: [],
-      wordCount: state.sections.reduce((total, section) => total + section.wordCount, 0),
-      readingTime: Math.ceil(state.sections.reduce((total, section) => total + section.wordCount, 0) / 200),
+      wordCount: sections.reduce((total, section) => total + section.wordCount, 0),
+      readingTime: Math.ceil(sections.reduce((total, section) => total + section.wordCount, 0) / 200),
       collaboratorCount: 1,
       commentCount: 0,
       editCount: 0
@@ -857,9 +634,9 @@ export function ContentAssembler({
                   </p>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
-                  <span>{state.sections.reduce((total, section) => total + section.wordCount, 0)} words</span>
+                  <span>{sections.reduce((total, section) => total + section.wordCount, 0)} words</span>
                   <span>•</span>
-                  <span>{Math.ceil(state.sections.reduce((total, section) => total + section.wordCount, 0) / 200)} min read</span>
+                  <span>{Math.ceil(sections.reduce((total, section) => total + section.wordCount, 0) / 200)} min read</span>
                 </div>
               </div>
             </CardContent>
@@ -871,7 +648,7 @@ export function ContentAssembler({
           <Droppable droppableId="sections">
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
-                {state.sections.map((section, index) => (
+                {sections.map((section, index) => (
                   <Draggable key={section.id} draggableId={section.id} index={index}>
                     {(provided, snapshot) => (
                       <Card
@@ -879,9 +656,7 @@ export function ContentAssembler({
                         {...provided.draggableProps}
                         className={`transition-shadow ${
                           snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'
-                        } ${selectedSection === section.id ? 'ring-2 ring-blue-500' : ''} ${
-                          state.errors[section.id] ? 'border-red-300 bg-red-50' : ''
-                        }`}
+                        } ${selectedSection === section.id ? 'ring-2 ring-blue-500' : ''}`}
                       >
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
@@ -910,20 +685,6 @@ export function ContentAssembler({
                                     </>
                                   )}
                                 </div>
-                                {state.errors[section.id] && (
-                                  <div className="flex items-center space-x-1 text-sm text-red-600 mt-1">
-                                    <AlertCircle className="w-4 h-4" />
-                                    <span>{state.errors[section.id]}</span>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => dispatch({ type: 'CLEAR_ERROR', payload: section.id })}
-                                      className="h-4 w-4 p-0 text-red-600 hover:text-red-700"
-                                    >
-                                      <X className="w-3 h-3" />
-                                    </Button>
-                                  </div>
-                                )}
                               </div>
                             </div>
                             <div className="flex items-center space-x-2">
@@ -950,7 +711,7 @@ export function ContentAssembler({
                                       variant="ghost"
                                       size="sm"
                                       onClick={() => handleGenerateSection(section.id)}
-                                      disabled={section.isGenerating || state.pendingGenerations.has(section.id)}
+                                      disabled={section.isGenerating}
                                     >
                                       <Wand2 className="w-4 h-4" />
                                     </Button>
@@ -986,7 +747,6 @@ export function ContentAssembler({
                                     size="sm"
                                     onClick={() => handleGenerateSection(section.id)}
                                     className="mt-2"
-                                    disabled={section.isGenerating || state.pendingGenerations.has(section.id)}
                                   >
                                     <Wand2 className="w-4 h-4 mr-2" />
                                     Generate Content
@@ -1090,7 +850,7 @@ export function ContentAssembler({
           </div>
 
           <div className="space-y-3">
-            {state.aiSuggestions.map((suggestion) => (
+            {aiSuggestions.map((suggestion) => (
               <Card key={suggestion.id} className="transition-shadow hover:shadow-md">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
@@ -1120,19 +880,12 @@ export function ContentAssembler({
                         Preview
                       </Button>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => dispatch({ type: 'REMOVE_AI_SUGGESTION', payload: suggestion.id })}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
 
-            {state.aiSuggestions.length === 0 && (
+            {aiSuggestions.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <Sparkles className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                 <p>No suggestions available</p>
@@ -1145,6 +898,3 @@ export function ContentAssembler({
     </div>
   );
 }
-
-// Export as default as well for convenience
-export default ContentAssembler;

@@ -1,4 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { 
+  createSuccessResponse, 
+  createErrorResponse, 
+  createValidationErrorResponse,
+  ContentGenerationResponse,
+  ContentGenerationErrorCodes,
+  ValidationError
+} from '@/types/api-responses';
 
 interface GenerationRequest {
   sectionId: string;
@@ -20,18 +28,58 @@ interface GenerationRequest {
 }
 
 export async function POST(request: NextRequest) {
+  const requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const startTime = Date.now();
+  
   try {
     const body: GenerationRequest = await request.json();
     
     // Validate required fields
-    if (!body.sectionId || !body.sectionTitle || !body.projectContext) {
+    const validationErrors: ValidationError[] = [];
+    
+    if (!body.sectionId) {
+      validationErrors.push({
+        field: 'sectionId',
+        message: 'Section ID is required',
+        code: ContentGenerationErrorCodes.INVALID_SECTION_ID
+      });
+    }
+    
+    if (!body.sectionTitle) {
+      validationErrors.push({
+        field: 'sectionTitle',
+        message: 'Section title is required',
+        code: 'MISSING_SECTION_TITLE'
+      });
+    }
+    
+    if (!body.projectContext) {
+      validationErrors.push({
+        field: 'projectContext',
+        message: 'Project context is required',
+        code: ContentGenerationErrorCodes.MISSING_PROJECT_CONTEXT
+      });
+    }
+    
+    if (validationErrors.length > 0) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        createValidationErrorResponse(validationErrors, requestId),
         { status: 400 }
       );
     }
 
     const { sectionId, sectionTitle, sectionType, projectContext, generationStrategy } = body;
+
+    // Check for valid section ID format
+    if (!sectionId.match(/^[a-zA-Z0-9\-_]+$/)) {
+      return NextResponse.json(
+        createErrorResponse({
+          code: ContentGenerationErrorCodes.INVALID_SECTION_ID,
+          message: 'Invalid section ID format'
+        }, requestId),
+        { status: 400 }
+      );
+    }
 
     // Generate content based on section type and context
     const content = await generateContentForSection(sectionId, sectionTitle, sectionType, projectContext, generationStrategy);
@@ -39,19 +87,58 @@ export async function POST(request: NextRequest) {
     // Calculate quality score and word count
     const wordCount = content.split(/\s+/).length;
     const quality = calculateQualityScore(content, sectionType, projectContext);
+    const generationTime = Date.now() - startTime;
+
+    // Check quality threshold
+    if (quality < 0.3) {
+      return NextResponse.json(
+        createErrorResponse({
+          code: ContentGenerationErrorCodes.QUALITY_THRESHOLD_NOT_MET,
+          message: 'Generated content did not meet minimum quality threshold'
+        }, requestId),
+        { status: 422 }
+      );
+    }
+
+    // Check content length limits
+    if (wordCount > 10000) {
+      return NextResponse.json(
+        createErrorResponse({
+          code: ContentGenerationErrorCodes.CONTENT_TOO_LONG,
+          message: 'Generated content exceeds maximum length limit'
+        }, requestId),
+        { status: 413 }
+      );
+    }
     
-    return NextResponse.json({
+    const responseData: ContentGenerationResponse = {
       content,
       quality,
       wordCount,
       generatedAt: new Date().toISOString(),
-      sectionId
-    });
+      sectionId,
+      metadata: {
+        generationTime,
+        model: 'content-generator-v1',
+        temperature: 0.7
+      }
+    };
+    
+    return NextResponse.json(
+      createSuccessResponse(responseData, 'Content generated successfully', requestId)
+    );
     
   } catch (error) {
     console.error('Error generating content:', error);
+    
+    const errorMessage = error instanceof Error ? error.message : 'Failed to generate content';
+    
     return NextResponse.json(
-      { error: 'Failed to generate content' },
+      createErrorResponse({
+        code: ContentGenerationErrorCodes.GENERATION_FAILED,
+        message: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error : undefined
+      }, requestId),
       { status: 500 }
     );
   }

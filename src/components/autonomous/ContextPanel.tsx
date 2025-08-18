@@ -46,6 +46,20 @@ interface Project {
     workProductId?: string;
     workProductTitle?: string;
     workProducts?: number;
+    dealValueCents?: number;
+    currentValue?: number;
+    targetValue?: number;
+    deadline?: string;
+    createdAt?: string;
+    risks?: string[];
+    irr?: number;
+    moic?: number;
+    expectedIRR?: number;
+    targetMultiple?: number;
+    assetType?: string;
+    esgScore?: number;
+    totalReturn?: number;
+    dbMetadata?: any;
   };
 }
 
@@ -92,66 +106,111 @@ interface ProjectMetrics {
   };
 }
 
-// Generate project-specific metrics based on actual project data
+// Generate project-specific metrics using real database data
 const generateProjectMetrics = (project: Project): ProjectMetrics => {
-  // Use actual project metadata when available
-  const dealValue = project.metadata?.dealValue || 50000000;
-  const sector = project.metadata?.sector || project.type;
-  const stage = project.metadata?.stage || 'growth';
+  // Use real project metadata from database
+  const dealValue = project.metadata?.dealValueCents || project.metadata?.dealValue || 0;
+  const currentValue = project.metadata?.currentValue || dealValue;
+  const sector = project.metadata?.sector || 'Unknown';
+  const stage = project.metadata?.stage || 'active';
   const riskRating = project.metadata?.riskRating || 'medium';
-  const teamMembers = project.metadata?.team || ['Team Lead', 'Analyst', 'Associate'];
-  const progress = project.metadata?.progress || 50;
-  const workProducts = project.metadata?.workProducts || 8;
+  const teamMembers = project.metadata?.team || [];
+  const progress = project.metadata?.progress || 0;
+  const workProducts = project.metadata?.workProducts || 0;
 
-  // Calculate derived metrics
-  const currentValue = `$${Math.floor(dealValue / 1000000)}M`;
-  const targetValue = `$${Math.floor(dealValue * 1.5 / 1000000)}M`;
-  const irr = stage === 'growth' ? '18.5%' : stage === 'buyout' ? '22.3%' : '15.2%';
-  const multiple = stage === 'growth' ? '2.3x' : stage === 'buyout' ? '2.8x' : '2.0x';
-
-  // Generate timeline based on project status
-  const projectIdNum = parseInt(project.id) || 1; // Default to 1 if parsing fails
-  const startDate = new Date(2024, 0, 15 + projectIdNum * 10).toISOString().split('T')[0];
-  const targetDays = project.status === 'active' ? 180 : project.status === 'review' ? 30 : 240;
-  const targetClose = new Date(Date.now() + targetDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-  const daysPending = Math.floor((Date.now() - new Date(startDate).getTime()) / (24 * 60 * 60 * 1000));
-
-  // Generate sector-specific risks
-  const risksBySector: Record<string, string[]> = {
-    'Technology': ['Market disruption', 'Regulatory changes', 'Tech obsolescence'],
-    'Healthcare': ['Regulatory approval', 'Clinical trials', 'Compliance risks'],
-    'Retail': ['Consumer trends', 'Supply chain', 'Economic downturn'],
-    'Manufacturing': ['Supply costs', 'Labor issues', 'Environmental regs'],
-    'report': ['Data accuracy', 'Timeline pressure', 'Stakeholder alignment'],
-    'analysis': ['Market volatility', 'Assumption validity', 'Competition']
+  // Use real financial data from database
+  const formatValue = (value: number) => {
+    if (value === 0) return 'TBD';
+    return `$${Math.round(value / 100 / 1000000)}M`; // Convert cents to millions
   };
+
+  const currentValueStr = formatValue(currentValue);
+  const targetValueStr = project.metadata?.targetValue ? formatValue(project.metadata.targetValue) : 
+                        dealValue > 0 ? formatValue(dealValue * 1.5) : 'TBD';
+
+  // Use real performance metrics if available
+  const irr = project.metadata?.irr ? `${(project.metadata.irr * 100).toFixed(1)}%` :
+             project.metadata?.expectedIRR ? `${project.metadata.expectedIRR.toFixed(1)}%` : 'TBD';
+  const multiple = project.metadata?.moic ? `${project.metadata.moic.toFixed(1)}x` :
+                  project.metadata?.targetMultiple ? `${project.metadata.targetMultiple.toFixed(1)}x` : 'TBD';
+
+  // Use real timeline data from database
+  const createdAt = project.metadata?.createdAt ? new Date(project.metadata.createdAt) : new Date();
+  const startDate = createdAt.toISOString().split('T')[0];
+  
+  const deadline = project.metadata?.deadline ? new Date(project.metadata.deadline) : 
+                  new Date(Date.now() + 180 * 24 * 60 * 60 * 1000); // 6 months default
+  const targetClose = deadline.toISOString().split('T')[0];
+  
+  const daysPending = Math.floor((Date.now() - createdAt.getTime()) / (24 * 60 * 60 * 1000));
+
+  // Use real team data from database
+  const realTeamMembers = Array.isArray(teamMembers) ? teamMembers : [];
+  const teamLead = realTeamMembers.length > 0 ? realTeamMembers[0] : 'Unassigned';
+  const teamOthers = realTeamMembers.slice(1);
+
+  // Format last activity from real data
+  const lastActivity = project.lastActivity ? new Date(project.lastActivity) : new Date();
+  const timeDiff = Date.now() - lastActivity.getTime();
+  const hoursAgo = Math.floor(timeDiff / (1000 * 60 * 60));
+  const daysAgo = Math.floor(hoursAgo / 24);
+  
+  const lastUpdate = daysAgo > 0 ? `${daysAgo} day${daysAgo > 1 ? 's' : ''} ago` :
+                    hoursAgo > 0 ? `${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago` : 'Just now';
+
+  // Use real risk data from database or generate based on real sector
+  const getRisksForSector = (sectorName: string): string[] => {
+    const normalizedSector = sectorName.toLowerCase();
+    
+    if (normalizedSector.includes('tech')) {
+      return ['Technology disruption risk', 'Cybersecurity vulnerabilities', 'Talent retention challenges'];
+    } else if (normalizedSector.includes('health')) {
+      return ['Regulatory compliance risk', 'Clinical trial outcomes', 'FDA approval delays'];
+    } else if (normalizedSector.includes('retail')) {
+      return ['Consumer demand volatility', 'Supply chain disruption', 'E-commerce competition'];
+    } else if (normalizedSector.includes('manufacturing')) {
+      return ['Raw material cost inflation', 'Labor shortage', 'Environmental regulations'];
+    } else if (normalizedSector.includes('financial') || normalizedSector.includes('finance')) {
+      return ['Interest rate volatility', 'Credit risk exposure', 'Regulatory changes'];
+    } else if (normalizedSector.includes('energy')) {
+      return ['Commodity price volatility', 'Environmental regulations', 'Transition to renewables'];
+    } else {
+      return ['Market volatility', 'Competitive pressures', 'Execution risk'];
+    }
+  };
+
+  const riskItems = project.metadata?.risks || getRisksForSector(sector);
+
+  // Calculate real document metrics from work products
+  const totalDocs = workProducts > 0 ? workProducts * 15 + 25 : 12; // Estimate based on real work products
+  const completedDocs = Math.floor(totalDocs * (progress / 100));
+  const pendingDocs = totalDocs - completedDocs;
 
   return {
     financial: {
-      currentValue,
-      targetValue,
-      irr,
-      multiple
+      currentValue: currentValueStr,
+      targetValue: targetValueStr,
+      irr: irr,
+      multiple: multiple
     },
     timeline: {
       startDate,
       targetClose,
-      daysPending: Math.max(daysPending, 1)
+      daysPending: Math.max(daysPending, 0)
     },
     team: {
-      lead: teamMembers[0] || 'Team Lead',
-      members: teamMembers.slice(1) || ['Analyst', 'Associate'],
-      lastUpdate: project.status === 'active' ? '2 hours ago' : 
-                   project.status === 'review' ? '1 day ago' : '1 week ago'
+      lead: teamLead,
+      members: teamOthers,
+      lastUpdate: lastUpdate
     },
     risks: {
       level: riskRating as 'low' | 'medium' | 'high',
-      items: risksBySector[sector] || risksBySector[project.type] || ['General market risk', 'Execution risk', 'Timeline risk']
+      items: Array.isArray(riskItems) ? riskItems : getRisksForSector(sector)
     },
     documents: {
-      total: workProducts * 18 + 20,
-      pending: Math.floor(workProducts * (100 - progress) / 100 * 5),
-      completed: workProducts * 15 + Math.floor(progress / 10 * 15)
+      total: totalDocs,
+      pending: pendingDocs,
+      completed: completedDocs
     }
   };
 };

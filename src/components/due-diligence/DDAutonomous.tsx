@@ -35,15 +35,17 @@ export function DDAutonomous({ onSwitchMode }: DDAutonomousProps) {
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
-    toggleContextPanel
+    toggleContextPanel,
+    loadDueDiligenceProjects
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
 
-  // Initialize project type for due diligence
+  // Initialize project type for due diligence and load real data
   React.useEffect(() => {
     setActiveProjectType('due-diligence');
-  }, [setActiveProjectType]);
+    loadDueDiligenceProjects(); // Load real due diligence data from SQLite backend
+  }, [setActiveProjectType, loadDueDiligenceProjects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);

@@ -2,7 +2,6 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
 
 interface Project {
   id: string;
@@ -16,6 +15,25 @@ interface Project {
     value?: string;
     progress?: number;
     team?: string[];
+    sector?: string;
+    stage?: string;
+    geography?: string;
+    riskRating?: string;
+    dealValueCents?: number;
+    currentValue?: number;
+    targetValue?: number;
+    deadline?: string;
+    createdAt?: string;
+    workProducts?: number;
+    risks?: string[];
+    irr?: number;
+    moic?: number;
+    expectedIRR?: number;
+    targetMultiple?: number;
+    assetType?: string;
+    esgScore?: number;
+    totalReturn?: number;
+    dbMetadata?: any;
   };
 }
 
@@ -63,6 +81,12 @@ interface AutonomousActions {
   setDealScreeningProjects: (projects: Project[]) => void;
   setDealStructuringProjects: (projects: Project[]) => void;
   
+  // Real data loading methods
+  loadWorkspaceProjects: () => Promise<void>;
+  loadPortfolioProjects: () => Promise<void>;
+  loadDashboardProjects: () => Promise<void>;
+  loadDueDiligenceProjects: () => Promise<void>;
+  
   // Chat session actions
   createChatSession: (projectId: string) => string;
   deleteChatSession: (sessionId: string) => void;
@@ -85,51 +109,17 @@ interface AutonomousActions {
 
 type AutonomousStore = AutonomousState & AutonomousActions;
 
-// Generate initial projects from unified data source
+// Generate initial empty projects structure - data will be loaded dynamically from APIs
 const getInitialProjects = (): Record<string, Project[]> => {
-  const autonomousProjects = UnifiedWorkspaceDataService.getAutonomousProjects();
-  const portfolioAssets = UnifiedWorkspaceDataService.getPortfolioAssetsAsProjects();
-  
-  // Group projects by type for different sections
-  const projectsByType: Record<string, Project[]> = {
+  // Return empty structure - real data will be loaded by individual components
+  return {
     dashboard: [],
-    portfolio: portfolioAssets, // Use actual portfolio assets as projects
+    portfolio: [],
     'due-diligence': [],
-    workspace: autonomousProjects, // Main workspace projects
+    workspace: [],
     'deal-screening': [],
     'deal-structuring': []
   };
-  
-  // Add some derived projects for other sections based on workspace projects
-  autonomousProjects.forEach(project => {
-    // Skip adding workspace projects to portfolio since we now use actual assets
-    if (project.metadata.stage === 'growth' || project.metadata.stage === 'buyout') {
-      projectsByType['due-diligence'].push({
-        ...project,
-        type: 'company',
-        name: project.name.replace('Due Diligence', 'DD').replace('Investment Committee', 'Acquisition DD')
-      });
-    }
-  });
-  
-  // Add dashboard and screening projects
-  projectsByType.dashboard = [
-    {
-      id: '5',
-      name: 'Q4 Performance Review',
-      type: 'report',
-      status: 'active',
-      lastActivity: new Date(),
-      priority: 'high',
-      unreadMessages: 3,
-      metadata: { progress: 75 }
-    }
-  ];
-  
-  // Deal screening projects will be loaded dynamically from API
-  projectsByType['deal-screening'] = [];
-  
-  return projectsByType;
 };
 
 const initialProjects = getInitialProjects();
@@ -229,10 +219,12 @@ export const useAutonomousStore = create<AutonomousStore>()(
           }
         })),
 
-      refreshProjectsFromUnifiedData: () =>
+      refreshProjectsFromUnifiedData: () => {
+        console.warn('refreshProjectsFromUnifiedData called - this should be replaced with real API calls');
         set(() => ({
           projects: getInitialProjects()
-        })),
+        }));
+      },
 
       setDealScreeningProjects: (projects) =>
         set((state) => ({
@@ -325,6 +317,220 @@ export const useAutonomousStore = create<AutonomousStore>()(
         };
         
         return JSON.stringify(exportData, null, 2);
+      },
+
+      // Real data loading implementations
+      loadWorkspaceProjects: async () => {
+        try {
+          const response = await fetch('/api/workspaces');
+          if (response.ok) {
+            const data = await response.json();
+            
+            // Convert workspace data to Project format for compatibility
+            const workspaceProjects: Project[] = data.data.map((workspace: any) => ({
+              id: workspace.id,
+              name: workspace.name,
+              type: workspace.type as Project['type'],
+              status: workspace.status as Project['status'],
+              lastActivity: new Date(workspace.updatedAt),
+              priority: workspace.priority || 'medium' as Project['priority'],
+              metadata: {
+                value: workspace.dealValue ? `$${Math.round(workspace.dealValue / 100 / 1000000)}M` : undefined,
+                progress: workspace.progress || 0,
+                team: workspace.team || [],
+                sector: workspace.sector,
+                stage: workspace.stage,
+                geography: workspace.geography,
+                riskRating: workspace.riskRating,
+                dealValueCents: workspace.dealValue,
+                currentValue: workspace.currentValue || workspace.dealValue,
+                targetValue: workspace.targetValue,
+                deadline: workspace.deadline,
+                createdAt: workspace.createdAt,
+                workProducts: workspace.workProducts || 0,
+                risks: workspace.risks,
+                irr: workspace.irr,
+                moic: workspace.moic,
+                expectedIRR: workspace.expectedIRR,
+                targetMultiple: workspace.targetMultiple,
+                dbMetadata: workspace.metadata || {}
+              }
+            }));
+
+            set((state) => ({
+              projects: {
+                ...state.projects,
+                workspace: workspaceProjects
+              }
+            }));
+          }
+        } catch (error) {
+          console.error('Failed to load workspace projects:', error);
+        }
+      },
+
+      loadPortfolioProjects: async () => {
+        try {
+          const response = await fetch('/api/portfolio');
+          if (response.ok) {
+            const data = await response.json();
+            
+            // Convert portfolio data to Project format
+            const portfolioProjects: Project[] = data.data.flatMap((portfolio: any) => 
+              portfolio.assets?.map((asset: any) => ({
+                id: asset.id,
+                name: asset.name,
+                type: 'portfolio' as const,
+                status: asset.status === 'active' ? 'active' : 
+                       asset.status === 'exited' ? 'completed' : 'draft',
+                lastActivity: new Date(asset.lastUpdated || asset.acquisitionDate),
+                priority: asset.riskRating === 'high' ? 'high' : 
+                         asset.riskRating === 'low' ? 'low' : 'medium',
+                metadata: {
+                  value: asset.currentValue ? `$${Math.round(asset.currentValue / 1000000)}M` : undefined,
+                  progress: Math.round((asset.performance?.irr || 0) * 100),
+                  team: asset.teamMembers || [],
+                  sector: asset.sector,
+                  assetType: asset.assetType,
+                  riskRating: asset.riskRating,
+                  esgScore: asset.esgMetrics?.overallScore,
+                  currentValue: asset.currentValue,
+                  dealValueCents: asset.acquisitionValue,
+                  irr: asset.performance?.irr,
+                  moic: asset.performance?.moic,
+                  totalReturn: asset.performance?.totalReturn,
+                  createdAt: asset.acquisitionDate,
+                  workProducts: asset.workProducts || 0,
+                  risks: asset.risks || []
+                }
+              })) || []
+            );
+
+            set((state) => ({
+              projects: {
+                ...state.projects,
+                portfolio: portfolioProjects
+              }
+            }));
+          }
+        } catch (error) {
+          console.error('Failed to load portfolio projects:', error);
+        }
+      },
+
+      loadDashboardProjects: async () => {
+        try {
+          // Load dashboard metrics and convert to projects
+          const [workspacesRes, portfolioRes] = await Promise.all([
+            fetch('/api/workspaces'),
+            fetch('/api/portfolio')
+          ]);
+
+          const dashboardProjects: Project[] = [];
+
+          if (workspacesRes.ok) {
+            const workspaceData = await workspacesRes.json();
+            // Create summary projects for active workspaces
+            const activeWorkspaces = workspaceData.data.filter((w: any) => w.status === 'active');
+            
+            if (activeWorkspaces.length > 0) {
+              dashboardProjects.push({
+                id: 'dashboard-active-workspaces',
+                name: `Active Workspaces (${activeWorkspaces.length})`,
+                type: 'report',
+                status: 'active',
+                lastActivity: new Date(),
+                priority: 'high',
+                metadata: {
+                  progress: Math.round(activeWorkspaces.reduce((sum: number, w: any) => sum + (w.progress || 0), 0) / activeWorkspaces.length),
+                  value: `$${Math.round(activeWorkspaces.reduce((sum: number, w: any) => sum + (w.dealValue || 0), 0) / 100 / 1000000)}M total`
+                }
+              });
+            }
+          }
+
+          if (portfolioRes.ok) {
+            const portfolioData = await portfolioRes.json();
+            // Create summary project for portfolio performance
+            dashboardProjects.push({
+              id: 'dashboard-portfolio-performance',
+              name: 'Portfolio Performance Review',
+              type: 'analysis',
+              status: 'active',
+              lastActivity: new Date(),
+              priority: 'medium',
+              metadata: {
+                progress: 85,
+                value: portfolioData.data?.length ? `${portfolioData.data.length} portfolios` : undefined
+              }
+            });
+          }
+
+          set((state) => ({
+            projects: {
+              ...state.projects,
+              dashboard: dashboardProjects
+            }
+          }));
+        } catch (error) {
+          console.error('Failed to load dashboard projects:', error);
+        }
+      },
+
+      loadDueDiligenceProjects: async () => {
+        try {
+          // Load workspaces and filter for due diligence related ones
+          const response = await fetch('/api/workspaces');
+          if (response.ok) {
+            const data = await response.json();
+            
+            // Filter and convert workspaces that are DD-related
+            const ddProjects: Project[] = data.data
+              .filter((workspace: any) => 
+                workspace.type === 'due-diligence' || 
+                workspace.stage === 'due-diligence' ||
+                workspace.name.toLowerCase().includes('due diligence') ||
+                workspace.name.toLowerCase().includes(' dd ')
+              )
+              .map((workspace: any) => ({
+                id: workspace.id,
+                name: workspace.name,
+                type: 'company' as const,
+                status: workspace.status as Project['status'],
+                lastActivity: new Date(workspace.updatedAt),
+                priority: workspace.priority || 'medium' as Project['priority'],
+                metadata: {
+                  value: workspace.dealValue ? `$${Math.round(workspace.dealValue / 100 / 1000000)}M` : undefined,
+                  progress: workspace.progress || 0,
+                  team: workspace.team || [],
+                  sector: workspace.sector,
+                  stage: workspace.stage,
+                  geography: workspace.geography,
+                  riskRating: workspace.riskRating,
+                  dealValueCents: workspace.dealValue,
+                  currentValue: workspace.currentValue || workspace.dealValue,
+                  targetValue: workspace.targetValue,
+                  deadline: workspace.deadline,
+                  createdAt: workspace.createdAt,
+                  workProducts: workspace.workProducts || 0,
+                  risks: workspace.risks,
+                  irr: workspace.irr,
+                  moic: workspace.moic,
+                  expectedIRR: workspace.expectedIRR,
+                  targetMultiple: workspace.targetMultiple
+                }
+              }));
+
+            set((state) => ({
+              projects: {
+                ...state.projects,
+                'due-diligence': ddProjects
+              }
+            }));
+          }
+        } catch (error) {
+          console.error('Failed to load due diligence projects:', error);
+        }
       }
     }),
     {

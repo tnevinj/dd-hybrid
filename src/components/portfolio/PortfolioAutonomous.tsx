@@ -37,16 +37,16 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
     contextPanelCollapsed,
     toggleSidebar,
     toggleContextPanel,
-    refreshProjectsFromUnifiedData
+    loadPortfolioProjects
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
 
-  // Initialize project type for portfolio and refresh data
+  // Initialize project type for portfolio and load real data
   React.useEffect(() => {
     setActiveProjectType('portfolio');
-    refreshProjectsFromUnifiedData(); // Ensure we have latest unified data
-  }, [setActiveProjectType, refreshProjectsFromUnifiedData]);
+    loadPortfolioProjects(); // Load real portfolio data from SQLite backend
+  }, [setActiveProjectType, loadPortfolioProjects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);

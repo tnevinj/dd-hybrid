@@ -57,15 +57,17 @@ export function DashboardAutonomous({
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
-    toggleContextPanel
+    toggleContextPanel,
+    loadDashboardProjects
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
 
-  // Initialize project type for dashboard
+  // Initialize project type for dashboard and load real data
   React.useEffect(() => {
     setActiveProjectType('dashboard');
-  }, [setActiveProjectType]);
+    loadDashboardProjects(); // Load real dashboard data from SQLite backend
+  }, [setActiveProjectType, loadDashboardProjects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);

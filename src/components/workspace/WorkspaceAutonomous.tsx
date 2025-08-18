@@ -39,7 +39,7 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
     contextPanelCollapsed,
     toggleSidebar,
     toggleContextPanel,
-    refreshProjectsFromUnifiedData
+    loadWorkspaceProjects
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
@@ -48,57 +48,13 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
   const [showWorkProductViewer, setShowWorkProductViewer] = useState(false);
   const [currentWorkProduct, setCurrentWorkProduct] = useState<WorkProduct | null>(null);
   const [creationMode, setCreationMode] = useState<'traditional' | 'assembler'>('assembler');
-  const [realWorkspaces, setRealWorkspaces] = useState<Project[]>([]);
+  // Real workspace data is now loaded via the autonomous store
 
-  // Load real workspaces from database
-  const loadRealWorkspaces = async () => {
-    try {
-      const response = await fetch('/api/workspaces');
-      if (response.ok) {
-        const data = await response.json();
-        
-        // Convert workspace data to Project format for compatibility
-        const workspaceProjects: Project[] = data.data.map((workspace: any) => ({
-          id: workspace.id,
-          name: workspace.name,
-          type: workspace.type as Project['type'],
-          status: workspace.status as Project['status'],
-          lastActivity: new Date(workspace.updatedAt),
-          priority: workspace.priority || 'medium' as Project['priority'],
-          metadata: {
-            value: workspace.dealValue ? `$${Math.round(workspace.dealValue / 100 / 1000000)}M` : undefined,
-            progress: workspace.progress || 0,
-            team: workspace.team || [],
-            sector: workspace.sector,
-            stage: workspace.stage,
-            geography: workspace.geography,
-            riskRating: workspace.riskRating,
-            dealValueCents: workspace.dealValue, // Keep original cents value for calculations
-            dbMetadata: workspace.metadata || {} // Include any additional metadata
-          }
-        }));
-
-        setRealWorkspaces(workspaceProjects);
-        
-        // Update the autonomous store with real workspace projects
-        const { useAutonomousStore } = await import('@/lib/stores/autonomousStore');
-        const store = useAutonomousStore.getState();
-        
-        // Replace workspace projects in the store to avoid duplicates
-        store.setProjectsForType('workspace', workspaceProjects);
-      }
-    } catch (error) {
-      console.error('Failed to load real workspaces:', error);
-      // Fallback to existing unified data
-      refreshProjectsFromUnifiedData();
-    }
-  };
-
-  // Initialize project type for workspace and refresh data
+  // Initialize project type for workspace and load real data
   React.useEffect(() => {
     setActiveProjectType('workspace');
-    loadRealWorkspaces(); // Load real workspaces from database
-  }, [setActiveProjectType]);
+    loadWorkspaceProjects(); // Load real workspace data from SQLite backend
+  }, [setActiveProjectType, loadWorkspaceProjects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);

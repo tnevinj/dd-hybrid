@@ -14,7 +14,7 @@ import {
   TrendingUp,
   Shield,
   Calculator,
-  PresentationChart,
+  BarChart3 as PresentationChart,
   Wand2,
   Loader,
   CheckCircle,
