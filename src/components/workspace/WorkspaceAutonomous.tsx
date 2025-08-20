@@ -3,7 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
 import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
+import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
+import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
 import { useAutonomousStore } from '@/lib/stores/autonomousStore';
+import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X, Wand2 } from 'lucide-react';
@@ -43,6 +46,8 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
     toggleContextPanel,
     loadWorkspaceProjects
   } = useAutonomousStore();
+  
+  const { exitAutonomous, navigateToModule } = useAutonomousMode();
 
   const [showSettings, setShowSettings] = useState(false);
   const [showWorkProductCreator, setShowWorkProductCreator] = useState(false);
@@ -190,13 +195,38 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
               {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
             </Button>
             
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
-                Autonomous Workspace
+            {/* Navigation Menu */}
+            <AutonomousNavMenu 
+              currentModule="workspaces"
+              onNavigate={(moduleId) => {
+                const moduleRoutes: Record<string, string> = {
+                  dashboard: '/dashboard',
+                  workspaces: '/workspaces',
+                  'due-diligence': '/due-diligence',
+                  portfolio: '/portfolio',
+                  'deal-screening': '/deal-screening',
+                  'deal-structuring': '/deal-structuring'
+                };
+                const route = moduleRoutes[moduleId];
+                if (route) {
+                  navigateToModule(route, true);
+                }
+              }}
+              className="hidden sm:block"
+            />
+            
+            <div className="min-w-0 flex-1 sm:hidden">
+              <h1 className="text-lg font-semibold text-gray-900 truncate">
+                Workspaces
               </h1>
-              <p className="text-xs sm:text-sm text-gray-500 truncate">
-                {selectedProject ? selectedProject.name : 'Select a workspace project'}
-              </p>
+            </div>
+            
+            {/* Breadcrumb - Hidden on mobile to save space */}
+            <div className="hidden sm:block flex-1 min-w-0">
+              <AutonomousBreadcrumb 
+                currentModule="workspaces"
+                projectName={selectedProject?.name}
+              />
             </div>
           </div>
 
@@ -227,11 +257,18 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onSwitchMode?.('assisted')}
+              onClick={() => {
+                if (onSwitchMode) {
+                  onSwitchMode('assisted');
+                } else {
+                  exitAutonomous('assisted');
+                }
+              }}
               className="text-xs sm:text-sm"
+              title="Exit Autonomous Mode"
             >
-              <span className="hidden sm:inline">Switch Mode</span>
-              <span className="sm:hidden">Mode</span>
+              <span className="hidden sm:inline">Exit Autonomous</span>
+              <span className="sm:hidden">Exit</span>
             </Button>
             
             <Button

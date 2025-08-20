@@ -2,7 +2,11 @@
 
 import React, { useState } from 'react';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
+import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
+import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
+import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
 import { useAutonomousStore } from '@/lib/stores/autonomousStore';
+import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X } from 'lucide-react';
@@ -41,6 +45,7 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
+  const { exitAutonomous, navigateToModule } = useAutonomousMode();
 
   // Initialize project type for portfolio and load real data
   React.useEffect(() => {
@@ -55,47 +60,86 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
   // If no project selected, show project-based autonomous interface
   if (!selectedProject) {
     return (
-      <div className="flex h-screen bg-gray-100">
+      <AutonomousLayout>
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+        <div className="autonomous-header px-4 py-3">
+          <div className="flex items-center justify-between min-h-[56px]">
+            <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={toggleSidebar}
-                className="lg:hidden"
+                className="lg:hidden flex-shrink-0"
+                aria-label="Toggle sidebar"
               >
                 {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
               </Button>
               
-              <div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Autonomous Portfolio
+              {/* Navigation Menu */}
+              <AutonomousNavMenu 
+                currentModule="portfolio"
+                onNavigate={(moduleId) => {
+                  const moduleRoutes: Record<string, string> = {
+                    dashboard: '/dashboard',
+                    workspaces: '/workspaces',
+                    'due-diligence': '/due-diligence',
+                    portfolio: '/portfolio',
+                    'deal-screening': '/deal-screening',
+                    'deal-structuring': '/deal-structuring'
+                  };
+                  const route = moduleRoutes[moduleId];
+                  if (route) {
+                    navigateToModule(route, true);
+                  }
+                }}
+                className="hidden sm:block"
+              />
+              
+              <div className="min-w-0 flex-1 sm:hidden">
+                <h1 className="text-lg font-semibold text-gray-900 truncate">
+                  Portfolio
                 </h1>
-                <p className="text-sm text-gray-500">
-                  Select a portfolio to get started
-                </p>
+              </div>
+              
+              {/* Breadcrumb - Hidden on mobile to save space */}
+              <div className="hidden sm:block flex-1 min-w-0">
+                <AutonomousBreadcrumb 
+                  currentModule="portfolio"
+                  projectName="Select portfolio"
+                />
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+              <Badge 
+                variant="outline" 
+                className="bg-green-50 text-green-700 border-green-200 hidden sm:inline-flex"
+              >
                 AI Ready
               </Badge>
               
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onSwitchMode?.('assisted')}
+                onClick={() => {
+                  if (onSwitchMode) {
+                    onSwitchMode('assisted');
+                  } else {
+                    exitAutonomous('assisted');
+                  }
+                }}
+                className="text-xs sm:text-sm"
+                title="Exit Autonomous Mode"
               >
-                Switch Mode
+                <span className="hidden sm:inline">Exit Autonomous</span>
+                <span className="sm:hidden">Exit</span>
               </Button>
               
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowSettings(!showSettings)}
+                aria-label="Settings"
               >
                 <Settings className="w-4 h-4" />
               </Button>
@@ -104,7 +148,7 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
         </div>
 
         {/* Main Layout */}
-        <div className="flex flex-1 pt-16">
+        <div className="autonomous-content">
           {/* Project Selector Sidebar */}
           {!sidebarCollapsed && (
             <ProjectSelector
@@ -122,53 +166,92 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
             </div>
           </div>
         </div>
-      </div>
+      </AutonomousLayout>
     );
   }
 
   // Project selected - show full autonomous interface with hierarchical layout
   return (
-    <div className="flex h-screen bg-gray-100">
+    <AutonomousLayout>
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="autonomous-header px-4 py-3">
+        <div className="flex items-center justify-between min-h-[56px]">
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleSidebar}
-              className="lg:hidden"
+              className="lg:hidden flex-shrink-0"
+              aria-label="Toggle sidebar"
             >
               {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
             </Button>
             
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Autonomous Portfolio: {selectedProject.name}
+            {/* Navigation Menu */}
+            <AutonomousNavMenu 
+              currentModule="portfolio"
+              onNavigate={(moduleId) => {
+                const moduleRoutes: Record<string, string> = {
+                  dashboard: '/dashboard',
+                  workspaces: '/workspaces',
+                  'due-diligence': '/due-diligence',
+                  portfolio: '/portfolio',
+                  'deal-screening': '/deal-screening',
+                  'deal-structuring': '/deal-structuring'
+                };
+                const route = moduleRoutes[moduleId];
+                if (route) {
+                  navigateToModule(route, true);
+                }
+              }}
+              className="hidden sm:block"
+            />
+            
+            <div className="min-w-0 flex-1 sm:hidden">
+              <h1 className="text-lg font-semibold text-gray-900 truncate">
+                Portfolio
               </h1>
-              <p className="text-sm text-gray-500">
-                AI-powered comprehensive portfolio management
-              </p>
+            </div>
+            
+            {/* Breadcrumb - Hidden on mobile to save space */}
+            <div className="hidden sm:block flex-1 min-w-0">
+              <AutonomousBreadcrumb 
+                currentModule="portfolio"
+                projectName={selectedProject.name}
+              />
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+          <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+            <Badge 
+              variant="outline" 
+              className="bg-green-50 text-green-700 border-green-200 hidden sm:inline-flex"
+            >
               AI Optimizing
             </Badge>
             
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onSwitchMode?.('assisted')}
+              onClick={() => {
+                if (onSwitchMode) {
+                  onSwitchMode('assisted');
+                } else {
+                  exitAutonomous('assisted');
+                }
+              }}
+              className="text-xs sm:text-sm"
+              title="Exit Autonomous Mode"
             >
-              Switch Mode
+              <span className="hidden sm:inline">Exit Autonomous</span>
+              <span className="sm:hidden">Exit</span>
             </Button>
             
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowSettings(!showSettings)}
+              aria-label="Settings"
             >
               <Settings className="w-4 h-4" />
             </Button>
@@ -177,7 +260,7 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
       </div>
 
       {/* Main Layout */}
-      <div className="flex flex-1 pt-16">
+      <div className="autonomous-content">
         {/* Project Selector Sidebar */}
         {!sidebarCollapsed && (
           <div className="w-80 border-r border-gray-200">
@@ -202,7 +285,7 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
           />
         )}
       </div>
-    </div>
+    </AutonomousLayout>
   );
 }
 

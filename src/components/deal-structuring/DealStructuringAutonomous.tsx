@@ -2,7 +2,11 @@
 
 import React, { useState } from 'react';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
+import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
+import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
+import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
 import { useAutonomousStore } from '@/lib/stores/autonomousStore';
+import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X } from 'lucide-react';
@@ -35,7 +39,7 @@ interface DealStructuringAutonomousProps {
   onSwitchMode?: (mode: 'traditional' | 'assisted' | 'autonomous') => void;
 }
 
-function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAutonomousProps) {
+export function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAutonomousProps) {
   const {
     selectedProject,
     projects,
@@ -50,6 +54,7 @@ function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAutonomousPr
 
   const { deals, isLoading } = useDealStructuring();
   const [showSettings, setShowSettings] = useState(false);
+  const { exitAutonomous, navigateToModule } = useAutonomousMode();
 
   // Initialize project type for deal structuring and load data
   React.useEffect(() => {
@@ -91,47 +96,86 @@ function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAutonomousPr
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <AutonomousLayout>
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="autonomous-header px-4 py-3">
+        <div className="flex items-center justify-between min-h-[56px]">
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleSidebar}
-              className="lg:hidden"
+              className="lg:hidden flex-shrink-0"
+              aria-label="Toggle sidebar"
             >
               {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
             </Button>
             
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Autonomous Deal Structuring
+            {/* Navigation Menu */}
+            <AutonomousNavMenu 
+              currentModule="deal-structuring"
+              onNavigate={(moduleId) => {
+                const moduleRoutes: Record<string, string> = {
+                  dashboard: '/dashboard',
+                  workspaces: '/workspaces',
+                  'due-diligence': '/due-diligence',
+                  portfolio: '/portfolio',
+                  'deal-screening': '/deal-screening',
+                  'deal-structuring': '/deal-structuring'
+                };
+                const route = moduleRoutes[moduleId];
+                if (route) {
+                  navigateToModule(route, true);
+                }
+              }}
+              className="hidden sm:block"
+            />
+            
+            <div className="min-w-0 flex-1 sm:hidden">
+              <h1 className="text-lg font-semibold text-gray-900 truncate">
+                Deal Structuring
               </h1>
-              <p className="text-sm text-gray-500">
-                {selectedProject ? selectedProject.name : 'Select a deal to get started'}
-              </p>
+            </div>
+            
+            {/* Breadcrumb - Hidden on mobile to save space */}
+            <div className="hidden sm:block flex-1 min-w-0">
+              <AutonomousBreadcrumb 
+                currentModule="deal-structuring"
+                projectName={selectedProject ? selectedProject.name : 'Select deal'}
+              />
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+            <Badge 
+              variant="outline" 
+              className="bg-blue-50 text-blue-700 border-blue-200 hidden sm:inline-flex"
+            >
               AI Structuring
             </Badge>
             
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onSwitchMode?.('assisted')}
+              onClick={() => {
+                if (onSwitchMode) {
+                  onSwitchMode('assisted');
+                } else {
+                  exitAutonomous('assisted');
+                }
+              }}
+              className="text-xs sm:text-sm"
+              title="Exit Autonomous Mode"
             >
-              Switch Mode
+              <span className="hidden sm:inline">Exit Autonomous</span>
+              <span className="sm:hidden">Exit</span>
             </Button>
             
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowSettings(!showSettings)}
+              aria-label="Settings"
             >
               <Settings className="w-4 h-4" />
             </Button>
@@ -140,8 +184,7 @@ function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAutonomousPr
       </div>
 
       {/* Main content with 3-panel layout */}
-      <div className="flex-1 pt-16">
-        <div className="flex h-full">
+      <div className="autonomous-content">
           {/* Project Selector - Left Panel */}
           <div className={`${sidebarCollapsed ? 'w-0' : 'w-80'} transition-all duration-300 overflow-hidden border-r border-gray-200 bg-white`}>
             <ProjectSelector
@@ -310,7 +353,6 @@ Focus on being proactive and providing actionable insights while maintaining tra
               ] : []}
             />
           </div>
-        </div>
       </div>
 
       {/* Settings Modal */}
@@ -334,8 +376,8 @@ Focus on being proactive and providing actionable insights while maintaining tra
           </div>
         </div>
       )}
-    </div>
+    </AutonomousLayout>
   );
-};
+}
 
 export default DealStructuringAutonomous;

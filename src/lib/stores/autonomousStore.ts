@@ -131,6 +131,15 @@ export const useAutonomousStore = create<AutonomousStore>()(
       projects: getInitialProjects(),
       selectedProject: null,
       activeProjectType: 'dashboard',
+      
+      // Cross-module context
+      globalSelectedProject: null,
+      moduleProjects: {},
+      crossModuleContext: {
+        lastUsedProjects: {},
+        navigationHistory: []
+      },
+      
       chatSessions: {},
       activeChatSession: null,
       sidebarCollapsed: false,
@@ -317,6 +326,77 @@ export const useAutonomousStore = create<AutonomousStore>()(
         };
         
         return JSON.stringify(exportData, null, 2);
+      },
+
+      // Cross-module context actions
+      setGlobalProject: (project) =>
+        set((state) => ({
+          globalSelectedProject: project,
+          selectedProject: project,
+        })),
+
+      getProjectForModule: (module) => {
+        const state = get();
+        return state.moduleProjects[module] || state.globalSelectedProject;
+      },
+
+      setProjectForModule: (module, project) =>
+        set((state) => ({
+          moduleProjects: {
+            ...state.moduleProjects,
+            [module]: project
+          },
+          crossModuleContext: {
+            ...state.crossModuleContext,
+            lastUsedProjects: {
+              ...state.crossModuleContext.lastUsedProjects,
+              [module]: project?.id || null
+            }
+          }
+        })),
+
+      syncProjectAcrossModules: (project) =>
+        set((state) => ({
+          globalSelectedProject: project,
+          selectedProject: project,
+          moduleProjects: Object.keys(state.moduleProjects).reduce((acc, module) => {
+            // Only sync if the project types are compatible
+            const isCompatible = project.type === 'company' || project.type === 'deal' || project.type === 'analysis';
+            acc[module] = isCompatible ? project : state.moduleProjects[module];
+            return acc;
+          }, {} as Record<string, Project | null>)
+        })),
+
+      addToNavigationHistory: (module, projectId) =>
+        set((state) => {
+          const newHistoryItem = {
+            module,
+            projectId,
+            timestamp: new Date()
+          };
+          
+          // Keep only the last 20 navigation items
+          const updatedHistory = [newHistoryItem, ...state.crossModuleContext.navigationHistory]
+            .slice(0, 20);
+            
+          return {
+            crossModuleContext: {
+              ...state.crossModuleContext,
+              navigationHistory: updatedHistory
+            }
+          };
+        }),
+
+      getRecentProjectsForModule: (module) => {
+        const state = get();
+        const moduleHistory = state.crossModuleContext.navigationHistory
+          .filter(item => item.module === module)
+          .slice(0, 5); // Get last 5 projects for this module
+          
+        const allProjects = Object.values(state.projects).flat();
+        return moduleHistory
+          .map(item => allProjects.find(project => project.id === item.projectId))
+          .filter(Boolean) as Project[];
       },
 
       // Real data loading implementations
