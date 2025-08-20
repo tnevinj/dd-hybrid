@@ -529,10 +529,6 @@ export async function PUT(
     const updates: WorkspaceUpdateRequest = await request.json();
     
     // In real implementation, update in database
-    // const updatedWorkspace = await prisma.investmentWorkspace.update({
-    //   where: { id: workspaceId },
-    //   data: updates
-    // });
     
     if (workspaceId !== '1') {
       return NextResponse.json(
@@ -567,10 +563,6 @@ export async function DELETE(
     const { id: workspaceId } = await params;
     
     // In real implementation, soft delete or hard delete
-    // await prisma.investmentWorkspace.update({
-    //   where: { id: workspaceId },
-    //   data: { status: 'ARCHIVED' }
-    // });
     
     if (workspaceId !== '1') {
       return NextResponse.json(

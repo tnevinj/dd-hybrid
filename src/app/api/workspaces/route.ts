@@ -328,7 +328,6 @@ export async function POST(request: NextRequest) {
     };
     
     // In a real implementation, save to database here
-    // await prisma.investmentWorkspace.create({ data: newWorkspace });
     
     return NextResponse.json(newWorkspace, { status: 201 });
     

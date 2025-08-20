@@ -17,7 +17,12 @@ import {
   Brain,
   ChevronRight,
   Sparkles,
-  FolderOpen
+  FolderOpen,
+  Building,
+  Users,
+  Shield,
+  TrendingUp,
+  Zap
 } from 'lucide-react'
 
 interface TraditionalSidebarProps {
@@ -35,6 +40,11 @@ const iconMap = {
   Settings,
   Brain,
   FolderOpen,
+  Building,
+  Users,
+  Shield,
+  TrendingUp,
+  Zap,
 }
 
 export function TraditionalSidebar({ enhanced = false, collapsed = false, className }: TraditionalSidebarProps) {

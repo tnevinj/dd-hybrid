@@ -84,6 +84,8 @@ const defaultNavigationItems: NavigationItem[] = [
     aiEnhanced: true,
     description: 'Collaborative investment analysis workspaces'
   },
+  
+  // Core Operations
   {
     id: 'deal-screening',
     label: 'Deal Screening',
@@ -115,6 +117,94 @@ const defaultNavigationItems: NavigationItem[] = [
     href: '/portfolio',
     aiEnhanced: true,
     description: 'Comprehensive portfolio management with analytics, optimization, risk management, and team collaboration'
+  },
+  
+  // Enhanced Features
+  {
+    id: 'portfolio-management',
+    label: 'Portfolio Management',
+    icon: 'BarChart',
+    href: '/portfolio-management',
+    aiEnhanced: true,
+    description: 'Enhanced portfolio analytics, ESG reporting, and performance tracking'
+  },
+  {
+    id: 'fund-operations',
+    label: 'Fund Operations',
+    icon: 'Building',
+    href: '/fund-operations',
+    aiEnhanced: true,
+    description: 'NAV tracking, expense management, and operational workflows'
+  },
+  {
+    id: 'investment-committee',
+    label: 'Investment Committee',
+    icon: 'Users',
+    href: '/investment-committee',
+    aiEnhanced: true,
+    description: 'Meeting management, voting systems, and decision tracking'
+  },
+  {
+    id: 'legal-management',
+    label: 'Legal Management',
+    icon: 'Shield',
+    href: '/legal-management',
+    aiEnhanced: true,
+    description: 'Document center, compliance monitoring, and risk assessment'
+  },
+  
+  // Intelligence & Analytics
+  {
+    id: 'market-intelligence',
+    label: 'Market Intelligence',
+    icon: 'TrendingUp',
+    href: '/market-intelligence',
+    aiEnhanced: true,
+    description: 'AFME dashboard, currency monitoring, and geopolitical analysis'
+  },
+  {
+    id: 'knowledge-management',
+    label: 'Knowledge Center',
+    icon: 'Brain',
+    href: '/knowledge-management',
+    aiEnhanced: true,
+    description: 'Institutional memory, expert networks, and pattern recognition'
+  },
+  {
+    id: 'advanced-analytics',
+    label: 'Advanced Analytics',
+    icon: 'BarChart',
+    href: '/advanced-analytics',
+    aiEnhanced: true,
+    description: 'Predictive modeling, risk correlation, and scenario planning'
+  },
+  
+  // Relationship & Operations
+  {
+    id: 'lpgp-relationship',
+    label: 'LP Relationships',
+    icon: 'Users',
+    href: '/lpgp-relationship',
+    aiEnhanced: true,
+    description: 'CRM, communication center, and strategic relationship planning'
+  },
+  {
+    id: 'workflow-automation',
+    label: 'Workflow Automation',
+    icon: 'Zap',
+    href: '/workflow-automation',
+    aiEnhanced: true,
+    description: 'Document workflows, approval processes, and automation'
+  },
+  
+  // Administration
+  {
+    id: 'admin-management',
+    label: 'Administration',
+    icon: 'Shield',
+    href: '/admin-management',
+    aiEnhanced: true,
+    description: 'Multi-org support, RBAC, audit logging, and system administration'
   },
   {
     id: 'settings',
