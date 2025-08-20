@@ -154,10 +154,7 @@ export function HybridNavigation({ children, className, viewContext }: HybridNav
       case 'autonomous':
         return (
           <>
-            {/* Traditional Sidebar - Still useful for top-level navigation */}
-            <TraditionalSidebar enhanced={true} />
-            
-            {/* Content Area - No redundant AI conversation panel */}
+            {/* Autonomous mode uses its own full-screen layout - no traditional sidebar */}
             <div className="flex-1 flex flex-col overflow-hidden">
               <main className="flex-1 overflow-auto">
                 {children}

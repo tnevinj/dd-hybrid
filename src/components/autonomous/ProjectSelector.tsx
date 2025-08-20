@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAutonomousStore } from '@/lib/stores/autonomousStore';
+import { ZIndex, getZIndexStyle } from '@/styles/z-index';
+import { cn } from '@/lib/utils';
 import { 
   Search, 
   Plus, 
@@ -41,6 +43,8 @@ interface ProjectSelectorProps {
   selectedProjectId?: string;
   onProjectSelect: (project: Project) => void;
   className?: string;
+  collapsed?: boolean;
+  onToggle?: () => void;
 }
 
 // Mock projects removed - now using unified data from store
@@ -49,7 +53,9 @@ export function ProjectSelector({
   projectType, 
   selectedProjectId, 
   onProjectSelect, 
-  className = '' 
+  className = '',
+  collapsed = false,
+  onToggle
 }: ProjectSelectorProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -111,8 +117,33 @@ export function ProjectSelector({
     return 'Just now';
   };
 
+  // Mobile overlay for when sidebar is open
+  const MobileSidebarOverlay = () => (
+    <div 
+      className="lg:hidden fixed inset-0 bg-black bg-opacity-50" 
+      style={getZIndexStyle(ZIndex.OVERLAY)}
+      onClick={onToggle}
+    />
+  );
+
   return (
-    <div className={`w-80 bg-gray-50 border-r border-gray-200 flex flex-col h-full ${className}`}>
+    <>
+      {/* Mobile overlay */}
+      {!collapsed && <MobileSidebarOverlay />}
+      
+      {/* Sidebar */}
+      <div className={cn(
+        "w-80 bg-gray-50 border-r border-gray-200 flex flex-col h-full transition-transform duration-300 ease-in-out lg:translate-x-0",
+        "lg:static lg:w-80", // Always visible on desktop
+        "fixed inset-y-0 left-0 lg:relative", // Fixed position on mobile, relative on desktop
+        collapsed ? "-translate-x-full lg:translate-x-0" : "translate-x-0", // Hide on mobile when collapsed
+        className
+      )} 
+      style={{
+        ...getZIndexStyle(ZIndex.STICKY),
+        paddingTop: 'var(--autonomous-header-height, 64px)' // Account for fixed header
+      }}
+      >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between mb-3">
@@ -260,6 +291,7 @@ export function ProjectSelector({
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
+import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
 import { useAutonomousStore } from '@/lib/stores/autonomousStore';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -75,7 +76,7 @@ export function DashboardAutonomous({
 
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <AutonomousLayout>
       {/* Header */}
       <div className="autonomous-header px-4 py-3">
         <div className="flex items-center justify-between">
@@ -150,7 +151,7 @@ export function DashboardAutonomous({
           />
         )}
       </div>
-    </div>
+    </AutonomousLayout>
   );
 }
 

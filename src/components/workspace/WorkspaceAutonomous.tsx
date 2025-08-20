@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
+import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
 import { useAutonomousStore } from '@/lib/stores/autonomousStore';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -171,12 +172,11 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <AutonomousLayout>
       {/* Header */}
       <div 
         id="autonomous-workspace-header"
-        className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 sm:px-6 transition-all duration-200"
-        style={getZIndexStyle(ZIndex.FIXED_HEADER)}
+        className="autonomous-header px-4 py-3 sm:px-6"
       >
         <div className="flex items-center justify-between min-h-[56px]">
           <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
@@ -247,18 +247,15 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
       </div>
 
       {/* Main Layout */}
-      <div 
-        className="flex flex-1 transition-all duration-200"
-        style={{ paddingTop: `${headerHeight}px` }}
-      >
+      <div className="autonomous-content">
         {/* Project Selector Sidebar */}
-        {!sidebarCollapsed && (
-          <ProjectSelector
-            projectType="workspace"
-            selectedProjectId={selectedProject?.id}
-            onProjectSelect={handleProjectSelect}
-          />
-        )}
+        <ProjectSelector
+          projectType="workspace"
+          selectedProjectId={selectedProject?.id}
+          onProjectSelect={handleProjectSelect}
+          collapsed={sidebarCollapsed}
+          onToggle={toggleSidebar}
+        />
 
         {/* Chat Interface */}
         <div className="flex-1">
@@ -381,7 +378,7 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
           </div>
         </div>
       )}
-    </div>
+    </AutonomousLayout>
   );
 }
 

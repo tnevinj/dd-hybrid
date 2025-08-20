@@ -129,6 +129,36 @@
   z-index: var(--z-sticky);
 }
 
+/* Autonomous mode body styling */
+body.autonomous-mode {
+  overflow: hidden; /* Prevent scrolling on body level */
+}
+
+/* Standardized sidebar widths */
+:root {
+  --sidebar-width-narrow: 16rem; /* 256px - MainLayout sidebar */
+  --sidebar-width-wide: 20rem;   /* 320px - ProjectSelector sidebar */
+  --sidebar-width-mobile: 100vw; /* Full width on mobile */
+}
+
+/* Ensure consistent widths */
+.main-layout-sidebar {
+  width: var(--sidebar-width-narrow);
+}
+
+.autonomous-project-selector {
+  width: var(--sidebar-width-wide);
+}
+
+/* Mobile responsive sidebar widths */
+@media (max-width: 768px) {
+  .main-layout-sidebar,
+  .autonomous-project-selector {
+    width: var(--sidebar-width-mobile);
+    max-width: 24rem; /* Max width for very large mobile screens */
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .autonomous-floating-button {
@@ -143,4 +173,24 @@
     right: 1rem;
     max-width: none;
   }
+
+  /* Adjust header padding on smaller screens */
+  .autonomous-header {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Prevent layout shift when switching between modes */
+.hybrid-workspace-container {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Ensure modals appear above autonomous headers */
+.autonomous-modal-overlay {
+  z-index: var(--z-overlay) !important;
+}
+
+.autonomous-modal-content {
+  z-index: var(--z-modal-content) !important;
 }
