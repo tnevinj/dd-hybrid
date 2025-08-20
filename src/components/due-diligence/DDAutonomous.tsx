@@ -54,7 +54,7 @@ export function DDAutonomous({ onSwitchMode }: DDAutonomousProps) {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
+      <div className="autonomous-header px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button
@@ -101,7 +101,7 @@ export function DDAutonomous({ onSwitchMode }: DDAutonomousProps) {
       </div>
 
       {/* Main Layout */}
-      <div className="flex flex-1 pt-16">
+      <div className="autonomous-content">
         {/* Project Selector Sidebar */}
         {!sidebarCollapsed && (
           <ProjectSelector

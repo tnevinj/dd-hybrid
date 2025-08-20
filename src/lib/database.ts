@@ -258,6 +258,335 @@ const initSchema = () => {
     );
   `);
 
+  // Operational Assessment tables
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS operational_assessments (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL,
+      workspace_id TEXT REFERENCES workspaces(id) ON DELETE SET NULL,
+      assessment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+      overall_score REAL DEFAULT 0, -- 0-100 operational excellence score
+      process_efficiency_score REAL DEFAULT 0,
+      digital_maturity_score REAL DEFAULT 0,
+      quality_management_score REAL DEFAULT 0,
+      supply_chain_score REAL DEFAULT 0,
+      automation_readiness_score REAL DEFAULT 0,
+      cost_efficiency_score REAL DEFAULT 0,
+      scalability_score REAL DEFAULT 0,
+      status TEXT DEFAULT 'draft', -- 'draft', 'in_progress', 'completed', 'approved'
+      assessor_name TEXT,
+      notes TEXT,
+      recommendations JSON, -- Array of improvement recommendations
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS operational_metrics (
+      id TEXT PRIMARY KEY,
+      assessment_id TEXT NOT NULL REFERENCES operational_assessments(id) ON DELETE CASCADE,
+      metric_category TEXT NOT NULL, -- 'process', 'quality', 'efficiency', 'automation', 'cost'
+      metric_name TEXT NOT NULL,
+      current_value REAL,
+      target_value REAL,
+      benchmark_value REAL,
+      unit TEXT, -- 'percentage', 'hours', 'dollars', 'ratio', etc.
+      trend TEXT DEFAULT 'stable', -- 'improving', 'declining', 'stable'
+      measurement_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+      data_source TEXT,
+      reliability_score REAL DEFAULT 1.0, -- 0-1 confidence in data
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS operational_processes (
+      id TEXT PRIMARY KEY,
+      assessment_id TEXT NOT NULL REFERENCES operational_assessments(id) ON DELETE CASCADE,
+      process_name TEXT NOT NULL,
+      process_category TEXT, -- 'core', 'support', 'management'
+      efficiency_score REAL DEFAULT 0, -- 0-100
+      automation_level REAL DEFAULT 0, -- 0-100 percentage automated
+      bottlenecks JSON, -- Array of identified bottlenecks
+      improvement_opportunities JSON, -- Array of improvement suggestions
+      cycle_time_current INTEGER, -- in minutes
+      cycle_time_target INTEGER, -- in minutes
+      cost_current INTEGER, -- in cents
+      cost_target INTEGER, -- in cents
+      quality_metrics JSON, -- Quality KPIs for this process
+      status TEXT DEFAULT 'active', -- 'active', 'under_review', 'deprecated'
+      last_reviewed DATETIME,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS operational_benchmarks (
+      id TEXT PRIMARY KEY,
+      assessment_id TEXT NOT NULL REFERENCES operational_assessments(id) ON DELETE CASCADE,
+      benchmark_category TEXT NOT NULL, -- 'industry', 'peer', 'best_in_class'
+      metric_name TEXT NOT NULL,
+      company_value REAL,
+      benchmark_value REAL,
+      percentile_ranking REAL, -- 0-100 percentile vs benchmark
+      benchmark_source TEXT,
+      industry_sector TEXT,
+      company_size_category TEXT, -- 'small', 'medium', 'large'
+      geographic_region TEXT,
+      data_vintage TEXT, -- Year or quarter of benchmark data
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // Management Assessment tables
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS management_assessments (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL,
+      workspace_id TEXT REFERENCES workspaces(id) ON DELETE SET NULL,
+      assessment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+      overall_team_score REAL DEFAULT 0, -- 0-100 overall management quality score
+      leadership_score REAL DEFAULT 0,
+      strategic_thinking_score REAL DEFAULT 0,
+      execution_capability_score REAL DEFAULT 0,
+      financial_acumen_score REAL DEFAULT 0,
+      industry_expertise_score REAL DEFAULT 0,
+      team_dynamics_score REAL DEFAULT 0,
+      succession_readiness_score REAL DEFAULT 0,
+      retention_risk_score REAL DEFAULT 0, -- Higher score = lower risk
+      status TEXT DEFAULT 'draft', -- 'draft', 'in_progress', 'completed', 'approved'
+      assessor_name TEXT,
+      key_strengths JSON, -- Array of identified strengths
+      key_concerns JSON, -- Array of concerns/risks
+      succession_gaps JSON, -- Array of succession planning gaps
+      retention_strategies JSON, -- Array of retention recommendations
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS management_team_members (
+      id TEXT PRIMARY KEY,
+      assessment_id TEXT NOT NULL REFERENCES management_assessments(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      position TEXT NOT NULL,
+      department TEXT,
+      tenure_years REAL DEFAULT 0,
+      age INTEGER,
+      education_background TEXT,
+      previous_experience JSON, -- Array of previous roles/companies
+      leadership_score REAL DEFAULT 0, -- 0-100
+      strategic_thinking_score REAL DEFAULT 0,
+      execution_score REAL DEFAULT 0,
+      financial_acumen_score REAL DEFAULT 0,
+      industry_expertise_score REAL DEFAULT 0,
+      team_collaboration_score REAL DEFAULT 0,
+      retention_risk TEXT DEFAULT 'medium', -- 'low', 'medium', 'high'
+      succession_readiness REAL DEFAULT 0, -- 0-100 ready to be replaced
+      development_areas JSON, -- Array of improvement areas
+      key_achievements JSON, -- Array of notable achievements
+      compensation_satisfaction TEXT DEFAULT 'unknown', -- 'low', 'medium', 'high', 'unknown'
+      career_aspirations TEXT,
+      flight_risk_factors JSON, -- Array of factors increasing flight risk
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS gp_relationships (
+      id TEXT PRIMARY KEY,
+      assessment_id TEXT NOT NULL REFERENCES management_assessments(id) ON DELETE CASCADE,
+      gp_name TEXT NOT NULL,
+      relationship_type TEXT, -- 'primary', 'secondary', 'advisor'
+      relationship_duration_years REAL DEFAULT 0,
+      relationship_quality_score REAL DEFAULT 0, -- 0-100
+      communication_frequency TEXT, -- 'weekly', 'monthly', 'quarterly', 'as_needed'
+      previous_deal_count INTEGER DEFAULT 0,
+      previous_deal_performance JSON, -- Array of previous deal outcomes
+      value_add_areas JSON, -- Array of value-add contributions
+      areas_for_improvement JSON, -- Array of relationship improvement areas
+      future_opportunity_pipeline JSON, -- Array of potential future deals
+      reference_check_score REAL DEFAULT 0, -- 0-100 based on reference checks
+      overall_satisfaction TEXT DEFAULT 'unknown', -- 'low', 'medium', 'high', 'unknown'
+      notes TEXT,
+      last_interaction_date DATETIME,
+      next_review_date DATETIME,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // Qualification Assessment tables
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS qualification_assessments (
+      id TEXT PRIMARY KEY,
+      team_member_id TEXT NOT NULL REFERENCES management_team_members(id) ON DELETE CASCADE,
+      assessment_type TEXT NOT NULL, -- 'skills', 'references', 'performance', 'competency', 'cultural_fit'
+      assessment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+      overall_qualification_score REAL DEFAULT 0, -- 0-100 overall qualification score
+      verification_status TEXT DEFAULT 'pending', -- 'pending', 'in_progress', 'completed', 'failed'
+      assessed_by TEXT,
+      methodology TEXT, -- Assessment methodology used
+      confidence_level REAL DEFAULT 0, -- 0-1 confidence in assessment
+      findings JSON, -- Detailed assessment findings
+      recommendations JSON, -- Assessment recommendations
+      red_flags JSON, -- Identified red flags
+      validation_evidence JSON, -- Supporting evidence
+      external_validation_required BOOLEAN DEFAULT FALSE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS skills_validations (
+      id TEXT PRIMARY KEY,
+      qualification_assessment_id TEXT NOT NULL REFERENCES qualification_assessments(id) ON DELETE CASCADE,
+      skill_category TEXT NOT NULL, -- 'technical', 'leadership', 'strategic', 'financial', 'operational'
+      skill_name TEXT NOT NULL,
+      claimed_proficiency REAL DEFAULT 0, -- 0-100 self-reported skill level
+      validated_proficiency REAL DEFAULT 0, -- 0-100 validated skill level
+      validation_method TEXT, -- 'interview', 'test', 'portfolio', 'reference', 'observation'
+      evidence_type TEXT, -- 'certification', 'project', 'testimonial', 'demonstration'
+      evidence_quality REAL DEFAULT 0, -- 0-100 quality of evidence
+      assessor_notes TEXT,
+      validation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+      expiry_date DATETIME, -- When validation expires
+      industry_relevance REAL DEFAULT 0, -- 0-100 relevance to current role/industry
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS reference_checks (
+      id TEXT PRIMARY KEY,
+      qualification_assessment_id TEXT NOT NULL REFERENCES qualification_assessments(id) ON DELETE CASCADE,
+      reference_name TEXT NOT NULL,
+      reference_position TEXT,
+      reference_company TEXT,
+      relationship_to_candidate TEXT, -- 'direct_manager', 'peer', 'subordinate', 'client', 'board_member'
+      reference_type TEXT DEFAULT 'professional', -- 'professional', 'personal', 'academic'
+      contact_method TEXT, -- 'phone', 'email', 'video', 'in_person'
+      response_status TEXT DEFAULT 'pending', -- 'pending', 'completed', 'declined', 'unreachable'
+      overall_rating REAL DEFAULT 0, -- 0-100 overall reference rating
+      would_rehire BOOLEAN,
+      leadership_rating REAL DEFAULT 0,
+      performance_rating REAL DEFAULT 0,
+      integrity_rating REAL DEFAULT 0,
+      collaboration_rating REAL DEFAULT 0,
+      specific_feedback TEXT,
+      strengths_mentioned JSON, -- Array of mentioned strengths
+      concerns_mentioned JSON, -- Array of mentioned concerns
+      verification_items JSON, -- Items verified (title, dates, achievements)
+      red_flags JSON, -- Any red flags identified
+      reference_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+      follow_up_required BOOLEAN DEFAULT FALSE,
+      follow_up_notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS performance_validations (
+      id TEXT PRIMARY KEY,
+      qualification_assessment_id TEXT NOT NULL REFERENCES qualification_assessments(id) ON DELETE CASCADE,
+      performance_period_start DATE,
+      performance_period_end DATE,
+      company_name TEXT,
+      role_title TEXT,
+      claimed_achievements JSON, -- Array of claimed achievements
+      validated_achievements JSON, -- Array of validated achievements
+      quantitative_metrics JSON, -- Validated quantitative performance metrics
+      revenue_impact INTEGER, -- Revenue impact in cents
+      cost_savings INTEGER, -- Cost savings in cents
+      team_size_managed INTEGER,
+      budget_responsibility INTEGER, -- Budget managed in cents
+      stakeholder_feedback_score REAL DEFAULT 0, -- 0-100
+      peer_review_score REAL DEFAULT 0, -- 0-100
+      subordinate_feedback_score REAL DEFAULT 0, -- 0-100
+      client_satisfaction_score REAL DEFAULT 0, -- 0-100
+      awards_recognition JSON, -- Array of awards and recognition
+      performance_improvement_areas JSON, -- Areas for improvement
+      validation_sources JSON, -- Sources used for validation
+      validation_confidence REAL DEFAULT 0, -- 0-1 confidence level
+      discrepancies_found JSON, -- Any discrepancies between claimed and actual
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS competency_validations (
+      id TEXT PRIMARY KEY,
+      qualification_assessment_id TEXT NOT NULL REFERENCES qualification_assessments(id) ON DELETE CASCADE,
+      competency_framework TEXT, -- Framework used (e.g., 'leadership_pipeline', 'mckinsey_7s')
+      competency_category TEXT NOT NULL,
+      competency_name TEXT NOT NULL,
+      required_level REAL DEFAULT 0, -- 0-100 required level for role
+      demonstrated_level REAL DEFAULT 0, -- 0-100 demonstrated level
+      assessment_method TEXT, -- 'behavioral_interview', 'simulation', 'assessment_center', '360_feedback'
+      behavioral_indicators JSON, -- Observed behavioral indicators
+      situational_examples JSON, -- Real examples provided by candidate
+      assessment_scenarios JSON, -- Scenarios used in assessment
+      competency_gaps JSON, -- Identified gaps
+      development_recommendations JSON, -- Recommendations for development
+      assessor_confidence REAL DEFAULT 0, -- 0-1 assessor confidence
+      external_validation JSON, -- External validation (degrees, certifications)
+      industry_benchmarks JSON, -- Industry benchmark comparisons
+      future_potential_score REAL DEFAULT 0, -- 0-100 future potential
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS cultural_fit_assessments (
+      id TEXT PRIMARY KEY,
+      qualification_assessment_id TEXT NOT NULL REFERENCES qualification_assessments(id) ON DELETE CASCADE,
+      company_culture_profile JSON, -- Company culture characteristics
+      individual_profile JSON, -- Individual culture profile
+      values_alignment_score REAL DEFAULT 0, -- 0-100 alignment with company values
+      work_style_compatibility REAL DEFAULT 0, -- 0-100 work style fit
+      communication_style_fit REAL DEFAULT 0, -- 0-100 communication fit
+      leadership_style_fit REAL DEFAULT 0, -- 0-100 leadership style fit
+      decision_making_style_fit REAL DEFAULT 0, -- 0-100 decision making fit
+      change_adaptability_score REAL DEFAULT 0, -- 0-100 adaptability to change
+      team_integration_potential REAL DEFAULT 0, -- 0-100 team integration
+      cultural_red_flags JSON, -- Identified cultural misalignment areas
+      integration_strategies JSON, -- Strategies for successful integration
+      cultural_development_plan JSON, -- Plan for cultural adaptation
+      assessment_methodology TEXT,
+      external_consultant_used BOOLEAN DEFAULT FALSE,
+      assessment_tools_used JSON, -- Tools and assessments used
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS qualification_documents (
+      id TEXT PRIMARY KEY,
+      qualification_assessment_id TEXT NOT NULL REFERENCES qualification_assessments(id) ON DELETE CASCADE,
+      document_type TEXT NOT NULL, -- 'resume', 'transcript', 'certification', 'portfolio', 'reference_letter'
+      document_name TEXT NOT NULL,
+      document_path TEXT, -- File path or URL
+      verification_status TEXT DEFAULT 'pending', -- 'pending', 'verified', 'discrepancy', 'fake'
+      verification_method TEXT, -- Method used to verify document
+      verification_date DATETIME,
+      verified_by TEXT, -- Who verified the document
+      authenticity_score REAL DEFAULT 0, -- 0-100 confidence in authenticity
+      relevance_score REAL DEFAULT 0, -- 0-100 relevance to position
+      quality_score REAL DEFAULT 0, -- 0-100 document quality
+      key_findings JSON, -- Key findings from document
+      discrepancies JSON, -- Any discrepancies found
+      verification_notes TEXT,
+      expiry_date DATETIME, -- When document/certification expires
+      issuing_authority TEXT, -- Authority that issued document
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
   // Create indexes for better query performance
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_workspaces_status ON workspaces(status);
@@ -271,6 +600,35 @@ const initSchema = () => {
     CREATE INDEX IF NOT EXISTS idx_template_usage_template_id ON template_usage(template_id);
     CREATE INDEX IF NOT EXISTS idx_template_usage_workspace_id ON template_usage(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_generation_sessions_workspace_id ON generation_sessions(workspace_id);
+    
+    -- Operational assessment indexes
+    CREATE INDEX IF NOT EXISTS idx_operational_assessments_project_id ON operational_assessments(project_id);
+    CREATE INDEX IF NOT EXISTS idx_operational_assessments_workspace_id ON operational_assessments(workspace_id);
+    CREATE INDEX IF NOT EXISTS idx_operational_metrics_assessment_id ON operational_metrics(assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_operational_metrics_category ON operational_metrics(metric_category);
+    CREATE INDEX IF NOT EXISTS idx_operational_processes_assessment_id ON operational_processes(assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_operational_benchmarks_assessment_id ON operational_benchmarks(assessment_id);
+    
+    -- Management assessment indexes
+    CREATE INDEX IF NOT EXISTS idx_management_assessments_project_id ON management_assessments(project_id);
+    CREATE INDEX IF NOT EXISTS idx_management_assessments_workspace_id ON management_assessments(workspace_id);
+    CREATE INDEX IF NOT EXISTS idx_management_team_members_assessment_id ON management_team_members(assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_gp_relationships_assessment_id ON gp_relationships(assessment_id);
+    
+    -- Qualification assessment indexes
+    CREATE INDEX IF NOT EXISTS idx_qualification_assessments_team_member_id ON qualification_assessments(team_member_id);
+    CREATE INDEX IF NOT EXISTS idx_qualification_assessments_type ON qualification_assessments(assessment_type);
+    CREATE INDEX IF NOT EXISTS idx_qualification_assessments_status ON qualification_assessments(verification_status);
+    CREATE INDEX IF NOT EXISTS idx_skills_validations_assessment_id ON skills_validations(qualification_assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_skills_validations_category ON skills_validations(skill_category);
+    CREATE INDEX IF NOT EXISTS idx_reference_checks_assessment_id ON reference_checks(qualification_assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_reference_checks_status ON reference_checks(response_status);
+    CREATE INDEX IF NOT EXISTS idx_performance_validations_assessment_id ON performance_validations(qualification_assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_competency_validations_assessment_id ON competency_validations(qualification_assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_cultural_fit_assessments_assessment_id ON cultural_fit_assessments(qualification_assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_qualification_documents_assessment_id ON qualification_documents(qualification_assessment_id);
+    CREATE INDEX IF NOT EXISTS idx_qualification_documents_type ON qualification_documents(document_type);
+    CREATE INDEX IF NOT EXISTS idx_qualification_documents_status ON qualification_documents(verification_status);
   `);
 
   console.log('Database schema initialized successfully');

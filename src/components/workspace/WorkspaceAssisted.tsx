@@ -274,7 +274,9 @@ export function WorkspaceAssisted({
     totalWorkspaces: 0,
     activeWorkspaces: 0,
     completedWorkspaces: 0,
-    teamMembers: 0
+    teamMembers: 0,
+    aiOptimizationScore: 0,
+    predictedEfficiency: 0
   }
   const enhancedWorkspaces = workspaces || []
 
@@ -362,7 +364,7 @@ export function WorkspaceAssisted({
               <Target className="h-5 w-5 text-purple-600" />
               <p className="text-sm text-gray-600 font-medium">AI Optimization</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.aiOptimizationScore.toFixed(1)}/10</p>
+            <p className="text-3xl font-bold text-gray-900">{(unifiedMetrics.aiOptimizationScore || 0).toFixed(1)}/10</p>
             <div className="flex items-center text-purple-600 text-sm mt-1">
               <Star className="h-4 w-4 mr-1" />
               Excellent score
@@ -384,7 +386,7 @@ export function WorkspaceAssisted({
         <Card className="border-purple-200 bg-white">
           <CardContent className="p-6">
             <p className="text-sm text-gray-600 font-medium mb-2">Efficiency Gain</p>
-            <p className="text-3xl font-bold text-gray-900">+{unifiedMetrics.predictedEfficiency}%</p>
+            <p className="text-3xl font-bold text-gray-900">+{unifiedMetrics.predictedEfficiency || 0}%</p>
             <div className="flex items-center text-purple-600 text-sm mt-1">
               <Lightbulb className="h-4 w-4 mr-1" />
               AI-powered

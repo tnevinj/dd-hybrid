@@ -187,34 +187,42 @@ export class AIRiskEngine {
   private analyzeRiskFactors(riskData: any, companyData: any, industryContext: string): RiskFactor[] {
     const factors: RiskFactor[] = []
     
-    // Financial factors
-    if (riskData.category === 'financial') {
-      factors.push({
-        category: 'Financial Performance',
-        weight: 0.4,
-        score: this.scoreFinancialHealth(companyData.financials),
-        description: 'Overall financial health and trend analysis',
-        dataSource: 'financial_statements'
-      })
-    }
+    // Rebalanced weights according to enhancement plan:
+    // Management: 35-40%, Operational: 25-30%, Financial: 25-30%, Market: 10-15%
     
-    // Operational factors
-    if (riskData.category === 'operational') {
-      factors.push({
-        category: 'Operational Efficiency',
-        weight: 0.35,
-        score: this.scoreOperationalEfficiency(companyData.operations),
-        description: 'Process efficiency and scalability assessment',
-        dataSource: 'operational_metrics'
-      })
-    }
+    // Management Team Assessment (NEW - highest priority for emerging markets)
+    factors.push({
+      category: 'Management Team Quality',
+      weight: 0.38, // 38% weight - critical for emerging market success
+      score: this.scoreManagementTeam(companyData.management),
+      description: 'Leadership competencies, team stability, and succession planning',
+      dataSource: 'management_assessment'
+    })
     
-    // Market factors
+    // Enhanced Operational factors (increased from limited scope)
+    factors.push({
+      category: 'Operational Excellence',
+      weight: 0.28, // 28% weight - drives 25-40% of value creation
+      score: this.scoreOperationalEfficiency(companyData.operations),
+      description: 'Comprehensive operational efficiency and process maturity assessment',
+      dataSource: 'operational_assessment'
+    })
+    
+    // Financial factors (reduced but still important)
+    factors.push({
+      category: 'Financial Performance',
+      weight: 0.24, // 24% weight - reduced from 40% to balance assessment
+      score: this.scoreFinancialHealth(companyData.financials),
+      description: 'Financial health, profitability, and growth trends',
+      dataSource: 'financial_statements'
+    })
+    
+    // Market factors (reduced weight)
     factors.push({
       category: 'Market Position',
-      weight: 0.25,
+      weight: 0.10, // 10% weight - supporting factor
       score: this.scoreMarketPosition(companyData.market, industryContext),
-      description: 'Competitive position and market dynamics',
+      description: 'Competitive positioning and market dynamics',
       dataSource: 'market_analysis'
     })
     
@@ -361,14 +369,166 @@ export class AIRiskEngine {
     if (!operations) return 5
     
     let score = 5 // Base score
+    let totalWeight = 0
+    let weightedScore = 0
     
-    // Process automation
-    if (operations.automationLevel > 0.7) score += 1
-    else if (operations.automationLevel < 0.3) score -= 1
+    // Enhanced operational scoring with multiple factors
+    const operationalFactors = [
+      { key: 'processEfficiency', weight: 0.25, threshold: { excellent: 85, good: 70, poor: 50 } },
+      { key: 'costOptimization', weight: 0.20, threshold: { excellent: 80, good: 65, poor: 45 } },
+      { key: 'qualityScore', weight: 0.15, threshold: { excellent: 90, good: 75, poor: 60 } },
+      { key: 'automationLevel', weight: 0.15, threshold: { excellent: 75, good: 55, poor: 35 } },
+      { key: 'digitalMaturity', weight: 0.10, threshold: { excellent: 80, good: 60, poor: 40 } },
+      { key: 'supplyChainResilience', weight: 0.10, threshold: { excellent: 85, good: 70, poor: 50 } },
+      { key: 'operationalScalability', weight: 0.05, threshold: { excellent: 85, good: 70, poor: 55 } }
+    ]
     
-    // Scalability
-    if (operations.scalabilityScore > 7) score += 1
-    else if (operations.scalabilityScore < 4) score -= 1
+    operationalFactors.forEach(factor => {
+      if (operations[factor.key] !== undefined) {
+        const value = operations[factor.key]
+        let factorScore = 5 // Neutral score
+        
+        if (value >= factor.threshold.excellent) {
+          factorScore = 8.5
+        } else if (value >= factor.threshold.good) {
+          factorScore = 7
+        } else if (value >= factor.threshold.poor) {
+          factorScore = 5.5
+        } else {
+          factorScore = 3
+        }
+        
+        weightedScore += factorScore * factor.weight
+        totalWeight += factor.weight
+      }
+    })
+    
+    // Calculate weighted average if we have operational data
+    if (totalWeight > 0) {
+      score = weightedScore / totalWeight
+    }
+    
+    // Additional scoring based on operational excellence indicators
+    if (operations.processMaturityLevel) {
+      const maturityBonus = {
+        'optimized': 1.5,
+        'managed': 1.0,
+        'defined': 0.5,
+        'developing': 0,
+        'initial': -0.5
+      }
+      score += maturityBonus[operations.processMaturityLevel] || 0
+    }
+    
+    // Operational risk factors
+    if (operations.keyOperationalRisks) {
+      const highRiskCount = operations.keyOperationalRisks.filter((risk: any) => 
+        risk.severity === 'high' || risk.severity === 'critical'
+      ).length
+      score -= highRiskCount * 0.3
+    }
+    
+    // Process inefficiency penalty
+    if (operations.inefficiencyCount) {
+      score -= Math.min(operations.inefficiencyCount * 0.2, 1.5)
+    }
+    
+    // Improvement opportunity bonus (shows potential)
+    if (operations.improvementOpportunities) {
+      const highImpactOpportunities = operations.improvementOpportunities.filter((opp: any) => 
+        opp.estimatedImpact > 80
+      ).length
+      score += Math.min(highImpactOpportunities * 0.3, 1.0)
+    }
+    
+    return Math.max(0, Math.min(10, score))
+  }
+
+  private scoreManagementTeam(management: any): number {
+    if (!management) return 5
+    
+    let score = 5 // Base score
+    let totalWeight = 0
+    let weightedScore = 0
+    
+    // Management competency scoring
+    const competencyFactors = [
+      { key: 'leadership', weight: 0.20 },
+      { key: 'strategicThinking', weight: 0.18 },
+      { key: 'operationalExecution', weight: 0.15 },
+      { key: 'industryExpertise', weight: 0.15 },
+      { key: 'financialAcumen', weight: 0.12 },
+      { key: 'teamBuilding', weight: 0.10 },
+      { key: 'adaptability', weight: 0.05 },
+      { key: 'integrityScore', weight: 0.05 }
+    ]
+    
+    if (management.teamCompetencies) {
+      competencyFactors.forEach(factor => {
+        if (management.teamCompetencies[factor.key] !== undefined) {
+          const competencyScore = management.teamCompetencies[factor.key]
+          // Convert 0-100 scale to 0-10 scale
+          const normalizedScore = competencyScore / 10
+          weightedScore += normalizedScore * factor.weight
+          totalWeight += factor.weight
+        }
+      })
+    }
+    
+    if (totalWeight > 0) {
+      score = weightedScore / totalWeight
+    }
+    
+    // Team stability and succession planning
+    if (management.teamStability !== undefined) {
+      if (management.teamStability > 85) score += 1.0
+      else if (management.teamStability > 70) score += 0.5
+      else if (management.teamStability < 50) score -= 1.0
+    }
+    
+    if (management.successionPlanning) {
+      const readiness = management.successionPlanning.successionReadiness || 0
+      if (readiness > 80) score += 0.8
+      else if (readiness > 60) score += 0.4
+      else if (readiness < 30) score -= 0.8
+    }
+    
+    // Track record and experience scoring
+    if (management.averageExperience !== undefined) {
+      if (management.averageExperience > 15) score += 0.5
+      else if (management.averageExperience > 10) score += 0.3
+      else if (management.averageExperience < 5) score -= 0.5
+    }
+    
+    // Performance history
+    if (management.performanceHistory) {
+      const avgPerformance = management.performanceHistory.reduce((sum: number, record: any) => 
+        sum + (record.kpiAchievement || 0), 0) / management.performanceHistory.length
+      
+      if (avgPerformance > 85) score += 1.0
+      else if (avgPerformance > 70) score += 0.5
+      else if (avgPerformance < 50) score -= 1.0
+    }
+    
+    // Risk factors penalty
+    if (management.keyRisks) {
+      const criticalRisks = management.keyRisks.filter((risk: any) => 
+        risk.severity === 'critical'
+      ).length
+      const highRisks = management.keyRisks.filter((risk: any) => 
+        risk.severity === 'high'
+      ).length
+      
+      score -= (criticalRisks * 1.0) + (highRisks * 0.5)
+    }
+    
+    // Governance structure bonus
+    if (management.governanceScore > 80) score += 0.5
+    else if (management.governanceScore < 50) score -= 0.5
+    
+    // Emerging market specific factors
+    if (management.localMarketExperience > 80) score += 0.5
+    if (management.regulatoryComplianceScore > 85) score += 0.3
     
     return Math.max(0, Math.min(10, score))
   }

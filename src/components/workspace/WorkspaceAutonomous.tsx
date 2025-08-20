@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
 import { useAutonomousStore } from '@/lib/stores/autonomousStore';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Settings, Menu, X, Wand2 } from 'lucide-react';
 import { WorkProductCreator } from '@/components/work-product';
 import { ContentAssembler } from '@/components/content-transformation/ContentAssembler';
 import { WorkProduct, WorkProductCreateRequest, ProjectContext } from '@/types/work-product';
+import { ZIndex, getZIndexStyle } from '@/styles/z-index';
 
 interface Project {
   id: string;
@@ -48,6 +49,7 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
   const [showWorkProductViewer, setShowWorkProductViewer] = useState(false);
   const [currentWorkProduct, setCurrentWorkProduct] = useState<WorkProduct | null>(null);
   const [creationMode, setCreationMode] = useState<'traditional' | 'assembler'>('assembler');
+  const [headerHeight, setHeaderHeight] = useState(64); // Default header height in px
   // Real workspace data is now loaded via the autonomous store
 
   // Initialize project type for workspace and load real data
@@ -55,6 +57,39 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
     setActiveProjectType('workspace');
     loadWorkspaceProjects(); // Load real workspace data from SQLite backend
   }, [setActiveProjectType, loadWorkspaceProjects]);
+
+  // Update header height dynamically
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      const headerElement = document.getElementById('autonomous-workspace-header');
+      if (headerElement) {
+        const height = headerElement.offsetHeight;
+        setHeaderHeight(height);
+        // Set CSS custom property for consistent spacing
+        document.documentElement.style.setProperty('--autonomous-header-height', `${height}px`);
+      }
+    };
+
+    updateHeaderHeight();
+    
+    // Update on window resize
+    window.addEventListener('resize', updateHeaderHeight);
+    
+    // Update when content changes (use MutationObserver for header content changes)
+    const headerElement = document.getElementById('autonomous-workspace-header');
+    if (headerElement) {
+      const observer = new MutationObserver(updateHeaderHeight);
+      observer.observe(headerElement, { childList: true, subtree: true });
+      return () => {
+        observer.disconnect();
+        window.removeEventListener('resize', updateHeaderHeight);
+      };
+    }
+    
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, [selectedProject]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
@@ -138,30 +173,38 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div 
+        id="autonomous-workspace-header"
+        className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 sm:px-6 transition-all duration-200"
+        style={getZIndexStyle(ZIndex.FIXED_HEADER)}
+      >
+        <div className="flex items-center justify-between min-h-[56px]">
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleSidebar}
-              className="lg:hidden"
+              className="lg:hidden flex-shrink-0"
+              aria-label="Toggle sidebar"
             >
               {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
             </Button>
             
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
                 Autonomous Workspace
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500 truncate">
                 {selectedProject ? selectedProject.name : 'Select a workspace project'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+          <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+            <Badge 
+              variant="outline" 
+              className="bg-purple-50 text-purple-700 border-purple-200 hidden sm:inline-flex"
+            >
               AI Managing
             </Badge>
             
@@ -169,24 +212,33 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
               variant="outline"
               size="sm"
               onClick={() => setCreationMode(creationMode === 'assembler' ? 'traditional' : 'assembler')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+              title={`Switch to ${creationMode === 'assembler' ? 'Traditional' : 'AI'} Creator`}
             >
-              <Wand2 className="w-4 h-4" />
-              {creationMode === 'assembler' ? 'AI Creator' : 'Traditional'}
+              <Wand2 className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">
+                {creationMode === 'assembler' ? 'AI Creator' : 'Traditional'}
+              </span>
+              <span className="sm:hidden">
+                {creationMode === 'assembler' ? 'AI' : 'Trad'}
+              </span>
             </Button>
             
             <Button
               variant="outline"
               size="sm"
               onClick={() => onSwitchMode?.('assisted')}
+              className="text-xs sm:text-sm"
             >
-              Switch Mode
+              <span className="hidden sm:inline">Switch Mode</span>
+              <span className="sm:hidden">Mode</span>
             </Button>
             
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowSettings(!showSettings)}
+              aria-label="Settings"
             >
               <Settings className="w-4 h-4" />
             </Button>
@@ -195,7 +247,10 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
       </div>
 
       {/* Main Layout */}
-      <div className="flex flex-1 pt-16">
+      <div 
+        className="flex flex-1 transition-all duration-200"
+        style={{ paddingTop: `${headerHeight}px` }}
+      >
         {/* Project Selector Sidebar */}
         {!sidebarCollapsed && (
           <ProjectSelector
@@ -227,8 +282,14 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
 
       {/* Work Product Creator Modal */}
       {showWorkProductCreator && selectedProject && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+          style={getZIndexStyle(ZIndex.OVERLAY)}
+        >
+          <div 
+            className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+            style={getZIndexStyle(ZIndex.MODAL_CONTENT)}
+          >
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-semibold">Create Work Product - {selectedProject.name}</h2>
               <Button variant="ghost" size="sm" onClick={() => setShowWorkProductCreator(false)}>
@@ -248,8 +309,14 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
 
       {/* Content Assembler Modal */}
       {showContentAssembler && selectedProject && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-7xl w-full max-h-[95vh] overflow-hidden">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+          style={getZIndexStyle(ZIndex.OVERLAY)}
+        >
+          <div 
+            className="bg-white rounded-lg max-w-7xl w-full max-h-[95vh] overflow-hidden shadow-2xl"
+            style={getZIndexStyle(ZIndex.MODAL_CONTENT)}
+          >
             <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-violet-50 to-purple-50">
               <div className="flex items-center gap-3">
                 <Wand2 className="w-5 h-5 text-violet-600" />
@@ -273,8 +340,14 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
 
       {/* Work Product Viewer Modal */}
       {showWorkProductViewer && currentWorkProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[95vh] overflow-hidden">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+          style={getZIndexStyle(ZIndex.OVERLAY)}
+        >
+          <div 
+            className="bg-white rounded-lg max-w-6xl w-full max-h-[95vh] overflow-hidden shadow-2xl"
+            style={getZIndexStyle(ZIndex.MODAL_CONTENT)}
+          >
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-semibold">{currentWorkProduct.title}</h2>
               <div className="flex items-center gap-2">

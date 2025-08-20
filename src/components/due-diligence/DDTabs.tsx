@@ -40,6 +40,20 @@ export function DDTabs({ activeTab, onTabChange, mode, aiEnhancements = false }:
       badge: mode === 'assisted' ? 'AI' : undefined
     },
     {
+      id: 'operational',
+      label: 'Operational',
+      icon: Lightbulb,
+      aiFeatures: ['Process optimization', 'Efficiency scoring', 'Benchmarking'],
+      badge: mode === 'assisted' ? 'Enhanced' : undefined
+    },
+    {
+      id: 'management',
+      label: 'Management',
+      icon: Users,
+      aiFeatures: ['Team assessment', 'Competency analysis', 'Succession planning'],
+      badge: mode === 'assisted' ? 'Enhanced' : undefined
+    },
+    {
       id: 'findings',
       label: 'Findings',
       icon: AlertTriangle,

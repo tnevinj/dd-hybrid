@@ -11,6 +11,8 @@ import { FindingsManagement } from './FindingsManagement'
 import { RiskWorkflowAutomation } from './RiskWorkflowAutomation'
 import { AIAutomationHub } from './AIAutomationHub'
 import { DueDiligenceDashboard } from './DueDiligenceDashboard'
+import { OperationalAssessment } from './OperationalAssessment'
+import { ManagementTeamAssessment } from './ManagementTeamAssessment'
 import { useNavigationStore } from '@/stores/navigation-store'
 import { 
   Brain,
@@ -372,6 +374,12 @@ export function DDAssistedView({
         )}
         {activeTab === 'workflows' && (
           <RiskWorkflowAutomation projectId={project?.id} />
+        )}
+        {activeTab === 'operational' && (
+          <OperationalAssessment projectId={project?.id} mode="assisted" />
+        )}
+        {activeTab === 'management' && (
+          <ManagementTeamAssessment projectId={project?.id} mode="assisted" />
         )}
         {activeTab === 'automation' && (
           <AIAutomationHub projectId={project.id} />

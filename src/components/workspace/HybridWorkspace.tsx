@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -51,9 +51,9 @@ interface HybridWorkspaceProps {
 }
 
 export function HybridWorkspace({
-  workspaces = [],
-  metrics,
-  isLoading = false,
+  workspaces: propWorkspaces,
+  metrics: propMetrics,
+  isLoading: propIsLoading = false,
   onCreateWorkspace,
   onViewWorkspace,
   onEditWorkspace,
@@ -70,6 +70,59 @@ export function HybridWorkspace({
 }: HybridWorkspaceProps) {
   const { currentMode, setMode } = useNavigationStore()
   const router = useRouter()
+  
+  // Local state for data fetching
+  const [workspaces, setWorkspaces] = useState(propWorkspaces || [])
+  const [metrics, setMetrics] = useState(propMetrics)
+  const [isLoading, setIsLoading] = useState(propIsLoading)
+  const [error, setError] = useState<string | null>(null)
+
+  // Fetch workspace data if not provided as props
+  useEffect(() => {
+    if (!propWorkspaces) {
+      fetchWorkspaces()
+    }
+  }, [propWorkspaces])
+
+  const fetchWorkspaces = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      
+      const response = await fetch('/api/workspaces')
+      if (!response.ok) {
+        throw new Error(`Failed to fetch workspaces: ${response.statusText}`)
+      }
+      
+      const data = await response.json()
+      setWorkspaces(data.data || [])
+      
+      // Calculate metrics from the workspace data
+      const totalWorkspaces = data.total || 0
+      const activeWorkspaces = data.data?.filter((w: any) => w.status === 'active').length || 0
+      const completedWorkspaces = data.data?.filter((w: any) => w.status === 'completed').length || 0
+      const draftWorkspaces = data.data?.filter((w: any) => w.status === 'draft').length || 0
+      
+      setMetrics({
+        total: totalWorkspaces,
+        totalWorkspaces: totalWorkspaces,
+        active: activeWorkspaces,
+        activeWorkspaces: activeWorkspaces,
+        completed: completedWorkspaces,
+        completedWorkspaces: completedWorkspaces,
+        draft: draftWorkspaces,
+        inReview: data.data?.filter((w: any) => w.status === 'review').length || 0,
+        teamMembers: data.data?.reduce((total: number, w: any) => total + (w.team?.length || 0), 0) || 0,
+        avgProgress: totalWorkspaces > 0 ? Math.round(data.data?.reduce((sum: number, w: any) => sum + (w.progress || 0), 0) / totalWorkspaces) : 0
+      })
+      
+    } catch (err) {
+      console.error('Error fetching workspaces:', err)
+      setError(err instanceof Error ? err.message : 'Failed to load workspaces')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // Ensure currentMode is one of our valid workspace modes
   const workspaceMode: WorkspaceMode = ['traditional', 'assisted', 'autonomous'].includes(currentMode.mode as WorkspaceMode) 
@@ -121,6 +174,17 @@ export function HybridWorkspace({
     }
   }, [onCreateWorkspace, router])
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96">
+        <div className="text-red-600 text-xl font-semibold mb-4">Error Loading Workspaces</div>
+        <p className="text-gray-600 mb-4">{error}</p>
+        <Button onClick={fetchWorkspaces} variant="outline">
+          Try Again
+        </Button>
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (

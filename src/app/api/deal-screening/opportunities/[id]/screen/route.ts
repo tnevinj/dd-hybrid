@@ -36,20 +36,49 @@ let screeningResults: DealScreeningResult[] = [];
 // Start or complete a screening process
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     
-    const opportunity = opportunities.find(opp => opp.id === id);
+    // Import database services to use real data instead of mock
+    const { DealOpportunityService } = await import('@/lib/services/database');
+    const dbOpportunity = DealOpportunityService.getById(id);
     
-    if (!opportunity) {
+    if (!dbOpportunity) {
       return NextResponse.json(
         { error: 'Opportunity not found', success: false },
         { status: 404 }
       );
     }
+
+    // Transform to API format for consistency
+    const opportunity = {
+      id: dbOpportunity.id,
+      name: dbOpportunity.name,
+      description: dbOpportunity.description || '',
+      seller: dbOpportunity.seller || '',
+      assetType: dbOpportunity.asset_type,
+      vintage: dbOpportunity.vintage || '',
+      sector: dbOpportunity.sector || '',
+      geography: dbOpportunity.geography || '',
+      askPrice: dbOpportunity.ask_price ? dbOpportunity.ask_price / 100 : 0,
+      navPercentage: dbOpportunity.nav_percentage || 0,
+      expectedReturn: dbOpportunity.expected_return || 0,
+      expectedRisk: dbOpportunity.expected_risk || 0,
+      expectedMultiple: dbOpportunity.expected_multiple || 0,
+      expectedIRR: dbOpportunity.expected_irr || 0,
+      expectedHoldingPeriod: dbOpportunity.expected_holding_period || 0,
+      scores: [],
+      status: dbOpportunity.status,
+      aiConfidence: dbOpportunity.ai_confidence || 0,
+      similarDeals: dbOpportunity.similar_deals || [],
+      aiRecommendations: dbOpportunity.ai_recommendations || [],
+      createdAt: dbOpportunity.created_at,
+      updatedAt: dbOpportunity.updated_at,
+      additionalData: {}
+    };
 
     const { 
       templateId, 
@@ -99,15 +128,19 @@ export async function POST(
     // Save screening result
     screeningResults.push(screeningResult);
 
-    // Update opportunity status and scores
-    const opportunityIndex = opportunities.findIndex(opp => opp.id === id);
-    if (opportunityIndex !== -1) {
-      opportunities[opportunityIndex] = {
-        ...opportunities[opportunityIndex],
-        scores: scores || [],
-        status: autoComplete ? 'analyzed' : 'screening',
-        updatedAt: new Date().toISOString(),
-      };
+    // Update opportunity status in database
+    const updateData: any = {
+      status: autoComplete ? 'analyzed' : 'screening',
+      updated_at: new Date().toISOString()
+    };
+    
+    // Also store scores in database if provided
+    if (scores && scores.length > 0) {
+      // In a real implementation, you might want to save scores to a separate scores table
+      // For now, we'll just update the status
+      DealOpportunityService.update(id, updateData);
+    } else {
+      DealOpportunityService.update(id, updateData);
     }
 
     // Generate AI insights and initialize post-screening workflow
@@ -161,15 +194,11 @@ export async function POST(
             newStatus = 'awaiting_approval';
           }
           
-          // Update opportunity status
-          const opportunityIndex = opportunities.findIndex(opp => opp.id === id);
-          if (opportunityIndex !== -1) {
-            opportunities[opportunityIndex] = {
-              ...opportunities[opportunityIndex],
-              status: newStatus,
-              updatedAt: new Date().toISOString(),
-            };
-          }
+          // Update opportunity status in database
+          DealOpportunityService.update(id, {
+            status: newStatus,
+            updated_at: new Date().toISOString()
+          });
           
           console.log(`Post-screening workflow initiated for ${opportunity.name}: ${workflowStage} stage`);
           
@@ -180,10 +209,26 @@ export async function POST(
       }
     }
 
+    // Get updated opportunity from database for response
+    const updatedDbOpportunity = DealOpportunityService.getById(id);
+    const updatedOpportunity = updatedDbOpportunity ? {
+      id: updatedDbOpportunity.id,
+      name: updatedDbOpportunity.name,
+      description: updatedDbOpportunity.description || '',
+      seller: updatedDbOpportunity.seller || '',
+      assetType: updatedDbOpportunity.asset_type,
+      vintage: updatedDbOpportunity.vintage || '',
+      sector: updatedDbOpportunity.sector || '',
+      geography: updatedDbOpportunity.geography || '',
+      askPrice: updatedDbOpportunity.ask_price ? updatedDbOpportunity.ask_price / 100 : 0,
+      status: updatedDbOpportunity.status,
+      updatedAt: updatedDbOpportunity.updated_at
+    } : opportunity;
+
     return NextResponse.json({
       data: {
         screeningResult,
-        updatedOpportunity: opportunities[opportunityIndex],
+        updatedOpportunity,
         aiInsights: Object.keys(aiInsights).length > 0 ? aiInsights : undefined,
         postScreeningWorkflow,
         workflowInitiated: !!postScreeningWorkflow,
@@ -206,19 +251,48 @@ export async function POST(
 // Get existing screening results for an opportunity
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
-    const opportunity = opportunities.find(opp => opp.id === id);
+    // Import database services to use real data
+    const { DealOpportunityService } = await import('@/lib/services/database');
+    const dbOpportunity = DealOpportunityService.getById(id);
     
-    if (!opportunity) {
+    if (!dbOpportunity) {
       return NextResponse.json(
         { error: 'Opportunity not found', success: false },
         { status: 404 }
       );
     }
+
+    // Transform to API format for consistency
+    const opportunity = {
+      id: dbOpportunity.id,
+      name: dbOpportunity.name,
+      description: dbOpportunity.description || '',
+      seller: dbOpportunity.seller || '',
+      assetType: dbOpportunity.asset_type,
+      vintage: dbOpportunity.vintage || '',
+      sector: dbOpportunity.sector || '',
+      geography: dbOpportunity.geography || '',
+      askPrice: dbOpportunity.ask_price ? dbOpportunity.ask_price / 100 : 0,
+      navPercentage: dbOpportunity.nav_percentage || 0,
+      expectedReturn: dbOpportunity.expected_return || 0,
+      expectedRisk: dbOpportunity.expected_risk || 0,
+      expectedMultiple: dbOpportunity.expected_multiple || 0,
+      expectedIRR: dbOpportunity.expected_irr || 0,
+      expectedHoldingPeriod: dbOpportunity.expected_holding_period || 0,
+      scores: [],
+      status: dbOpportunity.status,
+      aiConfidence: dbOpportunity.ai_confidence || 0,
+      similarDeals: dbOpportunity.similar_deals || [],
+      aiRecommendations: dbOpportunity.ai_recommendations || [],
+      createdAt: dbOpportunity.created_at,
+      updatedAt: dbOpportunity.updated_at,
+      additionalData: {}
+    };
 
     // Get all screening results for this opportunity
     const opportunityScreeningResults = screeningResults.filter(
@@ -251,10 +325,10 @@ export async function GET(
 // Update an existing screening result
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { screeningResultId, updates } = body;
 
@@ -288,20 +362,28 @@ export async function PUT(
 
     // Update opportunity scores if provided
     if (updates.criteriaScores) {
-      const opportunityIndex = opportunities.findIndex(opp => opp.id === id);
-      if (opportunityIndex !== -1) {
-        opportunities[opportunityIndex] = {
-          ...opportunities[opportunityIndex],
-          scores: updates.criteriaScores,
-          updatedAt: new Date().toISOString(),
-        };
-      }
+      // Import database service
+      const { DealOpportunityService } = await import('@/lib/services/database');
+      DealOpportunityService.update(id, {
+        updated_at: new Date().toISOString()
+      });
     }
+
+    // Get updated opportunity from database for response
+    const { DealOpportunityService } = await import('@/lib/services/database');
+    const updatedDbOpportunity = DealOpportunityService.getById(id);
+    
+    const updatedOpportunity = updatedDbOpportunity ? {
+      id: updatedDbOpportunity.id,
+      name: updatedDbOpportunity.name,
+      status: updatedDbOpportunity.status,
+      updatedAt: updatedDbOpportunity.updated_at
+    } : null;
 
     return NextResponse.json({
       data: {
         screeningResult: updatedResult,
-        updatedOpportunity: opportunities.find(opp => opp.id === id),
+        updatedOpportunity,
       },
       success: true,
     });

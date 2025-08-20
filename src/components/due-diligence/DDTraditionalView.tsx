@@ -11,6 +11,8 @@ import { FindingsManagement } from './FindingsManagement'
 import { RiskWorkflowAutomation } from './RiskWorkflowAutomation'
 import { AIAutomationHub } from './AIAutomationHub'
 import { DueDiligenceDashboard } from './DueDiligenceDashboard'
+import { OperationalAssessment } from './OperationalAssessment'
+import { ManagementTeamAssessment } from './ManagementTeamAssessment'
 import { 
   CheckSquare,
   AlertTriangle,
@@ -270,6 +272,12 @@ export function DDTraditionalView({
         )}
         {activeTab === 'workflows' && (
           <RiskWorkflowAutomation projectId={project?.id} />
+        )}
+        {activeTab === 'operational' && (
+          <OperationalAssessment projectId={project?.id} mode="traditional" />
+        )}
+        {activeTab === 'management' && (
+          <ManagementTeamAssessment projectId={project?.id} mode="traditional" />
         )}
         {activeTab === 'automation' && (
           <AIAutomationHub projectId={project?.id} />

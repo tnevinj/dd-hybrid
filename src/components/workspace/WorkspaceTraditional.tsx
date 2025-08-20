@@ -55,21 +55,22 @@ export function WorkspaceTraditional({
   const displayWorkspaces = workspaces || []
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active': return 'bg-green-100 text-green-800'
-      case 'Review': return 'bg-yellow-100 text-yellow-800'
-      case 'Draft': return 'bg-gray-100 text-gray-800'
-      case 'Completed': return 'bg-blue-100 text-blue-800'
+    switch (status?.toLowerCase()) {
+      case 'active': return 'bg-green-100 text-green-800'
+      case 'review': return 'bg-yellow-100 text-yellow-800'
+      case 'draft': return 'bg-gray-100 text-gray-800'
+      case 'completed': return 'bg-blue-100 text-blue-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
 
   const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'Due Diligence': return 'bg-purple-100 text-purple-800'
-      case 'IC Preparation': return 'bg-red-100 text-red-800'
-      case 'Screening': return 'bg-orange-100 text-orange-800'
-      case 'Monitoring': return 'bg-blue-100 text-blue-800'
+    switch (type?.toLowerCase()) {
+      case 'deal': return 'bg-purple-100 text-purple-800'
+      case 'portfolio': return 'bg-red-100 text-red-800'  
+      case 'analysis': return 'bg-orange-100 text-orange-800'
+      case 'company': return 'bg-blue-100 text-blue-800'
+      case 'report': return 'bg-indigo-100 text-indigo-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -125,7 +126,7 @@ export function WorkspaceTraditional({
               <FolderOpen className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Total Workspaces</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.totalWorkspaces}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.totalWorkspaces || unifiedMetrics.total || displayWorkspaces.length}</p>
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <Calendar className="h-4 w-4 mr-1" />
               <span>Manually tracked</span>
@@ -139,7 +140,7 @@ export function WorkspaceTraditional({
               <Clock className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Active Workspaces</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.activeWorkspaces}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.activeWorkspaces || unifiedMetrics.active || displayWorkspaces.filter(w => w.status === 'active').length}</p>
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <User className="h-4 w-4 mr-1" />
               <span>Manual review</span>
@@ -153,7 +154,7 @@ export function WorkspaceTraditional({
               <FileText className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Completed</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.completedWorkspaces}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.completedWorkspaces || unifiedMetrics.completed || displayWorkspaces.filter(w => w.status === 'completed').length}</p>
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <Users className="h-4 w-4 mr-1" />
               <span>Expert analysis</span>
@@ -167,7 +168,7 @@ export function WorkspaceTraditional({
               <Users className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Team Members</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.teamMembers}</p>
+            <p className="text-3xl font-bold text-gray-900">{unifiedMetrics.teamMembers || displayWorkspaces.reduce((total, w) => total + (w.team?.length || 0), 0)}</p>
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <User className="h-4 w-4 mr-1" />
               <span>Direct management</span>
@@ -266,14 +267,14 @@ export function WorkspaceTraditional({
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">{workspace.name}</h3>
-                  <p className="text-sm text-gray-600">{workspace.lastActivity}</p>
+                  <p className="text-sm text-gray-600">{workspace.updatedAt ? new Date(workspace.updatedAt).toLocaleDateString() : 'Recently updated'}</p>
                 </div>
                 <div className="flex flex-col space-y-2">
                   <Badge className={`text-xs ${getStatusColor(workspace.status)}`}>
-                    {workspace.status}
+                    {workspace.status?.charAt(0).toUpperCase() + workspace.status?.slice(1).toLowerCase() || 'Unknown'}
                   </Badge>
                   <Badge className={`text-xs ${getTypeColor(workspace.type)}`}>
-                    {workspace.type}
+                    {workspace.type?.charAt(0).toUpperCase() + workspace.type?.slice(1).toLowerCase() || 'Unknown'}
                   </Badge>
                 </div>
               </div>
@@ -291,13 +292,13 @@ export function WorkspaceTraditional({
                 </div>
 
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Work Products</span>
-                  <span className="font-medium">{workspace.workProducts}</span>
+                  <span className="text-gray-600">Deal Value</span>
+                  <span className="font-medium">{workspace.dealValue ? `$${(workspace.dealValue / 100 / 1000000).toFixed(0)}M` : 'TBD'}</span>
                 </div>
 
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Team Members</span>
-                  <span className="font-medium">{workspace.teamMembers}</span>
+                  <span className="font-medium">{workspace.team?.length || 0}</span>
                 </div>
               </div>
 

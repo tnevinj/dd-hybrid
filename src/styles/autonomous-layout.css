@@ -1,0 +1,146 @@
+/**
+ * Autonomous Layout Styles
+ * 
+ * CSS custom properties and utilities for autonomous mode layouts
+ * to ensure consistent spacing and positioning across components.
+ */
+
+:root {
+  /* Default autonomous header height - updated dynamically by JavaScript */
+  --autonomous-header-height: 64px;
+  
+  /* Z-index values for consistent layering */
+  --z-base: 0;
+  --z-tooltip: 10;
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-fixed-header: 40;
+  --z-floating-button: 45;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-modal-content: 70;
+  --z-notification: 80;
+  --z-toast: 90;
+  --z-loading: 100;
+  --z-system-modal: 110;
+}
+
+/* Autonomous layout utilities */
+.autonomous-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.autonomous-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-fixed-header);
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.autonomous-content {
+  flex: 1;
+  padding-top: var(--autonomous-header-height);
+  transition: padding-top 0.2s ease;
+  display: flex;
+}
+
+/* Responsive header adjustments */
+@media (max-width: 640px) {
+  .autonomous-header {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .autonomous-header {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Modal and overlay improvements */
+.autonomous-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: var(--z-overlay);
+}
+
+.autonomous-modal-content {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: var(--z-modal-content);
+  max-height: 90vh;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Floating button positioning */
+.autonomous-floating-button {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: var(--z-floating-button);
+}
+
+/* Dropdown improvements */
+.autonomous-dropdown {
+  position: absolute;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  z-index: var(--z-dropdown);
+}
+
+/* Toast and notification positioning */
+.autonomous-toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: var(--z-toast);
+  max-width: 20rem;
+}
+
+.autonomous-notification {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: var(--z-notification);
+  max-width: 20rem;
+}
+
+/* Ensure proper spacing for sticky elements in autonomous mode */
+.autonomous-sticky-content {
+  position: sticky;
+  top: var(--autonomous-header-height);
+  z-index: var(--z-sticky);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .autonomous-floating-button {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  
+  .autonomous-toast,
+  .autonomous-notification {
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    max-width: none;
+  }
+}

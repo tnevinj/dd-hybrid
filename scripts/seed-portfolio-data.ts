@@ -227,13 +227,314 @@ const seedAssets = (portfolios: any) => {
   
   console.log(`✓ Created asset: ${windFarm.name}`);
 
+  // Additional diverse assets for main portfolio
+  const finTechStartup = PortfolioAssetService.create({
+    portfolio_id: portfolios.mainPortfolio.id,
+    name: 'PayFlow Technologies',
+    asset_type: 'traditional',
+    description: 'Digital payments platform for SMEs in Latin America',
+    acquisition_date: '2022-01-15',
+    acquisition_value: 1500000000, // $15M in cents
+    current_value: 2800000000, // $28M in cents
+    location_country: 'Brazil',
+    location_region: 'South America',
+    location_city: 'São Paulo',
+    sector: 'Financial Services',
+    tags: ['FinTech', 'Payments', 'B2B', 'LATAM'],
+    risk_rating: 'high',
+    specific_metrics: {
+      companyStage: 'series_b',
+      fundingRounds: 3,
+      employeeCount: 145,
+      revenue: 1200000000, // $12M in cents
+      ebitda: 180000000, // $1.8M in cents
+      debtToEquity: 0.15,
+      boardSeats: 2,
+      ownershipPercentage: 28
+    }
+  });
+
+  const bioTechCorp = PortfolioAssetService.create({
+    portfolio_id: portfolios.growthPortfolio.id,
+    name: 'GenoMed Therapeutics',
+    asset_type: 'traditional',
+    description: 'Gene therapy company developing treatments for rare diseases',
+    acquisition_date: '2021-09-10',
+    acquisition_value: 8000000000, // $80M in cents
+    current_value: 15000000000, // $150M in cents
+    location_country: 'Switzerland',
+    location_region: 'Europe',
+    location_city: 'Basel',
+    sector: 'Biotechnology',
+    tags: ['Biotech', 'Gene Therapy', 'Pharmaceuticals'],
+    risk_rating: 'high',
+    specific_metrics: {
+      companyStage: 'series_c',
+      fundingRounds: 4,
+      employeeCount: 280,
+      revenue: 500000000, // $5M in cents
+      ebitda: -2000000000, // -$20M in cents (R&D heavy)
+      debtToEquity: 0.05,
+      boardSeats: 2,
+      ownershipPercentage: 22
+    }
+  });
+
+  const industrialManufacturing = PortfolioAssetService.create({
+    portfolio_id: portfolios.mainPortfolio.id,
+    name: 'Precision Components GmbH',
+    asset_type: 'traditional',
+    description: 'Automotive parts manufacturer specializing in electric vehicle components',
+    acquisition_date: '2020-05-20',
+    acquisition_value: 4500000000, // $45M in cents
+    current_value: 6200000000, // $62M in cents
+    location_country: 'Germany',
+    location_region: 'Europe',
+    location_city: 'Stuttgart',
+    sector: 'Manufacturing',
+    tags: ['Automotive', 'EV Components', 'Manufacturing'],
+    risk_rating: 'medium',
+    specific_metrics: {
+      companyStage: 'mature',
+      fundingRounds: 1,
+      employeeCount: 520,
+      revenue: 8500000000, // $85M in cents
+      ebitda: 1200000000, // $12M in cents
+      debtToEquity: 0.45,
+      boardSeats: 3,
+      ownershipPercentage: 65
+    }
+  });
+
+  // More real estate variety
+  const luxuryHotel = PortfolioAssetService.create({
+    portfolio_id: portfolios.mainPortfolio.id,
+    name: 'Meridian Luxury Resort',
+    asset_type: 'real_estate',
+    description: '5-star beachfront resort with 180 rooms and spa facilities',
+    acquisition_date: '2019-03-12',
+    acquisition_value: 12000000000, // $120M in cents
+    current_value: 13800000000, // $138M in cents
+    location_country: 'Thailand',
+    location_region: 'Asia',
+    location_city: 'Phuket',
+    sector: 'Hospitality',
+    tags: ['Hotel', 'Luxury', 'Resort', 'Hospitality'],
+    risk_rating: 'medium',
+    specific_metrics: {
+      propertyType: 'hospitality',
+      totalRooms: 180,
+      occupancyRate: 78,
+      avgDailyRate: 42500, // $425 in cents
+      revPAR: 33150, // $331.50 in cents
+      staffCount: 280,
+      seasonalityFactor: 0.65
+    }
+  });
+
+  const industrialWarehouse = PortfolioAssetService.create({
+    portfolio_id: portfolios.conservativePortfolio.id,
+    name: 'Metro Logistics Hub',
+    asset_type: 'real_estate',
+    description: 'Last-mile distribution center serving major metropolitan area',
+    acquisition_date: '2021-08-30',
+    acquisition_value: 3500000000, // $35M in cents
+    current_value: 4200000000, // $42M in cents
+    location_country: 'United Kingdom',
+    location_region: 'Europe',
+    location_city: 'London',
+    sector: 'Industrial',
+    tags: ['Warehouse', 'Logistics', 'Industrial', 'Last-Mile'],
+    risk_rating: 'low',
+    specific_metrics: {
+      propertyType: 'industrial',
+      totalSqFt: 250000,
+      occupancyRate: 100,
+      avgLeaseLength: 12,
+      capRate: 5.8,
+      noiYield: 6.9,
+      clearHeight: 32,
+      truckDoors: 48
+    }
+  });
+
+  const studentHousing = PortfolioAssetService.create({
+    portfolio_id: portfolios.growthPortfolio.id,
+    name: 'University Village Residences',
+    asset_type: 'real_estate',
+    description: 'Purpose-built student accommodation near major university',
+    acquisition_date: '2020-07-15',
+    acquisition_value: 2800000000, // $28M in cents
+    current_value: 3200000000, // $32M in cents
+    location_country: 'Australia',
+    location_region: 'Oceania',
+    location_city: 'Melbourne',
+    sector: 'Student Housing',
+    tags: ['Student Housing', 'Education', 'Residential'],
+    risk_rating: 'medium',
+    specific_metrics: {
+      propertyType: 'residential',
+      totalBeds: 324,
+      occupancyRate: 96,
+      avgWeeklyRent: 32500, // $325 in cents
+      studentSatisfaction: 4.3,
+      proximityToUni: 0.8,
+      academicYearOccupancy: 98
+    }
+  });
+
+  // More infrastructure variety
+  const tollRoad = PortfolioAssetService.create({
+    portfolio_id: portfolios.conservativePortfolio.id,
+    name: 'Highway 401 Concession',
+    asset_type: 'infrastructure',
+    description: '50km toll road concession with 30-year operating agreement',
+    acquisition_date: '2018-11-10',
+    acquisition_value: 25000000000, // $250M in cents
+    current_value: 27500000000, // $275M in cents
+    location_country: 'Canada',
+    location_region: 'North America',
+    location_city: 'Toronto',
+    sector: 'Transportation',
+    tags: ['Toll Road', 'Transportation', 'Concession'],
+    risk_rating: 'low',
+    specific_metrics: {
+      assetCategory: 'transportation',
+      dailyTrafficVolume: 45000,
+      averageTollRevenue: 850000000, // $8.5M in cents annually
+      concessionYearsRemaining: 22,
+      maintenanceScore: 92,
+      regulatoryCompliance: 99,
+      capacityUtilization: 72,
+      weatherAdjustedRevenue: 0.95
+    }
+  });
+
+  const dataCenter = PortfolioAssetService.create({
+    portfolio_id: portfolios.mainPortfolio.id,
+    name: 'CloudCore Data Center',
+    asset_type: 'infrastructure',
+    description: 'Tier III data center facility serving hyperscale cloud providers',
+    acquisition_date: '2021-04-25',
+    acquisition_value: 18000000000, // $180M in cents
+    current_value: 21600000000, // $216M in cents
+    location_country: 'Ireland',
+    location_region: 'Europe',
+    location_city: 'Dublin',
+    sector: 'Digital Infrastructure',
+    tags: ['Data Center', 'Cloud', 'Digital Infrastructure'],
+    risk_rating: 'medium',
+    specific_metrics: {
+      assetCategory: 'digital',
+      powerCapacity: 25000, // 25MW
+      occupancyRate: 87,
+      contractedRevenue: 1800000000, // $18M in cents
+      pue: 1.35, // Power Usage Effectiveness
+      uptime: 99.98,
+      hyperscaleClientPercentage: 78,
+      renewableEnergyPercentage: 85
+    }
+  });
+
+  const waterTreatment = PortfolioAssetService.create({
+    portfolio_id: portfolios.conservativePortfolio.id,
+    name: 'AquaPure Treatment Facility',
+    asset_type: 'infrastructure',
+    description: 'Municipal water treatment facility serving 500k residents',
+    acquisition_date: '2019-09-18',
+    acquisition_value: 15000000000, // $150M in cents
+    current_value: 16500000000, // $165M in cents
+    location_country: 'Netherlands',
+    location_region: 'Europe',
+    location_city: 'Amsterdam',
+    sector: 'Utilities',
+    tags: ['Water', 'Utilities', 'Municipal', 'ESG'],
+    risk_rating: 'low',
+    specific_metrics: {
+      assetCategory: 'utilities',
+      dailyCapacity: 180000, // cubic meters
+      populationServed: 500000,
+      contractedRevenue: 1200000000, // $12M in cents
+      regulatoryCompliance: 100,
+      waterQualityScore: 98,
+      operationalEfficiency: 94,
+      esgCertifications: ['ISO14001', 'EU_TAXONOMY']
+    }
+  });
+
+  // Add assets to growth portfolio
+  const agriTech = PortfolioAssetService.create({
+    portfolio_id: portfolios.growthPortfolio.id,
+    name: 'FarmBot Precision Agriculture',
+    asset_type: 'traditional',
+    description: 'AI-powered precision agriculture and crop monitoring platform',
+    acquisition_date: '2022-02-20',
+    acquisition_value: 800000000, // $8M in cents
+    current_value: 1600000000, // $16M in cents
+    location_country: 'India',
+    location_region: 'Asia',
+    location_city: 'Bangalore',
+    sector: 'Agriculture Technology',
+    tags: ['AgTech', 'AI', 'Agriculture', 'Sustainability'],
+    risk_rating: 'high',
+    specific_metrics: {
+      companyStage: 'series_a',
+      fundingRounds: 2,
+      employeeCount: 85,
+      revenue: 400000000, // $4M in cents
+      ebitda: -200000000, // -$2M in cents
+      debtToEquity: 0.1,
+      boardSeats: 1,
+      ownershipPercentage: 35
+    }
+  });
+
+  const cleanTech = PortfolioAssetService.create({
+    portfolio_id: portfolios.growthPortfolio.id,
+    name: 'BatteryNext Energy Storage',
+    asset_type: 'traditional',
+    description: 'Next-generation battery technology for grid-scale energy storage',
+    acquisition_date: '2021-11-05',
+    acquisition_value: 3000000000, // $30M in cents
+    current_value: 5500000000, // $55M in cents
+    location_country: 'South Korea',
+    location_region: 'Asia',
+    location_city: 'Seoul',
+    sector: 'Clean Technology',
+    tags: ['CleanTech', 'Battery', 'Energy Storage', 'Grid'],
+    risk_rating: 'high',
+    specific_metrics: {
+      companyStage: 'series_b',
+      fundingRounds: 3,
+      employeeCount: 195,
+      revenue: 1500000000, // $15M in cents
+      ebitda: -500000000, // -$5M in cents
+      debtToEquity: 0.12,
+      boardSeats: 2,
+      ownershipPercentage: 25
+    }
+  });
+
+  console.log(`✓ Created additional diverse assets`);
+
   return {
     techCorp,
     healthTechCorp,
     officeComplex,
     retailCenter,
     solarFacility,
-    windFarm
+    windFarm,
+    finTechStartup,
+    bioTechCorp,
+    industrialManufacturing,
+    luxuryHotel,
+    industrialWarehouse,
+    studentHousing,
+    tollRoad,
+    dataCenter,
+    waterTreatment,
+    agriTech,
+    cleanTech
   };
 };
 

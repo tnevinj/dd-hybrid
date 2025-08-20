@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Brain, Zap } from 'lucide-react';
 import ThandoAvatar from './ThandoAvatar';
+import { ZIndex, getZIndexStyle } from '@/styles/z-index';
 
 interface ThandoButtonProps {
   onClick: () => void;
@@ -60,7 +61,8 @@ const ThandoButton: React.FC<ThandoButtonProps> = ({
 
   return (
     <div 
-      className="fixed bottom-6 right-6 z-50"
+      className="fixed bottom-6 right-6"
+      style={getZIndexStyle(ZIndex.FLOATING_BUTTON)}
       title={getModeTitle()}
     >
       <div className="relative">

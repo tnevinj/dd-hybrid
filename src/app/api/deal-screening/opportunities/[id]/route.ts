@@ -1,88 +1,71 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DealOpportunity } from '@/types/deal-screening';
+import { DealOpportunityService, DealScoreService } from '@/lib/services/database';
 
-// Mock data store (in production, this would use a database)
-let opportunities: DealOpportunity[] = [
-  {
-    id: '1',
-    name: 'TechCorp Series B',
-    description: 'AI-powered enterprise software company with strong growth metrics and market position.',
-    seller: 'TechCorp Ventures',
-    assetType: 'direct',
-    vintage: '2023',
-    sector: 'Technology',
-    geography: 'North America',
-    askPrice: 50000000,
-    navPercentage: 0.85,
-    expectedReturn: 0.25,
-    expectedRisk: 0.15,
-    expectedMultiple: 2.8,
-    expectedIRR: 25.5,
-    expectedHoldingPeriod: 4,
-    scores: [],
-    status: 'screening',
-    aiConfidence: 0.87,
-    similarDeals: ['deal-2', 'deal-5'],
-    aiRecommendations: [
-      {
-        id: 'rec-1',
-        type: 'suggestion',
-        priority: 'high',
-        title: 'Similar Deal Pattern Detected',
-        description: 'This deal is 87% similar to your successful CloudCo investment from 2022.',
-        confidence: 0.87,
-        category: 'comparison',
-        actions: [
-          { label: 'Apply CloudCo Template', action: 'APPLY_TEMPLATE', params: { templateId: 'cloudco' } },
-          { label: 'View Comparison', action: 'VIEW_COMPARISON' }
-        ]
-      }
-    ],
-    createdAt: '2024-01-15T10:30:00Z',
-    updatedAt: '2024-01-15T14:20:00Z',
-    additionalData: {},
-  },
-  {
-    id: '2',
-    name: 'HealthTech Solutions',
-    description: 'Digital health platform serving emerging markets with strong patient outcomes.',
-    seller: 'HealthVentures LP',
-    assetType: 'fund',
-    vintage: '2024',
-    sector: 'Healthcare',
-    geography: 'Africa',
-    askPrice: 25000000,
-    navPercentage: 0.78,
-    expectedReturn: 0.18,
-    expectedRisk: 0.12,
-    expectedMultiple: 2.2,
-    expectedIRR: 18.2,
-    scores: [],
-    status: 'approved',
-    aiConfidence: 0.92,
-    aiRecommendations: [],
-    createdAt: '2024-01-14T14:20:00Z',
-    updatedAt: '2024-01-14T16:45:00Z',
-    additionalData: {},
-  }
-];
+// Transform database opportunity to API format with scores
+function transformOpportunityWithScores(dbOpportunity: any) {
+  const scores = DealScoreService.getByOpportunityId(dbOpportunity.id);
+  
+  // Convert database format to API format
+  const apiOpportunity = {
+    id: dbOpportunity.id,
+    name: dbOpportunity.name,
+    description: dbOpportunity.description || '',
+    seller: dbOpportunity.seller || '',
+    assetType: dbOpportunity.asset_type,
+    vintage: dbOpportunity.vintage || '',
+    sector: dbOpportunity.sector || '',
+    geography: dbOpportunity.geography || '',
+    askPrice: dbOpportunity.ask_price ? dbOpportunity.ask_price / 100 : 0, // Convert cents to dollars
+    navPercentage: dbOpportunity.nav_percentage || 0,
+    expectedReturn: dbOpportunity.expected_return || 0,
+    expectedRisk: dbOpportunity.expected_risk || 0,
+    expectedMultiple: dbOpportunity.expected_multiple || 0,
+    expectedIRR: dbOpportunity.expected_irr || 0,
+    expectedHoldingPeriod: dbOpportunity.expected_holding_period || 0,
+    dueDiligenceProjectId: dbOpportunity.due_diligence_project_id,
+    submissionId: dbOpportunity.submission_id,
+    workspaceId: dbOpportunity.workspace_id,
+    scores: scores.map(score => ({
+      criterionId: score.criterion_id,
+      value: score.score,
+      normalizedScore: score.score / 100,
+      weightedScore: (score.score / 100) * score.weight,
+      notes: score.comments,
+      aiGenerated: true,
+      confidence: 0.9
+    })),
+    status: dbOpportunity.status,
+    aiConfidence: dbOpportunity.ai_confidence || 0,
+    similarDeals: dbOpportunity.similar_deals || [],
+    aiRecommendations: dbOpportunity.ai_recommendations || [],
+    createdAt: dbOpportunity.created_at,
+    updatedAt: dbOpportunity.updated_at,
+    additionalData: {}
+  };
+
+  return apiOpportunity;
+}
 
 // GET /api/deal-screening/opportunities/[id]
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
-    const opportunity = opportunities.find(opp => opp.id === id);
+    // Get opportunity from database
+    const dbOpportunity = DealOpportunityService.getById(id);
     
-    if (!opportunity) {
+    if (!dbOpportunity) {
       return NextResponse.json(
         { error: 'Opportunity not found', success: false },
         { status: 404 }
       );
     }
+
+    // Transform to API format
+    const opportunity = transformOpportunityWithScores(dbOpportunity);
 
     // Include additional data based on query parameters
     const { searchParams } = new URL(request.url);
@@ -100,16 +83,17 @@ export async function GET(
     }
 
     if (includeSimilar && opportunity.similarDeals) {
-      // Fetch similar deals data
-      const similarDealsData = opportunities.filter(opp => 
-        opportunity.similarDeals?.includes(opp.id)
-      ).map(opp => ({
-        id: opp.id,
-        name: opp.name,
-        sector: opp.sector,
-        expectedIRR: opp.expectedIRR,
-        status: opp.status,
-      }));
+      // Fetch similar deals data from database
+      const allOpportunities = DealOpportunityService.getAll();
+      const similarDealsData = allOpportunities
+        .filter(opp => opportunity.similarDeals?.includes(opp.id))
+        .map(opp => ({
+          id: opp.id,
+          name: opp.name,
+          sector: opp.sector,
+          expectedIRR: opp.expected_irr,
+          status: opp.status,
+        }));
       
       responseData.additionalData = {
         ...responseData.additionalData,
@@ -134,27 +118,20 @@ export async function GET(
 // PUT /api/deal-screening/opportunities/[id]
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     
-    const opportunityIndex = opportunities.findIndex(opp => opp.id === id);
+    const existingOpportunity = DealOpportunityService.getById(id);
     
-    if (opportunityIndex === -1) {
+    if (!existingOpportunity) {
       return NextResponse.json(
         { error: 'Opportunity not found', success: false },
         { status: 404 }
       );
     }
-
-    // Update opportunity
-    const updatedOpportunity = {
-      ...opportunities[opportunityIndex],
-      ...body,
-      updatedAt: new Date().toISOString(),
-    };
 
     // Validate status transitions
     const validStatusTransitions: Record<string, string[]> = {
@@ -166,8 +143,8 @@ export async function PUT(
       'closed': [],
     };
 
-    if (body.status && opportunities[opportunityIndex].status !== body.status) {
-      const currentStatus = opportunities[opportunityIndex].status;
+    if (body.status && existingOpportunity.status !== body.status) {
+      const currentStatus = existingOpportunity.status;
       const newStatus = body.status;
       
       if (!validStatusTransitions[currentStatus]?.includes(newStatus)) {
@@ -181,22 +158,43 @@ export async function PUT(
       }
     }
 
+    // Prepare update data in database format
+    const updateData: any = {};
+    if (body.name !== undefined) updateData.name = body.name;
+    if (body.description !== undefined) updateData.description = body.description;
+    if (body.seller !== undefined) updateData.seller = body.seller;
+    if (body.assetType !== undefined) updateData.asset_type = body.assetType;
+    if (body.vintage !== undefined) updateData.vintage = body.vintage;
+    if (body.sector !== undefined) updateData.sector = body.sector;
+    if (body.geography !== undefined) updateData.geography = body.geography;
+    if (body.askPrice !== undefined) updateData.ask_price = body.askPrice * 100; // Convert to cents
+    if (body.navPercentage !== undefined) updateData.nav_percentage = body.navPercentage;
+    if (body.expectedReturn !== undefined) updateData.expected_return = body.expectedReturn;
+    if (body.expectedRisk !== undefined) updateData.expected_risk = body.expectedRisk;
+    if (body.expectedMultiple !== undefined) updateData.expected_multiple = body.expectedMultiple;
+    if (body.expectedIRR !== undefined) updateData.expected_irr = body.expectedIRR;
+    if (body.expectedHoldingPeriod !== undefined) updateData.expected_holding_period = body.expectedHoldingPeriod;
+    if (body.status !== undefined) updateData.status = body.status;
+    if (body.workspaceId !== undefined) updateData.workspace_id = body.workspaceId;
+
     // Re-run AI analysis if requested
     if (body.runAIAnalysis) {
-      updatedOpportunity.aiConfidence = Math.random() * 0.3 + 0.7;
+      updateData.ai_confidence = Math.random() * 0.3 + 0.7;
       
-      // Generate new AI recommendations
+      // Generate new AI recommendations based on the data
       const newRecommendations = [];
+      const expectedIRR = body.expectedIRR ?? existingOpportunity.expected_irr ?? 0;
+      const navPercentage = body.navPercentage ?? existingOpportunity.nav_percentage ?? 0;
       
-      if (updatedOpportunity.expectedIRR > 25) {
+      if (expectedIRR > 25) {
         newRecommendations.push({
           id: `rec-${Date.now()}`,
-          type: 'insight' as const,
-          priority: 'high' as const,
+          type: 'insight',
+          priority: 'high',
           title: 'Exceptional Returns Detected',
           description: 'This opportunity shows returns in the top 10% of your portfolio.',
           confidence: 0.95,
-          category: 'analysis' as const,
+          category: 'analysis',
           actions: [
             { label: 'Fast-Track Due Diligence', action: 'FAST_TRACK_DD' },
             { label: 'Schedule IC Presentation', action: 'SCHEDULE_IC' }
@@ -204,15 +202,15 @@ export async function PUT(
         });
       }
 
-      if (updatedOpportunity.navPercentage < 0.8) {
+      if (navPercentage < 0.8) {
         newRecommendations.push({
           id: `rec-${Date.now()}-2`,
-          type: 'opportunity' as const,
-          priority: 'medium' as const,
+          type: 'opportunity',
+          priority: 'medium',
           title: 'Attractive Discount Identified',
-          description: `Trading at ${(updatedOpportunity.navPercentage * 100).toFixed(0)}% of NAV presents good value.`,
+          description: `Trading at ${(navPercentage * 100).toFixed(0)}% of NAV presents good value.`,
           confidence: 0.85,
-          category: 'scoring' as const,
+          category: 'scoring',
           actions: [
             { label: 'Analyze Discount Factors', action: 'ANALYZE_DISCOUNT' },
             { label: 'Negotiate Better Terms', action: 'NEGOTIATE_TERMS' }
@@ -220,10 +218,21 @@ export async function PUT(
         });
       }
 
-      updatedOpportunity.aiRecommendations = newRecommendations;
+      updateData.ai_recommendations = newRecommendations;
     }
 
-    opportunities[opportunityIndex] = updatedOpportunity;
+    // Update opportunity in database
+    const updatedDbOpportunity = DealOpportunityService.update(id, updateData);
+
+    if (!updatedDbOpportunity) {
+      return NextResponse.json(
+        { error: 'Failed to update opportunity', success: false },
+        { status: 500 }
+      );
+    }
+
+    // Transform to API format and return
+    const updatedOpportunity = transformOpportunityWithScores(updatedDbOpportunity);
 
     return NextResponse.json({
       data: updatedOpportunity,
@@ -242,14 +251,14 @@ export async function PUT(
 // DELETE /api/deal-screening/opportunities/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
-    const opportunityIndex = opportunities.findIndex(opp => opp.id === id);
+    const opportunity = DealOpportunityService.getById(id);
     
-    if (opportunityIndex === -1) {
+    if (!opportunity) {
       return NextResponse.json(
         { error: 'Opportunity not found', success: false },
         { status: 404 }
@@ -257,7 +266,6 @@ export async function DELETE(
     }
 
     // Check if opportunity can be deleted
-    const opportunity = opportunities[opportunityIndex];
     if (opportunity.status === 'approved' || opportunity.status === 'closed') {
       return NextResponse.json(
         { 
@@ -268,16 +276,23 @@ export async function DELETE(
       );
     }
 
-    // Remove opportunity
-    const deletedOpportunity = opportunities.splice(opportunityIndex, 1)[0];
+    // Delete opportunity from database
+    const success = DealOpportunityService.delete(id);
+    
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Failed to delete opportunity', success: false },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       data: { 
         deletedId: id,
         deletedOpportunity: {
-          id: deletedOpportunity.id,
-          name: deletedOpportunity.name,
-          status: deletedOpportunity.status,
+          id: opportunity.id,
+          name: opportunity.name,
+          status: opportunity.status,
         }
       },
       success: true,

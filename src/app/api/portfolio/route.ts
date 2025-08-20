@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
       };
     });
     
-    return NextResponse.json(portfoliosWithAssets, { status: 200 });
+    return NextResponse.json({ portfolios: portfoliosWithAssets }, { status: 200 });
   } catch (error) {
     console.error('Error fetching portfolios:', error);
     return NextResponse.json(

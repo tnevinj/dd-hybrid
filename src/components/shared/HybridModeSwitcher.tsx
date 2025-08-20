@@ -10,6 +10,7 @@ import {
   ChevronDown,
   Info
 } from 'lucide-react'
+import { ZIndex, getZIndexStyle } from '@/styles/z-index'
 
 export type HybridMode = 'traditional' | 'assisted' | 'autonomous'
 
@@ -235,7 +236,10 @@ export function HybridModeSwitcher({
       </Button>
       
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-[28rem] max-w-[90vw] bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+        <div 
+          className="absolute right-0 mt-2 w-[28rem] max-w-[90vw] bg-white rounded-lg shadow-xl border border-gray-200"
+          style={getZIndexStyle(ZIndex.DROPDOWN)}
+        >
           <div className="p-2">
             {modes.map((mode) => (
               <button

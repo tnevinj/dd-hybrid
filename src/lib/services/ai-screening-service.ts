@@ -120,7 +120,12 @@ export class AIScreeningService {
     template: DealScreeningTemplate
   ): AISuggestion {
     const sectorBenchmarks = SECTOR_BENCHMARKS[opportunity.sector] || SECTOR_BENCHMARKS['Technology'];
-    const categoryBenchmarks = sectorBenchmarks[criterion.category as keyof typeof sectorBenchmarks];
+    let categoryBenchmarks = sectorBenchmarks[criterion.category as keyof typeof sectorBenchmarks];
+    
+    // Fallback to technology sector category if not found, or default values
+    if (!categoryBenchmarks) {
+      categoryBenchmarks = SECTOR_BENCHMARKS['Technology'][criterion.category as keyof typeof SECTOR_BENCHMARKS['Technology']] || { avgScore: 7.0 };
+    }
     
     // Calculate intelligent score based on opportunity characteristics
     const baseScore = this.calculateIntelligentScore(opportunity, criterion, categoryBenchmarks);
@@ -155,6 +160,11 @@ export class AIScreeningService {
     criterion: DealScreeningCriterion,
     categoryBenchmarks: any
   ): number {
+    // Provide fallback if categoryBenchmarks is undefined
+    if (!categoryBenchmarks || !categoryBenchmarks.avgScore) {
+      categoryBenchmarks = { avgScore: 7.0 }; // Default average score
+    }
+    
     let baseScore = categoryBenchmarks.avgScore;
     const scoreRange = criterion.maxValue - criterion.minValue;
     
@@ -328,7 +338,13 @@ export class AIScreeningService {
     
     // Adjust confidence based on score deviation from benchmarks
     const sectorBenchmarks = SECTOR_BENCHMARKS[opportunity.sector] || SECTOR_BENCHMARKS['Technology'];
-    const categoryBenchmarks = sectorBenchmarks[criterion.category as keyof typeof sectorBenchmarks];
+    let categoryBenchmarks = sectorBenchmarks[criterion.category as keyof typeof sectorBenchmarks];
+    
+    // Fallback if categoryBenchmarks is undefined
+    if (!categoryBenchmarks || !categoryBenchmarks.avgScore) {
+      categoryBenchmarks = SECTOR_BENCHMARKS['Technology'][criterion.category as keyof typeof SECTOR_BENCHMARKS['Technology']] || { avgScore: 7.0 };
+    }
+    
     const scoreDifference = Math.abs(score - categoryBenchmarks.avgScore);
     
     if (scoreDifference > 2.0) confidence -= 0.10; // -10% for extreme scores
@@ -347,6 +363,11 @@ export class AIScreeningService {
     score: number,
     categoryBenchmarks: any
   ): string {
+    // Provide fallback if categoryBenchmarks is undefined
+    if (!categoryBenchmarks || !categoryBenchmarks.avgScore) {
+      categoryBenchmarks = { avgScore: 7.0 };
+    }
+    
     const isAboveBenchmark = score > categoryBenchmarks.avgScore;
     const sectorName = opportunity.sector;
     const dealSize = this.formatCurrency(opportunity.askPrice);
@@ -435,6 +456,11 @@ export class AIScreeningService {
     criterion: DealScreeningCriterion,
     categoryBenchmarks: any
   ): BenchmarkData {
+    // Provide fallback if categoryBenchmarks is undefined
+    if (!categoryBenchmarks || !categoryBenchmarks.avgScore) {
+      categoryBenchmarks = { avgScore: 7.0 };
+    }
+    
     const sectorData = SECTOR_BENCHMARKS[opportunity.sector] || SECTOR_BENCHMARKS['Technology'];
     const baseScore = categoryBenchmarks.avgScore;
     
@@ -461,17 +487,22 @@ export class AIScreeningService {
     score: number
   ): { riskFactors: string[]; opportunities: string[] } {
     const sectorData = SECTOR_BENCHMARKS[opportunity.sector] || SECTOR_BENCHMARKS['Technology'];
-    const categoryData = sectorData[criterion.category as keyof typeof sectorData];
+    let categoryData = sectorData[criterion.category as keyof typeof sectorData];
+    
+    // Fallback if categoryData is undefined
+    if (!categoryData) {
+      categoryData = SECTOR_BENCHMARKS['Technology'][criterion.category as keyof typeof SECTOR_BENCHMARKS['Technology']] || {};
+    }
     
     let riskFactors: string[] = [];
     let opportunities: string[] = [];
     
     // Add sector-specific risks and opportunities
-    if (categoryData.commonRisks) {
+    if (categoryData && categoryData.commonRisks) {
       riskFactors.push(...categoryData.commonRisks.slice(0, 2));
     }
     
-    if (categoryData.successFactors) {
+    if (categoryData && categoryData.successFactors) {
       opportunities.push(...categoryData.successFactors.slice(0, 2));
     }
     
