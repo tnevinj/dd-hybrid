@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ import {
   HybridModeExplanation,
   type HybridMode 
 } from '@/components/shared';
+import { ModeNotification } from '@/components/ui/mode-notification';
 
 import { 
   DealOpportunity, 
@@ -471,16 +473,15 @@ export const HybridDealScreening: React.FC = () => {
 
       {/* Mode Transition Announcement */}
       {currentMode.mode !== 'traditional' && (
-        <div className="fixed bottom-5 left-5 max-w-sm z-50 bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-lg">
-          <div className="flex items-start space-x-2">
-            <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-blue-800">
-              You're now in <strong>{currentMode.mode}</strong> mode.
-              {currentMode.mode === 'assisted' && ' AI will help with suggestions and automation.'}
-              {currentMode.mode === 'autonomous' && ' AI is handling routine tasks automatically.'}
-            </div>
-          </div>
-        </div>
+        <ModeNotification
+          mode={currentMode.mode as 'assisted' | 'autonomous'}
+          title={`${currentMode.mode.charAt(0).toUpperCase() + currentMode.mode.slice(1)} Mode Active`}
+          description={
+            currentMode.mode === 'assisted' 
+              ? 'AI will help with suggestions and automation.'
+              : 'AI is handling routine tasks automatically.'
+          }
+        />
       )}
     </div>
   );

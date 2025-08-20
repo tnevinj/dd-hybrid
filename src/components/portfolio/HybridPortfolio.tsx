@@ -27,6 +27,7 @@ import { PortfolioTraditional } from './PortfolioTraditional'
 import { PortfolioAssisted } from './PortfolioAssisted'
 import { PortfolioAutonomous } from './PortfolioAutonomous'
 import { UnifiedPortfolioProvider } from './contexts/UnifiedPortfolioContext'
+import { ModeNotification } from '@/components/ui/mode-notification'
 import { 
   ErrorBoundary, 
   HybridModeHeader, 
@@ -315,7 +316,7 @@ export const HybridPortfolio: React.FC = () => {
 
   return (
     <UnifiedPortfolioProvider>
-      <div className={currentMode.mode === 'autonomous' ? 'w-full h-screen' : 'w-full min-h-screen'}>
+      <div className={currentMode.mode === 'autonomous' ? 'w-full h-screen' : 'w-full min-h-screen bg-gray-50'}>
         {/* Header with Mode Switcher - Hidden for autonomous mode */}
         {currentMode.mode !== 'autonomous' && (
           <HybridModeHeader
@@ -393,23 +394,15 @@ export const HybridPortfolio: React.FC = () => {
 
         {/* Mode Transition Notification */}
         {currentMode.mode !== 'traditional' && (
-          <div className="fixed bottom-5 right-5 max-w-sm z-50 bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg">
-            <div className="flex items-start space-x-2">
-              <Info className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-green-800">
-                Portfolio <strong>{currentMode.mode}</strong> mode active.
-                {currentMode.mode === 'assisted' && (
-                  <span> AI is providing optimization insights and suggestions.</span>
-                )}
-                {currentMode.mode === 'autonomous' && (
-                  <span> AI is actively managing your portfolio with intelligent rebalancing.</span>
-                )}
-                <div className="mt-1 text-xs text-green-600">
-                  {metrics.aiEfficiencyGains}% efficiency improvement this month
-                </div>
-              </div>
-            </div>
-          </div>
+          <ModeNotification
+            mode={currentMode.mode as 'assisted' | 'autonomous'}
+            title={`Portfolio ${currentMode.mode.charAt(0).toUpperCase() + currentMode.mode.slice(1)} Mode`}
+            description={
+              currentMode.mode === 'assisted'
+                ? `AI is providing optimization insights. ${metrics.aiEfficiencyGains}% efficiency improvement this month.`
+                : `AI is actively managing your portfolio. ${metrics.aiEfficiencyGains}% efficiency improvement this month.`
+            }
+          />
         )}
       </div>
     </UnifiedPortfolioProvider>

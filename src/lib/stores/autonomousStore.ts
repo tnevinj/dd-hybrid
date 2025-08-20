@@ -456,8 +456,8 @@ export const useAutonomousStore = create<AutonomousStore>()(
             const data = await response.json();
             
             // Convert portfolio data to Project format
-            const portfolioProjects: Project[] = data.data.flatMap((portfolio: any) => 
-              portfolio.assets?.map((asset: any) => ({
+            const portfolioProjects: Project[] = (data.data || []).flatMap((portfolio: any) => 
+              (portfolio.assets || []).map((asset: any) => ({
                 id: asset.id,
                 name: asset.name,
                 type: 'portfolio' as const,
@@ -483,7 +483,7 @@ export const useAutonomousStore = create<AutonomousStore>()(
                   workProducts: asset.workProducts || 0,
                   risks: asset.risks || []
                 }
-              })) || []
+              })).filter(Boolean) || []
             );
 
             set((state) => ({

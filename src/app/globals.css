@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../styles/autonomous-layout.css";
+@import "../styles/responsive-patterns.css";
 
 :root {
   --background: #ffffff;

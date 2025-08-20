@@ -1,0 +1,66 @@
+/**
+ * Responsive Grid Patterns
+ * 
+ * Standardized responsive grid utilities to ensure consistent 
+ * breakpoint behavior across all components.
+ */
+
+/* 2-column responsive grid */
+.grid-responsive-2 {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+/* 3-column responsive grid */
+.grid-responsive-3 {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+/* 4-column responsive grid */
+.grid-responsive-4 {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4;
+}
+
+/* Card grid with consistent spacing */
+.grid-cards-2 {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+}
+
+.grid-cards-3 {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+/* Form layout grids */
+.grid-form-2 {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-4;
+}
+
+/* Dashboard metric grids */
+.grid-metrics {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4;
+}
+
+/* Container layout patterns */
+.container-hybrid-traditional {
+  @apply w-full min-h-screen bg-gray-50;
+}
+
+.container-hybrid-assisted {
+  @apply w-full min-h-screen bg-gray-50;
+}
+
+.container-hybrid-autonomous {
+  @apply w-full h-screen;
+}
+
+/* Responsive spacing utilities */
+.spacing-responsive-sm {
+  @apply p-4 md:p-6;
+}
+
+.spacing-responsive-md {
+  @apply p-6 md:p-8;
+}
+
+.spacing-responsive-lg {
+  @apply p-8 md:p-12;
+}

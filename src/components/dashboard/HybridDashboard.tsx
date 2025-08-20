@@ -26,6 +26,7 @@ import {
 import { DashboardTraditional } from './DashboardTraditional'
 import { DashboardAssisted } from './DashboardAssisted'
 import { DashboardAutonomous } from './DashboardAutonomous'
+import { ModeNotification } from '@/components/ui/mode-notification'
 import { 
   ErrorBoundary, 
   HybridModeHeader, 
@@ -402,23 +403,15 @@ export const HybridDashboard: React.FC = () => {
 
       {/* Mode Transition Notification */}
       {currentMode.mode !== 'traditional' && (
-        <div className="fixed bottom-5 right-5 max-w-sm z-50 bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg">
-          <div className="flex items-start space-x-2">
-            <Info className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-green-800">
-              Dashboard <strong>{currentMode.mode}</strong> mode active.
-              {currentMode.mode === 'assisted' && (
-                <span> AI is providing operational insights and optimization suggestions.</span>
-              )}
-              {currentMode.mode === 'autonomous' && (
-                <span> AI is actively managing operations with intelligent automation.</span>
-              )}
-              <div className="mt-1 text-xs text-green-600">
-                {metrics.aiEfficiencyGains}% efficiency improvement this month
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModeNotification
+          mode={currentMode.mode as 'assisted' | 'autonomous'}
+          title={`Dashboard ${currentMode.mode.charAt(0).toUpperCase() + currentMode.mode.slice(1)} Mode`}
+          description={
+            currentMode.mode === 'assisted'
+              ? `AI is providing operational insights. ${metrics.aiEfficiencyGains}% efficiency improvement this month.`
+              : `AI is actively managing operations. ${metrics.aiEfficiencyGains}% efficiency improvement this month.`
+          }
+        />
       )}
     </div>
   )

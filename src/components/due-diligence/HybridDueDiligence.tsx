@@ -26,6 +26,7 @@ import {
 import { DDTraditionalView } from './DDTraditionalView'
 import { DDAssistedView } from './DDAssistedView'
 import { DDAutonomousView } from './DDAutonomousView'
+import { ModeNotification } from '@/components/ui/mode-notification'
 import { 
   ErrorBoundary, 
   HybridModeHeader, 
@@ -340,23 +341,15 @@ export const HybridDueDiligence: React.FC = () => {
 
       {/* Mode Transition Notification */}
       {currentMode.mode !== 'traditional' && (
-        <div className="fixed bottom-5 right-5 max-w-sm z-50 bg-purple-50 border border-purple-200 rounded-lg p-4 shadow-lg">
-          <div className="flex items-start space-x-2">
-            <Info className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-purple-800">
-              DD <strong>{currentMode.mode}</strong> mode active.
-              {currentMode.mode === 'assisted' && (
-                <span> AI is analyzing documents and suggesting optimizations.</span>
-              )}
-              {currentMode.mode === 'autonomous' && (
-                <span> AI is handling routine DD tasks automatically.</span>
-              )}
-              <div className="mt-1 text-xs text-purple-600">
-                {metrics.aiEfficiencyGains}% efficiency gain this month
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModeNotification
+          mode={currentMode.mode as 'assisted' | 'autonomous'}
+          title={`Due Diligence ${currentMode.mode.charAt(0).toUpperCase() + currentMode.mode.slice(1)} Mode`}
+          description={
+            currentMode.mode === 'assisted'
+              ? `AI is analyzing documents and suggesting optimizations. ${metrics.aiEfficiencyGains}% efficiency gain this month.`
+              : `AI is handling routine DD tasks automatically. ${metrics.aiEfficiencyGains}% efficiency gain this month.`
+          }
+        />
       )}
     </div>
   )

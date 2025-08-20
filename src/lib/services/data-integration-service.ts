@@ -165,11 +165,13 @@ export class DataIntegrationService {
   }
 
   /**
-   * Fetch financial data
+   * Fetch financial data for project
+   * Note: Financial data integration is not yet implemented
    */
   private static async fetchFinancialData(projectId: string): Promise<any> {
-    // This endpoint doesn't exist yet - skip for now
-    // TODO: Implement financial data endpoint when needed
+    // Financial data endpoint not yet available
+    // When implemented, this should call /api/projects/{projectId}/financials
+    // and return structured financial metrics, projections, and KPIs
     return null;
   }
 
@@ -221,8 +223,9 @@ export class DataIntegrationService {
    * Fetch team data
    */
   private static async fetchTeamData(projectId: string): Promise<any> {
-    // This endpoint doesn't exist yet - team data is already included in workspace data
-    // TODO: Implement separate team endpoint if needed
+    // Team data is already included in workspace data from /api/workspaces
+    // Dedicated team endpoint not required as team information is embedded
+    // in workspace responses with member roles, skills, and availability
     return null;
   }
 

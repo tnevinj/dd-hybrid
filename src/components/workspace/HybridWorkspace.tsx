@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useCallback, useEffect } from 'react'
+import * as React from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -24,6 +25,9 @@ import {
   HybridModeExplanation,
   type HybridMode 
 } from '@/components/shared'
+import { LoadingState } from '@/components/ui/loading-spinner'
+import { ErrorDisplay } from '@/components/ui/error-display'
+import { logger } from '@/lib/logger'
 
 type WorkspaceMode = 'traditional' | 'assisted' | 'autonomous'
 
@@ -117,8 +121,13 @@ export function HybridWorkspace({
       })
       
     } catch (err) {
-      console.error('Error fetching workspaces:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load workspaces')
+      const error = err instanceof Error ? err : new Error('Failed to load workspaces')
+      logger.error('Error fetching workspaces', {
+        module: 'workspace',
+        action: 'fetch_workspaces',
+        metadata: { endpoint: '/api/workspaces' }
+      }, error)
+      setError(error.message)
     } finally {
       setIsLoading(false)
     }
@@ -176,22 +185,24 @@ export function HybridWorkspace({
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-96">
-        <div className="text-red-600 text-xl font-semibold mb-4">Error Loading Workspaces</div>
-        <p className="text-gray-600 mb-4">{error}</p>
-        <Button onClick={fetchWorkspaces} variant="outline">
-          Try Again
-        </Button>
-      </div>
+      <ErrorDisplay
+        title="Error Loading Workspaces"
+        error={error}
+        onRetry={fetchWorkspaces}
+      />
     )
   }
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-        <h3 className="text-xl font-semibold text-gray-700">Loading Workspace Management...</h3>
-      </div>
+      <LoadingState
+        isLoading={true}
+        title="Loading Workspace Management..."
+        description="Please wait while we load your workspaces and settings"
+        size="lg"
+      >
+        <div></div>
+      </LoadingState>
     )
   }
 
