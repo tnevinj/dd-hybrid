@@ -42,3 +42,25 @@ export function formatTimeAgoSafe(date: Date): string {
   
   return date.toLocaleDateString()
 }
+
+export function formatCurrencySafe(amount: number, currency = 'USD'): string {
+  // Use consistent manual formatting during SSR to avoid hydration mismatch
+  if (typeof window === 'undefined') {
+    const formatted = amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    return `$${formatted}`
+  }
+  
+  // Use Intl.NumberFormat on client side
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount)
+  } catch (error) {
+    // Fallback to manual formatting
+    const formatted = amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    return `$${formatted}`
+  }
+}

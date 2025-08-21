@@ -14,8 +14,9 @@ import {
   Sparkles,
   Info
 } from 'lucide-react'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { UserNavigationMode } from '@/types/navigation'
+import { ModeNotification } from '@/components/ui/mode-notification'
 import { WorkspaceTraditional } from './WorkspaceTraditional'
 import { WorkspaceAssisted } from './WorkspaceAssisted'
 import { WorkspaceAutonomous } from './WorkspaceAutonomous'
@@ -30,6 +31,51 @@ import { ErrorDisplay } from '@/components/ui/error-display'
 import { logger } from '@/lib/logger'
 
 type WorkspaceMode = 'traditional' | 'assisted' | 'autonomous'
+
+// Workspace AI State Interface
+interface WorkspaceAIState {
+  recommendations: Array<{
+    id: string
+    type: 'suggestion' | 'automation' | 'warning' | 'insight'
+    priority: 'low' | 'medium' | 'high' | 'critical'
+    title: string
+    description: string
+    actions: Array<{
+      id: string
+      label: string
+      action: string
+      primary?: boolean
+      estimatedTimeSaving?: number
+    }>
+    confidence: number
+    moduleContext: string
+    timestamp: Date
+    workspaceId?: string
+  }>
+  processingTasks: Array<{
+    id: string
+    type: string
+    description: string
+    progress: number
+    estimatedCompletion: Date
+  }>
+  automatedActions: Array<{
+    id: string
+    action: string
+    description: string
+    timestamp: Date
+    status: 'completed' | 'in_progress' | 'failed'
+    rollbackable: boolean
+  }>
+  pendingApprovals: Array<{
+    id: string
+    action: string
+    description: string
+    risk: 'low' | 'medium' | 'high'
+    impact: string[]
+    requestedAt: Date
+  }>
+}
 
 interface HybridWorkspaceProps {
   // Shared props that can be passed to all modes
@@ -72,8 +118,21 @@ export function HybridWorkspace({
   onPauseAutomation,
   onResumeAutomation
 }: HybridWorkspaceProps) {
-  const { currentMode, setMode } = useNavigationStore()
+  const { currentMode, setMode, setCurrentModule, addRecommendation } = useNavigationStoreRefactored()
   const router = useRouter()
+  
+  // Set current module for navigation store
+  React.useEffect(() => {
+    setCurrentModule('workspace')
+  }, [setCurrentModule])
+
+  // AI state management
+  const [aiState, setAIState] = React.useState<WorkspaceAIState>({
+    recommendations: [],
+    processingTasks: [],
+    automatedActions: [],
+    pendingApprovals: []
+  })
   
   // Local state for data fetching
   const [workspaces, setWorkspaces] = useState(propWorkspaces || [])
@@ -279,6 +338,19 @@ export function HybridWorkspace({
             />
           </ErrorBoundary>
         )}
+        
+      {/* Mode Transition Notification */}
+      {workspaceMode !== 'traditional' && (
+        <ModeNotification
+          mode={workspaceMode as 'assisted' | 'autonomous'}
+          title={`Workspace ${workspaceMode.charAt(0).toUpperCase() + workspaceMode.slice(1)} Mode`}
+          description={
+            workspaceMode === 'assisted'
+              ? `AI is optimizing workspace organization and team collaboration. ${metrics?.aiEfficiencyGains || 0}% efficiency improvement this month.`
+              : `AI is autonomously managing workspaces and team workflows. ${metrics?.aiEfficiencyGains || 0}% efficiency improvement this month.`
+          }
+        />
+      )}
     </div>
   )
 }

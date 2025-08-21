@@ -19,7 +19,7 @@ import {
   AlertCircle,
   Loader
 } from 'lucide-react';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 
 interface WorkProductListProps {
   workspaceId: string;
@@ -78,7 +78,7 @@ export function WorkProductList({
   onEditWorkProduct,
   onShareWorkProduct
 }: WorkProductListProps) {
-  const { navigationMode } = useNavigationStore();
+  const { navigationMode } = useNavigationStoreRefactored();
   const [showAIInsights, setShowAIInsights] = useState(navigationMode !== 'traditional');
 
   const renderAIInsights = () => {

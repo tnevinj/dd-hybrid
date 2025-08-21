@@ -5,11 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ModeSwitcher } from '@/components/navigation/mode-switcher'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
+import { usePreferencesStore } from '@/stores/preferences-store'
 import { Settings, User, Bell, Shield, Palette } from 'lucide-react'
 
 export default function SettingsPage() {
-  const { currentMode, preferences, updatePreferences } = useNavigationStore()
+  const { currentMode } = useNavigationStoreRefactored()
+  const { preferences, updatePreferences } = usePreferencesStore()
 
   return (
     <div className="p-6 space-y-6">

@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { 
   AlertTriangle,
   CheckCircle,
@@ -32,7 +32,7 @@ interface FindingsManagementProps {
 }
 
 export function FindingsManagement({ projectId }: FindingsManagementProps) {
-  const { currentMode, addRecommendation, addInsight } = useNavigationStore()
+  const { currentMode, addRecommendation, addInsight } = useNavigationStoreRefactored()
   const [statusFilter, setStatusFilter] = React.useState<string>('all')
   const [priorityFilter, setPriorityFilter] = React.useState<string>('all')
   const [categoryFilter, setCategoryFilter] = React.useState<string>('all')

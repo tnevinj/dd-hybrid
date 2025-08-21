@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { X, Lightbulb, Sparkles, TrendingUp } from 'lucide-react'
 
 interface AIHint {
@@ -23,7 +23,7 @@ interface AIHintToastProps {
 }
 
 export function AIHintToast({ hint, onDismiss, className }: AIHintToastProps) {
-  const { currentMode, trackInteraction } = useNavigationStore()
+  const { currentMode, trackInteraction } = useNavigationStoreRefactored()
   const [isVisible, setIsVisible] = React.useState(true)
 
   // Don't show AI hints in traditional mode unless they're very subtle

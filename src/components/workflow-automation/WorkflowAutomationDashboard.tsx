@@ -64,6 +64,7 @@ import {
   Search,
   Calendar,
   Archive,
+  BarChart3,
 } from 'lucide-react';
 
 import {
@@ -98,25 +99,408 @@ export function WorkflowAutomationDashboard({
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   useEffect(() => {
-    fetchWorkflowData();
+    // Load comprehensive mock data instead of API call
+    loadMockWorkflowData();
   }, []);
 
-  const fetchWorkflowData = async () => {
-    try {
-      const response = await fetch('/api/workflow-automation');
-      const data = await response.json();
-      
-      setWorkflows(data.workflows || []);
-      setApprovalProcesses(data.approvalProcesses || []);
-      setExecutions(data.executions || []);
-      setAnalytics(data.analytics || null);
-      setAIInsights(data.aiInsights || []);
-      setAutomationRecommendations(data.automationRecommendations || []);
-    } catch (error) {
-      console.error('Error fetching workflow data:', error);
-    } finally {
-      setLoading(false);
-    }
+  const loadMockWorkflowData = () => {
+    // Mock Workflows
+    const mockWorkflows: DocumentWorkflow[] = [
+      {
+        id: 'wf-1',
+        name: 'Investment Memorandum Review',
+        description: 'Automated review and approval process for investment memorandums',
+        documentType: 'INVESTMENT_MEMORANDUM' as any,
+        triggerType: 'DOCUMENT_UPLOAD' as any,
+        isActive: true,
+        fundId: 'fund-1',
+        createdById: 'user-1',
+        approvalSteps: [
+          {
+            id: 'step-1',
+            workflowId: 'wf-1',
+            stepNumber: 1,
+            stepName: 'Investment Team Review',
+            approverType: 'ROLE_BASED' as any,
+            parallelApproval: false,
+            timeoutHours: 24,
+            createdAt: new Date('2024-10-01'),
+            updatedAt: new Date('2024-10-01')
+          },
+          {
+            id: 'step-2',
+            workflowId: 'wf-1',
+            stepNumber: 2,
+            stepName: 'IC Approval',
+            approverType: 'COMMITTEE' as any,
+            parallelApproval: true,
+            timeoutHours: 72,
+            createdAt: new Date('2024-10-01'),
+            updatedAt: new Date('2024-10-01')
+          }
+        ],
+        automationRules: [
+          {
+            id: 'rule-1',
+            workflowId: 'wf-1',
+            ruleName: 'Auto-route by deal size',
+            conditions: { dealSize: { greaterThan: 50000000 } },
+            actions: { skipStep: 1, goToCommittee: true },
+            priority: 1,
+            isActive: true,
+            createdAt: new Date('2024-10-01'),
+            updatedAt: new Date('2024-10-01')
+          },
+          {
+            id: 'rule-2',
+            workflowId: 'wf-1',
+            ruleName: 'Fast-track for repeat investments',
+            conditions: { isRepeatInvestment: true },
+            actions: { reduceTimeout: 12 },
+            priority: 2,
+            isActive: true,
+            createdAt: new Date('2024-10-01'),
+            updatedAt: new Date('2024-10-01')
+          }
+        ],
+        workflowExecutions: [],
+        createdAt: new Date('2024-10-01'),
+        updatedAt: new Date('2024-11-15')
+      },
+      {
+        id: 'wf-2',
+        name: 'Compliance Document Workflow',
+        description: 'Streamlined approval for regulatory compliance documents',
+        documentType: 'COMPLIANCE_REPORT' as any,
+        triggerType: 'DATE_BASED' as any,
+        isActive: true,
+        fundId: 'fund-1',
+        createdById: 'user-2',
+        approvalSteps: [
+          {
+            id: 'step-3',
+            workflowId: 'wf-2',
+            stepNumber: 1,
+            stepName: 'Compliance Officer Review',
+            approverType: 'SPECIFIC_USER' as any,
+            parallelApproval: false,
+            timeoutHours: 48,
+            createdAt: new Date('2024-10-05'),
+            updatedAt: new Date('2024-10-05')
+          }
+        ],
+        automationRules: [
+          {
+            id: 'rule-3',
+            workflowId: 'wf-2',
+            ruleName: 'Auto-generate compliance reports',
+            conditions: { scheduleType: 'quarterly' },
+            actions: { generateReport: true, notifyStakeholders: true },
+            priority: 1,
+            isActive: true,
+            createdAt: new Date('2024-10-05'),
+            updatedAt: new Date('2024-10-05')
+          }
+        ],
+        workflowExecutions: [],
+        createdAt: new Date('2024-10-05'),
+        updatedAt: new Date('2024-11-10')
+      },
+      {
+        id: 'wf-3',
+        name: 'Side Letter Processing',
+        description: 'Efficient processing and approval of investor side letters',
+        documentType: 'SIDE_LETTER' as any,
+        triggerType: 'MANUAL' as any,
+        isActive: false,
+        fundId: 'fund-1',
+        createdById: 'user-3',
+        approvalSteps: [
+          {
+            id: 'step-4',
+            workflowId: 'wf-3',
+            stepNumber: 1,
+            stepName: 'Legal Review',
+            approverType: 'ROLE_BASED' as any,
+            parallelApproval: false,
+            timeoutHours: 96,
+            createdAt: new Date('2024-09-20'),
+            updatedAt: new Date('2024-09-20')
+          }
+        ],
+        automationRules: [],
+        workflowExecutions: [],
+        createdAt: new Date('2024-09-20'),
+        updatedAt: new Date('2024-11-01')
+      }
+    ];
+
+    // Mock Approval Processes
+    const mockApprovalProcesses: ApprovalProcess[] = [
+      {
+        id: 'ap-1',
+        name: 'Investment Committee Approval',
+        description: 'Multi-level approval process for new investments',
+        processType: 'INVESTMENT_APPROVAL' as any,
+        entityType: 'INVESTMENT',
+        fundId: 'fund-1',
+        createdById: 'user-1',
+        isActive: true,
+        approvalLevels: [
+          {
+            id: 'level-1',
+            processId: 'ap-1',
+            levelNumber: 1,
+            levelName: 'Investment Team',
+            requiredApprovers: { roles: ['investment_analyst', 'investment_director'] },
+            minimumApprovals: 2,
+            parallelApproval: true,
+            escalationHours: 48,
+            createdAt: new Date('2024-10-01'),
+            updatedAt: new Date('2024-10-01')
+          },
+          {
+            id: 'level-2',
+            processId: 'ap-1',
+            levelNumber: 2,
+            levelName: 'Senior Management',
+            requiredApprovers: { roles: ['managing_partner', 'cio'] },
+            minimumApprovals: 1,
+            parallelApproval: false,
+            escalationHours: 72,
+            createdAt: new Date('2024-10-01'),
+            updatedAt: new Date('2024-10-01')
+          }
+        ],
+        processExecutions: [],
+        thresholds: { dealSize: 10000000, riskRating: 'medium' },
+        createdAt: new Date('2024-10-01'),
+        updatedAt: new Date('2024-11-15')
+      },
+      {
+        id: 'ap-2',
+        name: 'Expense Authorization',
+        description: 'Tiered approval process for fund expenses',
+        processType: 'EXPENSE_APPROVAL' as any,
+        entityType: 'EXPENSE',
+        fundId: 'fund-1',
+        createdById: 'user-2',
+        isActive: true,
+        approvalLevels: [
+          {
+            id: 'level-3',
+            processId: 'ap-2',
+            levelNumber: 1,
+            levelName: 'Department Head',
+            requiredApprovers: { roles: ['department_head'] },
+            minimumApprovals: 1,
+            parallelApproval: false,
+            escalationHours: 24,
+            createdAt: new Date('2024-10-10'),
+            updatedAt: new Date('2024-10-10')
+          }
+        ],
+        processExecutions: [],
+        thresholds: { amount: 5000 },
+        createdAt: new Date('2024-10-10'),
+        updatedAt: new Date('2024-11-12')
+      }
+    ];
+
+    // Mock Executions with cross-module data
+    const mockExecutions: (DocumentWorkflowExecution | ApprovalProcessExecution)[] = [
+      {
+        id: 'exec-1',
+        workflowId: 'wf-1',
+        documentId: 'doc-1',
+        documentType: 'INVESTMENT_MEMORANDUM' as any,
+        status: 'IN_PROGRESS' as any,
+        currentStep: 2,
+        startedById: 'user-1',
+        startedBy: { id: 'user-1', name: 'Sarah Johnson', email: 'sarah.johnson@fund.com' },
+        approvalHistory: [
+          {
+            id: 'hist-1',
+            executionId: 'exec-1',
+            stepNumber: 1,
+            approverId: 'user-2',
+            approver: { id: 'user-2', name: 'Michael Chen', email: 'michael.chen@fund.com' },
+            status: 'APPROVED' as any,
+            comments: 'Deal metrics look solid, proceeding to IC',
+            approvedAt: new Date('2024-11-20'),
+            createdAt: new Date('2024-11-20')
+          }
+        ],
+        automationLogs: [
+          {
+            id: 'log-1',
+            executionId: 'exec-1',
+            ruleId: 'rule-1',
+            action: 'route_to_committee',
+            result: 'SUCCESS' as any,
+            resultMessage: 'Auto-routed to IC due to deal size > $50M',
+            executedAt: new Date('2024-11-20'),
+            metadata: { dealSize: 125000000, trigger: 'deal_size_threshold' }
+          }
+        ],
+        metadata: { dealName: 'TechCorp Acquisition', sector: 'Technology', dealValue: 125000000 },
+        createdAt: new Date('2024-11-18'),
+        updatedAt: new Date('2024-11-20')
+      } as DocumentWorkflowExecution,
+      {
+        id: 'exec-2',
+        processId: 'ap-1',
+        entityId: 'inv-2',
+        entityType: 'INVESTMENT',
+        requestedById: 'user-3',
+        requestedBy: { id: 'user-3', name: 'Emily Rodriguez', email: 'emily.rodriguez@fund.com' },
+        status: 'PENDING' as any,
+        currentLevel: 1,
+        priority: 'HIGH' as any,
+        deadline: new Date('2024-12-15'),
+        approvalRecords: [],
+        escalationLogs: [],
+        metadata: { dealName: 'HealthTech Direct Investment', sector: 'Healthcare', dealValue: 85000000 },
+        createdAt: new Date('2024-11-22'),
+        updatedAt: new Date('2024-11-22')
+      } as ApprovalProcessExecution,
+      {
+        id: 'exec-3',
+        processId: 'ap-2',
+        entityId: 'exp-1',
+        entityType: 'EXPENSE',
+        requestedById: 'user-4',
+        requestedBy: { id: 'user-4', name: 'David Park', email: 'david.park@fund.com' },
+        status: 'APPROVED' as any,
+        priority: 'NORMAL' as any,
+        completedAt: new Date('2024-11-19'),
+        approvalRecords: [
+          {
+            id: 'rec-1',
+            executionId: 'exec-3',
+            levelNumber: 1,
+            approverId: 'user-5',
+            approver: { id: 'user-5', name: 'Lisa Wang', email: 'lisa.wang@fund.com' },
+            status: 'APPROVED' as any,
+            comments: 'Approved within budget limits',
+            approvedAt: new Date('2024-11-19'),
+            createdAt: new Date('2024-11-19')
+          }
+        ],
+        escalationLogs: [],
+        metadata: { expenseCategory: 'Legal Services', amount: 15000, vendor: 'Smith & Associates' },
+        createdAt: new Date('2024-11-18'),
+        updatedAt: new Date('2024-11-19')
+      } as ApprovalProcessExecution
+    ];
+
+    // Mock Analytics with realistic performance data
+    const mockAnalytics: WorkflowAnalytics = {
+      totalWorkflows: mockWorkflows.length,
+      activeExecutions: mockExecutions.filter(e => e.status === 'IN_PROGRESS' || e.status === 'PENDING').length,
+      averageProcessingTime: 32,
+      approvalSuccess: 94,
+      pendingApprovals: mockExecutions.filter(e => e.status === 'PENDING').length,
+      automationEfficiency: 78,
+      workflowPerformance: [
+        {
+          workflowId: 'wf-1',
+          workflowName: 'Investment Memorandum Review',
+          executionsCount: 45,
+          averageProcessingTime: 28,
+          successRate: 96,
+          automationRate: 85,
+          bottlenecks: ['IC scheduling conflicts', 'Document quality review']
+        },
+        {
+          workflowId: 'wf-2',
+          workflowName: 'Compliance Document Workflow',
+          executionsCount: 12,
+          averageProcessingTime: 18,
+          successRate: 100,
+          automationRate: 95,
+          bottlenecks: []
+        }
+      ]
+    };
+
+    // Mock AI Insights with cross-module intelligence
+    const mockAIInsights: WorkflowAIInsight[] = [
+      {
+        id: 'insight-1',
+        type: 'optimization',
+        title: 'Investment Committee Scheduling Bottleneck Identified',
+        description: 'IC meetings are causing 65% of approval delays. Consider implementing asynchronous approval for deals under $25M.',
+        confidence: 87,
+        impact: 'high',
+        actionable: true,
+        suggestedAction: 'Configure async approval rule for sub-$25M deals with 48hr response window',
+        relatedWorkflowId: 'wf-1'
+      },
+      {
+        id: 'insight-2',
+        type: 'automation',
+        title: 'Due Diligence Data Integration Opportunity',
+        description: 'DD risk scores could automatically influence approval routing. High-risk deals (score < 6.0) should bypass standard workflow.',
+        confidence: 92,
+        impact: 'medium',
+        actionable: true,
+        suggestedAction: 'Create conditional routing rule based on DD module risk assessment scores'
+      },
+      {
+        id: 'insight-3',
+        type: 'efficiency',
+        title: 'Cross-Module Data Sync Performance',
+        description: 'Workflow execution times could be reduced by 23% with real-time portfolio and market data integration.',
+        confidence: 79,
+        impact: 'high',
+        actionable: true,
+        suggestedAction: 'Enable real-time data feeds from Portfolio Management and Market Intelligence modules'
+      }
+    ];
+
+    // Mock Automation Recommendations with cross-module suggestions
+    const mockAutomationRecommendations: AutomationRecommendation[] = [
+      {
+        id: 'rec-1',
+        workflowId: 'wf-1',
+        stepNumber: 1,
+        automationType: 'approval_routing' as any,
+        description: 'Auto-route investments based on Deal Screening module scoring and sector alignment',
+        potentialSavings: 8,
+        complexity: 'medium' as any,
+        riskLevel: 'low' as any
+      },
+      {
+        id: 'rec-2',
+        workflowId: 'wf-2',
+        stepNumber: 1,
+        automationType: 'document_generation' as any,
+        description: 'Generate compliance reports using Portfolio Management performance data',
+        potentialSavings: 12,
+        complexity: 'high' as any,
+        riskLevel: 'low' as any
+      },
+      {
+        id: 'rec-3',
+        workflowId: 'wf-1',
+        stepNumber: 2,
+        automationType: 'notification' as any,
+        description: 'Smart notifications based on LP Portal investor preferences and communication cadence',
+        potentialSavings: 5,
+        complexity: 'low' as any,
+        riskLevel: 'low' as any
+      }
+    ];
+
+    // Set all mock data
+    setWorkflows(mockWorkflows);
+    setApprovalProcesses(mockApprovalProcesses);
+    setExecutions(mockExecutions);
+    setAnalytics(mockAnalytics);
+    setAIInsights(mockAIInsights);
+    setAutomationRecommendations(mockAutomationRecommendations);
+    setLoading(false);
   };
 
   const getStatusColor = (status: string) => {
@@ -174,6 +558,50 @@ export function WorkflowAutomationDashboard({
       )}
     </div>
   );
+
+  // Enhanced event handlers with cross-module integration
+  const handleCreateWorkflow = () => {
+    alert('Advanced Workflow Creation Wizard would open here:\n\n• Document type selection with AI suggestions\n• Approval step configuration with role-based routing\n• Integration with Deal Screening, Due Diligence, and Portfolio modules\n• Automation rule builder with cross-module data triggers\n• Template library with fund industry best practices\n• Real-time testing and validation environment')
+  };
+
+  const handleViewWorkflow = (workflowId: string) => {
+    const workflow = workflows.find(w => w.id === workflowId);
+    if (workflow) {
+      alert(`Opening comprehensive workflow management interface for "${workflow.name}":\n\n• Visual workflow designer with drag-and-drop steps\n• Real-time execution monitoring and analytics\n• Cross-module data integration settings\n• Automation rule configuration and testing\n• Approval history and audit trail\n• Performance metrics and optimization suggestions`)
+    }
+  };
+
+  const handleCreateApprovalProcess = () => {
+    alert('Advanced Approval Process Builder would launch:\n\n• Multi-level approval hierarchy designer\n• Role-based and conditional approval routing\n• Integration with organizational charts and permissions\n• Threshold-based automatic routing (deal size, risk scores)\n• Escalation policies and delegation management\n• Cross-module trigger configuration (from DD, Portfolio, etc.)')
+  };
+
+  const handleViewApprovalProcess = (processId: string) => {
+    const process = approvalProcesses.find(p => p.id === processId);
+    if (process) {
+      alert(`Opening approval process management interface for "${process.name}":\n\n• Process flow visualization and modification\n• Approval level configuration and threshold management\n• Real-time execution tracking and bottleneck analysis\n• Integration with user management and role assignments\n• Performance analytics and process optimization\n• Automated reporting and compliance tracking`)
+    }
+  };
+
+  const handleViewExecution = (executionId: string) => {
+    const execution = executions.find(e => e.id === executionId);
+    if (execution) {
+      alert(`Opening detailed execution view for workflow execution:\n\n• Step-by-step progress tracking with timestamps\n• Approval history and comments from all participants\n• Automation log showing rule executions and results\n• Cross-module data that influenced routing decisions\n• Real-time notifications and escalation status\n• Document versions and audit trail`)
+    }
+  };
+
+  const handleImplementRecommendation = (recommendationId: string) => {
+    const recommendation = automationRecommendations.find(r => r.id === recommendationId);
+    if (recommendation) {
+      alert(`Implementing automation recommendation:\n\n"${recommendation.description}"\n\n• Configuration wizard would guide setup\n• Cross-module data connections would be established\n• Testing environment for validation\n• Rollback plan and monitoring setup\n• Expected savings: ${recommendation.potentialSavings} hours/week\n• Complexity: ${recommendation.complexity}, Risk: ${recommendation.riskLevel}`)
+    }
+  };
+
+  const handleApplyInsight = (insightId: string) => {
+    const insight = aiInsights.find(i => i.id === insightId);
+    if (insight) {
+      alert(`Applying AI insight: "${insight.title}"\n\n${insight.description}\n\nSuggested Action: ${insight.suggestedAction}\n\n• Confidence level: ${insight.confidence}%\n• Expected impact: ${insight.impact}\n• Implementation wizard would guide the setup\n• A/B testing framework for validation\n• Performance monitoring and rollback capabilities`)
+    }
+  };
 
   const renderOverviewTab = () => (
     <div className="space-y-6">
@@ -280,7 +708,9 @@ export function WorkflowAutomationDashboard({
                     {new Date(execution.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="sm">View</Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleViewExecution(execution.id)}>
+                      View
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -319,9 +749,19 @@ export function WorkflowAutomationDashboard({
                       <h4 className="font-medium">{insight.title}</h4>
                       <p className="text-sm text-muted-foreground mt-1">{insight.description}</p>
                       {insight.suggestedAction && (
-                        <p className="text-sm text-blue-600 mt-2">
-                          💡 {insight.suggestedAction}
-                        </p>
+                        <div className="mt-3">
+                          <p className="text-sm text-blue-600">
+                            💡 {insight.suggestedAction}
+                          </p>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="mt-2"
+                            onClick={() => handleApplyInsight(insight.id)}
+                          >
+                            Apply Insight
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -360,49 +800,10 @@ export function WorkflowAutomationDashboard({
           </Select>
         </div>
         
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Workflow
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Create New Workflow</DialogTitle>
-              <DialogDescription>
-                Define a new document workflow with approval steps and automation rules.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">Name</Label>
-                <Input id="name" className="col-span-3" placeholder="Workflow name" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="type" className="text-right">Document Type</Label>
-                <Select>
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select document type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="INVESTMENT_MEMORANDUM">Investment Memorandum</SelectItem>
-                    <SelectItem value="SIDE_LETTER">Side Letter</SelectItem>
-                    <SelectItem value="COMPLIANCE_REPORT">Compliance Report</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">Description</Label>
-                <Textarea id="description" className="col-span-3" placeholder="Workflow description" />
-              </div>
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline">Cancel</Button>
-              <Button>Create Workflow</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={handleCreateWorkflow}>
+          <Plus className="w-4 h-4 mr-2" />
+          Create Workflow
+        </Button>
       </div>
 
       {/* Workflows Grid */}
@@ -444,11 +845,19 @@ export function WorkflowAutomationDashboard({
 
                 <div className="pt-2 border-t">
                   <div className="flex items-center justify-between">
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleViewWorkflow(workflow.id)}
+                    >
                       <Settings className="w-4 h-4 mr-1" />
                       Configure
                     </Button>
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleViewWorkflow(workflow.id)}
+                    >
                       <Archive className="w-4 h-4 mr-1" />
                       History
                     </Button>
@@ -467,7 +876,7 @@ export function WorkflowAutomationDashboard({
       {/* Approval Controls */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">Approval Processes</h3>
-        <Button>
+        <Button onClick={handleCreateApprovalProcess}>
           <Plus className="w-4 h-4 mr-2" />
           Create Approval Process
         </Button>
@@ -510,10 +919,18 @@ export function WorkflowAutomationDashboard({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleViewApprovalProcess(process.id)}
+                  >
                     <Settings className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleViewApprovalProcess(process.id)}
+                  >
                     <Activity className="w-4 h-4" />
                   </Button>
                 </div>
@@ -568,14 +985,179 @@ export function WorkflowAutomationDashboard({
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Performance Metrics */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <BarChart3 className="w-5 h-5 mr-2 text-blue-600" />
+                  Workflow Performance Metrics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {analytics?.workflowPerformance.map((workflow) => (
+                    <div key={workflow.workflowId} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-sm">{workflow.workflowName}</h4>
+                        <Badge variant="outline">{workflow.executionsCount} executions</Badge>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <p className="text-gray-600">Success Rate</p>
+                          <div className="flex items-center space-x-2">
+                            <Progress value={workflow.successRate} className="flex-1 h-2" />
+                            <span className="font-medium">{workflow.successRate}%</span>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Automation Rate</p>
+                          <div className="flex items-center space-x-2">
+                            <Progress value={workflow.automationRate} className="flex-1 h-2" />
+                            <span className="font-medium">{workflow.automationRate}%</span>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Avg Time</p>
+                          <p className="font-medium">{workflow.averageProcessingTime}h</p>
+                        </div>
+                      </div>
+
+                      {workflow.bottlenecks.length > 0 && (
+                        <div className="mt-2">
+                          <p className="text-xs text-amber-600 mb-1">Identified bottlenecks:</p>
+                          <div className="flex flex-wrap gap-1">
+                            {workflow.bottlenecks.map((bottleneck, index) => (
+                              <Badge key={index} variant="destructive" className="text-xs">
+                                {bottleneck}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cross-Module Integration Metrics */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Activity className="w-5 h-5 mr-2 text-green-600" />
+                  Cross-Module Integration Analytics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">24</div>
+                      <div className="text-sm text-gray-600">Deal Screening → Workflow</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">18</div>
+                      <div className="text-sm text-gray-600">DD → Approval Routing</div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Portfolio Data Integration</span>
+                        <span>87% success rate</span>
+                      </div>
+                      <Progress value={87} className="h-2" />
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Market Intel Triggers</span>
+                        <span>94% success rate</span>
+                      </div>
+                      <Progress value={94} className="h-2" />
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>LP/GP Portal Notifications</span>
+                        <span>91% delivery rate</span>
+                      </div>
+                      <Progress value={91} className="h-2" />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-3 bg-purple-50 rounded-lg">
+                    <h5 className="font-medium text-purple-800 mb-2">Integration Opportunities</h5>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span>Advanced Analytics → Auto-reporting</span>
+                        <span className="text-purple-600">High impact</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Legal Management → Document workflow</span>
+                        <span className="text-purple-600">Medium impact</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Fund Operations → Expense approval</span>
+                        <span className="text-purple-600">Low impact</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Workflow Execution Timeline */}
           <Card>
             <CardHeader>
-              <CardTitle>Workflow Analytics</CardTitle>
-              <CardDescription>Performance metrics and trends for your automation processes</CardDescription>
+              <CardTitle className="flex items-center">
+                <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
+                Recent Execution Timeline & Performance Trends
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center text-muted-foreground py-8">
-                Analytics dashboard coming soon...
+              <div className="space-y-4">
+                {executions.slice(0, 8).map((execution) => (
+                  <div key={execution.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex flex-col items-center">
+                        <div className={`w-3 h-3 rounded-full ${getStatusColor(execution.status).includes('green') ? 'bg-green-500' : 
+                          getStatusColor(execution.status).includes('blue') ? 'bg-blue-500' : 
+                          getStatusColor(execution.status).includes('yellow') ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          {new Date(execution.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="font-medium">
+                          {'workflowId' in execution ? 'Document Workflow' : 'Approval Process'}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {execution.metadata?.dealName || execution.metadata?.expenseCategory || 'Unknown entity'}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          By {('startedBy' in execution ? execution.startedBy?.name : 
+                               'requestedBy' in execution ? execution.requestedBy?.name : 'Unknown')}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">
+                      <Badge className={getStatusColor(execution.status)}>
+                        {execution.status}
+                      </Badge>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {execution.metadata?.dealValue ? `$${(execution.metadata.dealValue / 1000000).toFixed(0)}M` : 
+                         execution.metadata?.amount ? `$${execution.metadata.amount.toLocaleString()}` : ''}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -604,7 +1186,11 @@ export function WorkflowAutomationDashboard({
                           Potential savings: {rec.potentialSavings} hours/week
                         </p>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleImplementRecommendation(rec.id)}
+                      >
                         Implement
                       </Button>
                     </div>

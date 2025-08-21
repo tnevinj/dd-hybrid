@@ -108,7 +108,7 @@ export function FundOperationsDashboard({
       avgNetIRR,
       avgNetMOIC,
       avgDPI,
-      activeFunds: funds.filter(f => f.status === FundStatus.INVESTING || f.status === FundStatus.HARVESTING).length,
+      activeFunds: funds.filter(f => f.status === 'Investing' || f.status === 'Harvesting').length,
       totalFunds: funds.length
     };
   };
@@ -337,9 +337,11 @@ export function FundOperationsDashboard({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Fund Status</p>
-                  <Badge variant={currentFund.status === FundStatus.INVESTING ? 'default' : 'secondary'}>
-                    {currentFund.status}
-                  </Badge>
+                  <div className="flex items-center space-x-2">
+                    <Badge variant={currentFund.status === 'Investing' ? 'default' : 'secondary'}>
+                      {currentFund.status}
+                    </Badge>
+                  </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600">Vintage {currentFund.vintage}</p>

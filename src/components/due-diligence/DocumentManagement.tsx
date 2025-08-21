@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { 
   FileText,
   Upload,
@@ -30,7 +30,7 @@ interface DocumentManagementProps {
 }
 
 export function DocumentManagement({ projectId }: DocumentManagementProps) {
-  const { currentMode, addRecommendation, addInsight } = useNavigationStore()
+  const { currentMode, addRecommendation, addInsight } = useNavigationStoreRefactored()
   const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('list')
   const [filterCategory, setFilterCategory] = React.useState<string>('all')
   const [sortBy, setSortBy] = React.useState<string>('recent')

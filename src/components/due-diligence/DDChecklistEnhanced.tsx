@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { 
   CheckCircle,
   Circle,
@@ -55,7 +55,7 @@ interface DDChecklistEnhancedProps {
 }
 
 export function DDChecklistEnhanced({ projectId, dealType = 'saas' }: DDChecklistEnhancedProps) {
-  const { currentMode, trackInteraction, addRecommendation } = useNavigationStore()
+  const { currentMode, trackInteraction, addRecommendation } = useNavigationStoreRefactored()
   const [expandedCategories, setExpandedCategories] = React.useState<Set<string>>(new Set(['financial']))
   const [automationRunning, setAutomationRunning] = React.useState(false)
   const [selectedItems, setSelectedItems] = React.useState<Set<string>>(new Set())

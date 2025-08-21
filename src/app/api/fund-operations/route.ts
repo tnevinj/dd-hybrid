@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { 
-  Fund,
-  FundCommitment,
-  FundCapitalCall,
-  FundDistribution,
-  FundExpense,
-  NAVReport,
-  FundUpdate,
+import {
   FundType,
   FundStatus,
   InvestorType,
@@ -18,6 +11,15 @@ import type {
   ExpenseStatus,
   NAVReportType,
   NAVReportStatus
+} from '@/types/fund-operations';
+import type { 
+  Fund,
+  FundCommitment,
+  FundCapitalCall,
+  FundDistribution,
+  FundExpense,
+  NAVReport,
+  FundUpdate
 } from '@/types/fund-operations';
 
 // Mock Fund Data

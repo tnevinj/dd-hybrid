@@ -46,7 +46,7 @@ import {
   Download,
   Share2
 } from 'lucide-react';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { 
@@ -296,7 +296,7 @@ export function ContentAssembler({
   onTemplateChange,
   className = ''
 }: ContentAssemblerProps) {
-  const { currentMode } = useNavigationStore();
+  const { currentMode } = useNavigationStoreRefactored();
   const navigationMode = currentMode?.mode || 'traditional';
   
   // Initialize reducer state

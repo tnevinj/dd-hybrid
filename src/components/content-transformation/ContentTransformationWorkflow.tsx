@@ -10,7 +10,7 @@ import {
   WorkProduct,
   ContentGenerationRequest 
 } from '@/types/work-product';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -50,7 +50,7 @@ export function ContentTransformationWorkflow({
   initialTemplate,
   className = ''
 }: ContentTransformationWorkflowProps) {
-  const { currentMode } = useNavigationStore();
+  const { currentMode } = useNavigationStoreRefactored();
   const navigationMode = currentMode?.mode || 'traditional';
 
   // Workflow state

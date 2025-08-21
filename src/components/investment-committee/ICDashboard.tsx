@@ -35,7 +35,9 @@ import {
   UserCheck,
   Calendar as CalendarIcon,
   Gavel,
-  ClipboardList
+  ClipboardList,
+  Brain,
+  Zap
 } from 'lucide-react';
 import type { 
   InvestmentCommittee,
@@ -221,6 +223,29 @@ export function ICDashboard({
           </div>
         </CardContent>
       </Card>
+      
+      {/* AI-Enhanced Metrics */}
+      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-purple-700">AI Decision Forecast</p>
+              <p className="text-2xl font-bold text-purple-900">
+                {metrics.predictedApprovals} approvals
+              </p>
+            </div>
+            <div className="h-12 w-12 bg-purple-200 rounded-lg flex items-center justify-center">
+              <Brain className="h-6 w-6 text-purple-700" />
+            </div>
+          </div>
+          <div className="mt-4 flex items-center">
+            <Zap className="h-4 w-4 text-purple-600 mr-1" />
+            <span className="text-sm text-purple-700">
+              {metrics.aiConfidence}% confidence • {metrics.consensusLevel}% consensus
+            </span>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 
@@ -382,12 +407,20 @@ export function ICDashboard({
 // Traditional IC Content
 function TraditionalICContent({ proposals, meetings }: { proposals: ICProposal[], meetings: ICMeeting[] }) {
   const upcomingMeetings = meetings
-    .filter(m => m.status === 'SCHEDULED' && m.meetingDate > new Date())
-    .sort((a, b) => a.meetingDate.getTime() - b.meetingDate.getTime())
+    .filter(m => m.status === 'SCHEDULED' && new Date(m.meetingDate) > new Date())
+    .sort((a, b) => {
+      const dateA = new Date(a.meetingDate).getTime();
+      const dateB = new Date(b.meetingDate).getTime();
+      return dateA - dateB;
+    })
     .slice(0, 3);
 
   const recentProposals = proposals
-    .sort((a, b) => b.submittedAt.getTime() - a.submittedAt.getTime())
+    .sort((a, b) => {
+      const dateA = new Date(a.submittedAt).getTime();
+      const dateB = new Date(b.submittedAt).getTime();
+      return dateB - dateA;
+    })
     .slice(0, 5);
 
   return (
@@ -468,42 +501,220 @@ function TraditionalICContent({ proposals, meetings }: { proposals: ICProposal[]
 
 // Assisted IC Content
 function AssistedICContent({ proposals, meetings }: { proposals: ICProposal[], meetings: ICMeeting[] }) {
+  // AI-powered insights and recommendations
+  const aiInsights = React.useMemo(() => {
+    const insights = [];
+    
+    // Risk Analysis Insight
+    const highRiskProposals = proposals.filter(p => Math.random() > 0.7); // Simulate risk scoring
+    if (highRiskProposals.length > 0) {
+      insights.push({
+        id: 'risk-alert',
+        type: 'warning' as const,
+        title: 'High-Risk Proposals Detected',
+        description: `${highRiskProposals.length} proposal(s) show elevated risk scores. AI recommends extended due diligence.`,
+        confidence: 0.87,
+        actionable: true,
+        actions: ['Review Risk Analysis', 'Schedule Deep Dive', 'Consult Risk Committee']
+      });
+    }
+
+    // Meeting Optimization
+    const upcomingMeetings = meetings.filter(m => m.status === 'SCHEDULED' && m.meetingDate > new Date());
+    if (upcomingMeetings.length > 0) {
+      insights.push({
+        id: 'meeting-opt',
+        type: 'optimization' as const,
+        title: 'Meeting Schedule Optimization',
+        description: 'AI suggests combining 2 upcoming meetings to improve member attendance (predicted 89% vs 72%).',
+        confidence: 0.92,
+        actionable: true,
+        actions: ['View Optimization Plan', 'Send Meeting Invite', 'Reschedule Conflicts']
+      });
+    }
+
+    // Proposal Scoring
+    const pendingProposals = proposals.filter(p => p.status === 'SUBMITTED' || p.status === 'UNDER_REVIEW');
+    if (pendingProposals.length > 0) {
+      insights.push({
+        id: 'proposal-scoring',
+        type: 'insight' as const,
+        title: 'AI Proposal Scoring Complete',
+        description: `Analyzed ${pendingProposals.length} proposals. Top candidate: HealthTech Inc (AI Score: 8.7/10, predicted IRR: 28.4%)`,
+        confidence: 0.85,
+        actionable: true,
+        actions: ['View Full Scoring', 'Compare Alternatives', 'Generate Report']
+      });
+    }
+
+    // Voting Pattern Analysis
+    insights.push({
+      id: 'voting-pattern',
+      type: 'insight' as const,
+      title: 'Voting Pattern Analysis',
+      description: 'AI detected consensus trend: 94% alignment on ESG-focused deals vs 67% on traditional investments.',
+      confidence: 0.78,
+      actionable: true,
+      actions: ['View Pattern Analysis', 'Adjust Pipeline Focus', 'Generate Strategy Brief']
+    });
+
+    return insights;
+  }, [proposals, meetings]);
+
+  // Smart meeting preparation
+  const meetingPreparation = React.useMemo(() => {
+    const upcomingMeeting = meetings.find(m => m.status === 'SCHEDULED' && m.meetingDate > new Date());
+    if (!upcomingMeeting) return null;
+
+    return {
+      meetingId: upcomingMeeting.id,
+      date: upcomingMeeting.meetingDate,
+      preparationScore: 85, // AI-calculated readiness score
+      missingItems: ['Member conflict disclosures', 'Updated market analysis'],
+      recommendations: [
+        'Send preparation materials 48h before meeting',
+        'Pre-brief members on complex proposals',
+        'Schedule 15min buffer between agenda items'
+      ]
+    };
+  }, [meetings]);
+
   return (
     <div className="space-y-6">
+      {/* AI Insights Panel */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Target className="h-5 w-5 mr-2" />
-            AI Recommendations
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Target className="h-5 w-5 mr-2 text-blue-600" />
+              AI-Powered Insights
+            </div>
+            <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+              {aiInsights.length} Active
+            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="p-4 border rounded-lg border-amber-200 bg-amber-50">
-              <h3 className="font-semibold text-amber-800 flex items-center">
-                <AlertTriangle className="h-4 w-4 mr-2" />
-                High-Risk Proposal Alert
-              </h3>
-              <p className="text-sm text-amber-700 mt-1">
-                TechCorp proposal shows elevated market risk (score: 8.2/10). Consider extended due diligence.
-              </p>
-              <div className="flex gap-2 mt-3">
-                <Button size="sm" className="bg-amber-600 hover:bg-amber-700">Review Analysis</Button>
-                <Button size="sm" variant="outline">Schedule DD</Button>
+            {aiInsights.map(insight => (
+              <div 
+                key={insight.id}
+                className={`p-4 border rounded-lg ${
+                  insight.type === 'warning' ? 'border-amber-200 bg-amber-50' :
+                  insight.type === 'optimization' ? 'border-blue-200 bg-blue-50' :
+                  'border-green-200 bg-green-50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className={`font-semibold flex items-center ${
+                      insight.type === 'warning' ? 'text-amber-800' :
+                      insight.type === 'optimization' ? 'text-blue-800' :
+                      'text-green-800'
+                    }`}>
+                      {insight.type === 'warning' && <AlertTriangle className="h-4 w-4 mr-2" />}
+                      {insight.type === 'optimization' && <Target className="h-4 w-4 mr-2" />}
+                      {insight.type === 'insight' && <CheckCircle className="h-4 w-4 mr-2" />}
+                      {insight.title}
+                    </h3>
+                    <p className={`text-sm mt-1 ${
+                      insight.type === 'warning' ? 'text-amber-700' :
+                      insight.type === 'optimization' ? 'text-blue-700' :
+                      'text-green-700'
+                    }`}>
+                      {insight.description}
+                    </p>
+                    <div className="flex items-center mt-2">
+                      <span className="text-xs text-gray-500">
+                        Confidence: {Math.round(insight.confidence * 100)}%
+                      </span>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="ghost" className="ml-2">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </div>
+                {insight.actionable && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {insight.actions.map((action, idx) => (
+                      <Button key={idx} size="sm" variant="outline" className="text-xs">
+                        {action}
+                      </Button>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-            
-            <div className="p-4 border rounded-lg border-blue-200 bg-blue-50">
-              <h3 className="font-semibold text-blue-800">Meeting Efficiency Insight</h3>
-              <p className="text-sm text-blue-700 mt-1">
-                Average meeting duration increased 15% this quarter. AI suggests agenda optimization.
-              </p>
-              <Button size="sm" className="mt-3 bg-blue-600 hover:bg-blue-700">View Suggestions</Button>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
+      {/* Smart Meeting Preparation */}
+      {meetingPreparation && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Calendar className="h-5 w-5 mr-2 text-indigo-600" />
+              Smart Meeting Preparation
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p className="font-medium">Next Meeting Readiness</p>
+                  <p className="text-sm text-gray-600">
+                    {formatDate(meetingPreparation.date)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center">
+                    <Progress value={meetingPreparation.preparationScore} className="w-16 mr-2" />
+                    <span className="font-bold text-lg">{meetingPreparation.preparationScore}%</span>
+                  </div>
+                  <p className="text-xs text-gray-500">Ready</p>
+                </div>
+              </div>
+
+              {meetingPreparation.missingItems.length > 0 && (
+                <div className="space-y-2">
+                  <p className="font-medium text-sm">Missing Items:</p>
+                  {meetingPreparation.missingItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center text-sm text-amber-700 bg-amber-50 p-2 rounded">
+                      <Clock className="h-4 w-4 mr-2" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <p className="font-medium text-sm">AI Recommendations:</p>
+                {meetingPreparation.recommendations.map((rec, idx) => (
+                  <div key={idx} className="flex items-center text-sm text-blue-700 bg-blue-50 p-2 rounded">
+                    <Target className="h-4 w-4 mr-2" />
+                    {rec}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button size="sm" variant="default">
+                  Complete Preparation
+                </Button>
+                <Button size="sm" variant="outline">
+                  Send Reminders
+                </Button>
+                <Button size="sm" variant="outline">
+                  View Full Agenda
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Traditional Content with AI Enhancements */}
       <TraditionalICContent proposals={proposals} meetings={meetings} />
     </div>
   );
@@ -511,42 +722,297 @@ function AssistedICContent({ proposals, meetings }: { proposals: ICProposal[], m
 
 // Autonomous IC Content
 function AutonomousICContent({ proposals, meetings }: { proposals: ICProposal[], meetings: ICMeeting[] }) {
+  // Autonomous processing state
+  const [autonomousActions, setAutonomousActions] = React.useState([
+    {
+      id: 'auto-1',
+      type: 'approval' as const,
+      title: 'Auto-Approved: FinServ Follow-On',
+      description: 'Follow-on investment in FinServ Corp automatically approved. Meets all criteria: <$5M, existing portfolio, strong performance metrics.',
+      status: 'completed' as const,
+      timestamp: new Date(Date.now() - 3600000), // 1 hour ago
+      confidence: 0.98,
+      rollbackable: true
+    },
+    {
+      id: 'auto-2',
+      type: 'scheduling' as const,
+      title: 'Meeting Auto-Scheduled',
+      description: 'Emergency IC meeting scheduled for tomorrow 2PM to address 3 time-sensitive proposals. All members notified.',
+      status: 'in_progress' as const,
+      timestamp: new Date(Date.now() - 1800000), // 30 min ago
+      confidence: 0.95,
+      rollbackable: true
+    },
+    {
+      id: 'auto-3',
+      type: 'analysis' as const,
+      title: 'Risk Analysis Complete',
+      description: 'Completed automated risk assessment for 5 pending proposals. 2 flagged for human review, 3 cleared for fast-track.',
+      status: 'completed' as const,
+      timestamp: new Date(Date.now() - 900000), // 15 min ago
+      confidence: 0.89,
+      rollbackable: false
+    }
+  ]);
+
+  // Pending autonomous actions awaiting approval
+  const [pendingActions, setPendingActions] = React.useState([
+    {
+      id: 'pending-1',
+      type: 'voting' as const,
+      title: 'Auto-Vote Recommendation',
+      description: 'AI recommends "APPROVE" vote for HealthTech proposal based on portfolio fit analysis (94% match). Execute autonomous vote?',
+      estimatedImpact: 'Medium - follows established investment criteria',
+      riskLevel: 'Low' as const,
+      requiresApproval: true
+    },
+    {
+      id: 'pending-2',
+      type: 'workflow' as const,
+      title: 'Process Optimization',
+      description: 'Detected inefficiency in proposal review workflow. AI can restructure to reduce average review time by 40%.',
+      estimatedImpact: 'High - affects all future proposals',
+      riskLevel: 'Medium' as const,
+      requiresApproval: true
+    }
+  ]);
+
+  // AI-powered decision predictions
+  const decisionPredictions = React.useMemo(() => {
+    return proposals.map(proposal => ({
+      proposalId: proposal.id,
+      proposalName: proposal.company || `Proposal ${proposal.id.slice(-3)}`,
+      predictedOutcome: Math.random() > 0.5 ? 'APPROVE' : 'REJECT',
+      confidence: Math.round((0.7 + Math.random() * 0.3) * 100), // 70-100%
+      memberVotes: {
+        likely_approve: Math.floor(Math.random() * 5) + 1,
+        likely_reject: Math.floor(Math.random() * 3),
+        uncertain: Math.floor(Math.random() * 2)
+      },
+      keyFactors: ['Financial metrics', 'Market timing', 'Portfolio fit', 'ESG alignment'],
+      aiRecommendation: Math.random() > 0.6 ? 'STRONG_APPROVE' : Math.random() > 0.3 ? 'APPROVE' : 'REVIEW_NEEDED'
+    })).slice(0, 4); // Show top 4
+  }, [proposals]);
+
+  const executeAutonomousAction = (actionId: string) => {
+    setPendingActions(prev => prev.filter(a => a.id !== actionId));
+    alert(`Executing Investment Committee Autonomous Action ${actionId}:\n\n• AI-powered decision validation and risk assessment\n• Automated investment analysis with ML modeling\n• Cross-module data integration and impact analysis\n• Real-time market sentiment and competitive intelligence\n• Intelligent workflow routing and stakeholder notifications\n• Automated compliance checks and regulatory verification\n• Predictive outcome modeling with scenario analysis`);
+  };
+
+  const rollbackAction = (actionId: string) => {
+    setAutonomousActions(prev => 
+      prev.map(action => 
+        action.id === actionId 
+          ? { ...action, status: 'rolled_back' as const }
+          : action
+      )
+    );
+  };
+
   return (
     <div className="space-y-6">
+      {/* Autonomous Actions Dashboard */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Gavel className="h-5 w-5 mr-2" />
-            Decision Queue
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Zap className="h-5 w-5 mr-2 text-purple-600" />
+              Autonomous Operations Center
+            </div>
+            <Badge variant="outline" className="border-purple-200 text-purple-700 bg-purple-50">
+              {autonomousActions.filter(a => a.status === 'in_progress').length} Active
+            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="p-4 border rounded-lg border-red-200 bg-red-50">
-              <h3 className="font-semibold text-red-800 flex items-center">
-                <Clock className="h-4 w-4 mr-2" />
-                Urgent: Voting Deadline Tomorrow
-              </h3>
-              <p className="text-sm text-red-700 mt-1">
-                GreenTech proposal (IC-2024-008) requires decision by EOD. 3 votes pending.
-              </p>
-              <div className="flex gap-2 mt-3">
-                <Button size="sm" className="bg-red-600 hover:bg-red-700">Send Reminders</Button>
-                <Button size="sm" variant="outline">Extend Deadline</Button>
+            {autonomousActions.map(action => (
+              <div 
+                key={action.id}
+                className={`p-4 border rounded-lg ${
+                  action.status === 'completed' ? 'border-green-200 bg-green-50' :
+                  action.status === 'in_progress' ? 'border-blue-200 bg-blue-50' :
+                  'border-gray-200 bg-gray-50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center mb-2">
+                      {action.status === 'completed' && <CheckCircle className="h-4 w-4 text-green-600 mr-2" />}
+                      {action.status === 'in_progress' && <Clock className="h-4 w-4 text-blue-600 mr-2" />}
+                      <h3 className="font-semibold">{action.title}</h3>
+                      <Badge 
+                        size="sm" 
+                        className={`ml-2 ${
+                          action.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          action.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {action.status}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-700 mb-2">{action.description}</p>
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <span>Confidence: {Math.round(action.confidence * 100)}%</span>
+                      <span>•</span>
+                      <span>{formatDate(action.timestamp)}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 ml-4">
+                    <Button size="sm" variant="ghost">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    {action.rollbackable && action.status === 'completed' && (
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="text-red-600 border-red-200"
+                        onClick={() => rollbackAction(action.id)}
+                      >
+                        Rollback
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            <div className="p-4 border rounded-lg border-green-200 bg-green-50">
-              <h3 className="font-semibold text-green-800">Auto-Approved: Compliance Cleared</h3>
-              <p className="text-sm text-green-700 mt-1">
-                FinServ follow-on investment automatically approved - meets all predefined criteria.
-              </p>
-              <Button size="sm" className="mt-3 bg-green-600 hover:bg-green-700">View Details</Button>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
+      {/* Pending Autonomous Actions */}
+      {pendingActions.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Gavel className="h-5 w-5 mr-2 text-amber-600" />
+              Pending Autonomous Actions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {pendingActions.map(action => (
+                <div key={action.id} className="p-4 border border-amber-200 bg-amber-50 rounded-lg">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-amber-800 flex items-center">
+                        <AlertTriangle className="h-4 w-4 mr-2" />
+                        {action.title}
+                      </h3>
+                      <p className="text-sm text-amber-700 mt-1">{action.description}</p>
+                    </div>
+                    <Badge 
+                      className={`${
+                        action.riskLevel === 'Low' ? 'bg-green-100 text-green-800' :
+                        action.riskLevel === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {action.riskLevel} Risk
+                    </Badge>
+                  </div>
+                  <div className="text-sm text-amber-600 mb-3">
+                    <strong>Impact:</strong> {action.estimatedImpact}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      className="bg-amber-600 hover:bg-amber-700"
+                      onClick={() => executeAutonomousAction(action.id)}
+                    >
+                      Execute
+                    </Button>
+                    <Button size="sm" variant="outline">
+                      Review Details
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      className="text-red-600"
+                      onClick={() => setPendingActions(prev => prev.filter(a => a.id !== action.id))}
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* AI Decision Predictions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Brain className="h-5 w-5 mr-2 text-indigo-600" />
+            AI Decision Predictions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {decisionPredictions.map(prediction => (
+              <div key={prediction.proposalId} className="p-4 border rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">{prediction.proposalName}</h4>
+                  <div className="flex items-center gap-2">
+                    <Badge 
+                      className={`${
+                        prediction.predictedOutcome === 'APPROVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {prediction.predictedOutcome}
+                    </Badge>
+                    <span className="text-sm text-gray-500">{prediction.confidence}% confident</span>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4 mb-3 text-sm">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-green-600">{prediction.memberVotes.likely_approve}</div>
+                    <div className="text-xs text-gray-500">Likely Approve</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-red-600">{prediction.memberVotes.likely_reject}</div>
+                    <div className="text-xs text-gray-500">Likely Reject</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gray-600">{prediction.memberVotes.uncertain}</div>
+                    <div className="text-xs text-gray-500">Uncertain</div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {prediction.keyFactors.map(factor => (
+                    <Badge key={factor} variant="outline" className="text-xs">
+                      {factor}
+                    </Badge>
+                  ))}
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <Badge 
+                    className={`${
+                      prediction.aiRecommendation === 'STRONG_APPROVE' ? 'bg-green-100 text-green-800' :
+                      prediction.aiRecommendation === 'APPROVE' ? 'bg-blue-100 text-blue-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}
+                  >
+                    AI: {prediction.aiRecommendation.replace('_', ' ')}
+                  </Badge>
+                  <Button size="sm" variant="outline">
+                    View Analysis
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Enhanced Assisted Content */}
       <AssistedICContent proposals={proposals} meetings={meetings} />
     </div>
   );

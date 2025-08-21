@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { WorkspaceType, WorkspaceQuickCreateOption, WorkspaceCreateRequest } from '@/types/workspace';
 import { Plus, Clock, Users, Target, Search, Wand2 } from 'lucide-react';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 
 interface WorkspaceQuickCreateProps {
   onCreateWorkspace: (request: WorkspaceCreateRequest) => void;
@@ -53,7 +53,7 @@ const quickCreateOptions: WorkspaceQuickCreateOption[] = [
 ];
 
 export function WorkspaceQuickCreate({ onCreateWorkspace, onCancel }: WorkspaceQuickCreateProps) {
-  const { navigationMode } = useNavigationStore();
+  const { navigationMode } = useNavigationStoreRefactored();
   const [selectedOption, setSelectedOption] = useState<WorkspaceQuickCreateOption | null>(null);
   const [dealName, setDealName] = useState('');
   const [title, setTitle] = useState('');

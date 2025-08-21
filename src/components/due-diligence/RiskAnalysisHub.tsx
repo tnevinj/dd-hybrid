@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { useDueDiligence } from '@/contexts/DueDiligenceContext'
 import { RiskHeatMap } from './RiskHeatMap'
 import { RiskScoring } from './RiskScoring'
@@ -29,7 +29,7 @@ interface RiskAnalysisHubProps {
 }
 
 export function RiskAnalysisHub({ projectId }: RiskAnalysisHubProps) {
-  const { currentMode, addRecommendation, addInsight } = useNavigationStore()
+  const { currentMode, addRecommendation, addInsight } = useNavigationStoreRefactored()
   const { addRisk, updateRisk } = useDueDiligence()
 
   // Sample risk data - replace with real API calls

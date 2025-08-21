@@ -2,11 +2,11 @@
 
 import React from 'react'
 import { useParams } from 'next/navigation'
-import { HybridPortfolio } from '@/components/portfolio/HybridPortfolio'
+import { HybridPortfolioRefactored } from '@/components/portfolio/HybridPortfolioRefactored'
 
 export default function PortfolioPage() {
   const params = useParams()
   const portfolioId = params.id as string
 
-  return <HybridPortfolio portfolioId={portfolioId} />
+  return <HybridPortfolioRefactored />
 }

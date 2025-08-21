@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { ThandoContext, ConversationMessage, ClaudeRequest, ClaudeResponse, AIAction } from '@/types/thando-context';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
 
 interface Message {
@@ -187,7 +187,7 @@ export function useAutonomousChat(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messageIdCounter = useRef(0);
-  const { currentMode } = useNavigationStore();
+  const { currentMode } = useNavigationStoreRefactored();
 
   const generateMessageId = () => {
     messageIdCounter.current += 1;

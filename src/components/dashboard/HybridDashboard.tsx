@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
+import { useAIStore } from '@/stores/ai-store'
 import { UserNavigationMode } from '@/types/navigation'
 import {
   BarChart3,
@@ -26,6 +27,7 @@ import {
 import { DashboardTraditional } from './DashboardTraditional'
 import { DashboardAssisted } from './DashboardAssisted'
 import { DashboardAutonomous } from './DashboardAutonomous'
+import { CrossModuleDashboard } from '@/components/analytics/CrossModuleDashboard'
 import { ModeNotification } from '@/components/ui/mode-notification'
 import { 
   ErrorBoundary, 
@@ -82,7 +84,8 @@ interface DashboardAIState {
 
 export const HybridDashboard: React.FC = () => {
   const router = useRouter()
-  const { currentMode, setMode, setCurrentModule, addRecommendation } = useNavigationStore()
+  const { currentMode, setMode, setCurrentModule } = useNavigationStoreRefactored()
+  const { addRecommendation } = useAIStore()
   
   // Set current module for navigation store
   React.useEffect(() => {
@@ -264,25 +267,25 @@ export const HybridDashboard: React.FC = () => {
 
   // Handle dashboard actions
   const handleCreateWorkspace = () => {
-    console.log('Creating new workspace')
+    alert('Hybrid Workspace Creation would launch:\n\n• AI-powered project type detection and setup\n• Automated team assignment with expertise matching\n• Cross-module integration setup (DD, Deal Screening, Portfolio)\n• Smart template selection based on fund strategy\n• Intelligent resource allocation and timeline planning\n• Real-time collaboration framework initialization\n• Predictive milestone and deliverable scheduling')
     router.push('/workspaces/new')
   }
 
   const handleViewWorkspace = (id: string) => {
-    console.log(`Viewing workspace: ${id}`)
+    alert(`Opening Hybrid Workspace ${id}:\n\n• Unified view of all project activities and progress\n• AI-powered task prioritization and resource optimization\n• Real-time cross-module data synchronization\n• Intelligent workflow automation and routing\n• Advanced analytics with predictive insights\n• Collaborative tools with smart notifications\n• Integration with all fund management modules`)
     router.push(`/workspaces/${id}`)
   }
 
   const handleCreateDeal = () => {
-    console.log('Creating new deal')
+    alert('AI-Enhanced Deal Creation would initiate:\n\n• Intelligent opportunity classification and sourcing\n• Automated market research and competitive analysis\n• ML-powered initial valuation and risk assessment\n• Cross-module workflow setup (Screening → DD → Portfolio)\n• Smart document generation and template selection\n• Automated stakeholder notification and team assignment\n• Integration with Market Intelligence and sector analysis')
   }
 
   const handleViewDeal = (id: string) => {
-    console.log(`Viewing deal: ${id}`)
+    alert(`Comprehensive Deal Analysis Dashboard for Deal ${id}:\n\n• 360-degree view with cross-module data integration\n• Real-time deal progression tracking and milestone management\n• AI-powered risk assessment with predictive modeling\n• Automated benchmark analysis and valuation updates\n• Smart workflow orchestration across all modules\n• Intelligent document management and version control\n• Advanced analytics with performance predictions`)
   }
 
   const handleExecuteAIAction = (actionId: string) => {
-    console.log(`Executing Dashboard AI action: ${actionId}`)
+    alert(`Executing AI Action ${actionId}:\n\n• Intelligent action validation and risk assessment\n• Automated workflow orchestration and task routing\n• Cross-module impact analysis and dependency management\n• Smart resource allocation and timeline optimization\n• Real-time progress monitoring and adjustment\n• Automated stakeholder communication and updates\n• Integration with compliance and audit systems`)
     
     // Add to automated actions
     setAIState(prev => ({
@@ -299,7 +302,7 @@ export const HybridDashboard: React.FC = () => {
   }
 
   const handleApproveAction = (approvalId: string) => {
-    console.log(`Approving Dashboard action: ${approvalId}`)
+    alert(`Approving AI Action ${approvalId}:\n\n• Action validated and authorized for execution\n• Automated workflow orchestration initiated\n• Cross-module dependencies resolved and updated\n• Real-time monitoring and progress tracking enabled\n• Stakeholder notifications sent automatically\n• Audit trail and compliance records updated\n• System-wide impact analysis completed`)
     setAIState(prev => ({
       ...prev,
       pendingApprovals: prev.pendingApprovals.filter(p => p.id !== approvalId)
@@ -307,7 +310,7 @@ export const HybridDashboard: React.FC = () => {
   }
 
   const handleRejectAction = (approvalId: string) => {
-    console.log(`Rejecting Dashboard action: ${approvalId}`)
+    alert(`Rejecting AI Action ${approvalId}:\n\n• Action rejected and workflow terminated\n• Alternative recommendations generated automatically\n• Risk assessment updated with rejection rationale\n• Team notifications sent with next steps\n• Learning system updated to improve future suggestions\n• Compliance documentation generated\n• Escalation procedures initiated if required`)
     setAIState(prev => ({
       ...prev,
       pendingApprovals: prev.pendingApprovals.filter(p => p.id !== approvalId)

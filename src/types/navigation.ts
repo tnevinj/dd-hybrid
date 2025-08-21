@@ -109,7 +109,75 @@ export interface AIInsight {
   actions?: RecommendedAction[];
 }
 
-export interface NavigationState {
+// Autonomous mode specific types
+export interface Project {
+  id: string;
+  name: string;
+  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis';
+  status: 'active' | 'completed' | 'draft' | 'review';
+  lastActivity: Date;
+  priority: 'high' | 'medium' | 'low';
+  unreadMessages?: number;
+  metadata?: {
+    value?: string;
+    progress?: number;
+    team?: string[];
+    sector?: string;
+    stage?: string;
+    geography?: string;
+    riskRating?: string;
+    dealValueCents?: number;
+    currentValue?: number;
+    targetValue?: number;
+    deadline?: string;
+    createdAt?: string;
+    workProducts?: number;
+    risks?: string[];
+    irr?: number;
+    moic?: number;
+    expectedIRR?: number;
+    targetMultiple?: number;
+    assetType?: string;
+    esgScore?: number;
+    totalReturn?: number;
+    dbMetadata?: any;
+  };
+}
+
+export interface ChatSession {
+  id: string;
+  projectId: string;
+  messages: Array<{
+    id: string;
+    content: string;
+    role: 'user' | 'assistant';
+    timestamp: Date;
+    actions?: any[];
+  }>;
+  lastActivity: Date;
+}
+
+export interface AutonomousState {
+  // Project management
+  projects: Record<string, Project[]>;
+  selectedProject: Project | null;
+  activeProjectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' | 'deal-structuring';
+  
+  // Chat sessions
+  chatSessions: Record<string, ChatSession>;
+  activeChatSession: string | null;
+  
+  // UI state
+  sidebarCollapsed: boolean;
+  contextPanelCollapsed: boolean;
+  
+  // Settings
+  autoExecuteActions: boolean;
+  notificationsEnabled: boolean;
+  preferredResponseLength: 'short' | 'medium' | 'detailed';
+}
+
+export interface NavigationState extends AutonomousState {
   currentMode: UserNavigationMode;
   currentModule: string;
   navigationItems: NavigationItem[];

@@ -1,19 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { AdvancedAnalyticsDashboard } from '@/components/advanced-analytics/AdvancedAnalyticsDashboard';
+import React from 'react';
+import { HybridAdvancedAnalyticsRefactored } from '@/components/advanced-analytics/HybridAdvancedAnalyticsRefactored';
 
 export default function AdvancedAnalyticsPage() {
-  const [navigationMode, setNavigationMode] = useState<'traditional' | 'assisted' | 'autonomous'>('traditional');
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <AdvancedAnalyticsDashboard 
-          navigationMode={navigationMode}
-          onModeChange={setNavigationMode}
-        />
-      </div>
-    </div>
-  );
+  return <HybridAdvancedAnalyticsRefactored />;
 }

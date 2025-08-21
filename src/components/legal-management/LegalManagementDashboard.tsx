@@ -10,8 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Calendar, AlertTriangle, CheckCircle, Clock, FileText, Users, Shield, 
-         TrendingUp, Search, Filter, Plus, Eye, Edit, Download, Share2,
-         AlertCircle, BookOpen, Gavel, Scale } from 'lucide-react';
+         TrendingUp, TrendingDown, Search, Filter, Plus, Eye, Edit, Download, Share2,
+         AlertCircle, BookOpen, Gavel, Scale, BarChart3 } from 'lucide-react';
 
 import {
   NavigationMode,
@@ -528,6 +528,554 @@ export function LegalManagementDashboard({ navigationMode, onModeChange }: Legal
     </Card>
   );
 
+  const renderWorkflowManagement = () => (
+    <div className="space-y-6">
+      {/* Workflow Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Active Workflows</p>
+                <p className="text-2xl font-bold">{data?.stats.activeWorkflows || 0}</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Overdue Tasks</p>
+                <p className="text-2xl font-bold text-red-600">3</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-red-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Avg. Processing Time</p>
+                <p className="text-2xl font-bold">5.2 days</p>
+              </div>
+              <Clock className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Detailed Workflow Management */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Contract Review Pipeline
+              </div>
+              <Badge variant="secondary">12 Active</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                { name: 'TechCorp Investment Agreement', stage: 'Legal Review', progress: 75, assignee: 'Sarah Johnson', dueDate: '2024-04-15', priority: 'HIGH' },
+                { name: 'Fund IV Partnership Agreement', stage: 'Negotiation', progress: 45, assignee: 'Mike Chen', dueDate: '2024-04-20', priority: 'CRITICAL' },
+                { name: 'LP Side Letter - Pension Fund', stage: 'Draft Review', progress: 90, assignee: 'Lisa Wong', dueDate: '2024-04-12', priority: 'MEDIUM' },
+                { name: 'Management Services Agreement', stage: 'Final Approval', progress: 95, assignee: 'David Kim', dueDate: '2024-04-10', priority: 'LOW' }
+              ].map((workflow, index) => (
+                <div key={index} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-sm">{workflow.name}</h4>
+                    <Badge variant={getPriorityColor(workflow.priority as Priority)}>
+                      {workflow.priority}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Stage: {workflow.stage} • Assigned to: {workflow.assignee}
+                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm">Progress</span>
+                    <span className="text-sm font-medium">{workflow.progress}%</span>
+                  </div>
+                  <Progress value={workflow.progress} className="mb-2" />
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Due: {formatDate(workflow.dueDate)}</span>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="sm">
+                        <Eye className="h-3 w-3" />
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Gavel className="h-5 w-5" />
+              Workflow Templates
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { name: 'Investment Agreement Review', usage: 45, avgTime: '7 days', efficiency: 92 },
+                { name: 'Side Letter Negotiation', usage: 32, avgTime: '4 days', efficiency: 88 },
+                { name: 'Regulatory Filing', usage: 28, avgTime: '3 days', efficiency: 95 },
+                { name: 'Contract Amendment', usage: 15, avgTime: '2 days', efficiency: 97 },
+                { name: 'Compliance Review', usage: 22, avgTime: '5 days', efficiency: 85 }
+              ].map((template, index) => (
+                <div key={index} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{template.name}</h4>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>Used {template.usage} times</span>
+                      <span>Avg: {template.avgTime}</span>
+                      <span className="text-green-600">Efficiency: {template.efficiency}%</span>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Advanced Workflow Analytics */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Workflow Performance Analytics
+            {navigationMode === 'autonomous' && (
+              <Badge variant="outline">AI-Optimized</Badge>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <h4 className="font-semibold text-blue-900">Bottleneck Analysis</h4>
+              <p className="text-sm text-blue-700 mt-1">
+                Legal review stage averages 3.2 days longer than target. Consider parallel review process.
+              </p>
+            </div>
+            <div className="p-4 bg-green-50 rounded-lg">
+              <h4 className="font-semibold text-green-900">Efficiency Gains</h4>
+              <p className="text-sm text-green-700 mt-1">
+                Template standardization reduced processing time by 35% this quarter.
+              </p>
+            </div>
+            <div className="p-4 bg-orange-50 rounded-lg">
+              <h4 className="font-semibold text-orange-900">Resource Utilization</h4>
+              <p className="text-sm text-orange-700 mt-1">
+                Sarah Johnson is at 95% capacity. Consider workload redistribution.
+              </p>
+            </div>
+            <div className="p-4 bg-purple-50 rounded-lg">
+              <h4 className="font-semibold text-purple-900">Predictive Insights</h4>
+              <p className="text-sm text-purple-700 mt-1">
+                Q2 workload expected to increase 25%. Plan resource allocation accordingly.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const renderComplianceFramework = () => (
+    <div className="space-y-6">
+      {/* Compliance Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Compliance Score</p>
+                <p className="text-2xl font-bold text-green-600">94%</p>
+              </div>
+              <Shield className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Active Frameworks</p>
+                <p className="text-2xl font-bold">8</p>
+              </div>
+              <BookOpen className="h-8 w-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Risk Assessments</p>
+                <p className="text-2xl font-bold">23</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-orange-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Upcoming Audits</p>
+                <p className="text-2xl font-bold">2</p>
+              </div>
+              <Calendar className="h-8 w-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Regulatory Frameworks */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Regulatory Frameworks
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                { name: 'AIFMD (Alternative Investment Fund Managers)', jurisdiction: 'EU', compliance: 98, lastReview: '2024-03-15', nextAudit: '2024-09-15', status: 'COMPLIANT' },
+                { name: 'SEC Investment Advisers Act', jurisdiction: 'US', compliance: 95, lastReview: '2024-03-01', nextAudit: '2024-08-01', status: 'COMPLIANT' },
+                { name: 'FCA COLL Sourcebook', jurisdiction: 'UK', compliance: 92, lastReview: '2024-02-28', nextAudit: '2024-07-28', status: 'MINOR_ISSUES' },
+                { name: 'GDPR Data Protection', jurisdiction: 'EU', compliance: 97, lastReview: '2024-03-10', nextAudit: '2024-06-10', status: 'COMPLIANT' }
+              ].map((framework, index) => (
+                <div key={index} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-sm">{framework.name}</h4>
+                    <Badge variant={framework.status === 'COMPLIANT' ? 'default' : 'destructive'}>
+                      {framework.status.replace('_', ' ')}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Jurisdiction: {framework.jurisdiction}
+                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm">Compliance Level</span>
+                    <span className="text-sm font-medium text-green-600">{framework.compliance}%</span>
+                  </div>
+                  <Progress value={framework.compliance} className="mb-2" />
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Last Review: {formatDate(framework.lastReview)}</span>
+                    <span>Next Audit: {formatDate(framework.nextAudit)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5" />
+              Risk Assessment Matrix
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                { category: 'Regulatory Risk', level: 'LOW', probability: 15, impact: 'MEDIUM', mitigation: 'Active monitoring program', owner: 'Legal Team' },
+                { category: 'Operational Risk', level: 'MEDIUM', probability: 35, impact: 'HIGH', mitigation: 'Process automation', owner: 'Operations' },
+                { category: 'Reputational Risk', level: 'LOW', probability: 20, impact: 'HIGH', mitigation: 'PR response plan', owner: 'Communications' },
+                { category: 'Financial Risk', level: 'HIGH', probability: 45, impact: 'CRITICAL', mitigation: 'Enhanced controls', owner: 'Finance' },
+                { category: 'Cyber Security Risk', level: 'MEDIUM', probability: 30, impact: 'HIGH', mitigation: 'Security protocols', owner: 'IT Security' }
+              ].map((risk, index) => (
+                <div key={index} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-sm">{risk.category}</h4>
+                    <Badge variant={risk.level === 'LOW' ? 'secondary' : risk.level === 'MEDIUM' ? 'default' : 'destructive'}>
+                      {risk.level}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground mb-2">
+                    <div>
+                      <span className="font-medium">Probability:</span> {risk.probability}%
+                    </div>
+                    <div>
+                      <span className="font-medium">Impact:</span> {risk.impact}
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    <span className="font-medium">Mitigation:</span> {risk.mitigation}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-medium">Owner:</span> {risk.owner}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Compliance Intelligence */}
+      {navigationMode !== 'traditional' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              AI-Powered Compliance Intelligence
+              <Badge variant="outline">Smart Monitoring</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-900 flex items-center">
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Regulatory Changes
+                </h4>
+                <p className="text-sm text-blue-700 mt-1">
+                  EU AIFMD amendments effective Q3 2024. Impact assessment completed - minor adjustments required.
+                </p>
+              </div>
+              <div className="p-4 bg-amber-50 rounded-lg">
+                <h4 className="font-semibold text-amber-900 flex items-center">
+                  <Clock className="h-4 w-4 mr-2" />
+                  Deadline Monitoring
+                </h4>
+                <p className="text-sm text-amber-700 mt-1">
+                  Form ADV filing due in 15 days. Auto-generated draft ready for review.
+                </p>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-900 flex items-center">
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  Best Practices
+                </h4>
+                <p className="text-sm text-green-700 mt-1">
+                  Peer analysis shows opportunity to improve ESG disclosures. Template created for standardization.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+
+  const renderLegalReports = () => (
+    <div className="space-y-6">
+      {/* Report Generation Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Reports Generated</p>
+                <p className="text-2xl font-bold">47</p>
+              </div>
+              <FileText className="h-8 w-8 text-blue-600" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">This month</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Avg. Generation Time</p>
+                <p className="text-2xl font-bold">2.1 hrs</p>
+              </div>
+              <Clock className="h-8 w-8 text-green-600" />
+            </div>
+            <p className="text-xs text-green-600 mt-2">↓ 35% from last month</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Automated Reports</p>
+                <p className="text-2xl font-bold">78%</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-purple-600" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">Of total reports</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Pending Reviews</p>
+                <p className="text-2xl font-bold">5</p>
+              </div>
+              <Eye className="h-8 w-8 text-orange-600" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">Awaiting approval</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Report Categories */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Standard Reports
+              </div>
+              <Button size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Generate Report
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { name: 'Quarterly Compliance Report', frequency: 'Quarterly', lastGenerated: '2024-03-31', nextDue: '2024-06-30', status: 'CURRENT' },
+                { name: 'Annual Regulatory Filing Summary', frequency: 'Annual', lastGenerated: '2023-12-31', nextDue: '2024-12-31', status: 'CURRENT' },
+                { name: 'Risk Assessment Summary', frequency: 'Monthly', lastGenerated: '2024-03-28', nextDue: '2024-04-30', status: 'DUE_SOON' },
+                { name: 'Contract Lifecycle Report', frequency: 'Quarterly', lastGenerated: '2024-02-29', nextDue: '2024-05-31', status: 'OVERDUE' },
+                { name: 'Legal Spend Analysis', frequency: 'Monthly', lastGenerated: '2024-03-25', nextDue: '2024-04-25', status: 'CURRENT' }
+              ].map((report, index) => (
+                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{report.name}</h4>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>{report.frequency}</span>
+                      <span>Last: {formatDate(report.lastGenerated)}</span>
+                      <span>Next: {formatDate(report.nextDue)}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={
+                      report.status === 'CURRENT' ? 'default' :
+                      report.status === 'DUE_SOON' ? 'secondary' :
+                      'destructive'
+                    }>
+                      {report.status.replace('_', ' ')}
+                    </Badge>
+                    <Button variant="ghost" size="sm">
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Legal Analytics & Insights
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                { title: 'Contract Negotiation Cycle Time', metric: '14.2 days', trend: -8, insight: 'Improved by template standardization' },
+                { title: 'Legal Review Efficiency', metric: '92%', trend: 5, insight: 'Automated initial screening implemented' },
+                { title: 'Compliance Adherence Rate', metric: '97.8%', trend: 2, insight: 'Consistent across all frameworks' },
+                { title: 'External Legal Spend', metric: '$2.4M', trend: -12, insight: 'Reduced through in-house capabilities' },
+                { title: 'Risk Mitigation Success', metric: '89%', trend: 7, insight: 'Proactive risk management effective' }
+              ].map((analytic, index) => (
+                <div key={index} className="p-3 border rounded-lg">
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="font-medium text-sm">{analytic.title}</h4>
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg font-bold">{analytic.metric}</span>
+                      {analytic.trend > 0 ? (
+                        <TrendingUp className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4 text-red-600" />
+                      )}
+                      <span className={`text-xs ${analytic.trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {Math.abs(analytic.trend)}%
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{analytic.insight}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Advanced Reporting Features */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Custom Report Builder
+            {navigationMode === 'autonomous' && (
+              <Badge variant="outline">AI-Assisted</Badge>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { name: 'Fund Formation Summary', description: 'Comprehensive fund setup documentation and compliance status', complexity: 'Advanced', estimatedTime: '2-3 hours' },
+              { name: 'Investment Due Diligence Report', description: 'Legal risk assessment and documentation review summary', complexity: 'Expert', estimatedTime: '4-5 hours' },
+              { name: 'Regulatory Change Impact Analysis', description: 'Assessment of new regulations on existing portfolio', complexity: 'Intermediate', estimatedTime: '1-2 hours' },
+              { name: 'Contract Portfolio Health Check', description: 'Analysis of contract terms, renewals, and risk exposure', complexity: 'Advanced', estimatedTime: '3-4 hours' },
+              { name: 'Legal Spend Optimization', description: 'Analysis of legal costs with recommendations for efficiency', complexity: 'Intermediate', estimatedTime: '1 hour' },
+              { name: 'Compliance Dashboard for LPs', description: 'Investor-facing compliance status and regulatory updates', complexity: 'Basic', estimatedTime: '30 mins' }
+            ].map((template, index) => (
+              <div key={index} className="p-4 border rounded-lg hover:bg-gray-50">
+                <h4 className="font-semibold text-sm mb-2">{template.name}</h4>
+                <p className="text-xs text-muted-foreground mb-3">{template.description}</p>
+                <div className="flex items-center justify-between text-xs">
+                  <Badge variant={
+                    template.complexity === 'Basic' ? 'secondary' :
+                    template.complexity === 'Intermediate' ? 'default' :
+                    'destructive'
+                  }>
+                    {template.complexity}
+                  </Badge>
+                  <span className="text-muted-foreground">{template.estimatedTime}</span>
+                </div>
+                <Button size="sm" className="w-full mt-3">
+                  Generate Report
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -572,57 +1120,15 @@ export function LegalManagementDashboard({ navigationMode, onModeChange }: Legal
         </TabsContent>
 
         <TabsContent value="workflows">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Workflow Management
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Gavel className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Workflow Management</h3>
-                <p>Detailed workflow management interface would be implemented here</p>
-              </div>
-            </CardContent>
-          </Card>
+          {renderWorkflowManagement()}
         </TabsContent>
 
         <TabsContent value="compliance">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Compliance Framework
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Shield className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Compliance Management</h3>
-                <p>Comprehensive compliance framework and risk assessment tools would be implemented here</p>
-              </div>
-            </CardContent>
-          </Card>
+          {renderComplianceFramework()}
         </TabsContent>
 
         <TabsContent value="reports">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Legal Reports
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <FileText className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Legal Reporting</h3>
-                <p>Advanced legal analytics and reporting capabilities would be implemented here</p>
-              </div>
-            </CardContent>
-          </Card>
+          {renderLegalReports()}
         </TabsContent>
       </Tabs>
     </div>

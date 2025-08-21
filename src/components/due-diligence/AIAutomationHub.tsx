@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { aiRiskEngine, RiskAnalysisUtils } from '@/lib/ai-risk-engine'
 import { 
   Brain,
@@ -31,7 +31,7 @@ interface AIAutomationHubProps {
 }
 
 export function AIAutomationHub({ projectId }: AIAutomationHubProps) {
-  const { currentMode, addRecommendation, addInsight } = useNavigationStore()
+  const { currentMode, addRecommendation, addInsight } = useNavigationStoreRefactored()
   const [automationStatus, setAutomationStatus] = React.useState<'running' | 'paused' | 'stopped'>('running')
   const [analysisProgress, setAnalysisProgress] = React.useState(0)
 

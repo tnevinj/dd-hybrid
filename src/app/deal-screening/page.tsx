@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import HybridDealScreening from '@/components/deal-screening/HybridDealScreening';
+import { HybridDealScreeningRefactored } from '@/components/deal-screening/HybridDealScreeningRefactored';
 
 export default function DealScreeningPage() {
-  return <HybridDealScreening />;
+  return <HybridDealScreeningRefactored />;
 }

@@ -96,6 +96,13 @@ export function DDTabs({ activeTab, onTabChange, mode, aiEnhancements = false }:
       badge: mode === 'assisted' ? 'New' : undefined
     },
     {
+      id: 'predictive',
+      label: 'Predictive AI',
+      icon: Brain,
+      aiFeatures: ['ML predictions', 'Success probability', 'Risk patterns', 'Timeline forecasting'],
+      badge: 'ML'
+    },
+    {
       id: 'analytics',
       label: 'Analytics',
       icon: BarChart3,

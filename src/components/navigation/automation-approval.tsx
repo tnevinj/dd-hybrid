@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { 
   Bot, 
   Clock, 
@@ -53,7 +53,7 @@ export function AutomationApproval({
   onViewDetails, 
   className 
 }: ApprovalWorkflowProps) {
-  const { currentMode } = useNavigationStore()
+  const { currentMode } = useNavigationStoreRefactored()
   const [expandedRequest, setExpandedRequest] = React.useState<string | null>(null)
   const [autoApprovalEnabled, setAutoApprovalEnabled] = React.useState(false)
   const [approvalHistory, setApprovalHistory] = React.useState<Record<string, 'approved' | 'denied' | 'pending'>>({})

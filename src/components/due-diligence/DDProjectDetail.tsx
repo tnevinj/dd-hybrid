@@ -4,12 +4,12 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { useDueDiligence } from '@/contexts/DueDiligenceContext'
 import { DDTabs } from './DDTabs'
-import { DDTraditionalView } from './DDTraditionalView'
-import { DDAssistedView } from './DDAssistedView'
-import { DDAutonomousView } from './DDAutonomousView'
+import { DueDiligenceTraditional } from './DueDiligenceTraditional'
+import { DueDiligenceAssisted } from './DueDiligenceAssisted'
+import { DueDiligenceAutonomous } from './DueDiligenceAutonomous'
 import { 
   ArrowLeft,
   Brain,
@@ -30,7 +30,7 @@ interface DDProjectDetailProps {
 
 export function DDProjectDetail({ projectId }: DDProjectDetailProps) {
   const router = useRouter()
-  const { currentMode, addRecommendation } = useNavigationStore()
+  const { currentMode, addRecommendation } = useNavigationStoreRefactored()
   const { state, setCurrentProject } = useDueDiligence()
 
   // Mock project data - replace with real API call
@@ -212,15 +212,15 @@ export function DDProjectDetail({ projectId }: DDProjectDetailProps) {
       
       {/* Mode-specific Content */}
       {currentMode.mode === 'traditional' && (
-        <DDTraditionalView project={project} />
+        <DueDiligenceTraditional project={project} />
       )}
       
       {currentMode.mode === 'assisted' && (
-        <DDAssistedView project={project} />
+        <DueDiligenceAssisted project={project} />
       )}
       
       {currentMode.mode === 'autonomous' && (
-        <DDAutonomousView project={project} />
+        <DueDiligenceAutonomous project={project} />
       )}
     </div>
   )

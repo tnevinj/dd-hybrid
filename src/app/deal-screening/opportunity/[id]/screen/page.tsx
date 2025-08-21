@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import {
   ArrowLeft,
   Brain,
@@ -1109,7 +1109,7 @@ export default function DealScreeningPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<DealScreeningTemplate | null>(null);
   const [workflow, setWorkflow] = useState<ScreeningWorkflow | null>(null);
   const [loading, setLoading] = useState(true);
-  const { currentMode, setCurrentModule } = useNavigationStore();
+  const { currentMode, setCurrentModule } = useNavigationStoreRefactored();
   const mode = currentMode.mode;
 
   // Set current module for navigation store

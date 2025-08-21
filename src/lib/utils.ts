@@ -145,16 +145,18 @@ export function groupBy<T>(array: T[], key: keyof T): Record<string, T[]> {
   }, {} as Record<string, T[]>)
 }
 
-export function formatCurrency(amount: number, currency = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount)
+export function formatCurrency(amount: number | null | undefined, currency = 'USD'): string {
+  // Handle null/undefined values
+  if (amount == null) return currency === 'USD' ? '$0' : `0 ${currency}`
+  
+  // Use consistent manual formatting to avoid hydration mismatch
+  // This ensures server and client render the same format
+  const formatted = amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return currency === 'USD' ? `$${formatted}` : `${formatted} ${currency}`
 }
 
-export function formatPercentage(value: number, decimals = 1): string {
+export function formatPercentage(value: number | null | undefined, decimals = 1): string {
+  if (value == null) return '0.0%'
   return `${value.toFixed(decimals)}%`
 }
 

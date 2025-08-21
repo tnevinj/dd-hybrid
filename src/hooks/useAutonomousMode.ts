@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 
 export interface AutonomousModeOptions {
   autoDetect?: boolean;
@@ -29,7 +29,7 @@ export function useAutonomousMode(options: AutonomousModeOptions = {}) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const { currentMode, setMode } = useNavigationStore();
+  const { currentMode, setMode } = useNavigationStoreRefactored();
 
   const urlMode = searchParams.get('mode');
   const isAutonomousFromURL = urlMode === 'autonomous';

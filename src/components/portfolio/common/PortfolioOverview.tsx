@@ -8,7 +8,25 @@ import { Progress } from '@/components/ui/progress';
 import { AssetType } from '@/types/portfolio';
 
 export function PortfolioOverview() {
-  const { state, analytics } = useUnifiedPortfolio();
+  let state, analytics;
+  
+  try {
+    const context = useUnifiedPortfolio();
+    state = context.state;
+    analytics = context.analytics;
+  } catch (error) {
+    // Context not available, show fallback UI
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="p-4 border rounded-lg">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Portfolio Overview</h3>
+            <p className="text-gray-600">Portfolio data will be displayed here when available.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!state.currentPortfolio || !analytics) {
     return (

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 // Simple breadcrumb implementation (no external component needed)
 import {
   ArrowLeft,
@@ -26,7 +27,8 @@ import {
 } from 'lucide-react';
 
 import { DealOpportunity, AIRecommendation } from '@/types/deal-screening';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
+import { ComparativeValuationAnalysis } from '@/components/deal-screening/ComparativeValuationAnalysis';
 
 // Mode-aware opportunity detail components
 const TraditionalOpportunityView: React.FC<{
@@ -34,49 +36,67 @@ const TraditionalOpportunityView: React.FC<{
   onStartScreening: () => void;
   onViewWorkspace: () => void;
 }> = ({ opportunity, onStartScreening, onViewWorkspace }) => (
-  <div className="space-y-6">
-    {/* Key Metrics */}
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <BarChart3 className="h-5 w-5" />
-          <span>Key Metrics</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{opportunity.expectedIRR}%</div>
-            <div className="text-sm text-gray-600">Expected IRR</div>
-          </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{opportunity.expectedMultiple}x</div>
-            <div className="text-sm text-gray-600">Expected Multiple</div>
-          </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">{(opportunity.navPercentage * 100).toFixed(0)}%</div>
-            <div className="text-sm text-gray-600">NAV Percentage</div>
-          </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-orange-600">${(opportunity.askPrice / 1000000).toFixed(1)}M</div>
-            <div className="text-sm text-gray-600">Ask Price</div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+  <Tabs defaultValue="overview" className="space-y-6">
+    <TabsList className="grid w-full grid-cols-3">
+      <TabsTrigger value="overview">Overview</TabsTrigger>
+      <TabsTrigger value="valuation">Valuation Analysis</TabsTrigger>
+      <TabsTrigger value="actions">Actions</TabsTrigger>
+    </TabsList>
 
-    {/* Actions */}
-    <div className="flex space-x-4">
-      <Button onClick={onStartScreening} className="flex-1">
-        <FileText className="h-4 w-4 mr-2" />
-        Start Screening Process
-      </Button>
-      <Button variant="outline" onClick={onViewWorkspace}>
-        <Users className="h-4 w-4 mr-2" />
-        View Workspace
-      </Button>
-    </div>
-  </div>
+    <TabsContent value="overview" className="space-y-6">
+      {/* Key Metrics */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <BarChart3 className="h-5 w-5" />
+            <span>Key Metrics</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">{opportunity.expectedIRR}%</div>
+              <div className="text-sm text-gray-600">Expected IRR</div>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">{opportunity.expectedMultiple}x</div>
+              <div className="text-sm text-gray-600">Expected Multiple</div>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="text-2xl font-bold text-purple-600">{(opportunity.navPercentage * 100).toFixed(0)}%</div>
+              <div className="text-sm text-gray-600">NAV Percentage</div>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="text-2xl font-bold text-orange-600">${(opportunity.askPrice / 1000000).toFixed(1)}M</div>
+              <div className="text-sm text-gray-600">Ask Price</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </TabsContent>
+
+    <TabsContent value="valuation" className="space-y-6">
+      <ComparativeValuationAnalysis 
+        opportunityId={opportunity.id}
+        opportunityData={opportunity}
+        navigationMode="traditional"
+      />
+    </TabsContent>
+
+    <TabsContent value="actions" className="space-y-6">
+      {/* Actions */}
+      <div className="flex space-x-4">
+        <Button onClick={onStartScreening} className="flex-1">
+          <FileText className="h-4 w-4 mr-2" />
+          Start Screening Process
+        </Button>
+        <Button variant="outline" onClick={onViewWorkspace}>
+          <Users className="h-4 w-4 mr-2" />
+          View Workspace
+        </Button>
+      </div>
+    </TabsContent>
+  </Tabs>
 );
 
 const AssistedOpportunityView: React.FC<{
@@ -331,7 +351,7 @@ const AutonomousOpportunityView: React.FC<{
 export default function OpportunityDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { currentMode, setCurrentModule } = useNavigationStore();
+  const { currentMode, setCurrentModule } = useNavigationStoreRefactored();
   const navigationMode = currentMode.mode;
   
   // Set current module for navigation store

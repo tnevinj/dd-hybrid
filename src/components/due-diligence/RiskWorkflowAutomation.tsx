@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { 
   Workflow,
   Play,
@@ -55,7 +55,7 @@ interface RiskWorkflow {
 }
 
 export function RiskWorkflowAutomation({ projectId }: RiskWorkflowAutomationProps) {
-  const { currentMode, addRecommendation, addInsight } = useNavigationStore()
+  const { currentMode, addRecommendation, addInsight } = useNavigationStoreRefactored()
   const [selectedWorkflow, setSelectedWorkflow] = React.useState<string | null>(null)
 
   // Sample workflow data

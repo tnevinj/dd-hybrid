@@ -5,7 +5,7 @@ import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/auton
 import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
 import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
 import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
-import { useAutonomousStore } from '@/lib/stores/autonomousStore';
+import { useAutonomousStore } from '@/stores/autonomous-store';
 import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

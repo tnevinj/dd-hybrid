@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { 
+  InvestmentStage,
+  InvestmentType,
+  CompanyStatus,
+  RiskLevel,
+  ESGRating 
+} from '@/types/portfolio-management';
 import type { 
   PortfolioCompany,
   PortfolioAnalytics,
@@ -6,12 +13,7 @@ import type {
   ESGReport,
   RiskAssessment,
   QuarterlyUpdate,
-  InvestmentThesis,
-  InvestmentStage,
-  InvestmentType,
-  CompanyStatus,
-  RiskLevel,
-  ESGRating 
+  InvestmentThesis
 } from '@/types/portfolio-management';
 
 // Mock Portfolio Companies Data

@@ -6,7 +6,7 @@ import { ProjectContext } from '@/types/work-product';
 
 // Mock the navigation store
 jest.mock('@/stores/navigation-store', () => ({
-  useNavigationStore: () => ({
+  useNavigationStoreRefactored: () => ({
     currentMode: { mode: 'assisted' }
   })
 }));

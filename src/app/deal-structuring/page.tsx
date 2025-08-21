@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { HybridDealStructuring } from '@/components/deal-structuring';
+import { HybridDealStructuringRefactored } from '@/components/deal-structuring/HybridDealStructuringRefactored';
 
 const DealStructuringPage: React.FC = () => {
-  return <HybridDealStructuring />;
+  return <HybridDealStructuringRefactored />;
 };
 
 export default DealStructuringPage;

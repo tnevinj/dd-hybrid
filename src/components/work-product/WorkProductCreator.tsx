@@ -21,7 +21,7 @@ import {
   Wand2,
   Sparkles
 } from 'lucide-react';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
 import { dealScoringEngine } from '@/lib/services/deal-scoring-engine';
 
@@ -89,7 +89,7 @@ const workProductTypes = [
 ];
 
 export function WorkProductCreator({ workspaceId, onCreateWorkProduct, onCancel }: WorkProductCreatorProps) {
-  const { navigationMode } = useNavigationStore();
+  const { navigationMode } = useNavigationStoreRefactored();
   const [selectedType, setSelectedType] = useState<WorkProductType | null>(null);
   const [title, setTitle] = useState('');
   const [customizeTemplate, setCustomizeTemplate] = useState(false);

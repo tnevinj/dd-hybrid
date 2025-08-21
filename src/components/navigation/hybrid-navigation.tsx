@@ -2,7 +2,8 @@
 
 import * as React from 'react'
 import { usePathname } from 'next/navigation'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
+import { useAIStore } from '@/stores/ai-store'
 import { TraditionalSidebar } from './traditional-sidebar'
 import { AIPanel } from './ai-panel'
 import { AIInsightsBanner } from './ai-insights-banner'
@@ -30,7 +31,8 @@ interface HybridNavigationProps {
 
 export function HybridNavigation({ children, className, viewContext }: HybridNavigationProps) {
   const pathname = usePathname()
-  const { currentMode, isAIPanelOpen, trackInteraction } = useNavigationStore()
+  const { currentMode } = useNavigationStoreRefactored()
+  const { isAIPanelOpen, trackInteraction } = useAIStore()
   const { currentHint, addHint, dismissHint } = useAIHints()
   
   // Auto-detect context from URL if not provided

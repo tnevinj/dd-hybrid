@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
+import { useAIStore } from '@/stores/ai-store'
 import { NavigationItem } from '@/types/navigation'
 import {
   Home,
@@ -50,12 +51,15 @@ const iconMap = {
 export function TraditionalSidebar({ enhanced = false, collapsed = false, className }: TraditionalSidebarProps) {
   const { 
     navigationItems, 
-    currentMode, 
+    currentMode
+  } = useNavigationStoreRefactored()
+  
+  const {
     recommendations,
     toggleAIPanel,
     isAIPanelOpen,
     getRecommendationsByModule 
-  } = useNavigationStore()
+  } = useAIStore()
   
   const pathname = usePathname()
 

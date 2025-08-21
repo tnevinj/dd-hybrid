@@ -1,16 +1,12 @@
-export interface DealScreeningCriterion {
-  id: string;
-  name: string;
-  category: 'financial' | 'operational' | 'strategic' | 'impact' | 'risk' | 'esg' | 'custom';
-  description: string;
-  weight: number; // 0-1, sum of all weights should be 1
-  scoreFunction: 'linear' | 'exponential' | 'threshold' | 'custom';
-  minValue: number;
-  maxValue: number;
-  thresholdValue?: number;
-  isRequired: boolean;
-  isActive: boolean;
-}
+// Import from unified domain types
+export { 
+  ScreeningCriterion as DealScreeningCriterion,
+  ScreeningTemplate as DealScreeningTemplate,
+  DealOpportunity
+} from './investment-domain';
+
+// Re-export common types for convenience
+export type { Priority, RiskLevel, AssetType } from './shared-domain';
 
 export interface TemplateAnalytics {
   usageCount: number;
@@ -46,40 +42,7 @@ export interface DealScreeningTemplate {
   };
 }
 
-export interface DealOpportunity {
-  id: string;
-  name: string;
-  description: string;
-  seller?: string;
-  assetType: 'fund' | 'direct' | 'co-investment' | 'gp-led' | 'other';
-  vintage: string;
-  sector: string;
-  geography: string;
-  askPrice: number;
-  navPercentage: number; // Price as percentage of NAV
-  expectedReturn: number;
-  expectedRisk: number;
-  expectedMultiple: number;
-  expectedIRR: number;
-  expectedHoldingPeriod?: number;
-  
-  // Integration fields for hybrid workflow
-  dueDiligenceProjectId?: string;
-  submissionId?: string;
-  workspaceId?: string; // Link to workspace system
-  
-  scores: DealScore[];
-  status: 'new' | 'screening' | 'analyzed' | 'pending_committee_review' | 'in_due_diligence' | 'awaiting_approval' | 'conditional_approval' | 'investment_approved' | 'documentation_pending' | 'approved' | 'rejected' | 'closed';
-  
-  // AI Enhancement fields
-  aiConfidence?: number; // 0-1, AI confidence in analysis
-  similarDeals?: string[]; // IDs of similar historical deals
-  aiRecommendations?: AIRecommendation[];
-  
-  createdAt: string;
-  updatedAt: string;
-  additionalData?: Record<string, any>;
-}
+// DealOpportunity is now imported from unified types above
 
 export interface DealScore {
   criterionId: string;

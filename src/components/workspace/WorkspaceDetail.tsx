@@ -19,7 +19,7 @@ import {
   AlertCircle,
   Plus
 } from 'lucide-react';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import { WorkProductList, WorkProductCreator } from '@/components/work-product';
 import { WorkProduct, WorkProductCreateRequest } from '@/types/work-product';
 
@@ -39,7 +39,7 @@ const getComponentStatusIcon = (status: string) => {
 };
 
 export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: WorkspaceDetailProps) {
-  const { navigationMode } = useNavigationStore();
+  const { navigationMode } = useNavigationStoreRefactored();
   const [activeTab, setActiveTab] = useState('overview');
   const [showAIInsights, setShowAIInsights] = useState(navigationMode !== 'traditional');
   const [workProducts, setWorkProducts] = useState<WorkProduct[]>([]);

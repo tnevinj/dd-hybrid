@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { HybridPortfolio } from '@/components/portfolio/HybridPortfolio';
+import { HybridPortfolioRefactored } from '@/components/portfolio/HybridPortfolioRefactored';
 import { ErrorBoundary } from '@/components/portfolio/ErrorBoundary';
 
 export default function PortfolioPage() {
   return (
     <ErrorBoundary>
-      <HybridPortfolio />
+      <HybridPortfolioRefactored />
     </ErrorBoundary>
   );
 }

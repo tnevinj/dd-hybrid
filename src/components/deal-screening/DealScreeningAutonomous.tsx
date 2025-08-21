@@ -5,7 +5,7 @@ import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/auton
 import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
 import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
 import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
-import { useAutonomousStore } from '@/lib/stores/autonomousStore';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,37 +13,11 @@ import { Settings, Menu, X } from 'lucide-react';
 import { DealOpportunity, AIRecommendation, AutomatedAction, PendingApproval } from '@/types/deal-screening';
 import { WorkProductCreator } from '@/components/work-product';
 import { WorkProduct, WorkProductCreateRequest } from '@/types/work-product';
-
-interface Project {
-  id: string;
-  name: string;
-  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis';
-  status: 'active' | 'completed' | 'draft' | 'review';
-  lastActivity: Date;
-  priority: 'high' | 'medium' | 'low';
-  unreadMessages?: number;
-  metadata?: {
-    value?: string;
-    progress?: number;
-    team?: string[];
-  };
-}
+import { getAutonomousConfig, generateMockProjects, getAvailableActions, generateContextData } from '@/lib/autonomous-mode-config';
+import type { HybridMode } from '@/components/shared';
 
 interface DealScreeningAutonomousProps {
-  opportunities?: DealOpportunity[];
-  automatedActions?: AutomatedAction[];
-  pendingApprovals?: PendingApproval[];
-  aiRecommendations?: AIRecommendation[];
-  isProcessing?: boolean;
-  onApproveAction?: (approvalId: string) => void;
-  onRejectAction?: (approvalId: string) => void;
-  onSwitchMode?: (mode: 'traditional' | 'assisted' | 'autonomous') => void;
-  onPauseAI?: () => void;
-  onResumeAI?: () => void;
-  isPaused?: boolean;
-  onCreateOpportunity?: () => void;
-  onViewOpportunity?: (id: string) => void;
-  onScreenOpportunity?: (id: string) => void;
+  onSwitchMode?: (mode: HybridMode) => void;
 }
 
 export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomousProps) {
@@ -52,12 +26,12 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
     projects,
     selectProject,
     setActiveProjectType,
-    setDealScreeningProjects,
+    setProjectsForType,
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
     toggleContextPanel
-  } = useAutonomousStore();
+  } = useNavigationStoreRefactored();
 
   const [showSettings, setShowSettings] = useState(false);
   const [showWorkProductCreator, setShowWorkProductCreator] = useState(false);
@@ -65,53 +39,14 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
   const [currentWorkProduct, setCurrentWorkProduct] = useState<WorkProduct | null>(null);
   const { exitAutonomous, navigateToModule } = useAutonomousMode();
 
-  // Initialize project type for deal screening and load data
+  // Initialize project type for deal screening using standardized config
   React.useEffect(() => {
     setActiveProjectType('deal-screening');
     
-    // Fetch deal screening opportunities from API and convert to projects
-    const fetchDealScreeningData = async () => {
-      try {
-        const response = await fetch('/api/deal-screening/opportunities');
-        if (response.ok) {
-          const data = await response.json();
-          const opportunities = data.opportunities || [];
-          
-          // Convert opportunities to autonomous projects format
-          const projects: Project[] = opportunities.map((opp: DealOpportunity) => ({
-            id: opp.id,
-            name: opp.name,
-            type: 'analysis' as const,
-            status: opp.status === 'screening' ? 'active' : 
-                   opp.status === 'approved' ? 'review' : 
-                   opp.status === 'new' ? 'draft' : 'active',
-            lastActivity: new Date(opp.updatedAt || opp.createdAt),
-            priority: opp.expectedIRR > 20 ? 'high' : opp.expectedIRR > 15 ? 'medium' : 'low',
-            unreadMessages: opp.aiRecommendations?.length || 0,
-            metadata: {
-              progress: opp.status === 'approved' ? 95 : opp.status === 'screening' ? 65 : 25,
-              team: ['Alex Thompson', 'Rachel Martinez', 'Kevin Liu', 'Sarah Park'], // Default team
-              dealValue: opp.askPrice,
-              sector: opp.sector,
-              geography: opp.geography,
-              stage: opp.vintage,
-              riskRating: opp.expectedRisk > 0.15 ? 'high' : opp.expectedRisk > 0.1 ? 'medium' : 'low',
-              confidenceScore: opp.aiConfidence || 0.5,
-              workProductId: opp.id === '1' ? 'wp-techcorp' : opp.id === '2' ? 'wp-healthtech' : `wp-${opp.id}`,
-              workProductTitle: `${opp.name} Screening Report`
-            }
-          }));
-          
-          setDealScreeningProjects(projects);
-        }
-      } catch (error) {
-        console.error('Error fetching deal screening data:', error);
-        // Fallback to default behavior if API fails
-      }
-    };
-    
-    fetchDealScreeningData();
-  }, [setActiveProjectType, setDealScreeningProjects]);
+    // Generate mock projects using standardized configuration
+    const mockProjects = generateMockProjects('deal-screening', 4);
+    setProjectsForType('deal-screening', mockProjects);
+  }, [setActiveProjectType, setProjectsForType]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
@@ -269,43 +204,9 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
             projectId={selectedProject?.id}
             projectName={selectedProject?.name}
             projectType="deal-screening"
-            contextData={selectedProject?.metadata}
-            systemPrompt={selectedProject ? `You are an AI assistant specializing in deal screening and investment analysis. You're working on ${selectedProject.name}, a ${selectedProject.metadata?.sector} opportunity worth ${selectedProject.metadata?.dealValue ? `$${(selectedProject.metadata.dealValue / 1000000).toFixed(1)}M` : 'TBD'}.
-
-Your capabilities include:
-- Deal screening and initial assessment
-- Financial analysis and valuation
-- Risk evaluation and mitigation strategies
-- Market comparison and benchmarking
-- Investment committee preparation
-
-Provide actionable insights while maintaining transparency about your reasoning and confidence levels.` : undefined}
-            availableActions={[
-              {
-                id: 'screen-opportunity',
-                label: 'Screen Opportunity',
-                description: 'Comprehensive deal screening analysis',
-                category: 'analysis'
-              },
-              {
-                id: 'financial-analysis',
-                label: 'Financial Analysis',
-                description: 'Detailed financial metrics evaluation',
-                category: 'analysis'
-              },
-              {
-                id: 'market-comparison',
-                label: 'Market Comparison',
-                description: 'Compare with similar deals',
-                category: 'research'
-              },
-              {
-                id: 'generate-report',
-                label: 'Generate Report',
-                description: 'Create screening summary report',
-                category: 'reporting'
-              }
-            ]}
+            contextData={selectedProject ? generateContextData(selectedProject) : undefined}
+            systemPrompt={getAutonomousConfig('deal-screening')?.systemPrompt}
+            availableActions={getAvailableActions('deal-screening', selectedProject?.type)}
           />
         </div>
 

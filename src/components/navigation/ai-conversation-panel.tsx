@@ -5,7 +5,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
+import { useAIStore } from '@/stores/ai-store'
 import { useWorkspaceContextSafe } from '@/contexts/WorkspaceContext'
 import { 
   Bot, 
@@ -95,7 +96,8 @@ interface QuickAction {
 type AIMode = 'listening' | 'working' | 'idle' | 'paused'
 
 export function AIConversationPanel({ className, context }: AIConversationPanelProps) {
-  const { currentMode, trackInteraction } = useNavigationStore()
+  const { currentMode } = useNavigationStoreRefactored()
+  const { trackInteraction } = useAIStore()
   const workspaceContext = useWorkspaceContextSafe()
   const [messages, setMessages] = React.useState<AIMessage[]>([])
   const [isExpanded, setIsExpanded] = React.useState(true)

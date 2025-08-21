@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { UserNavigationMode } from '@/types/navigation'
 import { 
   Brain, 
@@ -41,7 +41,7 @@ interface OnboardingStep {
 }
 
 export function ModeOnboarding({ currentStep, onComplete, onStepChange }: ModeOnboardingProps) {
-  const { currentMode, setMode } = useNavigationStore()
+  const { currentMode, setMode } = useNavigationStoreRefactored()
   const [completedSteps, setCompletedSteps] = React.useState<string[]>([])
   const [currentProgress, setCurrentProgress] = React.useState(0)
 

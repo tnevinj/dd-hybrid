@@ -9,7 +9,7 @@ import { HybridMode, HybridModeSwitcher } from './HybridModeSwitcher'
 export interface HybridModeHeaderProps {
   currentMode: HybridMode
   onModeChange: (mode: HybridMode) => void
-  moduleContext: 'due-diligence' | 'portfolio' | 'dashboard' | 'workspace'
+  moduleContext: 'due-diligence' | 'portfolio' | 'dashboard' | 'workspace' | 'deal-screening' | 'deal-structuring' | 'fund-operations' | 'investment-committee' | 'legal-management' | 'market-intelligence' | 'advanced-analytics' | 'lp-portal' | 'gp-portal'
   title: string
   subtitle?: string
   disabled?: boolean

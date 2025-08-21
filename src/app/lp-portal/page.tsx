@@ -1,12 +1,8 @@
 'use client';
 
 import React from 'react';
-import { HybridLPDashboard } from '@/components/lp-portal/HybridLPDashboard';
+import { HybridLPDashboardRefactored } from '@/components/lp-portal/HybridLPDashboardRefactored';
 
 export default function LPPortalPage() {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <HybridLPDashboard />
-    </div>
-  );
+  return <HybridLPDashboardRefactored />;
 }

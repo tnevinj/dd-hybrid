@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
   Search,
   Filter,
@@ -23,10 +24,12 @@ import {
   PieChart,
   TrendingUp,
   User,
-  Settings
+  Settings,
+  Network
 } from 'lucide-react'
 
 import { SecondaryEdgeDashboard } from './SecondaryEdgeDashboard'
+import { CrossModuleDashboard } from '@/components/analytics/CrossModuleDashboard'
 
 interface DashboardTraditionalProps {
   dashboardData?: any
@@ -226,51 +229,48 @@ export function DashboardTraditional({
         </div>
       </div>
 
-      {/* View Toggle */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center space-x-2">
-          <Button 
-            variant={activeView === 'overview' ? 'default' : 'outline'}
-            onClick={() => setActiveView('overview')}
-            className="flex items-center space-x-2"
-          >
-            <BarChart3 className="h-4 w-4" />
-            <span>Executive Overview</span>
-          </Button>
-          <Button 
-            variant={activeView === 'detailed' ? 'default' : 'outline'}
-            onClick={() => setActiveView('detailed')}
-            className="flex items-center space-x-2"
-          >
-            <PieChart className="h-4 w-4" />
-            <span>Detailed Analytics</span>
-          </Button>
-        </div>
-        
-        {/* Manual Search & Filter */}
-        <div className="flex items-center space-x-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search deals, workspaces..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-64 border-gray-300 focus:border-gray-500"
-            />
+      {/* Main Dashboard Tabs with Cross-Module Intelligence */}
+      <Tabs defaultValue="overview" className="w-full">
+        <div className="flex justify-between items-center mb-6">
+          <TabsList className="grid w-fit grid-cols-3">
+            <TabsTrigger value="overview" className="flex items-center space-x-2">
+              <BarChart3 className="h-4 w-4" />
+              <span>Executive Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="cross-module" className="flex items-center space-x-2">
+              <Network className="h-4 w-4" />
+              <span>Cross-Module Intelligence</span>
+            </TabsTrigger>
+            <TabsTrigger value="detailed" className="flex items-center space-x-2">
+              <PieChart className="h-4 w-4" />
+              <span>Detailed Analytics</span>
+            </TabsTrigger>
+          </TabsList>
+          
+          {/* Manual Search & Filter */}
+          <div className="flex items-center space-x-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search deals, workspaces..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-64 border-gray-300 focus:border-gray-500"
+              />
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center space-x-2 border-gray-300 text-gray-700"
+            >
+              <Filter className="h-4 w-4" />
+              <span>Filters</span>
+            </Button>
           </div>
-          <Button 
-            variant="outline" 
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2 border-gray-300 text-gray-700"
-          >
-            <Filter className="h-4 w-4" />
-            <span>Filters</span>
-          </Button>
         </div>
-      </div>
 
-      {activeView === 'overview' && (
-        <>
+        {/* Tab Content */}
+        <TabsContent value="overview" className="mt-6">
           {/* Key Metrics - Manual Focus */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Card className="border-gray-200">
@@ -461,29 +461,34 @@ export function DashboardTraditional({
               </CardContent>
             </Card>
           </div>
-        </>
-      )}
+        </TabsContent>
 
-      {activeView === 'detailed' && (
-        <div className="mb-6">
-          <SecondaryEdgeDashboard mode="traditional" data={dashboardData} />
-        </div>
-      )}
+        <TabsContent value="cross-module" className="mt-6">
+          <CrossModuleDashboard mode="traditional" />
+        </TabsContent>
 
-      {/* Manual Process Notice */}
-      <div className="mt-6 p-4 bg-gray-100 border border-gray-200 rounded-lg">
-        <div className="flex items-start space-x-3">
-          <User className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-1">Traditional Dashboard Management</h4>
-            <p className="text-sm text-gray-600">
-              You have complete control over dashboard operations and data analysis. All metrics, deal tracking, 
-              and workspace management are performed manually without AI assistance. Use the search and filter 
-              tools to organize your data according to your preferences.
-            </p>
+        <TabsContent value="detailed" className="mt-6">
+          <div className="mb-6">
+            <SecondaryEdgeDashboard mode="traditional" data={dashboardData} />
+          </div>
+        </TabsContent>
+
+        {/* Manual Process Notice */}
+        <div className="mt-6 p-4 bg-gray-100 border border-gray-200 rounded-lg">
+          <div className="flex items-start space-x-3">
+            <User className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-1">Traditional Dashboard Management</h4>
+              <p className="text-sm text-gray-600">
+                You have complete control over dashboard operations and data analysis. All metrics, deal tracking, 
+                and workspace management are performed manually without AI assistance. Use the search and filter 
+                tools to organize your data according to your preferences. The Cross-Module Intelligence tab provides 
+                fund-wide performance grading and consolidated analytics across all modules.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </Tabs>
     </div>
   )
 }

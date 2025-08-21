@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useAIStore } from '@/stores/ai-store'
 import { 
   RotateCcw, 
   Clock, 
@@ -57,7 +57,7 @@ export function ActionRollback({
   onDownloadBackup, 
   className 
 }: ActionRollbackProps) {
-  const { trackInteraction } = useNavigationStore()
+  const { trackInteraction } = useAIStore()
   const [expandedAction, setExpandedAction] = React.useState<string | null>(null)
   const [rollbackInProgress, setRollbackInProgress] = React.useState<Set<string>>(new Set())
   const [showRollbackConfirm, setShowRollbackConfirm] = React.useState<string | null>(null)

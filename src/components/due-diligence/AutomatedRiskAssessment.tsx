@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { aiRiskEngine } from '@/lib/ai-risk-engine'
 import { 
   AlertTriangle,
@@ -106,7 +106,7 @@ interface AutomatedRiskAssessmentProps {
 }
 
 export function AutomatedRiskAssessment({ projectId, dealData }: AutomatedRiskAssessmentProps) {
-  const { currentMode, trackInteraction, addRecommendation } = useNavigationStore()
+  const { currentMode, trackInteraction, addRecommendation } = useNavigationStoreRefactored()
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>('financial')
   const [expandedRisks, setExpandedRisks] = React.useState<Set<string>>(new Set())
   const [analysisRunning, setAnalysisRunning] = React.useState(false)

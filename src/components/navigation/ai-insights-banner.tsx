@@ -3,7 +3,8 @@
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useAIStore } from '@/stores/ai-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { 
   X, 
   Lightbulb, 
@@ -14,15 +15,14 @@ import {
 } from 'lucide-react'
 
 export function AIInsightsBanner() {
+  const { currentMode, currentModule } = useNavigationStoreRefactored()
   const { 
-    recommendations, 
-    currentMode,
+    recommendations,
     executeRecommendation,
     dismissRecommendation,
     getHighPriorityRecommendations,
-    insights,
-    currentModule 
-  } = useNavigationStore()
+    insights
+  } = useAIStore()
 
   const [isVisible, setIsVisible] = React.useState(true)
   const [showDetails, setShowDetails] = React.useState(false)

@@ -4,7 +4,8 @@ import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useAIStore } from '@/stores/ai-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { AIRecommendation, AIInsight } from '@/types/navigation'
 import { 
   X, 
@@ -25,17 +26,17 @@ interface AIPanelProps {
 }
 
 export function AIPanel({ className }: AIPanelProps) {
+  const { currentModule } = useNavigationStoreRefactored()
   const { 
     isAIPanelOpen, 
     toggleAIPanel, 
     recommendations, 
     insights,
-    currentModule,
     executeRecommendation,
     dismissRecommendation,
     getRecommendationsByModule,
     getHighPriorityRecommendations
-  } = useNavigationStore()
+  } = useAIStore()
 
   const moduleRecommendations = getRecommendationsByModule(currentModule)
   const highPriorityRecommendations = getHighPriorityRecommendations()

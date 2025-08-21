@@ -24,7 +24,7 @@ import {
   AlertCircle,
   TrendingUp
 } from 'lucide-react';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -36,7 +36,7 @@ interface DocumentEditorProps {
 }
 
 export function DocumentEditor({ workProduct, onSave, onStatusChange, onBack }: DocumentEditorProps) {
-  const { navigationMode } = useNavigationStore();
+  const { navigationMode } = useNavigationStoreRefactored();
   const [sections, setSections] = useState<DocumentSection[]>(workProduct.sections);
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id || '');
   const [showPreview, setShowPreview] = useState(false);

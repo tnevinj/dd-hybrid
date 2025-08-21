@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Send, Bot, User, Settings, MoreHorizontal } from 'lucide-react';
 import { useAutonomousChat } from '@/hooks/use-autonomous-chat';
-import { useAutonomousStore } from '@/lib/stores/autonomousStore';
+import { useAutonomousStore } from '@/stores/autonomous-store';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 

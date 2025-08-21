@@ -21,7 +21,7 @@ import {
   Clock,
   Sparkles
 } from 'lucide-react';
-import { useNavigationStore } from '@/stores/navigation-store';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 
 interface ReportGeneratorProps {
   workspace: InvestmentWorkspace;
@@ -86,7 +86,7 @@ const reportTypes = [
 ];
 
 export function ReportGenerator({ workspace, onGenerateReport, onPreviewReport }: ReportGeneratorProps) {
-  const { navigationMode } = useNavigationStore();
+  const { navigationMode } = useNavigationStoreRefactored();
   const [selectedType, setSelectedType] = useState<WorkProductType | null>(null);
   const [config, setConfig] = useState<ReportConfig>({
     includeExecutiveSummary: true,

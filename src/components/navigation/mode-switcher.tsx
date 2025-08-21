@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { UserNavigationMode } from '@/types/navigation'
 import { 
   Zap, 
@@ -28,7 +28,7 @@ interface ModeSwitcherProps {
 }
 
 export function ModeSwitcher({ className, showOnboarding = false, onModeSelect }: ModeSwitcherProps) {
-  const { currentMode, setMode } = useNavigationStore()
+  const { currentMode, setMode } = useNavigationStoreRefactored()
   const [selectedMode, setSelectedMode] = React.useState<UserNavigationMode['mode']>(currentMode.mode)
 
   const modeConfig = {

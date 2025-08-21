@@ -5,30 +5,17 @@ import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/auton
 import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
 import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
 import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
-import { useAutonomousStore } from '@/lib/stores/autonomousStore';
+import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X } from 'lucide-react';
 import { PortfolioAutonomousContainer } from './containers/PortfolioAutonomousContainer';
-
-interface Project {
-  id: string;
-  name: string;
-  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis';
-  status: 'active' | 'completed' | 'draft' | 'review';
-  lastActivity: Date;
-  priority: 'high' | 'medium' | 'low';
-  unreadMessages?: number;
-  metadata?: {
-    value?: string;
-    progress?: number;
-    team?: string[];
-  };
-}
+import { getAutonomousConfig, generateMockProjects, getAvailableActions, generateContextData } from '@/lib/autonomous-mode-config';
+import type { HybridMode } from '@/components/shared';
 
 interface PortfolioAutonomousProps {
-  onSwitchMode?: (mode: 'traditional' | 'assisted' | 'autonomous') => void;
+  onSwitchMode?: (mode: HybridMode) => void;
 }
 
 export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) {
@@ -42,16 +29,19 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
     toggleSidebar,
     toggleContextPanel,
     loadPortfolioProjects
-  } = useAutonomousStore();
+  } = useNavigationStoreRefactored();
 
   const [showSettings, setShowSettings] = useState(false);
   const { exitAutonomous, navigateToModule } = useAutonomousMode();
 
-  // Initialize project type for portfolio and load real data
+  // Initialize project type for portfolio using standardized config
   React.useEffect(() => {
     setActiveProjectType('portfolio');
-    loadPortfolioProjects(); // Load real portfolio data from SQLite backend
-  }, [setActiveProjectType, loadPortfolioProjects]);
+    
+    // Generate mock projects using standardized configuration
+    const mockProjects = generateMockProjects('portfolio', 5);
+    setPortfolioProjects(mockProjects);
+  }, [setActiveProjectType, setPortfolioProjects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
@@ -280,7 +270,10 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
         {/* Context Panel */}
         {!contextPanelCollapsed && (
           <ContextPanel
-            project={selectedProject || undefined}
+            project={selectedProject ? {
+              ...selectedProject,
+              metadata: generateContextData(selectedProject)
+            } : undefined}
             projectType="portfolio"
           />
         )}
