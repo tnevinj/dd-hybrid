@@ -4,7 +4,7 @@ import * as React from 'react'
 import { usePathname } from 'next/navigation'
 import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { useAIStore } from '@/stores/ai-store'
-import { TraditionalSidebar } from './traditional-sidebar'
+import { SimpleRoleSidebar } from './simple-role-sidebar'
 import { AIPanel } from './ai-panel'
 import { AIInsightsBanner } from './ai-insights-banner'
 import { AIHintToast, useAIHints } from './ai-hint-toast'
@@ -114,8 +114,8 @@ export function HybridNavigation({ children, className, viewContext }: HybridNav
       case 'traditional':
         return (
           <>
-            {/* Traditional Navigation - Full Featured */}
-            <TraditionalSidebar enhanced={false} />
+            {/* Role-Based Navigation - Traditional Mode */}
+            <SimpleRoleSidebar enhanced={false} />
             
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">
@@ -135,8 +135,8 @@ export function HybridNavigation({ children, className, viewContext }: HybridNav
       case 'assisted':
         return (
           <>
-            {/* Enhanced Navigation */}
-            <TraditionalSidebar enhanced={true} />
+            {/* Role-Based Navigation - Enhanced Mode */}
+            <SimpleRoleSidebar enhanced={true} />
             
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col overflow-hidden">
