@@ -1,8 +1,9 @@
 'use client'
 
 import React from 'react'
-import { Badge } from '@/components/ui/badge'
-import { User } from 'lucide-react'
+import { ModuleHeader, ProcessNotice, MODE_DESCRIPTIONS } from '@/components/shared/ModeIndicators'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 import { PortfolioTraditionalContainer } from './containers/PortfolioTraditionalContainer'
 
 interface PortfolioTraditionalProps {
@@ -34,21 +35,38 @@ export function PortfolioTraditional({
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Mode Indicator */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3">
-        <Badge className="bg-gray-100 text-gray-800 border border-gray-300 flex items-center space-x-1">
-          <User className="h-3 w-3" />
-          <span>Traditional Mode</span>
-        </Badge>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="p-4 md:p-6">
+        {/* Standardized Header */}
+        <ModuleHeader
+          title="Portfolio Management"
+          description={MODE_DESCRIPTIONS.traditional.portfolio}
+          mode="traditional"
+          actions={
+            <Button 
+              onClick={onCreateAsset} 
+              className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800"
+            >
+              <Plus className="h-4 w-4" />
+              <span>New Asset</span>
+            </Button>
+          }
+        />
 
-      {/* Hierarchical Portfolio Container */}
-      <PortfolioTraditionalContainer
-        onViewAsset={onViewAsset}
-        onEditAsset={onEditAsset}
-        onCreateAsset={onCreateAsset}
-      />
+        {/* Portfolio Container */}
+        <PortfolioTraditionalContainer
+          onViewAsset={onViewAsset || (() => {})}
+          onEditAsset={onEditAsset || (() => {})}
+          onCreateAsset={onCreateAsset || (() => {})}
+        />
+
+        {/* Standardized Process Notice */}
+        <ProcessNotice
+          mode="traditional"
+          title="Traditional Manual Process"
+          description="You have complete control over portfolio management. All investment decisions, asset analysis, and performance tracking are performed manually without AI assistance. Use the tools above to manage your portfolio according to your investment strategy."
+        />
+      </div>
     </div>
   )
 }

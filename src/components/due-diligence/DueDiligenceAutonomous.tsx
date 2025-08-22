@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
 import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
+import { useAutonomousStore } from '@/stores/autonomous-store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X } from 'lucide-react';
@@ -129,4 +130,4 @@ export function DueDiligenceAutonomous({ onSwitchMode }: DueDiligenceAutonomousP
   );
 }
 
-export default DDAutonomousView;
+export default DueDiligenceAutonomous;

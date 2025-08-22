@@ -348,54 +348,176 @@ export class IndustryBenchmarkingEngine {
     }
   }
 
+  static benchmarkDealScreening(fundData: any): ModuleBenchmark {
+    const metrics: BenchmarkData[] = [
+      {
+        metric: 'Screening Accuracy',
+        fundValue: fundData.screeningAccuracy || 0.84,
+        industryMedian: this.industryData.dealScreeningMetrics.screeningAccuracy.median,
+        industryTopQuartile: this.industryData.dealScreeningMetrics.screeningAccuracy.topQuartile,
+        industryTopDecile: this.industryData.dealScreeningMetrics.screeningAccuracy.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.screeningAccuracy || 0.84, this.industryData.dealScreeningMetrics.screeningAccuracy),
+        trend: 'improving',
+        lastUpdated: new Date()
+      },
+      {
+        metric: 'Time to Deal (Days)',
+        fundValue: fundData.timeToDeal || 95,
+        industryMedian: this.industryData.dealScreeningMetrics.timeToDeal.median,
+        industryTopQuartile: this.industryData.dealScreeningMetrics.timeToDeal.topQuartile,
+        industryTopDecile: this.industryData.dealScreeningMetrics.timeToDeal.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.timeToDeal || 95, this.industryData.dealScreeningMetrics.timeToDeal, true),
+        trend: 'improving',
+        lastUpdated: new Date()
+      },
+      {
+        metric: 'Deal Conversion Rate',
+        fundValue: fundData.dealConversion || 0.28,
+        industryMedian: this.industryData.dealScreeningMetrics.dealConversion.median,
+        industryTopQuartile: this.industryData.dealScreeningMetrics.dealConversion.topQuartile,
+        industryTopDecile: this.industryData.dealScreeningMetrics.dealConversion.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.dealConversion || 0.28, this.industryData.dealScreeningMetrics.dealConversion),
+        trend: 'stable',
+        lastUpdated: new Date()
+      }
+    ]
+
+    const avgPercentile = metrics.reduce((acc, m) => acc + m.percentile, 0) / metrics.length
+
+    return {
+      moduleName: 'Deal Screening',
+      overallScore: avgPercentile,
+      grade: this.calculateGrade(avgPercentile),
+      metrics,
+      strengths: avgPercentile >= 75 ? ['Strong deal flow', 'Quality screening', 'Efficient conversion'] : ['Solid screening process'],
+      improvementAreas: avgPercentile < 50 ? ['Screening speed', 'Deal quality'] : [],
+      peerComparison: {
+        betterThan: avgPercentile,
+        similarTo: ['Hellman & Friedman', 'Francisco Partners', 'Thoma Bravo'],
+        laggingBehind: avgPercentile < 50 ? ['Deal sourcing', 'Screening efficiency'] : []
+      }
+    }
+  }
+
+  static benchmarkInvestmentCommittee(fundData: any): ModuleBenchmark {
+    const metrics: BenchmarkData[] = [
+      {
+        metric: 'Decision Speed (Days)',
+        fundValue: fundData.decisionSpeed || 18,
+        industryMedian: this.industryData.investmentCommitteeMetrics.decisionSpeed.median,
+        industryTopQuartile: this.industryData.investmentCommitteeMetrics.decisionSpeed.topQuartile,
+        industryTopDecile: this.industryData.investmentCommitteeMetrics.decisionSpeed.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.decisionSpeed || 18, this.industryData.investmentCommitteeMetrics.decisionSpeed, true),
+        trend: 'improving',
+        lastUpdated: new Date()
+      },
+      {
+        metric: 'Decision Accuracy',
+        fundValue: fundData.decisionAccuracy || 0.86,
+        industryMedian: this.industryData.investmentCommitteeMetrics.decisionAccuracy.median,
+        industryTopQuartile: this.industryData.investmentCommitteeMetrics.decisionAccuracy.topQuartile,
+        industryTopDecile: this.industryData.investmentCommitteeMetrics.decisionAccuracy.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.decisionAccuracy || 0.86, this.industryData.investmentCommitteeMetrics.decisionAccuracy),
+        trend: 'stable',
+        lastUpdated: new Date()
+      },
+      {
+        metric: 'Meeting Efficiency',
+        fundValue: fundData.meetingEfficiency || 0.82,
+        industryMedian: this.industryData.investmentCommitteeMetrics.meetingEfficiency.median,
+        industryTopQuartile: this.industryData.investmentCommitteeMetrics.meetingEfficiency.topQuartile,
+        industryTopDecile: this.industryData.investmentCommitteeMetrics.meetingEfficiency.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.meetingEfficiency || 0.82, this.industryData.investmentCommitteeMetrics.meetingEfficiency),
+        trend: 'improving',
+        lastUpdated: new Date()
+      }
+    ]
+
+    const avgPercentile = metrics.reduce((acc, m) => acc + m.percentile, 0) / metrics.length
+
+    return {
+      moduleName: 'Investment Committee',
+      overallScore: avgPercentile,
+      grade: this.calculateGrade(avgPercentile),
+      metrics,
+      strengths: avgPercentile >= 75 ? ['Efficient decisions', 'Strong governance', 'Fast turnaround'] : ['Good decision process'],
+      improvementAreas: avgPercentile < 50 ? ['Decision speed', 'Meeting efficiency'] : [],
+      peerComparison: {
+        betterThan: avgPercentile,
+        similarTo: ['CVC Capital', 'EQT Partners', 'Cinven'],
+        laggingBehind: avgPercentile < 50 ? ['Decision processes', 'Committee efficiency'] : []
+      }
+    }
+  }
+
+  static benchmarkMarketIntelligence(fundData: any): ModuleBenchmark {
+    const metrics: BenchmarkData[] = [
+      {
+        metric: 'Forecast Accuracy',
+        fundValue: fundData.forecastAccuracy || 0.81,
+        industryMedian: this.industryData.marketIntelligenceMetrics.forecastAccuracy.median,
+        industryTopQuartile: this.industryData.marketIntelligenceMetrics.forecastAccuracy.topQuartile,
+        industryTopDecile: this.industryData.marketIntelligenceMetrics.forecastAccuracy.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.forecastAccuracy || 0.81, this.industryData.marketIntelligenceMetrics.forecastAccuracy),
+        trend: 'improving',
+        lastUpdated: new Date()
+      },
+      {
+        metric: 'Data Timeliness',
+        fundValue: fundData.dataTimeliness || 0.87,
+        industryMedian: this.industryData.marketIntelligenceMetrics.dataTimeliness.median,
+        industryTopQuartile: this.industryData.marketIntelligenceMetrics.dataTimeliness.topQuartile,
+        industryTopDecile: this.industryData.marketIntelligenceMetrics.dataTimeliness.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.dataTimeliness || 0.87, this.industryData.marketIntelligenceMetrics.dataTimeliness),
+        trend: 'stable',
+        lastUpdated: new Date()
+      },
+      {
+        metric: 'Market Coverage',
+        fundValue: fundData.marketCoverage || 0.85,
+        industryMedian: this.industryData.marketIntelligenceMetrics.marketCoverage.median,
+        industryTopQuartile: this.industryData.marketIntelligenceMetrics.marketCoverage.topQuartile,
+        industryTopDecile: this.industryData.marketIntelligenceMetrics.marketCoverage.topDecile,
+        benchmark: 'top-quartile',
+        percentile: this.calculatePercentile(fundData.marketCoverage || 0.85, this.industryData.marketIntelligenceMetrics.marketCoverage),
+        trend: 'improving',
+        lastUpdated: new Date()
+      }
+    ]
+
+    const avgPercentile = metrics.reduce((acc, m) => acc + m.percentile, 0) / metrics.length
+
+    return {
+      moduleName: 'Market Intelligence',
+      overallScore: avgPercentile,
+      grade: this.calculateGrade(avgPercentile),
+      metrics,
+      strengths: avgPercentile >= 75 ? ['Good market coverage', 'Accurate forecasting', 'Timely insights'] : ['Solid market analysis'],
+      improvementAreas: avgPercentile < 50 ? ['Predictive analytics', 'Competitive intelligence'] : avgPercentile < 75 ? ['Predictive analytics'] : [],
+      peerComparison: {
+        betterThan: avgPercentile,
+        similarTo: ['Permira', 'PAI Partners', 'Nordic Capital'],
+        laggingBehind: avgPercentile < 50 ? ['Competitive intelligence', 'Market timing'] : []
+      }
+    }
+  }
+
   static generateComprehensiveBenchmarks(fundData: any): IndustryBenchmarks {
     const portfolioManagement = this.benchmarkPortfolioManagement(fundData.portfolio || {})
     const dueDiligence = this.benchmarkDueDiligence(fundData.dueDiligence || {})
     const legalManagement = this.benchmarkLegalManagement(fundData.legal || {})
     const fundOperations = this.benchmarkFundOperations(fundData.operations || {})
-
-    // Mock benchmarks for remaining modules
-    const dealScreening: ModuleBenchmark = {
-      moduleName: 'Deal Screening',
-      overallScore: 78,
-      grade: 'B+',
-      metrics: [],
-      strengths: ['Strong deal flow', 'Quality screening'],
-      improvementAreas: [],
-      peerComparison: {
-        betterThan: 78,
-        similarTo: ['Hellman & Friedman', 'Francisco Partners'],
-        laggingBehind: []
-      }
-    }
-
-    const investmentCommittee: ModuleBenchmark = {
-      moduleName: 'Investment Committee',
-      overallScore: 82,
-      grade: 'A',
-      metrics: [],
-      strengths: ['Efficient decisions', 'Strong governance'],
-      improvementAreas: [],
-      peerComparison: {
-        betterThan: 82,
-        similarTo: ['CVC Capital', 'EQT Partners'],
-        laggingBehind: []
-      }
-    }
-
-    const marketIntelligence: ModuleBenchmark = {
-      moduleName: 'Market Intelligence',
-      overallScore: 74,
-      grade: 'B+',
-      metrics: [],
-      strengths: ['Good market coverage'],
-      improvementAreas: ['Predictive analytics'],
-      peerComparison: {
-        betterThan: 74,
-        similarTo: ['Permira', 'PAI Partners'],
-        laggingBehind: ['Competitive intelligence']
-      }
-    }
+    const dealScreening = this.benchmarkDealScreening(fundData.dealScreening || {})
+    const investmentCommittee = this.benchmarkInvestmentCommittee(fundData.investmentCommittee || {})
+    const marketIntelligence = this.benchmarkMarketIntelligence(fundData.marketIntelligence || {})
 
     const overallScore = (
       portfolioManagement.overallScore +
@@ -474,11 +596,11 @@ export class IndustryBenchmarkingEngine {
     // Overall fund ranking insight
     const ranking = benchmarks.overallFundRanking
     insights.push({
-      type: ranking.percentile >= 75 ? 'strength' : 'opportunity',
+      type: ranking.percentile >= 75 ? 'strength' as const : 'opportunity' as const,
       module: 'Overall Fund',
       title: `Industry Ranking: #${ranking.industryRank} of ${ranking.totalFunds}`,
       description: `Fund ranks in ${ranking.percentile.toFixed(0)}th percentile with ${ranking.grade} grade`,
-      impact: 'high',
+      impact: 'high' as const,
       actionable: ranking.percentile < 75
     })
 

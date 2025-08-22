@@ -70,6 +70,7 @@ import {
   Brain,
   Filter,
 } from 'lucide-react';
+import { ModuleHeader, ProcessNotice } from '@/components/shared/ModeIndicators';
 
 import {
   Organization,
@@ -645,735 +646,741 @@ export function AdminManagementDashboard({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin & Organization Management</h1>
-          <p className="text-muted-foreground">
-            Comprehensive system administration with multi-org support and RBAC
-          </p>
-        </div>
-      </div>
+    <div className={`min-h-screen p-4 md:p-6 ${navigationMode === 'traditional' ? 'bg-gray-50' : ''}`}>
+      <div className="container mx-auto max-w-7xl">
+        <ModuleHeader
+          title="Admin & Organization Management"
+          description="Comprehensive system administration with multi-org support and RBAC"
+          mode={navigationMode}
+          actions={
+            <Select value={navigationMode} onValueChange={onModeChange}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="traditional">Traditional</SelectItem>
+                <SelectItem value="assisted">AI Assisted</SelectItem>
+                <SelectItem value="autonomous">Autonomous</SelectItem>
+              </SelectContent>
+            </Select>
+          }
+        />
 
-      {renderNavigationControls()}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="organizations">Organizations</TabsTrigger>
+            <TabsTrigger value="users-roles">Users & Roles</TabsTrigger>
+            <TabsTrigger value="permissions">Permissions</TabsTrigger>
+            <TabsTrigger value="audit">Audit Log</TabsTrigger>
+            <TabsTrigger value="security">Security</TabsTrigger>
+          </TabsList>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="organizations">Organizations</TabsTrigger>
-          <TabsTrigger value="users-roles">Users & Roles</TabsTrigger>
-          <TabsTrigger value="permissions">Permissions</TabsTrigger>
-          <TabsTrigger value="audit">Audit Log</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-        </TabsList>
+          <TabsContent value="overview" className="space-y-4">
+            {renderOverviewTab()}
+          </TabsContent>
 
-        <TabsContent value="overview" className="space-y-4">
-          {renderOverviewTab()}
-        </TabsContent>
+          <TabsContent value="organizations" className="space-y-4">
+            {renderOrganizationsTab()}
+          </TabsContent>
 
-        <TabsContent value="organizations" className="space-y-4">
-          {renderOrganizationsTab()}
-        </TabsContent>
+          <TabsContent value="users-roles" className="space-y-4">
+            {renderUsersRolesTab()}
+          </TabsContent>
 
-        <TabsContent value="users-roles" className="space-y-4">
-          {renderUsersRolesTab()}
-        </TabsContent>
-
-        <TabsContent value="permissions" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Permission Management</CardTitle>
-              <CardDescription>Configure system permissions and access control</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center text-muted-foreground py-8">
-                Permission management interface coming soon...
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="audit" className="space-y-4">
-          {renderAuditTab()}
-        </TabsContent>
-
-        <TabsContent value="security" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Center</CardTitle>
-              <CardDescription>Monitor security events and system health</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center text-muted-foreground py-8">
-                Security monitoring dashboard coming soon...
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-}
-
-// Traditional Admin Management Content Component
-function TraditionalAdminContent({ 
-  organizations, 
-  users, 
-  auditLogs 
-}: { 
-  organizations: Organization[], 
-  users: OrganizationUser[], 
-  auditLogs: AuditLog[] 
-}) {
-  return (
-    <div className="space-y-6">
-      {/* Standard Organization Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Building2 className="h-5 w-5 mr-2" />
-            Organization Management
-          </CardTitle>
-          <CardDescription>Manage organizations and their settings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {organizations.slice(0, 6).map((org) => (
-              <div key={org.id} className="border rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium">{org.name}</h4>
-                  <Badge variant={org.status === 'ACTIVE' ? 'default' : 'secondary'}>
-                    {org.status}
-                  </Badge>
-                </div>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <div className="flex justify-between">
-                    <span>Users:</span>
-                    <span>{org.userCount}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Tier:</span>
-                    <span>{org.subscriptionTier}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Created:</span>
-                    <span>{new Date(org.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* User Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Users className="h-5 w-5 mr-2" />
-            User Management
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {users.slice(0, 8).map((user) => (
-              <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarFallback>{user.firstName[0]}{user.lastName[0]}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">{user.firstName} {user.lastName}</div>
-                    <div className="text-sm text-gray-600">{user.email}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">{user.role}</Badge>
-                  <Badge variant={user.status === 'ACTIVE' ? 'default' : 'secondary'}>
-                    {user.status}
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Audit Log */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <FileText className="h-5 w-5 mr-2" />
-            Recent Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {auditLogs.slice(0, 6).map((log) => (
-              <div key={log.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                <div className="flex-1">
-                  <div className="font-medium">{log.action}</div>
-                  <div className="text-sm text-gray-600">{log.description}</div>
-                  <div className="text-xs text-gray-500 flex items-center gap-2 mt-1">
-                    <span>by {log.performedBy}</span>
-                    <span>•</span>
-                    <span>{new Date(log.timestamp).toLocaleString()}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-// Assisted Admin Management Content Component  
-function AssistedAdminContent({
-  organizations,
-  users,
-  auditLogs,
-  analytics
-}: {
-  organizations: Organization[],
-  users: OrganizationUser[],
-  auditLogs: AuditLog[],
-  analytics: AdminAnalytics
-}) {
-  // AI-powered admin insights
-  const adminInsights = React.useMemo(() => {
-    return {
-      userManagementSuggestions: [
-        {
-          type: 'USER_ONBOARDING',
-          title: 'Streamline User Onboarding',
-          description: '23% of new users take >5 days to complete setup. AI suggests automated onboarding workflow.',
-          impact: 'Reduce onboarding time by 60%',
-          confidence: 0.85,
-          actionable: true
-        },
-        {
-          type: 'ROLE_OPTIMIZATION',
-          title: 'Role Permission Optimization',
-          description: 'Detected 12 users with over-privileged access. Review and optimize role assignments.',
-          impact: 'Improve security posture by 25%',
-          confidence: 0.78,
-          actionable: true
-        }
-      ],
-      securityAlerts: [
-        {
-          severity: 'HIGH',
-          title: 'Unusual Login Pattern Detected',
-          description: 'Multiple failed login attempts from new geographic locations detected for 3 accounts',
-          recommendation: 'Enable MFA for affected accounts and review access patterns',
-          affectedUsers: ['user1@example.com', 'user2@example.com', 'user3@example.com']
-        },
-        {
-          severity: 'MEDIUM', 
-          title: 'Dormant Account Alert',
-          description: '18 user accounts have been inactive for >90 days',
-          recommendation: 'Review and disable inactive accounts to reduce security surface',
-          affectedUsers: []
-        }
-      ],
-      complianceInsights: [
-        {
-          area: 'Data Retention',
-          status: 'ATTENTION_NEEDED',
-          description: 'Several audit logs approaching retention limit. Archive or extend retention policy.',
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-          priority: 'HIGH'
-        },
-        {
-          area: 'Access Review',
-          status: 'COMPLIANT',
-          description: 'Quarterly access review completed. Next review due in 78 days.',
-          dueDate: new Date(Date.now() + 78 * 24 * 60 * 60 * 1000),
-          priority: 'LOW'
-        }
-      ]
-    };
-  }, []);
-
-  // Usage analytics with AI predictions
-  const usageAnalytics = React.useMemo(() => {
-    return {
-      userGrowthTrend: 'POSITIVE',
-      predictedChurn: 2.3,
-      engagementScore: 84.2,
-      featureAdoption: [
-        { feature: 'AI Assistant', adoption: 76, trend: 'UP' },
-        { feature: 'Autonomous Mode', adoption: 43, trend: 'UP' },
-        { feature: 'Advanced Analytics', adoption: 58, trend: 'STABLE' },
-        { feature: 'API Integration', adoption: 31, trend: 'UP' }
-      ]
-    };
-  }, []);
-
-  return (
-    <div className="space-y-6">
-      {/* AI Admin Insights Dashboard */}
-      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Brain className="h-5 w-5 mr-2 text-blue-600" />
-              AI Admin Intelligence
-            </div>
-            <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-              {adminInsights.userManagementSuggestions.length + adminInsights.securityAlerts.length} Insights
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-medium mb-3 text-blue-800">Management Suggestions</h4>
-              <div className="space-y-3">
-                {adminInsights.userManagementSuggestions.map((suggestion, idx) => (
-                  <div key={idx} className="p-3 bg-white rounded-lg border border-blue-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <h5 className="font-medium">{suggestion.title}</h5>
-                      <Badge variant="outline" className="text-blue-700">
-                        {Math.round(suggestion.confidence * 100)}% confident
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2">{suggestion.description}</p>
-                    <div className="text-sm">
-                      <strong className="text-blue-700">Impact:</strong> {suggestion.impact}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-medium mb-3 text-blue-800">Security Intelligence</h4>
-              <div className="space-y-3">
-                {adminInsights.securityAlerts.map((alert, idx) => (
-                  <div key={idx} className={`p-3 rounded-lg border ${
-                    alert.severity === 'HIGH' ? 'bg-red-50 border-red-200' : 'bg-orange-50 border-orange-200'
-                  }`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <h5 className="font-medium">{alert.title}</h5>
-                      <Badge className={
-                        alert.severity === 'HIGH' ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'
-                      }>
-                        {alert.severity}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2">{alert.description}</p>
-                    <div className="text-sm">
-                      <strong>Recommendation:</strong> {alert.recommendation}
-                    </div>
-                    {alert.affectedUsers.length > 0 && (
-                      <div className="text-xs text-gray-500 mt-1">
-                        Affected: {alert.affectedUsers.length} user(s)
+          <TabsContent value="permissions" className="space-y-4">
+            <div className="space-y-6">
+              {/* Permission Categories */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Shield className="w-4 h-4" />
+                      System Administration
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>User Management</span>
+                        <Badge variant="outline">12 roles</Badge>
                       </div>
-                    )}
-                  </div>
-                ))}
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Organization Settings</span>
+                        <Badge variant="outline">8 roles</Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span>System Configuration</span>
+                        <Badge variant="destructive">3 roles</Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      Data & Analytics
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Portfolio Access</span>
+                        <Badge variant="outline">15 roles</Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Financial Reports</span>
+                        <Badge variant="outline">10 roles</Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Export Data</span>
+                        <Badge variant="secondary">7 roles</Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Lock className="w-4 h-4" />
+                      Security & Compliance
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Audit Log Access</span>
+                        <Badge variant="outline">5 roles</Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Security Settings</span>
+                        <Badge variant="destructive">2 roles</Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Compliance Reports</span>
+                        <Badge variant="outline">6 roles</Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Usage Analytics Dashboard */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Activity className="h-5 w-5 mr-2 text-indigo-600" />
-            AI-Enhanced Usage Analytics
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-            <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-              <div className="text-2xl font-bold text-green-600">+{usageAnalytics.userGrowthTrend === 'POSITIVE' ? '12' : '0'}%</div>
-              <div className="text-sm text-green-700">User Growth (30d)</div>
-            </div>
-            <div className="text-center p-4 bg-red-50 rounded-lg border border-red-200">
-              <div className="text-2xl font-bold text-red-600">{usageAnalytics.predictedChurn}%</div>
-              <div className="text-sm text-red-700">Predicted Churn</div>
-            </div>
-            <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="text-2xl font-bold text-blue-600">{usageAnalytics.engagementScore}</div>
-              <div className="text-sm text-blue-700">Engagement Score</div>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-medium mb-3">Feature Adoption Trends</h4>
-            <div className="space-y-3">
-              {usageAnalytics.featureAdoption.map((feature, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="font-medium">{feature.feature}</div>
-                    <Badge className={
-                      feature.trend === 'UP' ? 'bg-green-100 text-green-800' :
-                      feature.trend === 'DOWN' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
-                    }>
-                      {feature.trend}
-                    </Badge>
+              {/* Permission Matrix */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserCheck className="w-5 h-5" />
+                    Role-Permission Matrix
+                  </CardTitle>
+                  <CardDescription>
+                    Configure granular permissions for each role across all system modules
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left p-2 font-medium">Permission</th>
+                          <th className="text-center p-2 font-medium">Super Admin</th>
+                          <th className="text-center p-2 font-medium">Fund Manager</th>
+                          <th className="text-center p-2 font-medium">Analyst</th>
+                          <th className="text-center p-2 font-medium">LP User</th>
+                          <th className="text-center p-2 font-medium">Read Only</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b hover:bg-gray-50">
+                          <td className="p-2 font-medium">Portfolio Management</td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Eye className="w-4 h-4 text-blue-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Eye className="w-4 h-4 text-blue-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Eye className="w-4 h-4 text-blue-600 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-gray-50">
+                          <td className="p-2 font-medium">Deal Screening</td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-gray-50">
+                          <td className="p-2 font-medium">Due Diligence</td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Eye className="w-4 h-4 text-blue-600 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-gray-50">
+                          <td className="p-2 font-medium">Financial Reports</td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Eye className="w-4 h-4 text-blue-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Eye className="w-4 h-4 text-blue-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Eye className="w-4 h-4 text-blue-600 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-gray-50">
+                          <td className="p-2 font-medium">User Management</td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><UserPlus className="w-4 h-4 text-orange-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-gray-50">
+                          <td className="p-2 font-medium">System Configuration</td>
+                          <td className="text-center p-2"><CheckCircle2 className="w-4 h-4 text-green-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                          <td className="text-center p-2"><Ban className="w-4 h-4 text-red-600 mx-auto" /></td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-lg font-bold">{feature.adoption}%</div>
-                    <div className="w-16">
-                      <Progress value={feature.adoption} className="h-2" />
+                  <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-green-600" />
+                      Full Access
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-3 h-3 text-blue-600" />
+                      Read Only
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <UserPlus className="w-3 h-3 text-orange-600" />
+                      Limited Access
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Ban className="w-3 h-3 text-red-600" />
+                      No Access
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                </CardContent>
+              </Card>
 
-      {/* Compliance Dashboard */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Shield className="h-5 w-5 mr-2 text-purple-600" />
-            Compliance Monitoring
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {adminInsights.complianceInsights.map((insight, idx) => (
-              <div key={idx} className={`p-3 rounded-lg border ${
-                insight.status === 'ATTENTION_NEEDED' ? 'bg-amber-50 border-amber-200' : 
-                'bg-green-50 border-green-200'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <h5 className="font-medium">{insight.area}</h5>
-                  <div className="flex items-center gap-2">
-                    <Badge className={
-                      insight.status === 'ATTENTION_NEEDED' ? 'bg-amber-100 text-amber-800' :
-                      'bg-green-100 text-green-800'
-                    }>
-                      {insight.status.replace('_', ' ')}
-                    </Badge>
-                    <Badge variant="outline" className={
-                      insight.priority === 'HIGH' ? 'border-red-200 text-red-700' :
-                      insight.priority === 'MEDIUM' ? 'border-yellow-200 text-yellow-700' :
-                      'border-gray-200 text-gray-700'
-                    }>
-                      {insight.priority}
-                    </Badge>
+              {/* Recent Permission Changes */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="w-5 h-5" />
+                    Recent Permission Changes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback>SA</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium text-sm">Super Admin granted Portfolio Management access to Analyst role</div>
+                          <div className="text-xs text-muted-foreground">2 hours ago • High impact change</div>
+                        </div>
+                      </div>
+                      <Badge variant="outline">GRANTED</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback>FM</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium text-sm">Fund Manager removed Export Data permission from LP User role</div>
+                          <div className="text-xs text-muted-foreground">1 day ago • Security enhancement</div>
+                        </div>
+                      </div>
+                      <Badge variant="destructive">REVOKED</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback>SA</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium text-sm">New role "Compliance Officer" created with audit permissions</div>
+                          <div className="text-xs text-muted-foreground">3 days ago • Role management</div>
+                        </div>
+                      </div>
+                      <Badge variant="secondary">CREATED</Badge>
+                    </div>
                   </div>
-                </div>
-                <p className="text-sm text-gray-600 mb-2">{insight.description}</p>
-                <div className="text-xs text-gray-500">
-                  Due: {insight.dueDate.toLocaleDateString()}
-                </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="audit" className="space-y-4">
+            {renderAuditTab()}
+          </TabsContent>
+
+          <TabsContent value="security" className="space-y-4">
+            <div className="space-y-6">
+              {/* Security Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Threat Level</p>
+                        <p className="text-2xl font-bold text-green-600">LOW</p>
+                      </div>
+                      <Shield className="h-4 w-4 text-green-600" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Active Sessions</p>
+                        <p className="text-2xl font-bold">247</p>
+                      </div>
+                      <Activity className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Failed Logins (24h)</p>
+                        <p className="text-2xl font-bold text-orange-600">12</p>
+                      </div>
+                      <AlertTriangle className="h-4 w-4 text-orange-600" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Security Score</p>
+                        <p className="text-2xl font-bold text-green-600">94%</p>
+                      </div>
+                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Traditional Content Enhanced */}
-      <TraditionalAdminContent organizations={organizations} users={users} auditLogs={auditLogs} />
-    </div>
-  );
-}
-
-// Autonomous Admin Management Content Component
-function AutonomousAdminContent({
-  organizations,
-  users,
-  auditLogs,
-  analytics
-}: {
-  organizations: Organization[],
-  users: OrganizationUser[],
-  auditLogs: AuditLog[],
-  analytics: AdminAnalytics
-}) {
-  // Autonomous operations state
-  const [autonomousActions, setAutonomousActions] = React.useState([
-    {
-      id: 'auto-security-1',
-      type: 'security' as const,
-      title: 'Auto-Disabled Compromised Account',
-      description: 'Detected unusual login patterns for user@example.com. Account automatically disabled and admin notified.',
-      status: 'completed' as const,
-      timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-      impact: 'Prevented potential security breach',
-      confidence: 0.95,
-      rollbackable: true
-    },
-    {
-      id: 'auto-cleanup-1',
-      type: 'maintenance' as const,
-      title: 'Automated Data Cleanup',
-      description: 'Automatically archived 2,847 old audit logs and optimized database performance.',
-      status: 'completed' as const,
-      timestamp: new Date(Date.now() - 7200000), // 2 hours ago
-      impact: 'Freed 1.2GB storage, improved query speed by 18%',
-      confidence: 0.99,
-      rollbackable: false
-    },
-    {
-      id: 'auto-scaling-1',
-      type: 'optimization' as const,
-      title: 'Auto-Scaling Adjustment',
-      description: 'Detected increased user activity. Automatically scaled infrastructure to maintain performance.',
-      status: 'in_progress' as const,
-      timestamp: new Date(Date.now() - 1800000), // 30 min ago
-      impact: 'Maintained <200ms response times during peak load',
-      confidence: 0.92,
-      rollbackable: true
-    }
-  ]);
-
-  // Pending autonomous actions
-  const [pendingActions, setPendingActions] = React.useState([
-    {
-      id: 'pending-policy-1',
-      type: 'policy' as const,
-      title: 'Password Policy Enhancement',
-      description: 'AI recommends implementing stricter password requirements based on recent security trends.',
-      estimatedImpact: 'Reduce password-related breaches by 45%',
-      riskLevel: 'Low' as const,
-      affectedUsers: 127,
-      implementationTime: '15 minutes'
-    },
-    {
-      id: 'pending-roles-1',
-      type: 'access' as const,
-      title: 'Role Permission Optimization',
-      description: 'Detected over-privileged accounts. Recommend automated role rightsizing for 23 users.',
-      estimatedImpact: 'Reduce security surface by 30%',
-      riskLevel: 'Medium' as const,
-      affectedUsers: 23,
-      implementationTime: '5 minutes'
-    }
-  ]);
-
-  // Real-time system monitoring
-  const [systemMetrics] = React.useState({
-    systemHealth: 96.8,
-    activeUsers: 1247,
-    securityScore: 87.3,
-    performanceIndex: 94.1,
-    automatedActions: 156,
-    preventedIncidents: 8,
-    lastCheck: new Date(Date.now() - 60000) // 1 min ago
-  });
-
-  const executeAutonomousAction = (actionId: string) => {
-    setPendingActions(prev => prev.filter(a => a.id !== actionId));
-    alert(`Executing Admin Management Autonomous Action ${actionId}:\n\n• AI-powered administrative task automation\n• Intelligent user management and permission optimization\n• Automated compliance monitoring and reporting\n• Cross-system integration and data synchronization\n• Smart resource allocation and performance monitoring\n• Predictive analytics for administrative efficiency\n• Automated audit trail and security verification`);
-  };
-
-  const rollbackAction = (actionId: string) => {
-    setAutonomousActions(prev => 
-      prev.map(action => 
-        action.id === actionId 
-          ? { ...action, status: 'rolled_back' as const }
-          : action
-      )
-    );
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* Autonomous Operations Command Center */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Zap className="h-5 w-5 mr-2 text-purple-600" />
-              Autonomous Admin Control Center
-            </div>
-            <Badge variant="outline" className="border-purple-200 text-purple-700 bg-purple-50">
-              {autonomousActions.filter(a => a.status === 'in_progress').length} Active Operations
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
-            <div className="text-center p-3 bg-white rounded-lg border border-green-200">
-              <div className="text-xl font-bold text-green-600">{systemMetrics.systemHealth}%</div>
-              <div className="text-xs text-green-700">System Health</div>
-            </div>
-            <div className="text-center p-3 bg-white rounded-lg border border-blue-200">
-              <div className="text-xl font-bold text-blue-600">{systemMetrics.activeUsers}</div>
-              <div className="text-xs text-blue-700">Active Users</div>
-            </div>
-            <div className="text-center p-3 bg-white rounded-lg border border-orange-200">
-              <div className="text-xl font-bold text-orange-600">{systemMetrics.automatedActions}</div>
-              <div className="text-xs text-orange-700">Auto Actions (24h)</div>
-            </div>
-            <div className="text-center p-3 bg-white rounded-lg border border-red-200">
-              <div className="text-xl font-bold text-red-600">{systemMetrics.preventedIncidents}</div>
-              <div className="text-xs text-red-700">Prevented Incidents</div>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <h4 className="font-medium">Recent Autonomous Actions</h4>
-            {autonomousActions.map(action => (
-              <div 
-                key={action.id}
-                className={`p-3 border rounded-lg ${
-                  action.status === 'completed' ? 'border-green-200 bg-green-50' :
-                  action.status === 'in_progress' ? 'border-blue-200 bg-blue-50' :
-                  'border-gray-200 bg-gray-50'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center mb-1">
-                      {action.status === 'completed' && <CheckCircle2 className="h-4 w-4 text-green-600 mr-2" />}
-                      {action.status === 'in_progress' && <Clock className="h-4 w-4 text-blue-600 mr-2" />}
-                      <h5 className="font-medium">{action.title}</h5>
-                      <Badge size="sm" className={`ml-2 ${
-                        action.type === 'security' ? 'bg-red-100 text-red-800' :
-                        action.type === 'maintenance' ? 'bg-blue-100 text-blue-800' :
-                        'bg-purple-100 text-purple-800'
-                      }`}>
-                        {action.type}
-                      </Badge>
+              {/* Security Alerts & Threats */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-orange-600" />
+                      Active Security Alerts
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between p-3 border rounded-lg bg-red-50">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge className="bg-red-100 text-red-800">CRITICAL</Badge>
+                            <span className="text-xs text-muted-foreground">2 min ago</span>
+                          </div>
+                          <h4 className="font-medium text-sm">Multiple Failed Login Attempts</h4>
+                          <p className="text-xs text-muted-foreground">IP: 192.168.1.100 • User: admin@techcorp.com</p>
+                        </div>
+                        <Button variant="destructive" size="sm">Block</Button>
+                      </div>
+                      
+                      <div className="flex items-start justify-between p-3 border rounded-lg bg-yellow-50">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge className="bg-yellow-100 text-yellow-800">MEDIUM</Badge>
+                            <span className="text-xs text-muted-foreground">15 min ago</span>
+                          </div>
+                          <h4 className="font-medium text-sm">Unusual Access Pattern</h4>
+                          <p className="text-xs text-muted-foreground">User accessing from new location • Singapore</p>
+                        </div>
+                        <Button variant="outline" size="sm">Review</Button>
+                      </div>
+                      
+                      <div className="flex items-start justify-between p-3 border rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge className="bg-blue-100 text-blue-800">INFO</Badge>
+                            <span className="text-xs text-muted-foreground">1 hour ago</span>
+                          </div>
+                          <h4 className="font-medium text-sm">Password Policy Update</h4>
+                          <p className="text-xs text-muted-foreground">New complexity requirements applied</p>
+                        </div>
+                        <Button variant="ghost" size="sm">Dismiss</Button>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{action.description}</p>
-                    <div className="text-xs text-gray-500 space-x-4">
-                      <span>Impact: {action.impact}</span>
-                      <span>Confidence: {Math.round(action.confidence * 100)}%</span>
-                      <span>{new Date(action.timestamp).toLocaleString()}</span>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Lock className="w-5 h-5 text-blue-600" />
+                      Access Control Status
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-sm">Multi-Factor Authentication</span>
+                        </div>
+                        <Badge variant="outline" className="text-green-600">98% Enabled</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-sm">Password Compliance</span>
+                        </div>
+                        <Badge variant="outline" className="text-green-600">94% Compliant</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                          <span className="text-sm">Session Management</span>
+                        </div>
+                        <Badge variant="outline" className="text-yellow-600">3 Stale Sessions</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-sm">API Security</span>
+                        </div>
+                        <Badge variant="outline" className="text-green-600">All Secured</Badge>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-2 ml-4">
-                    <Button size="sm" variant="ghost">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    {action.rollbackable && action.status === 'completed' && (
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="text-red-600 border-red-200"
-                        onClick={() => rollbackAction(action.id)}
-                      >
-                        Rollback
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Pending Autonomous Actions */}
-      {pendingActions.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Crown className="h-5 w-5 mr-2 text-amber-600" />
-              Pending Autonomous Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {pendingActions.map(action => (
-                <div key={action.id} className="p-4 border border-amber-200 bg-amber-50 rounded-lg">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-amber-800">{action.title}</h4>
-                      <p className="text-sm text-amber-700 mt-1">{action.description}</p>
+              {/* Security Metrics & Compliance */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart className="w-5 h-5 text-purple-600" />
+                      Security Metrics (30 Days)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span>Login Success Rate</span>
+                          <span className="font-medium">97.8%</span>
+                        </div>
+                        <Progress value={97.8} className="h-2" />
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span>Threat Detection Accuracy</span>
+                          <span className="font-medium">99.2%</span>
+                        </div>
+                        <Progress value={99.2} className="h-2" />
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span>Incident Response Time</span>
+                          <span className="font-medium">2.3 min avg</span>
+                        </div>
+                        <Progress value={85} className="h-2" />
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span>Compliance Score</span>
+                          <span className="font-medium">96.5%</span>
+                        </div>
+                        <Progress value={96.5} className="h-2" />
+                      </div>
                     </div>
-                    <Badge className={`${
-                      action.riskLevel === 'Low' ? 'bg-green-100 text-green-800' :
-                      action.riskLevel === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {action.riskLevel} Risk
-                    </Badge>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-4">
-                    <div>
-                      <span className="font-medium">Affected Users:</span>
-                      <p className="text-amber-600">{action.affectedUsers}</p>
-                    </div>
-                    <div>
-                      <span className="font-medium">Implementation:</span>
-                      <p className="text-amber-600">{action.implementationTime}</p>
-                    </div>
-                    <div>
-                      <span className="font-medium">Impact:</span>
-                      <p className="text-amber-600">{action.estimatedImpact}</p>
-                    </div>
-                  </div>
+                  </CardContent>
+                </Card>
 
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      className="bg-amber-600 hover:bg-amber-700"
-                      onClick={() => executeAutonomousAction(action.id)}
-                    >
-                      Execute
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      Review Details
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="text-red-600"
-                      onClick={() => setPendingActions(prev => prev.filter(a => a.id !== action.id))}
-                    >
-                      Dismiss
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-indigo-600" />
+                      Compliance Status
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                          <div>
+                            <div className="font-medium text-sm">SOC 2 Type II</div>
+                            <div className="text-xs text-muted-foreground">Last audit: Nov 2024</div>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="text-green-600">Compliant</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                          <div>
+                            <div className="font-medium text-sm">GDPR</div>
+                            <div className="text-xs text-muted-foreground">Data protection compliance</div>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="text-green-600">Compliant</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                          <div>
+                            <div className="font-medium text-sm">ISO 27001</div>
+                            <div className="text-xs text-muted-foreground">Certification renewal due</div>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="text-yellow-600">Action Required</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                          <div>
+                            <div className="font-medium text-sm">PCI DSS</div>
+                            <div className="text-xs text-muted-foreground">Payment security standards</div>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="text-green-600">Compliant</Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
 
-      {/* Real-time System Monitoring */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Activity className="h-5 w-5 mr-2 text-green-600" />
-              Real-time System Monitor
-            </div>
-            <div className="flex items-center text-sm text-gray-500">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-              Last check: {systemMetrics.lastCheck.toLocaleTimeString()}
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-2 bg-green-50 rounded text-sm">
-              <span>✓ User authentication system: Optimal</span>
-              <span className="text-gray-500">2m ago</span>
-            </div>
-            <div className="flex items-center justify-between p-2 bg-blue-50 rounded text-sm">
-              <span>ℹ Database optimization: Completed (+18% performance)</span>
-              <span className="text-gray-500">5m ago</span>
-            </div>
-            <div className="flex items-center justify-between p-2 bg-orange-50 rounded text-sm">
-              <span>⚠ Rate limiting: 3 requests blocked (suspicious activity)</span>
-              <span className="text-gray-500">8m ago</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+              {/* Recent Security Events */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="w-5 h-5" />
+                    Recent Security Events
+                  </CardTitle>
+                  <CardDescription>
+                    Real-time monitoring of security-related activities across the platform
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Timestamp</TableHead>
+                        <TableHead>Event Type</TableHead>
+                        <TableHead>User/Source</TableHead>
+                        <TableHead>Details</TableHead>
+                        <TableHead>Risk Level</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(Date.now() - 2 * 60 * 1000).toLocaleTimeString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="destructive">Failed Login</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-6 w-6">
+                              <AvatarFallback className="text-xs">AD</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">admin@techcorp.com</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm">5 consecutive failed attempts from 192.168.1.100</span>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className="bg-red-100 text-red-600">CRITICAL</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-orange-600">Investigating</Badge>
+                        </TableCell>
+                      </TableRow>
+                      
+                      <TableRow>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(Date.now() - 15 * 60 * 1000).toLocaleTimeString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">New Location</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-6 w-6">
+                              <AvatarFallback className="text-xs">JD</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">john.doe@fund.com</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm">Login from Singapore (first time)</span>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className="bg-yellow-100 text-yellow-600">MEDIUM</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-blue-600">Verified</Badge>
+                        </TableCell>
+                      </TableRow>
+                      
+                      <TableRow>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(Date.now() - 45 * 60 * 1000).toLocaleTimeString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">Permission Change</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-6 w-6">
+                              <AvatarFallback className="text-xs">SA</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">System Admin</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm">Role permissions updated for Analyst role</span>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className="bg-blue-100 text-blue-600">LOW</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-green-600">Completed</Badge>
+                        </TableCell>
+                      </TableRow>
+                      
+                      <TableRow>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(Date.now() - 2 * 60 * 60 * 1000).toLocaleTimeString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="default">API Access</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-6 w-6">
+                              <AvatarFallback className="text-xs">AP</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">API Client</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm">High volume API requests detected</span>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className="bg-yellow-100 text-yellow-600">MEDIUM</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-green-600">Resolved</Badge>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
 
-      {/* Enhanced Assisted Content */}
-      <AssistedAdminContent organizations={organizations} users={users} auditLogs={auditLogs} analytics={analytics} />
+              {/* AI Security Insights */}
+              {(navigationMode === 'assisted' || navigationMode === 'autonomous') && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Brain className="w-5 h-5" />
+                      AI Security Intelligence
+                    </CardTitle>
+                    <CardDescription>
+                      Machine learning-powered security analysis and threat prediction
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="p-4 border rounded-lg bg-blue-50">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge className="bg-blue-100 text-blue-800">PREDICTIVE</Badge>
+                              <span className="text-sm text-muted-foreground">92% confidence</span>
+                            </div>
+                            <h4 className="font-medium">Potential Brute Force Attack Pattern</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              ML model detected unusual login patterns that may indicate coordinated attack attempt within next 2-4 hours
+                            </p>
+                            <p className="text-sm text-blue-600 mt-2">
+                              💡 Recommend: Enable enhanced monitoring and consider temporary rate limiting
+                            </p>
+                          </div>
+                          <Button variant="outline" size="sm">Apply Recommendation</Button>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 border rounded-lg bg-green-50">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge className="bg-green-100 text-green-800">OPTIMIZATION</Badge>
+                              <span className="text-sm text-muted-foreground">87% confidence</span>
+                            </div>
+                            <h4 className="font-medium">Security Policy Optimization</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Analysis suggests adjusting session timeout policies could improve security by 15% without impacting user experience
+                            </p>
+                            <p className="text-sm text-green-600 mt-2">
+                              💡 Recommend: Reduce session timeout to 4 hours for high-privilege users
+                            </p>
+                          </div>
+                          <Button variant="outline" size="sm">Review Policy</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <ProcessNotice 
+          mode={navigationMode}
+          title="Admin & Organization Management"
+          description="System administration and organization management operations"
+        />
+      </div>
     </div>
   );
 }

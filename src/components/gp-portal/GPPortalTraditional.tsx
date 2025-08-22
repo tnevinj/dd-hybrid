@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ModuleHeader, ProcessNotice, MODE_DESCRIPTIONS } from '@/components/shared/ModeIndicators';
 import {
   Building2,
   FileText,
@@ -23,7 +24,8 @@ import {
   CheckCircle,
   XCircle,
   MoreHorizontal,
-  Calculator
+  Calculator,
+  Users
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { 
@@ -73,8 +75,27 @@ export function GPPortalTraditional({ data, onViewDetails }: GPPortalTraditional
   };
 
   return (
-    <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Standardized Header */}
+      <ModuleHeader
+        title="GP Portal"
+        description="Complete manual control over general partner operations and LP communications"
+        mode="traditional"
+        actions={
+          <div className="flex space-x-2">
+            <Button variant="outline" className="flex items-center space-x-2 border-gray-300 text-gray-700">
+              <Upload className="h-4 w-4" />
+              <span>Upload Documents</span>
+            </Button>
+            <Button className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
+              <Plus className="h-4 w-4" />
+              <span>New Submission</span>
+            </Button>
+          </div>
+        }
+      />
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="companies">Companies</TabsTrigger>
@@ -791,6 +812,13 @@ export function GPPortalTraditional({ data, onViewDetails }: GPPortalTraditional
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Standardized Process Notice */}
+      <ProcessNotice
+        mode="traditional"
+        title="Traditional GP Portal"
+        description="You have complete manual control over general partner operations. All deal submissions, LP communications, document management, and reporting are performed manually without AI assistance. Use the tools above to manage your GP operations according to your fund strategy."
+      />
     </div>
   );
 }

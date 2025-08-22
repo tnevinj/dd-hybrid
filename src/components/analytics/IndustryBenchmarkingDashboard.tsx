@@ -333,85 +333,78 @@ export function IndustryBenchmarkingDashboard({ mode = 'traditional' }: Industry
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {data.metrics.length > 0 ? (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {data.metrics.map((metric, idx) => (
-                          <div key={idx} className="p-4 border rounded-lg">
-                            <div className="flex justify-between items-start mb-2">
-                              <h4 className="font-medium text-gray-900 text-sm">{metric.metric}</h4>
-                              {getTrendIcon(metric.trend)}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {data.metrics.map((metric, idx) => (
+                        <div key={idx} className="p-4 border rounded-lg">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-medium text-gray-900 text-sm">{metric.metric}</h4>
+                            {getTrendIcon(metric.trend)}
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span>Your Fund:</span>
+                              <span className="font-semibold">{formatMetricValue(metric)}</span>
                             </div>
-                            <div className="space-y-2">
-                              <div className="flex justify-between text-sm">
-                                <span>Your Fund:</span>
-                                <span className="font-semibold">{formatMetricValue(metric)}</span>
+                            <div className="flex justify-between text-sm text-gray-600">
+                              <span>Industry Median:</span>
+                              <span>{formatMetricValue({...metric, fundValue: metric.industryMedian})}</span>
+                            </div>
+                            <div className="flex justify-between text-sm text-gray-600">
+                              <span>Top Quartile:</span>
+                              <span>{formatMetricValue({...metric, fundValue: metric.industryTopQuartile})}</span>
+                            </div>
+                            <div className="mt-2">
+                              <div className="flex justify-between text-xs mb-1">
+                                <span>Percentile</span>
+                                <span className="font-medium">{metric.percentile}%</span>
                               </div>
-                              <div className="flex justify-between text-sm text-gray-600">
-                                <span>Industry Median:</span>
-                                <span>{formatMetricValue({...metric, fundValue: metric.industryMedian})}</span>
-                              </div>
-                              <div className="flex justify-between text-sm text-gray-600">
-                                <span>Top Quartile:</span>
-                                <span>{formatMetricValue({...metric, fundValue: metric.industryTopQuartile})}</span>
-                              </div>
-                              <div className="mt-2">
-                                <div className="flex justify-between text-xs mb-1">
-                                  <span>Percentile</span>
-                                  <span className="font-medium">{metric.percentile}%</span>
-                                </div>
-                                <Progress value={metric.percentile} className="h-1.5" />
-                              </div>
+                              <Progress value={metric.percentile} className="h-1.5" />
                             </div>
                           </div>
-                        ))}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      <div>
+                        <h4 className="font-semibold text-green-900 mb-2">Strengths</h4>
+                        <ul className="space-y-1">
+                          {data.strengths.map((strength, idx) => (
+                            <li key={idx} className="text-sm text-green-700 flex items-center">
+                              <CheckCircle className="h-3 w-3 mr-2" />
+                              {strength}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      {data.improvementAreas.length > 0 && (
                         <div>
-                          <h4 className="font-semibold text-green-900 mb-2">Strengths</h4>
+                          <h4 className="font-semibold text-orange-900 mb-2">Improvement Areas</h4>
                           <ul className="space-y-1">
-                            {data.strengths.map((strength, idx) => (
-                              <li key={idx} className="text-sm text-green-700 flex items-center">
-                                <CheckCircle className="h-3 w-3 mr-2" />
-                                {strength}
+                            {data.improvementAreas.map((area, idx) => (
+                              <li key={idx} className="text-sm text-orange-700 flex items-center">
+                                <ArrowUpRight className="h-3 w-3 mr-2" />
+                                {area}
                               </li>
                             ))}
                           </ul>
                         </div>
+                      )}
+                    </div>
 
-                        {data.improvementAreas.length > 0 && (
-                          <div>
-                            <h4 className="font-semibold text-orange-900 mb-2">Improvement Areas</h4>
-                            <ul className="space-y-1">
-                              {data.improvementAreas.map((area, idx) => (
-                                <li key={idx} className="text-sm text-orange-700 flex items-center">
-                                  <ArrowUpRight className="h-3 w-3 mr-2" />
-                                  {area}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="border-t pt-4">
-                        <h4 className="font-semibold text-gray-900 mb-2">Peer Comparison</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {data.peerComparison.similarTo.map((peer, idx) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
-                              {peer}
-                            </Badge>
-                          ))}
-                        </div>
+                    <div className="border-t pt-4">
+                      <h4 className="font-semibold text-gray-900 mb-2">Peer Comparison</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {data.peerComparison.similarTo.map((peer, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">
+                            {peer}
+                          </Badge>
+                        ))}
                       </div>
                     </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      <FileText className="h-8 w-8 mx-auto mb-2" />
-                      <p>Detailed metrics coming soon for {data.moduleName}</p>
-                    </div>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
             ))}

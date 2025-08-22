@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ModuleHeader, ProcessNotice, MetricCard } from '@/components/shared/ModeIndicators';
 import {
   Search,
   Filter,
@@ -218,29 +219,24 @@ export const LegalManagementTraditional: React.FC<LegalManagementTraditionalProp
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      {/* Header - Traditional Theme */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <div className="flex items-center space-x-3">
-            <h1 className="text-3xl font-bold text-gray-900">Legal Management</h1>
-            <Badge className="bg-gray-100 text-gray-800 border border-gray-300 flex items-center space-x-1">
-              <User className="h-3 w-3" />
-              <span>Traditional Mode</span>
-            </Badge>
-          </div>
-          <p className="text-gray-600 mt-1">Complete manual control over legal documents, compliance, and workflows</p>
-        </div>
-        <div className="flex space-x-2">
-          <Button onClick={onCreateDocument} className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
-            <Plus className="h-4 w-4" />
-            <span>New Document</span>
-          </Button>
-          <Button onClick={onManageCompliance} variant="outline" className="flex items-center space-x-2">
-            <Shield className="h-4 w-4" />
-            <span>Compliance</span>
-          </Button>
-        </div>
-      </div>
+      <div className="container mx-auto max-w-7xl">
+        <ModuleHeader
+          title="Legal Management"
+          description="Complete manual control over legal documents, compliance, and workflows"
+          mode="traditional"
+          actions={
+            <div className="flex space-x-2">
+              <Button onClick={onCreateDocument} className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
+                <Plus className="h-4 w-4" />
+                <span>New Document</span>
+              </Button>
+              <Button onClick={onManageCompliance} variant="outline" className="flex items-center space-x-2">
+                <Shield className="h-4 w-4" />
+                <span>Compliance</span>
+              </Button>
+            </div>
+          }
+        />
       
       {/* KPI Cards - Traditional Focus */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
@@ -1114,20 +1110,11 @@ export const LegalManagementTraditional: React.FC<LegalManagementTraditionalProp
         </TabsContent>
       </Tabs>
 
-      {/* Manual Process Notice */}
-      <div className="mt-6 p-4 bg-gray-100 border border-gray-200 rounded-lg">
-        <div className="flex items-start space-x-3">
-          <User className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-1">Traditional Legal Management</h4>
-            <p className="text-sm text-gray-600">
-              You have full manual control over legal document management and compliance monitoring. 
-              All document reviews, workflow approvals, and compliance assessments are performed manually 
-              without AI assistance. Use the search, filter, and sort tools to organize documents according 
-              to your requirements.
-            </p>
-          </div>
-        </div>
+        <ProcessNotice 
+          mode="traditional"
+          title="Traditional Legal Management"
+          description="You have full manual control over legal document management and compliance monitoring. All document reviews, workflow approvals, and compliance assessments are performed manually without AI assistance. Use the search, filter, and sort tools to organize documents according to your requirements."
+        />
       </div>
     </div>
   );

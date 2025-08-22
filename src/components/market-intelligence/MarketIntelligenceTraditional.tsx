@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import { ModuleHeader, ProcessNotice, MODE_DESCRIPTIONS } from '@/components/shared/ModeIndicators';
 import { 
   TrendingUp, 
   TrendingDown,
@@ -217,35 +218,31 @@ export const MarketIntelligenceTraditional: React.FC<{ metrics?: any }> = ({ met
   };
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <div className="flex items-center space-x-3">
-            <h1 className="text-3xl font-bold text-gray-900">Market Intelligence Platform</h1>
-            <Badge className="bg-gray-100 text-gray-800 border border-gray-300 flex items-center space-x-1">
-              <User className="h-3 w-3" />
-              <span>Traditional Mode</span>
-            </Badge>
+      {/* Standardized Header */}
+      <ModuleHeader
+        title="Market Intelligence Platform"
+        description="Comprehensive market analysis, competitive intelligence, and economic forecasting"
+        mode="traditional"
+        actions={
+          <div className="flex space-x-2">
+            <Button variant="outline" className="flex items-center space-x-2 border-gray-300 text-gray-700">
+              <Download className="h-4 w-4" />
+              <span>Export Data</span>
+            </Button>
+            <Button className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
+              <Search className="h-4 w-4" />
+              <span>Market Research</span>
+            </Button>
           </div>
-          <p className="text-gray-600 mt-1">Comprehensive market analysis, competitive intelligence, and economic forecasting</p>
-        </div>
-        <div className="flex space-x-2">
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export Data
-          </Button>
-          <Button className="bg-gray-700 hover:bg-gray-800">
-            <Search className="h-4 w-4 mr-2" />
-            Market Research
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Enhanced KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
-              <BarChart3 className="h-5 w-5 text-blue-600" />
+              <BarChart3 className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Market Reports</p>
             </div>
             <p className="text-3xl font-bold text-gray-900">{metrics.totalReports || 127}</p>
@@ -259,7 +256,7 @@ export const MarketIntelligenceTraditional: React.FC<{ metrics?: any }> = ({ met
         <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
-              <Bell className="h-5 w-5 text-orange-600" />
+              <Bell className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Active Alerts</p>
             </div>
             <p className="text-3xl font-bold text-gray-900">{metrics.activeAlerts || 12}</p>
@@ -273,7 +270,7 @@ export const MarketIntelligenceTraditional: React.FC<{ metrics?: any }> = ({ met
         <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
-              <Target className="h-5 w-5 text-green-600" />
+              <Target className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Sectors Tracked</p>
             </div>
             <p className="text-3xl font-bold text-gray-900">{marketData.sectors.length}</p>
@@ -287,7 +284,7 @@ export const MarketIntelligenceTraditional: React.FC<{ metrics?: any }> = ({ met
         <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
-              <Users className="h-5 w-5 text-purple-600" />
+              <Users className="h-5 w-5 text-gray-600" />
               <p className="text-sm text-gray-600 font-medium">Competitors</p>
             </div>
             <p className="text-3xl font-bold text-gray-900">{marketData.competitors.length}</p>
@@ -301,13 +298,13 @@ export const MarketIntelligenceTraditional: React.FC<{ metrics?: any }> = ({ met
         <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
-              <Brain className="h-5 w-5 text-indigo-600" />
-              <p className="text-sm text-gray-600 font-medium">Forecast Accuracy</p>
+              <FileText className="h-5 w-5 text-gray-600" />
+              <p className="text-sm text-gray-600 font-medium">Research Quality</p>
             </div>
             <p className="text-3xl font-bold text-gray-900">84%</p>
             <div className="flex items-center text-sm text-gray-500 mt-1">
               <Award className="h-3 w-3 mr-1" />
-              <span>Above industry avg</span>
+              <span>Manual analysis</span>
             </div>
           </CardContent>
         </Card>
@@ -925,19 +922,12 @@ export const MarketIntelligenceTraditional: React.FC<{ metrics?: any }> = ({ met
         </TabsContent>
       </Tabs>
 
-      <div className="mt-6 p-4 bg-gray-100 border border-gray-200 rounded-lg">
-        <div className="flex items-start space-x-3">
-          <User className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-1">Traditional Market Intelligence</h4>
-            <p className="text-sm text-gray-600">
-              Comprehensive manual market analysis with full control over research methodology. 
-              Advanced sector analysis, competitive intelligence, economic forecasting, and news monitoring 
-              performed through traditional research methods with expert oversight.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Standardized Process Notice */}
+      <ProcessNotice
+        mode="traditional"
+        title="Traditional Market Intelligence"
+        description="Comprehensive manual market analysis with full control over research methodology. Advanced sector analysis, competitive intelligence, economic forecasting, and news monitoring performed through traditional research methods with expert oversight."
+      />
     </div>
   );
 };

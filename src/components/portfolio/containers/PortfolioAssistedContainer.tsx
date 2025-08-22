@@ -5,6 +5,8 @@ import { HierarchicalLayout } from '../layouts/HierarchicalLayout';
 import { getModuleGroups } from '@/lib/portfolio-modules';
 import { Badge } from '@/components/ui/badge';
 import { Brain, TrendingUp, Shield, Target } from 'lucide-react';
+import { UnifiedPortfolioProvider } from '../contexts/UnifiedPortfolioContext';
+import { PortfolioConfig } from '@/types/portfolio';
 
 interface PortfolioAssistedContainerProps {
   onViewAsset?: (assetId: string) => void;
@@ -19,9 +21,17 @@ export function PortfolioAssistedContainer({
 }: PortfolioAssistedContainerProps) {
   const moduleGroups = getModuleGroups('assisted');
 
+  // Default configuration for assisted portfolio management
+  const defaultConfig: PortfolioConfig = {
+    dashboardTabs: [],
+    metricsModules: [],
+    analyticsFeatures: []
+  };
+
   return (
-    <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <UnifiedPortfolioProvider config={defaultConfig}>
+      <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen">
+        <div className="max-w-7xl mx-auto">
         {/* Assisted Mode Header */}
         <div className="mb-6">
           <div className="flex items-center space-x-3 mb-3">
@@ -116,6 +126,7 @@ export function PortfolioAssistedContainer({
         </div>
       </div>
     </div>
+    </UnifiedPortfolioProvider>
   );
 }
 

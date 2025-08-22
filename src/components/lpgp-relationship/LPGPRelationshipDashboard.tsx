@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
+import { ModuleHeader, ProcessNotice, MetricCard, ModeIndicator } from '@/components/shared/ModeIndicators';
 import { 
   Users, Building2, Calendar, CheckSquare, TrendingUp, AlertCircle,
   Phone, Mail, MapPin, DollarSign, Clock, Target, Briefcase, Star,
@@ -98,23 +99,23 @@ export function LPGPRelationshipDashboard({ navigationMode, onModeChange }: LPGP
     }
   };
 
-  const getRelationshipStatusColor = (status: RelationshipStatus): string => {
+  const getRelationshipStatusColor = (status: RelationshipStatus) => {
     switch (status) {
-      case 'ACTIVE_LP': return 'default';
-      case 'PROSPECT': return 'secondary';
-      case 'FORMER_LP': return 'outline';
-      case 'DECLINED': return 'destructive';
-      default: return 'outline';
+      case 'ACTIVE_LP': return 'default' as const;
+      case 'PROSPECT': return 'secondary' as const;
+      case 'FORMER_LP': return 'outline' as const;
+      case 'DECLINED': return 'destructive' as const;
+      default: return 'outline' as const;
     }
   };
 
-  const getPriorityColor = (priority: Priority): string => {
+  const getPriorityColor = (priority: Priority) => {
     switch (priority) {
-      case 'URGENT': return 'destructive';
-      case 'HIGH': return 'destructive';
-      case 'MEDIUM': return 'default';
-      case 'LOW': return 'secondary';
-      default: return 'outline';
+      case 'URGENT': return 'destructive' as const;
+      case 'HIGH': return 'destructive' as const;
+      case 'MEDIUM': return 'default' as const;
+      case 'LOW': return 'secondary' as const;
+      default: return 'outline' as const;
     }
   };
 

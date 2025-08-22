@@ -43,6 +43,24 @@ export function formatTimeAgoSafe(date: Date): string {
   return date.toLocaleDateString()
 }
 
+export function formatDateSafe(date: Date | string): string {
+  // Use consistent ISO format during SSR to avoid hydration mismatch
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  
+  if (typeof window === 'undefined') {
+    // Return consistent ISO date format during SSR
+    return dateObj.toISOString().split('T')[0]
+  }
+  
+  // Use toLocaleDateString on client side
+  try {
+    return dateObj.toLocaleDateString()
+  } catch (error) {
+    // Fallback to ISO format
+    return dateObj.toISOString().split('T')[0]
+  }
+}
+
 export function formatCurrencySafe(amount: number, currency = 'USD'): string {
   // Use consistent manual formatting during SSR to avoid hydration mismatch
   if (typeof window === 'undefined') {

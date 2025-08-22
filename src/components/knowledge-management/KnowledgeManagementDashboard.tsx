@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
+import { ModuleHeader, ProcessNotice, MetricCard, ModeIndicator } from '@/components/shared/ModeIndicators';
 import { 
   BookOpen, Users, GraduationCap, TrendingUp, Search, Filter, Plus, 
   Star, Eye, MessageSquare, Download, Share2, Clock, Target, Brain,
@@ -98,13 +99,13 @@ export function KnowledgeManagementDashboard({ navigationMode, onModeChange }: K
     }
   };
 
-  const getImportanceColor = (importance: Importance): string => {
+  const getImportanceColor = (importance: Importance) => {
     switch (importance) {
-      case 'CRITICAL': return 'destructive';
-      case 'HIGH': return 'destructive';
-      case 'MEDIUM': return 'default';
-      case 'LOW': return 'secondary';
-      default: return 'outline';
+      case 'CRITICAL': return 'destructive' as const;
+      case 'HIGH': return 'destructive' as const;
+      case 'MEDIUM': return 'default' as const;
+      case 'LOW': return 'secondary' as const;
+      default: return 'outline' as const;
     }
   };
 
@@ -122,7 +123,7 @@ export function KnowledgeManagementDashboard({ navigationMode, onModeChange }: K
     });
   };
 
-  const renderStars = (rating: number): JSX.Element => {
+  const renderStars = (rating: number) => {
     return (
       <div className="flex items-center">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -737,21 +738,30 @@ export function KnowledgeManagementDashboard({ navigationMode, onModeChange }: K
   );
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <BookOpen className="h-8 w-8 text-blue-600" />
-            Knowledge Management
-          </h1>
-          <p className="text-muted-foreground">
-            Knowledge center, institutional memory, and pattern recognition
-          </p>
-        </div>
-        {renderModeSelector()}
-      </div>
+    <div className={`min-h-screen p-4 md:p-6 ${navigationMode === 'traditional' ? 'bg-gray-50' : ''}`}>
+      <div className="container mx-auto max-w-7xl">
+        <ModuleHeader
+          title="Knowledge Management"
+          description="Knowledge center, institutional memory, and pattern recognition"
+          mode={navigationMode}
+          actions={
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">Mode:</label>
+              <Select value={navigationMode} onValueChange={onModeChange}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="traditional">Traditional</SelectItem>
+                  <SelectItem value="assisted">Assisted</SelectItem>
+                  <SelectItem value="autonomous">Autonomous</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }
+        />
 
-      {renderStatsCards()}
+        {renderStatsCards()}
 
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
         <TabsList className="mb-6">
@@ -831,6 +841,19 @@ export function KnowledgeManagementDashboard({ navigationMode, onModeChange }: K
           </div>
         </TabsContent>
       </Tabs>
+
+        <ProcessNotice 
+          mode={navigationMode}
+          title={`${navigationMode === 'traditional' ? 'Traditional' : navigationMode === 'assisted' ? 'Assisted' : 'Autonomous'} Knowledge Management`}
+          description={
+            navigationMode === 'traditional' 
+              ? "You have full manual control over knowledge management. All article curation, expert matching, and content organization is performed manually without AI assistance. Use the search, filter, and categorization tools to organize knowledge according to your requirements."
+              : navigationMode === 'assisted'
+              ? "AI assists with content recommendations, smart search, and trending analysis while you maintain control over final decisions. The system provides suggestions for article relevance, expert matching, and learning path optimization."
+              : "AI autonomously manages knowledge curation, pattern detection, and content optimization. The system automatically identifies knowledge gaps, suggests content creation, and optimizes learning paths based on usage patterns and organizational needs."
+          }
+        />
+      </div>
     </div>
   );
 }

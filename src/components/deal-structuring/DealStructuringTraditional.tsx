@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { ModuleHeader, ProcessNotice, MODE_DESCRIPTIONS } from '@/components/shared/ModeIndicators';
 import { 
   TrendingUp,
   DollarSign,
@@ -75,43 +76,48 @@ const DealStructuringTraditional: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* Action Bar */}
-      <div className="flex justify-between items-center">
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <BookOpen className="h-4 w-4 mr-2" />
-            Templates
-          </Button>
-          <Button variant="outline">
-            <Calculator className="h-4 w-4 mr-2" />
-            Tools
-          </Button>
-        </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Deal Structure
-        </Button>
-      </div>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Standardized Header */}
+      <ModuleHeader
+        title="Deal Structuring"
+        description="Complete manual control over deal structuring and financial modeling"
+        mode="traditional"
+        actions={
+          <div className="flex space-x-2">
+            <Button variant="outline" className="flex items-center space-x-2 border-gray-300 text-gray-700">
+              <BookOpen className="h-4 w-4" />
+              <span>Templates</span>
+            </Button>
+            <Button variant="outline" className="flex items-center space-x-2 border-gray-300 text-gray-700">
+              <Calculator className="h-4 w-4" />
+              <span>Tools</span>
+            </Button>
+            <Button className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
+              <Plus className="h-4 w-4" />
+              <span>New Deal Structure</span>
+            </Button>
+          </div>
+        }
+      />
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active Deals</p>
                 <p className="text-2xl font-bold text-gray-900">{metrics?.activeDeals || 0}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {deals.filter(d => d.stage === 'STRUCTURING').length} in structuring
+                  {deals.filter(d => d.stage === 'structuring').length} in structuring
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-blue-600" />
+              <TrendingUp className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -121,12 +127,12 @@ const DealStructuringTraditional: React.FC = () => {
                 </p>
                 <p className="text-xs text-gray-500 mt-1">Across all active deals</p>
               </div>
-              <DollarSign className="h-8 w-8 text-blue-600" />
+              <DollarSign className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -136,12 +142,12 @@ const DealStructuringTraditional: React.FC = () => {
                 </p>
                 <p className="text-xs text-gray-500 mt-1">Overall completion rate</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-blue-600" />
+              <CheckCircle className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -149,17 +155,17 @@ const DealStructuringTraditional: React.FC = () => {
                 <p className="text-2xl font-bold text-gray-900">8</p>
                 <p className="text-xs text-gray-500 mt-1">Available templates</p>
               </div>
-              <FileText className="h-8 w-8 text-blue-600" />
+              <FileText className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Active Deals Section */}
         <div className="lg:col-span-2">
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold">Active Deals</h2>
@@ -181,7 +187,7 @@ const DealStructuringTraditional: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {deals.map((deal) => (
-                <Card key={deal.id} className="border-l-4 border-l-blue-500">
+                <Card key={deal.id} className="border-l-4 border-l-gray-400">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div>
@@ -262,51 +268,51 @@ const DealStructuringTraditional: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Manual Tools */}
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Calculator className="h-4 w-4 text-blue-500" />
+                <Calculator className="h-4 w-4 text-gray-600" />
                 <h3 className="text-lg font-semibold">Manual Tools</h3>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="flex items-center gap-2 mb-1">
-                  <FileText className="h-4 w-4 text-blue-600" />
+                  <FileText className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium">DCF Model Template</span>
                 </div>
                 <p className="text-xs text-gray-600 mb-2">
                   Standard discounted cash flow analysis template
                 </p>
-                <Button size="sm" className="h-6 text-xs">
+                <Button size="sm" className="h-6 text-xs bg-gray-700 hover:bg-gray-800">
                   <Download className="h-3 w-3 mr-1" />
                   Download
                 </Button>
               </div>
 
-              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="flex items-center gap-2 mb-1">
-                  <BarChart className="h-4 w-4 text-green-600" />
+                  <BarChart className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium">LBO Analysis</span>
                 </div>
                 <p className="text-xs text-gray-600 mb-2">
                   Leveraged buyout structure modeling
                 </p>
-                <Button size="sm" variant="outline" className="h-6 text-xs">
+                <Button size="sm" variant="outline" className="h-6 text-xs border-gray-300 text-gray-700">
                   <Download className="h-3 w-3 mr-1" />
                   Download
                 </Button>
               </div>
 
-              <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="flex items-center gap-2 mb-1">
-                  <Settings className="h-4 w-4 text-amber-600" />
+                  <Settings className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium">Risk Calculator</span>
                 </div>
                 <p className="text-xs text-gray-600 mb-2">
                   Manual risk assessment spreadsheet
                 </p>
-                <Button size="sm" variant="outline" className="h-6 text-xs">
+                <Button size="sm" variant="outline" className="h-6 text-xs border-gray-300 text-gray-700">
                   <Download className="h-3 w-3 mr-1" />
                   Download
                 </Button>
@@ -315,7 +321,7 @@ const DealStructuringTraditional: React.FC = () => {
           </Card>
 
           {/* Recent Activities */}
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
               <h3 className="text-lg font-semibold">Recent Activities</h3>
             </CardHeader>
@@ -344,7 +350,7 @@ const DealStructuringTraditional: React.FC = () => {
           </Card>
 
           {/* Upcoming Deadlines */}
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
               <h3 className="text-lg font-semibold">Upcoming Deadlines</h3>
             </CardHeader>
@@ -378,6 +384,13 @@ const DealStructuringTraditional: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Standardized Process Notice */}
+      <ProcessNotice
+        mode="traditional"
+        title="Traditional Deal Structuring"
+        description="You have complete manual control over deal structuring and financial modeling. All DCF models, LBO analyses, and risk assessments are performed manually without AI assistance. Use the templates and tools above to structure deals according to your investment strategy."
+      />
     </div>
   );
 };

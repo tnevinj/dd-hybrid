@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ModuleHeader, ProcessNotice, MODE_DESCRIPTIONS } from '@/components/shared/ModeIndicators';
 import {
   DollarSign,
   TrendingUp,
@@ -60,10 +61,29 @@ export function FundOperationsTraditional({
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Standardized Header */}
+      <ModuleHeader
+        title="Fund Operations"
+        description="Complete manual control over fund operations and capital management"
+        mode="traditional"
+        actions={
+          <div className="flex space-x-2">
+            <Button onClick={onCreateCapitalCall} className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
+              <Plus className="h-4 w-4" />
+              <span>New Capital Call</span>
+            </Button>
+            <Button onClick={onProcessDistribution} variant="outline" className="flex items-center space-x-2 border-gray-300 text-gray-700">
+              <Send className="h-4 w-4" />
+              <span>Process Distribution</span>
+            </Button>
+          </div>
+        }
+      />
+
       {/* Overview KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -72,19 +92,19 @@ export function FundOperationsTraditional({
                   {formatCurrency(metrics.totalCommitments)}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="h-6 w-6 text-blue-600" />
+              <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Users className="h-6 w-6 text-gray-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-500">
                 Across {metrics.totalFunds} funds
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -93,19 +113,19 @@ export function FundOperationsTraditional({
                   {formatCurrency(metrics.totalCalled)}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-green-600" />
+              <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <CreditCard className="h-6 w-6 text-gray-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-500">
                 {formatPercentage(metrics.totalCalled && metrics.totalCommitments ? (metrics.totalCalled / metrics.totalCommitments) * 100 : 0)} called
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -114,20 +134,20 @@ export function FundOperationsTraditional({
                   {formatCurrency(metrics.currentNAV)}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Calculator className="h-6 w-6 text-purple-600" />
+              <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Calculator className="h-6 w-6 text-gray-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center">
-              <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-              <span className="text-sm text-green-600">
+              <TrendingUp className="h-4 w-4 text-gray-500 mr-1" />
+              <span className="text-sm text-gray-500">
                 {formatPercentage(metrics.avgNetIRR)} Avg Net IRR
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -136,12 +156,12 @@ export function FundOperationsTraditional({
                   {formatCurrency(metrics.totalDistributed)}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-emerald-100 rounded-lg flex items-center justify-center">
-                <Banknote className="h-6 w-6 text-emerald-600" />
+              <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Banknote className="h-6 w-6 text-gray-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-500">
                 Active funds: {metrics.activeFunds}
               </span>
             </div>
@@ -166,16 +186,6 @@ export function FundOperationsTraditional({
           </select>
         </div>
         
-        <div className="flex space-x-3">
-          <Button onClick={onCreateCapitalCall}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Capital Call
-          </Button>
-          <Button variant="outline" onClick={onProcessDistribution}>
-            <Send className="h-4 w-4 mr-2" />
-            Process Distribution
-          </Button>
-        </div>
       </div>
 
       {/* Fund Details */}
@@ -351,6 +361,13 @@ export function FundOperationsTraditional({
           <ExpensesTable fundId={selectedFund} />
         </TabsContent>
       </Tabs>
+
+      {/* Standardized Process Notice */}
+      <ProcessNotice
+        mode="traditional"
+        title="Traditional Fund Operations"
+        description="You have complete manual control over fund operations. All capital calls, distributions, NAV reporting, and expense management are performed manually without AI assistance. Use the tools above to manage your fund operations according to your investment strategy."
+      />
     </div>
   );
 }

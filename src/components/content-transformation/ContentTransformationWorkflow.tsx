@@ -14,6 +14,8 @@ import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactor
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ModuleHeader, ProcessNotice } from '@/components/shared/ModeIndicators';
 import { 
   ArrowLeft,
   CheckCircle,
@@ -30,6 +32,8 @@ interface ContentTransformationWorkflowProps {
   onCancel: () => void;
   initialTemplate?: SmartTemplate;
   className?: string;
+  navigationMode?: 'traditional' | 'assisted' | 'autonomous';
+  onModeChange?: (mode: 'traditional' | 'assisted' | 'autonomous') => void;
 }
 
 type WorkflowStep = 'template-selection' | 'data-integration' | 'content-assembly' | 'validation';
@@ -48,10 +52,12 @@ export function ContentTransformationWorkflow({
   onSave,
   onCancel,
   initialTemplate,
-  className = ''
+  className = '',
+  navigationMode = 'traditional',
+  onModeChange
 }: ContentTransformationWorkflowProps) {
   const { currentMode } = useNavigationStoreRefactored();
-  const navigationMode = currentMode?.mode || 'traditional';
+  const effectiveNavigationMode = navigationMode || currentMode?.mode || 'traditional';
 
   // Workflow state
   const [currentStep, setCurrentStep] = useState<WorkflowStep>(
@@ -344,15 +350,43 @@ export function ContentTransformationWorkflow({
     </>
   );
 
-  return (
-    <div className={`min-h-screen bg-gray-50 ${className}`}>
-      {/* Step Indicator - only show for non-traditional modes */}
-      {navigationMode !== 'traditional' && currentStep !== 'content-assembly' && renderStepIndicator()}
+  const modeSelector = onModeChange ? (
+    <Select value={effectiveNavigationMode} onValueChange={onModeChange}>
+      <SelectTrigger className="w-40">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="traditional">Traditional</SelectItem>
+        <SelectItem value="assisted">AI Assisted</SelectItem>
+        <SelectItem value="autonomous">Autonomous</SelectItem>
+      </SelectContent>
+    </Select>
+  ) : null;
 
-      {/* Step Content */}
-      {currentStep === 'template-selection' && renderTemplateSelection()}
-      {currentStep === 'data-integration' && renderDataIntegration()}
-      {currentStep === 'content-assembly' && renderContentAssembly()}
+  return (
+    <div className={`min-h-screen p-4 md:p-6 ${effectiveNavigationMode === 'traditional' ? 'bg-gray-50' : ''} ${className}`}>
+      <div className="container mx-auto max-w-7xl">
+        <ModuleHeader
+          title="Content Transformation"
+          description="Transform project data into professional work products using intelligent templates"
+          mode={effectiveNavigationMode}
+          actions={modeSelector}
+        />
+
+        {/* Step Indicator - only show for non-traditional modes */}
+        {effectiveNavigationMode !== 'traditional' && currentStep !== 'content-assembly' && renderStepIndicator()}
+
+        {/* Step Content */}
+        {currentStep === 'template-selection' && renderTemplateSelection()}
+        {currentStep === 'data-integration' && renderDataIntegration()}
+        {currentStep === 'content-assembly' && renderContentAssembly()}
+
+        <ProcessNotice 
+          mode={effectiveNavigationMode}
+          title="Content Transformation"
+          description="Document generation and template-based content creation operations"
+        />
+      </div>
     </div>
   );
 }

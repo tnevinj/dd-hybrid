@@ -15,6 +15,7 @@ import {
   Play, Pause, RotateCcw, Download, Share2, Eye, Filter, Search,
   GitBranch, Layers, Cpu, Database, Calculator, Network, Plus
 } from 'lucide-react';
+import { ModuleHeader, ProcessNotice } from '@/components/shared/ModeIndicators';
 
 import {
   NavigationMode,
@@ -106,13 +107,13 @@ export function AdvancedAnalyticsDashboard({ navigationMode, onModeChange }: Adv
     }
   };
 
-  const getSeverityColor = (severity: string): string => {
+  const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
-      case 'critical': return 'destructive';
-      case 'high': return 'destructive';
-      case 'medium': return 'default';
-      case 'low': return 'secondary';
-      default: return 'outline';
+      case 'critical': return 'destructive' as const;
+      case 'high': return 'destructive' as const;
+      case 'medium': return 'default' as const;
+      case 'low': return 'secondary' as const;
+      default: return 'outline' as const;
     }
   };
 
@@ -668,122 +669,154 @@ export function AdvancedAnalyticsDashboard({ navigationMode, onModeChange }: Adv
   );
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <BarChart3 className="h-8 w-8 text-purple-600" />
-            Advanced Analytics
-          </h1>
-          <p className="text-muted-foreground">
-            Portfolio correlation, predictive risk modeling, and scenario planning
-          </p>
-        </div>
-        {renderModeSelector()}
+    <div className={`min-h-screen p-4 md:p-6 ${navigationMode === 'traditional' ? 'bg-gray-50' : ''}`}>
+      <div className="container mx-auto max-w-7xl">
+        <ModuleHeader
+          title="Advanced Analytics"
+          description="Portfolio correlation, predictive risk modeling, and scenario planning"
+          mode={navigationMode}
+          actions={
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAutoRefresh(!autoRefresh)}
+                className={autoRefresh ? 'bg-green-50 border-green-200' : ''}
+              >
+                <Activity className={`h-4 w-4 ${autoRefresh ? 'text-green-600' : ''}`} />
+                {autoRefresh ? 'Auto' : 'Manual'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchAnalyticsData}
+                disabled={loading}
+              >
+                <RotateCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              </Button>
+              <Select value={navigationMode} onValueChange={onModeChange}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="traditional">Traditional</SelectItem>
+                  <SelectItem value="assisted">Assisted</SelectItem>
+                  <SelectItem value="autonomous">Autonomous</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }
+        />
+
+        {renderStatsCards()}
+
+        <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+          <TabsList className="mb-6">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="models">Models</TabsTrigger>
+            <TabsTrigger value="correlations">Correlations</TabsTrigger>
+            <TabsTrigger value="risk">Risk Analysis</TabsTrigger>
+            <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
+            <TabsTrigger value="forecasting">Forecasting</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                {renderModelLibrary()}
+                {renderRecentRuns()}
+              </div>
+              <div className="space-y-6">
+                {renderCorrelationInsights()}
+                {renderRiskAlerts()}
+                {renderScenarioInsights()}
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="models">
+            {renderModelsList()}
+          </TabsContent>
+
+          <TabsContent value="correlations">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Network className="h-5 w-5" />
+                  Correlation Analysis
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <PieChart className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Advanced Correlation Analytics</h3>
+                  <p>Interactive correlation matrices, time-series analysis, and regime detection would be implemented here</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="risk">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Risk Modeling
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Advanced Risk Analysis</h3>
+                  <p>VaR modeling, stress testing frameworks, and risk factor attribution would be implemented here</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="scenarios">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <GitBranch className="h-5 w-5" />
+                  Scenario Planning
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <Layers className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Scenario Analysis Engine</h3>
+                  <p>Monte Carlo simulations, stress testing, and what-if analysis tools would be implemented here</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="forecasting">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <LineChart className="h-5 w-5" />
+                  Predictive Forecasting
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <TrendingUp className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Predictive Analytics</h3>
+                  <p>Time series forecasting, machine learning models, and predictive risk analytics would be implemented here</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        <ProcessNotice 
+          mode={navigationMode}
+          title="Advanced Analytics"
+          description="Portfolio correlation analysis, predictive risk modeling, and scenario planning operations"
+        />
       </div>
-
-      {renderStatsCards()}
-
-      <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="models">Models</TabsTrigger>
-          <TabsTrigger value="correlations">Correlations</TabsTrigger>
-          <TabsTrigger value="risk">Risk Analysis</TabsTrigger>
-          <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
-          <TabsTrigger value="forecasting">Forecasting</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-6">
-              {renderModelLibrary()}
-              {renderRecentRuns()}
-            </div>
-            <div className="space-y-6">
-              {renderCorrelationInsights()}
-              {renderRiskAlerts()}
-              {renderScenarioInsights()}
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="models">
-          {renderModelsList()}
-        </TabsContent>
-
-        <TabsContent value="correlations">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Network className="h-5 w-5" />
-                Correlation Analysis
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <PieChart className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Advanced Correlation Analytics</h3>
-                <p>Interactive correlation matrices, time-series analysis, and regime detection would be implemented here</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="risk">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5" />
-                Risk Modeling
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Advanced Risk Analysis</h3>
-                <p>VaR modeling, stress testing frameworks, and risk factor attribution would be implemented here</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="scenarios">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <GitBranch className="h-5 w-5" />
-                Scenario Planning
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Layers className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Scenario Analysis Engine</h3>
-                <p>Monte Carlo simulations, stress testing, and what-if analysis tools would be implemented here</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="forecasting">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <LineChart className="h-5 w-5" />
-                Predictive Forecasting
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <TrendingUp className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Predictive Analytics</h3>
-                <p>Time series forecasting, machine learning models, and predictive risk analytics would be implemented here</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }

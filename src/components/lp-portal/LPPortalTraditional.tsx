@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ModuleHeader, ProcessNotice, MODE_DESCRIPTIONS } from '@/components/shared/ModeIndicators';
 import {
   DollarSign,
   TrendingUp,
@@ -35,7 +36,6 @@ import {
   Search,
   Bell,
   Shield,
-  Zap,
   Globe,
   MapPin,
   Activity,
@@ -210,8 +210,27 @@ export function LPPortalTraditional({
   };
 
   return (
-    <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Standardized Header */}
+      <ModuleHeader
+        title="LP Portal"
+        description="Complete manual control over limited partner operations and fund communications"
+        mode="traditional"
+        actions={
+          <div className="flex space-x-2">
+            <Button variant="outline" className="flex items-center space-x-2 border-gray-300 text-gray-700">
+              <MessageSquare className="h-4 w-4" />
+              <span>New Message</span>
+            </Button>
+            <Button className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
+              <FileText className="h-4 w-4" />
+              <span>Generate Report</span>
+            </Button>
+          </div>
+        }
+      />
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
@@ -318,14 +337,14 @@ export function LPPortalTraditional({
             </Card>
           </div>
 
-          {/* Smart Alerts & Insights */}
-          <Card>
+          {/* Portfolio Alerts & Updates */}
+          <Card className="border-gray-200">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Zap className="h-5 w-5 mr-2 text-yellow-500" />
-                Smart Insights & Alerts
+                <Bell className="h-5 w-5 mr-2 text-gray-600" />
+                Portfolio Alerts & Updates
               </CardTitle>
-              <CardDescription>AI-powered insights tailored to your portfolio</CardDescription>
+              <CardDescription>Important notifications and fund updates</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -341,7 +360,7 @@ export function LPPortalTraditional({
                         <p className="text-sm text-gray-600 mt-1">{alert.description}</p>
                       </div>
                       <div className="flex items-center text-xs text-gray-500">
-                        <Clock className="h-3 w-3 mr-1" />
+                        <Clock className="h-4 w-4 mr-1" />
                         {formatDate(alert.timestamp)}
                       </div>
                     </div>
@@ -1569,12 +1588,6 @@ export function LPPortalTraditional({
                       </div>
                     </div>
                     
-                    {document.aiSummary && (
-                      <div className="bg-blue-50 p-3 rounded mb-4">
-                        <p className="text-sm font-medium text-blue-900 mb-1">AI Summary:</p>
-                        <p className="text-sm text-blue-800">{document.aiSummary}</p>
-                      </div>
-                    )}
                     
                     <div className="grid grid-cols-3 gap-4 text-sm bg-gray-50 p-3 rounded">
                       <div>
@@ -1605,6 +1618,13 @@ export function LPPortalTraditional({
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Standardized Process Notice */}
+      <ProcessNotice
+        mode="traditional"
+        title="Traditional LP Portal"
+        description="You have complete manual control over limited partner operations. All fund communications, document management, capital call responses, and reporting are performed manually without AI assistance. Use the tools above to manage your LP operations according to your investment preferences."
+      />
     </div>
   );
 }

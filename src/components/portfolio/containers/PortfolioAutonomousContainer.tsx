@@ -5,6 +5,8 @@ import { HierarchicalLayout } from '../layouts/HierarchicalLayout';
 import { getModuleGroups } from '@/lib/portfolio-modules';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Zap, Globe, Users, Settings, Activity } from 'lucide-react';
+import { UnifiedPortfolioProvider } from '../contexts/UnifiedPortfolioContext';
+import { PortfolioConfig } from '@/types/portfolio';
 
 interface PortfolioAutonomousContainerProps {
   onViewAsset?: (assetId: string) => void;
@@ -19,9 +21,17 @@ export function PortfolioAutonomousContainer({
 }: PortfolioAutonomousContainerProps) {
   const moduleGroups = getModuleGroups('autonomous');
 
+  // Default configuration for autonomous portfolio management
+  const defaultConfig: PortfolioConfig = {
+    dashboardTabs: [],
+    metricsModules: [],
+    analyticsFeatures: []
+  };
+
   return (
-    <div className="p-6 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <UnifiedPortfolioProvider config={defaultConfig}>
+      <div className="p-6 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 min-h-screen">
+        <div className="max-w-7xl mx-auto">
         {/* Autonomous Mode Header */}
         <div className="mb-6">
           <div className="flex items-center space-x-3 mb-3">
@@ -138,6 +148,7 @@ export function PortfolioAutonomousContainer({
         </div>
       </div>
     </div>
+    </UnifiedPortfolioProvider>
   );
 }
 

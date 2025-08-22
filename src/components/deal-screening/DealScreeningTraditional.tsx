@@ -16,6 +16,7 @@ import {
   ArrowUp,
   ArrowDown,
   User,
+  Users,
   Calendar,
   DollarSign,
   MapPin,
@@ -47,35 +48,26 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
     completedScreenings: 14,
     averageScreeningTime: '12 days',
     conversionRate: '42%',
-    // AI-enhanced metrics
-    aiAnalyzedDeals: 28,
-    valuationOutliers: 5, // Deals with significant valuation gaps vs comparables
-    highProbabilityDeals: 7, // AI-scored deals >80% success probability
-    avgAIConfidence: 84, // Average AI confidence across all analyses
-    valuationAccuracy: 91, // AI valuation vs actual transaction multiples
-    timeReduction: 35, // % reduction in screening time with AI
+    teamMembers: 8,
+    documentsReviewed: 156,
   },
   isLoading = false,
   onCreateOpportunity,
   onViewOpportunity,
   onScreenOpportunity,
 }) => {
-  // Local state for traditional mode with AI enhancements
+  // Local state for traditional mode - manual controls only
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOpportunities, setFilteredOpportunities] = useState(opportunities);
-  const [sortBy, setSortBy] = useState<'name' | 'status' | 'sector' | 'askPrice' | 'expectedIRR' | 'aiScore' | 'valuationMatch'>('name');
+  const [sortBy, setSortBy] = useState<'name' | 'status' | 'sector' | 'askPrice' | 'expectedIRR'>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [selectedFilters, setSelectedFilters] = useState({
     status: '',
     sector: '',
     assetType: '',
     geography: '',
-    aiScoreRange: '',
-    valuationOutlier: '',
   });
   const [showFilters, setShowFilters] = useState(false);
-  const [showAIInsights, setShowAIInsights] = useState(false);
-  const [selectedOpportunityForAnalysis, setSelectedOpportunityForAnalysis] = useState<string | null>(null);
 
   // Apply filtering and sorting
   useEffect(() => {
@@ -85,7 +77,7 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
     if (searchTerm) {
       result = result.filter(opportunity => 
         opportunity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        opportunity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (opportunity.description && opportunity.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
         opportunity.sector.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -163,8 +155,6 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
       sector: '',
       assetType: '',
       geography: '',
-      aiScoreRange: '',
-      valuationOutlier: '',
     });
     setSearchTerm('');
   };
@@ -198,8 +188,8 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
         </Button>
       </div>
       
-      {/* Enhanced KPI Cards - Focus on Manual Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+      {/* KPI Cards - Manual Metrics Only */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
         <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
@@ -249,6 +239,17 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
             <div className="flex items-center text-gray-500 text-sm mt-1">
               <User className="h-4 w-4 mr-1" />
               Human analysis
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-gray-200">
+          <CardContent className="p-6">
+            <p className="text-sm text-gray-600 font-medium mb-2">Team Members</p>
+            <p className="text-3xl font-bold text-gray-900">{metrics.teamMembers}</p>
+            <div className="flex items-center text-gray-500 text-sm mt-1">
+              <Users className="h-4 w-4 mr-1" />
+              Active analysts
             </div>
           </CardContent>
         </Card>
@@ -312,7 +313,7 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
 
           {/* Advanced Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg border">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg border">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select
@@ -374,137 +375,10 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
                   <option value="Africa">Africa</option>
                 </select>
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">AI Score Range</label>
-                <select
-                  value={selectedFilters.aiScoreRange}
-                  onChange={(e) => setSelectedFilters(prev => ({ ...prev, aiScoreRange: e.target.value }))}
-                  className="w-full p-2 border border-gray-300 rounded-md text-sm"
-                >
-                  <option value="">All Scores</option>
-                  <option value="high">High (&gt;80%)</option>
-                  <option value="medium">Medium (60-80%)</option>
-                  <option value="low">Low (&lt;60%)</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Valuation Analysis</label>
-                <select
-                  value={selectedFilters.valuationOutlier}
-                  onChange={(e) => setSelectedFilters(prev => ({ ...prev, valuationOutlier: e.target.value }))}
-                  className="w-full p-2 border border-gray-300 rounded-md text-sm"
-                >
-                  <option value="">All Deals</option>
-                  <option value="outlier">Valuation Outliers</option>
-                  <option value="matched">Well Matched</option>
-                </select>
-              </div>
             </div>
           )}
-          
-          {/* AI Insights Toggle */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowAIInsights(!showAIInsights)}
-                  className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50"
-                >
-                  <Zap className="h-4 w-4" />
-                  <span>AI Insights</span>
-                  {showAIInsights ? <ArrowUp className="h-3 w-3 ml-1" /> : <ArrowDown className="h-3 w-3 ml-1" />}
-                </Button>
-                <Badge className="bg-blue-100 text-blue-800 border border-blue-300">
-                  {metrics.aiAnalyzedDeals} deals analyzed
-                </Badge>
-              </div>
-              <div className="text-xs text-gray-500">
-                AI accuracy: {metrics.valuationAccuracy}% • Time saved: {metrics.timeReduction}%
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
-      
-      {/* AI Insights Panel */}
-      {showAIInsights && (
-        <Card className="mb-6 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-          <CardHeader>
-            <CardTitle className="text-xl text-blue-800 flex items-center space-x-2">
-              <Zap className="h-5 w-5" />
-              <span>AI-Powered Deal Intelligence</span>
-            </CardTitle>
-            <p className="text-blue-700">Advanced analytics and predictive insights for smarter deal screening</p>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* High-Probability Deals */}
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Target className="h-5 w-5 text-green-600" />
-                  <h4 className="font-semibold text-gray-900">High-Probability Deals</h4>
-                </div>
-                <div className="text-2xl font-bold text-green-600 mb-1">{metrics.highProbabilityDeals}</div>
-                <p className="text-sm text-gray-600">Deals with &gt;80% AI success probability</p>
-                <div className="mt-2 text-xs text-green-700">
-                  ↑ 23% vs last quarter
-                </div>
-              </div>
-              
-              {/* Valuation Outliers */}
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <div className="flex items-center space-x-2 mb-3">
-                  <AlertTriangle className="h-5 w-5 text-orange-600" />
-                  <h4 className="font-semibold text-gray-900">Valuation Outliers</h4>
-                </div>
-                <div className="text-2xl font-bold text-orange-600 mb-1">{metrics.valuationOutliers}</div>
-                <p className="text-sm text-gray-600">Deals with significant valuation gaps</p>
-                <div className="mt-2 text-xs text-orange-700">
-                  Require deeper analysis
-                </div>
-              </div>
-              
-              {/* AI Confidence */}
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <div className="flex items-center space-x-2 mb-3">
-                  <BarChart3 className="h-5 w-5 text-blue-600" />
-                  <h4 className="font-semibold text-gray-900">Avg. AI Confidence</h4>
-                </div>
-                <div className="text-2xl font-bold text-blue-600 mb-1">{metrics.avgAIConfidence}%</div>
-                <p className="text-sm text-gray-600">Average analysis confidence score</p>
-                <div className="mt-2 text-xs text-blue-700">
-                  {metrics.valuationAccuracy}% valuation accuracy
-                </div>
-              </div>
-            </div>
-            
-            {/* AI Recommendations */}
-            <div className="mt-6 p-4 bg-white rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-                <Activity className="h-4 w-4" />
-                <span>AI Recommendations</span>
-              </h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-start space-x-2">
-                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>TechCorp Alpha:</strong> Strong AI score (89%) suggests immediate deep dive</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <AlertTriangle className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>DataFlow Inc:</strong> Valuation 35% above comparables, review pricing</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <Target className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>Market Trend:</strong> Software deals trending 15% premium this quarter</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Manual Sorting Controls */}
       <Card className="mb-6 border-gray-200">
@@ -513,7 +387,7 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {(['name', 'status', 'sector', 'askPrice', 'expectedIRR', 'aiScore', 'valuationMatch'] as const).map((field) => (
+            {(['name', 'status', 'sector', 'askPrice', 'expectedIRR'] as const).map((field) => (
               <Button
                 key={field}
                 variant={sortBy === field ? "default" : "outline"}
@@ -527,9 +401,7 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
               >
                 <span className="capitalize">
                   {field === 'askPrice' ? 'Price' : 
-                   field === 'expectedIRR' ? 'IRR' : 
-                   field === 'aiScore' ? 'AI Score' :
-                   field === 'valuationMatch' ? 'Valuation Match' : field}
+                   field === 'expectedIRR' ? 'IRR' : field}
                 </span>
                 {sortBy === field && (
                   sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
@@ -539,31 +411,6 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
           </div>
         </CardContent>
       </Card>
-
-      {/* Comparative Valuation Analysis Modal */}
-      {selectedOpportunityForAnalysis && (
-        <Card className="mb-6 border-blue-200">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl text-blue-800">Comparative Valuation Analysis</CardTitle>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setSelectedOpportunityForAnalysis(null)}
-                className="text-gray-600"
-              >
-                Close Analysis
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <ComparativeValuationAnalysis 
-              opportunityId={selectedOpportunityForAnalysis}
-              navigationMode="traditional"
-            />
-          </CardContent>
-        </Card>
-      )}
 
       {/* Opportunities Table View - Traditional/Manual Style */}
       <Card className="border-gray-200">
@@ -590,9 +437,6 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Sector</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Ask Price</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Expected IRR</th>
-                    {showAIInsights && (
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">AI Analysis</th>
-                    )}
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
                   </tr>
                 </thead>
@@ -606,11 +450,11 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
                           <div className="flex items-center space-x-3 mt-2 text-xs text-gray-500">
                             <div className="flex items-center">
                               <MapPin className="h-3 w-3 mr-1" />
-                              {opportunity.geography}
+                              {opportunity.geography || 'N/A'}
                             </div>
                             <div className="flex items-center">
                               <Calendar className="h-3 w-3 mr-1" />
-                              {opportunity.vintage}
+                              {new Date().getFullYear()}
                             </div>
                           </div>
                         </div>
@@ -622,7 +466,7 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
                       </td>
                       <td className="py-4 px-4">
                         <span className="text-gray-900 font-medium">{opportunity.sector}</span>
-                        <div className="text-xs text-gray-500 mt-1">{opportunity.assetType}</div>
+                        <div className="text-xs text-gray-500 mt-1">Direct Investment</div>
                       </td>
                       <td className="py-4 px-4">
                         <span className="font-semibold text-gray-900">{formatCurrency(opportunity.askPrice)}</span>
@@ -634,29 +478,6 @@ export const DealScreeningTraditional: React.FC<DealScreeningTraditionalProps> =
                           {opportunity.expectedIRR}%
                         </span>
                       </td>
-                      {showAIInsights && (
-                        <td className="py-4 px-4">
-                          <div className="space-y-2">
-                            <div className="flex items-center space-x-2">
-                              <Badge className="bg-blue-100 text-blue-800 border border-blue-300">
-                                AI: {Math.floor(Math.random() * 20 + 70)}%
-                              </Badge>
-                              <Badge variant={Math.random() > 0.7 ? "default" : "outline"}>
-                                {Math.random() > 0.7 ? "High Match" : "Review"}
-                              </Badge>
-                            </div>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => setSelectedOpportunityForAnalysis(opportunity.id)}
-                              className="text-xs text-blue-700 border-blue-300 hover:bg-blue-50"
-                            >
-                              <BarChart3 className="h-3 w-3 mr-1" />
-                              Valuation Analysis
-                            </Button>
-                          </div>
-                        </td>
-                      )}
                       <td className="py-4 px-4">
                         <div className="flex items-center space-x-2">
                           <Button 

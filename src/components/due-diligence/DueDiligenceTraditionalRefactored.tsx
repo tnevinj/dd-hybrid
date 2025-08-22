@@ -14,6 +14,7 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import type { TraditionalModeProps } from '@/types/shared'
+import { formatCurrencySafe, formatDateSafe } from '@/hooks/use-client-date'
 import { 
   CheckSquare,
   AlertTriangle,
@@ -204,14 +205,6 @@ export function DueDiligenceTraditionalRefactored({
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
 
   const getRiskColor = (level: string) => {
     switch (level.toLowerCase()) {
@@ -262,7 +255,7 @@ export function DueDiligenceTraditionalRefactored({
               <span className="font-medium">Avg Risk Score:</span> {(mockDDProjects.reduce((sum, p) => sum + p.riskAssessment.overall, 0) / mockDDProjects.length).toFixed(1)}/10
             </div>
             <div>
-              <span className="font-medium">Total Deal Value:</span> {formatCurrency(mockDDProjects.reduce((sum, p) => sum + p.dealValue, 0))}
+              <span className="font-medium">Total Deal Value:</span> {formatCurrencySafe(mockDDProjects.reduce((sum, p) => sum + p.dealValue, 0))}
             </div>
             <div>
               <span className="font-medium">Avg Progress:</span> {Math.round(mockDDProjects.reduce((sum, p) => sum + p.progress, 0) / mockDDProjects.length)}%
@@ -315,7 +308,7 @@ export function DueDiligenceTraditionalRefactored({
                     <DollarSign className="h-8 w-8 text-purple-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">Total Deal Value</p>
-                      <p className="text-2xl font-bold text-gray-900">{formatCurrency(mockDDProjects.reduce((sum, p) => sum + p.dealValue, 0))}</p>
+                      <p className="text-2xl font-bold text-gray-900">{formatCurrencySafe(mockDDProjects.reduce((sum, p) => sum + p.dealValue, 0))}</p>
                       <p className="text-xs text-purple-600">Across 3 deals</p>
                     </div>
                   </div>
@@ -367,11 +360,11 @@ export function DueDiligenceTraditionalRefactored({
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-sm text-gray-600">Deal Value</p>
-                          <p className="text-lg font-semibold">{formatCurrency(currentProject.dealValue)}</p>
+                          <p className="text-lg font-semibold">{formatCurrencySafe(currentProject.dealValue)}</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Target Close</p>
-                          <p className="text-lg font-semibold">{new Date(currentProject.targetClose).toLocaleDateString()}</p>
+                          <p className="text-lg font-semibold">{formatDateSafe(currentProject.targetClose)}</p>
                         </div>
                       </div>
 
@@ -454,7 +447,7 @@ export function DueDiligenceTraditionalRefactored({
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
                         <p className="text-sm text-gray-600">Deal Value</p>
-                        <p className="font-semibold">{formatCurrency(project.dealValue)}</p>
+                        <p className="font-semibold">{formatCurrencySafe(project.dealValue)}</p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Progress</p>

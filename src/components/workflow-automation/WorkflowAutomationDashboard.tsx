@@ -66,6 +66,7 @@ import {
   Archive,
   BarChart3,
 } from 'lucide-react';
+import { ModuleHeader, ProcessNotice } from '@/components/shared/ModeIndicators';
 
 import {
   DocumentWorkflow,
@@ -694,13 +695,17 @@ export function WorkflowAutomationDashboard({
                     <div className="flex items-center gap-2">
                       <Avatar className="h-6 w-6">
                         <AvatarFallback className="text-xs">
-                          {'startedBy' in execution ? execution.startedBy.name.charAt(0) : 
-                           'requestedBy' in execution ? execution.requestedBy.name.charAt(0) : 'U'}
+                          {('startedBy' in execution && execution.startedBy && typeof execution.startedBy === 'object' && 'name' in execution.startedBy) ? 
+                            (execution.startedBy.name as string).charAt(0) : 
+                           ('requestedBy' in execution && execution.requestedBy && typeof execution.requestedBy === 'object' && 'name' in execution.requestedBy) ? 
+                            (execution.requestedBy.name as string).charAt(0) : 'U'}
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-sm">
-                        {'startedBy' in execution ? execution.startedBy.name : 
-                         'requestedBy' in execution ? execution.requestedBy.name : 'Unknown'}
+                        {('startedBy' in execution && execution.startedBy && typeof execution.startedBy === 'object' && 'name' in execution.startedBy) ? 
+                          execution.startedBy.name as string : 
+                         ('requestedBy' in execution && execution.requestedBy && typeof execution.requestedBy === 'object' && 'name' in execution.requestedBy) ? 
+                          execution.requestedBy.name as string : 'Unknown'}
                       </span>
                     </div>
                   </TableCell>
@@ -951,256 +956,273 @@ export function WorkflowAutomationDashboard({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Workflow Automation</h1>
-          <p className="text-muted-foreground">
-            Manage document workflows and approval processes with intelligent automation
-          </p>
-        </div>
-      </div>
+    <div className={`min-h-screen p-4 md:p-6 ${navigationMode === 'traditional' ? 'bg-gray-50' : ''}`}>
+      <div className="container mx-auto max-w-7xl">
+        <ModuleHeader
+          title="Workflow Automation"
+          description="Manage document workflows and approval processes with intelligent automation"
+          mode={navigationMode}
+          actions={
+            <Select value={navigationMode} onValueChange={onModeChange}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="traditional">Traditional</SelectItem>
+                <SelectItem value="assisted">AI Assisted</SelectItem>
+                <SelectItem value="autonomous">Autonomous</SelectItem>
+              </SelectContent>
+            </Select>
+          }
+        />
 
-      {renderNavigationControls()}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="workflows">Document Workflows</TabsTrigger>
+            <TabsTrigger value="approvals">Approval Processes</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="automation">Automation</TabsTrigger>
+          </TabsList>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="workflows">Document Workflows</TabsTrigger>
-          <TabsTrigger value="approvals">Approval Processes</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="automation">Automation</TabsTrigger>
-        </TabsList>
+          <TabsContent value="overview" className="space-y-4">
+            {renderOverviewTab()}
+          </TabsContent>
 
-        <TabsContent value="overview" className="space-y-4">
-          {renderOverviewTab()}
-        </TabsContent>
+          <TabsContent value="workflows" className="space-y-4">
+            {renderWorkflowsTab()}
+          </TabsContent>
 
-        <TabsContent value="workflows" className="space-y-4">
-          {renderWorkflowsTab()}
-        </TabsContent>
+          <TabsContent value="approvals" className="space-y-4">
+            {renderApprovalsTab()}
+          </TabsContent>
 
-        <TabsContent value="approvals" className="space-y-4">
-          {renderApprovalsTab()}
-        </TabsContent>
+          <TabsContent value="analytics" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Performance Metrics */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <BarChart3 className="w-5 h-5 mr-2 text-blue-600" />
+                    Workflow Performance Metrics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {analytics?.workflowPerformance.map((workflow) => (
+                      <div key={workflow.workflowId} className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-medium text-sm">{workflow.workflowName}</h4>
+                          <Badge variant="outline">{workflow.executionsCount} executions</Badge>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <p className="text-gray-600">Success Rate</p>
+                            <div className="flex items-center space-x-2">
+                              <Progress value={workflow.successRate} className="flex-1 h-2" />
+                              <span className="font-medium">{workflow.successRate}%</span>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Automation Rate</p>
+                            <div className="flex items-center space-x-2">
+                              <Progress value={workflow.automationRate} className="flex-1 h-2" />
+                              <span className="font-medium">{workflow.automationRate}%</span>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Avg Time</p>
+                            <p className="font-medium">{workflow.averageProcessingTime}h</p>
+                          </div>
+                        </div>
 
-        <TabsContent value="analytics" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Performance Metrics */}
+                        {workflow.bottlenecks.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs text-amber-600 mb-1">Identified bottlenecks:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {workflow.bottlenecks.map((bottleneck, index) => (
+                                <Badge key={index} variant="destructive" className="text-xs">
+                                  {bottleneck}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Cross-Module Integration Metrics */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Activity className="w-5 h-5 mr-2 text-green-600" />
+                    Cross-Module Integration Analytics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">24</div>
+                        <div className="text-sm text-gray-600">Deal Screening → Workflow</div>
+                      </div>
+                      <div className="text-center p-4 bg-green-50 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600">18</div>
+                        <div className="text-sm text-gray-600">DD → Approval Routing</div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Portfolio Data Integration</span>
+                          <span>87% success rate</span>
+                        </div>
+                        <Progress value={87} className="h-2" />
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Market Intel Triggers</span>
+                          <span>94% success rate</span>
+                        </div>
+                        <Progress value={94} className="h-2" />
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>LP/GP Portal Notifications</span>
+                          <span>91% delivery rate</span>
+                        </div>
+                        <Progress value={91} className="h-2" />
+                      </div>
+                    </div>
+
+                    <div className="mt-4 p-3 bg-purple-50 rounded-lg">
+                      <h5 className="font-medium text-purple-800 mb-2">Integration Opportunities</h5>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span>Advanced Analytics → Auto-reporting</span>
+                          <span className="text-purple-600">High impact</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Legal Management → Document workflow</span>
+                          <span className="text-purple-600">Medium impact</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Fund Operations → Expense approval</span>
+                          <span className="text-purple-600">Low impact</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Workflow Execution Timeline */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <BarChart3 className="w-5 h-5 mr-2 text-blue-600" />
-                  Workflow Performance Metrics
+                  <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
+                  Recent Execution Timeline & Performance Trends
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {analytics?.workflowPerformance.map((workflow) => (
-                    <div key={workflow.workflowId} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-medium text-sm">{workflow.workflowName}</h4>
-                        <Badge variant="outline">{workflow.executionsCount} executions</Badge>
+                  {executions.slice(0, 8).map((execution) => (
+                    <div key={execution.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex flex-col items-center">
+                          <div className={`w-3 h-3 rounded-full ${getStatusColor(execution.status).includes('green') ? 'bg-green-500' : 
+                            getStatusColor(execution.status).includes('blue') ? 'bg-blue-500' : 
+                            getStatusColor(execution.status).includes('yellow') ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            {new Date(execution.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <div className="font-medium">
+                            {'workflowId' in execution ? 'Document Workflow' : 'Approval Process'}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {execution.metadata?.dealName || execution.metadata?.expenseCategory || 'Unknown entity'}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            By {('startedBy' in execution && execution.startedBy && typeof execution.startedBy === 'object' && 'name' in execution.startedBy ? 
+                                 execution.startedBy.name as string : 
+                                 'requestedBy' in execution && execution.requestedBy && typeof execution.requestedBy === 'object' && 'name' in execution.requestedBy ? 
+                                 execution.requestedBy.name as string : 'Unknown')}
+                          </div>
+                        </div>
                       </div>
                       
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <p className="text-gray-600">Success Rate</p>
-                          <div className="flex items-center space-x-2">
-                            <Progress value={workflow.successRate} className="flex-1 h-2" />
-                            <span className="font-medium">{workflow.successRate}%</span>
-                          </div>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">Automation Rate</p>
-                          <div className="flex items-center space-x-2">
-                            <Progress value={workflow.automationRate} className="flex-1 h-2" />
-                            <span className="font-medium">{workflow.automationRate}%</span>
-                          </div>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">Avg Time</p>
-                          <p className="font-medium">{workflow.averageProcessingTime}h</p>
+                      <div className="text-right">
+                        <Badge className={getStatusColor(execution.status)}>
+                          {execution.status}
+                        </Badge>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {execution.metadata?.dealValue ? `$${(execution.metadata.dealValue / 1000000).toFixed(0)}M` : 
+                           execution.metadata?.amount ? `$${execution.metadata.amount.toLocaleString()}` : ''}
                         </div>
                       </div>
-
-                      {workflow.bottlenecks.length > 0 && (
-                        <div className="mt-2">
-                          <p className="text-xs text-amber-600 mb-1">Identified bottlenecks:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {workflow.bottlenecks.map((bottleneck, index) => (
-                              <Badge key={index} variant="destructive" className="text-xs">
-                                {bottleneck}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            {/* Cross-Module Integration Metrics */}
+          <TabsContent value="automation" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Activity className="w-5 h-5 mr-2 text-green-600" />
-                  Cross-Module Integration Analytics
-                </CardTitle>
+                <CardTitle>Automation Recommendations</CardTitle>
+                <CardDescription>AI-powered suggestions to optimize your workflows</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">24</div>
-                      <div className="text-sm text-gray-600">Deal Screening → Workflow</div>
-                    </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">18</div>
-                      <div className="text-sm text-gray-600">DD → Approval Routing</div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Portfolio Data Integration</span>
-                        <span>87% success rate</span>
-                      </div>
-                      <Progress value={87} className="h-2" />
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Market Intel Triggers</span>
-                        <span>94% success rate</span>
-                      </div>
-                      <Progress value={94} className="h-2" />
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>LP/GP Portal Notifications</span>
-                        <span>91% delivery rate</span>
-                      </div>
-                      <Progress value={91} className="h-2" />
-                    </div>
-                  </div>
-
-                  <div className="mt-4 p-3 bg-purple-50 rounded-lg">
-                    <h5 className="font-medium text-purple-800 mb-2">Integration Opportunities</h5>
-                    <div className="space-y-1 text-xs">
-                      <div className="flex justify-between">
-                        <span>Advanced Analytics → Auto-reporting</span>
-                        <span className="text-purple-600">High impact</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Legal Management → Document workflow</span>
-                        <span className="text-purple-600">Medium impact</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Fund Operations → Expense approval</span>
-                        <span className="text-purple-600">Low impact</span>
+                  {automationRecommendations.map((rec) => (
+                    <div key={rec.id} className="p-4 border rounded-lg">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge>{rec.automationType.replace(/_/g, ' ')}</Badge>
+                            <Badge variant="outline" className={getPriorityColor(rec.complexity.toUpperCase())}>
+                              {rec.complexity} complexity
+                            </Badge>
+                          </div>
+                          <p className="font-medium">{rec.description}</p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Potential savings: {rec.potentialSavings} hours/week
+                          </p>
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleImplementRecommendation(rec.id)}
+                        >
+                          Implement
+                        </Button>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </TabsContent>
+        </Tabs>
 
-          {/* Workflow Execution Timeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
-                Recent Execution Timeline & Performance Trends
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {executions.slice(0, 8).map((execution) => (
-                  <div key={execution.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex flex-col items-center">
-                        <div className={`w-3 h-3 rounded-full ${getStatusColor(execution.status).includes('green') ? 'bg-green-500' : 
-                          getStatusColor(execution.status).includes('blue') ? 'bg-blue-500' : 
-                          getStatusColor(execution.status).includes('yellow') ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
-                        <div className="text-xs text-gray-400 mt-1">
-                          {new Date(execution.createdAt).toLocaleDateString()}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <div className="font-medium">
-                          {'workflowId' in execution ? 'Document Workflow' : 'Approval Process'}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {execution.metadata?.dealName || execution.metadata?.expenseCategory || 'Unknown entity'}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          By {('startedBy' in execution ? execution.startedBy?.name : 
-                               'requestedBy' in execution ? execution.requestedBy?.name : 'Unknown')}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="text-right">
-                      <Badge className={getStatusColor(execution.status)}>
-                        {execution.status}
-                      </Badge>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {execution.metadata?.dealValue ? `$${(execution.metadata.dealValue / 1000000).toFixed(0)}M` : 
-                         execution.metadata?.amount ? `$${execution.metadata.amount.toLocaleString()}` : ''}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="automation" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Automation Recommendations</CardTitle>
-              <CardDescription>AI-powered suggestions to optimize your workflows</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {automationRecommendations.map((rec) => (
-                  <div key={rec.id} className="p-4 border rounded-lg">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge>{rec.automationType.replace(/_/g, ' ')}</Badge>
-                          <Badge variant="outline" className={getPriorityColor(rec.complexity.toUpperCase())}>
-                            {rec.complexity} complexity
-                          </Badge>
-                        </div>
-                        <p className="font-medium">{rec.description}</p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Potential savings: {rec.potentialSavings} hours/week
-                        </p>
-                      </div>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleImplementRecommendation(rec.id)}
-                      >
-                        Implement
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        <ProcessNotice 
+          mode={navigationMode}
+          title="Workflow Automation"
+          description="Document workflow and approval process management operations"
+        />
+      </div>
     </div>
   );
 }

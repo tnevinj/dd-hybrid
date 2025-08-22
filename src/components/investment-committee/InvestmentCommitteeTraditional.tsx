@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { ModuleHeader, ProcessNotice, MODE_DESCRIPTIONS } from '@/components/shared/ModeIndicators';
 import {
   Search,
   Filter,
@@ -20,7 +21,8 @@ import {
   Eye,
   Edit,
   User,
-  Gavel
+  Gavel,
+  MessageSquare
 } from 'lucide-react';
 import type { 
   ICProposal,
@@ -84,9 +86,6 @@ export const InvestmentCommitteeTraditional: React.FC<InvestmentCommitteeTraditi
     }
     if (selectedFilters.priority) {
       result = result.filter(proposal => proposal.priority === selectedFilters.priority);
-    }
-    if (selectedFilters.type) {
-      result = result.filter(proposal => proposal.type === selectedFilters.type);
     }
 
     // Apply sorting
@@ -158,29 +157,24 @@ export const InvestmentCommitteeTraditional: React.FC<InvestmentCommitteeTraditi
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      {/* Header - Traditional Theme */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <div className="flex items-center space-x-3">
-            <h1 className="text-3xl font-bold text-gray-900">Investment Committee Dashboard</h1>
-            <Badge className="bg-gray-100 text-gray-800 border border-gray-300 flex items-center space-x-1">
-              <User className="h-3 w-3" />
-              <span>Traditional Mode</span>
-            </Badge>
+      {/* Standardized Header */}
+      <ModuleHeader
+        title="Investment Committee Dashboard"
+        description="Complete manual control over committee operations and decision-making"
+        mode="traditional"
+        actions={
+          <div className="flex space-x-2">
+            <Button onClick={onCreateProposal} className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
+              <Plus className="h-4 w-4" />
+              <span>New Proposal</span>
+            </Button>
+            <Button onClick={onScheduleMeeting} variant="outline" className="flex items-center space-x-2 border-gray-300 text-gray-700">
+              <Calendar className="h-4 w-4" />
+              <span>Schedule Meeting</span>
+            </Button>
           </div>
-          <p className="text-gray-600 mt-1">Complete manual control over committee operations and decision-making</p>
-        </div>
-        <div className="flex space-x-2">
-          <Button onClick={onCreateProposal} className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800">
-            <Plus className="h-4 w-4" />
-            <span>New Proposal</span>
-          </Button>
-          <Button onClick={onScheduleMeeting} variant="outline" className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4" />
-            <span>Schedule Meeting</span>
-          </Button>
-        </div>
-      </div>
+        }
+      />
       
       {/* KPI Cards - Traditional Focus */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
@@ -665,20 +659,12 @@ export const InvestmentCommitteeTraditional: React.FC<InvestmentCommitteeTraditi
         </div>
       </div>
 
-      {/* Manual Process Notice */}
-      <div className="mt-6 p-4 bg-gray-100 border border-gray-200 rounded-lg">
-        <div className="flex items-start space-x-3">
-          <User className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-1">Traditional Committee Process</h4>
-            <p className="text-sm text-gray-600">
-              You have full manual control over investment committee operations. All proposal reviews, 
-              meeting scheduling, and decision tracking are performed manually without AI assistance. 
-              Use the search, filter, and sort tools above to organize proposals according to your preferences.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Standardized Process Notice */}
+      <ProcessNotice
+        mode="traditional"
+        title="Traditional Committee Process"
+        description="You have full manual control over investment committee operations. All proposal reviews, meeting scheduling, and decision tracking are performed manually without AI assistance. Use the search, filter, and sort tools above to organize proposals according to your preferences."
+      />
     </div>
   );
 };

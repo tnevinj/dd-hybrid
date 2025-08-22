@@ -526,7 +526,7 @@ export function QualificationAssessment({
                     {reference.reference_position} at {reference.reference_company}
                   </p>
                   <p className="text-xs text-gray-500 capitalize">
-                    {reference.relationship_to_candidate.replace('_', ' ')} • {reference.reference_type}
+                    {reference.relationship_to_candidate.replace('_', ' ')}
                   </p>
                 </div>
               </div>
@@ -622,6 +622,235 @@ export function QualificationAssessment({
     )
   }
 
+  const renderPerformanceValidation = () => {
+    if (!currentAssessment || currentAssessment.performanceValidations.length === 0) {
+      return (
+        <Card className="p-6 text-center">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="p-3 bg-gray-100 rounded-full">
+              <Target className="w-8 h-8 text-gray-400" />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900">No Performance Validations</h3>
+              <p className="text-sm text-gray-600 mt-1">Add performance validations to verify achievements</p>
+            </div>
+            <Button size="sm" className="mt-2">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Performance Validation
+            </Button>
+          </div>
+        </Card>
+      )
+    }
+
+    return (
+      <div className="space-y-4">
+        {currentAssessment.performanceValidations.map((performance) => (
+          <Card key={performance.id} className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Briefcase className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <h5 className="font-medium">{performance.role_title}</h5>
+                  <p className="text-sm text-gray-600">{performance.company_name}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(performance.performance_period_start).toLocaleDateString()} - {new Date(performance.performance_period_end).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-medium">{Math.round(performance.validation_confidence * 100)}%</div>
+                <div className="text-xs text-gray-600">Validation Confidence</div>
+              </div>
+            </div>
+
+            {/* Performance Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="text-center p-3 bg-green-50 rounded-lg">
+                <div className="text-lg font-bold text-green-600">
+                  ${(performance.revenue_impact / 1000000).toFixed(1)}M
+                </div>
+                <div className="text-xs text-green-700">Revenue Impact</div>
+              </div>
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <div className="text-lg font-bold text-blue-600">
+                  ${(performance.cost_savings / 1000000).toFixed(1)}M
+                </div>
+                <div className="text-xs text-blue-700">Cost Savings</div>
+              </div>
+              <div className="text-center p-3 bg-purple-50 rounded-lg">
+                <div className="text-lg font-bold text-purple-600">{performance.stakeholder_feedback_score}%</div>
+                <div className="text-xs text-purple-700">Stakeholder Rating</div>
+              </div>
+            </div>
+
+            {/* Achievements Comparison */}
+            <div className="space-y-4">
+              <div>
+                <h6 className="text-sm font-medium mb-2 text-gray-700">Claimed Achievements</h6>
+                <div className="space-y-1">
+                  {performance.claimed_achievements.map((achievement, index) => (
+                    <div key={index} className="text-sm p-2 bg-gray-50 rounded border-l-2 border-gray-300">
+                      {achievement}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h6 className="text-sm font-medium mb-2 text-green-700">Validated Achievements</h6>
+                <div className="space-y-1">
+                  {performance.validated_achievements.map((achievement, index) => (
+                    <div key={index} className="text-sm p-2 bg-green-50 rounded border-l-2 border-green-300">
+                      ✓ {achievement}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Discrepancies */}
+              {performance.discrepancies_found.length > 0 && (
+                <div>
+                  <h6 className="text-sm font-medium mb-2 text-red-700">Discrepancies Found</h6>
+                  <div className="space-y-1">
+                    {performance.discrepancies_found.map((discrepancy, index) => (
+                      <div key={index} className="text-sm p-2 bg-red-50 rounded border-l-2 border-red-300 text-red-700">
+                        ⚠ {discrepancy}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+
+  const renderDocumentVerification = () => {
+    if (!currentAssessment || currentAssessment.documents.length === 0) {
+      return (
+        <Card className="p-6 text-center">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="p-3 bg-gray-100 rounded-full">
+              <FileText className="w-8 h-8 text-gray-400" />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900">No Documents to Verify</h3>
+              <p className="text-sm text-gray-600 mt-1">Upload documents for verification and authenticity checks</p>
+            </div>
+            <Button size="sm" className="mt-2">
+              <Plus className="w-4 h-4 mr-2" />
+              Upload Document
+            </Button>
+          </div>
+        </Card>
+      )
+    }
+
+    return (
+      <div className="space-y-4">
+        {currentAssessment.documents.map((document) => {
+          const getStatusColor = (status: string) => {
+            switch (status) {
+              case 'verified': return 'bg-green-50 text-green-700 border-green-200'
+              case 'discrepancy': return 'bg-orange-50 text-orange-700 border-orange-200'
+              case 'fake': return 'bg-red-50 text-red-700 border-red-200'
+              default: return 'bg-gray-50 text-gray-700 border-gray-200'
+            }
+          }
+
+          const getStatusIcon = (status: string) => {
+            switch (status) {
+              case 'verified': return <CheckCircle className="w-4 h-4 text-green-500" />
+              case 'discrepancy': return <AlertTriangle className="w-4 h-4 text-orange-500" />
+              case 'fake': return <XCircle className="w-4 h-4 text-red-500" />
+              default: return <Clock className="w-4 h-4 text-gray-500" />
+            }
+          }
+
+          return (
+            <Card key={document.id} className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h5 className="font-medium">{document.document_name}</h5>
+                    <p className="text-sm text-gray-600 capitalize">{document.document_type.replace('_', ' ')}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {getStatusIcon(document.verification_status)}
+                  <Badge className={`text-xs ${getStatusColor(document.verification_status)}`}>
+                    {document.verification_status}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Verification Scores */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="text-center p-2 bg-gray-50 rounded">
+                  <div className="text-sm font-medium">{document.authenticity_score}%</div>
+                  <div className="text-xs text-gray-600">Authenticity</div>
+                  <Progress value={document.authenticity_score} className="w-full h-1 mt-1" />
+                </div>
+                <div className="text-center p-2 bg-gray-50 rounded">
+                  <div className="text-sm font-medium">{document.relevance_score}%</div>
+                  <div className="text-xs text-gray-600">Relevance</div>
+                  <Progress value={document.relevance_score} className="w-full h-1 mt-1" />
+                </div>
+                <div className="text-center p-2 bg-gray-50 rounded">
+                  <div className="text-sm font-medium">{document.quality_score}%</div>
+                  <div className="text-xs text-gray-600">Quality</div>
+                  <Progress value={document.quality_score} className="w-full h-1 mt-1" />
+                </div>
+              </div>
+
+              {/* Discrepancies */}
+              {document.discrepancies.length > 0 && (
+                <div>
+                  <h6 className="text-sm font-medium mb-2 text-orange-700">Discrepancies Found</h6>
+                  <div className="space-y-1">
+                    {document.discrepancies.map((discrepancy, index) => (
+                      <div key={index} className="text-sm p-2 bg-orange-50 rounded border-l-2 border-orange-300 text-orange-700">
+                        ⚠ {discrepancy}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex items-center justify-between mt-4 pt-3 border-t">
+                <div className="flex items-center space-x-2">
+                  <Button variant="outline" size="sm">
+                    <Eye className="w-4 h-4 mr-2" />
+                    View Document
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
+                {document.verification_status === 'pending' && (
+                  <Button size="sm">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Re-verify
+                  </Button>
+                )}
+              </div>
+            </Card>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -706,16 +935,8 @@ export function QualificationAssessment({
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'skills' && renderSkillsValidation()}
         {activeTab === 'references' && renderReferenceChecks()}
-        {activeTab === 'performance' && (
-          <div className="p-6 text-center text-gray-600">
-            Performance validation content coming soon...
-          </div>
-        )}
-        {activeTab === 'documents' && (
-          <div className="p-6 text-center text-gray-600">
-            Document verification content coming soon...
-          </div>
-        )}
+        {activeTab === 'performance' && renderPerformanceValidation()}
+        {activeTab === 'documents' && renderDocumentVerification()}
       </div>
     </div>
   )

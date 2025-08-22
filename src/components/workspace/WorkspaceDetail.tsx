@@ -362,6 +362,275 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
     );
   };
 
+  const renderEvidence = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900">Evidence Repository</h3>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline">
+            <Link2 className="w-4 h-4 mr-2" />
+            Link External
+          </Button>
+          <Button size="sm">
+            <Plus className="w-4 h-4 mr-2" />
+            Upload Evidence
+          </Button>
+        </div>
+      </div>
+
+      {/* Evidence Categories */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="w-5 h-5 text-blue-500" />
+            <span className="font-medium">Documents</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{workspace.evidence.filter(e => e.type === 'DOCUMENT').length}</p>
+          <p className="text-sm text-gray-600">Financial statements, contracts</p>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="w-5 h-5 text-green-500" />
+            <span className="font-medium">Interviews</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{workspace.evidence.filter(e => e.type === 'INTERVIEW').length}</p>
+          <p className="text-sm text-gray-600">Management, customer calls</p>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="w-5 h-5 text-purple-500" />
+            <span className="font-medium">Analysis</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{workspace.evidence.filter(e => e.type === 'MODEL').length}</p>
+          <p className="text-sm text-gray-600">Market research, models</p>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Link2 className="w-5 h-5 text-orange-500" />
+            <span className="font-medium">External</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{workspace.evidence.filter(e => e.type === 'EXTERNAL_DATA').length}</p>
+          <p className="text-sm text-gray-600">Third-party reports</p>
+        </Card>
+      </div>
+
+      {/* Evidence List */}
+      <Card className="p-6">
+        <div className="space-y-4">
+          {workspace.evidence.slice(0, 8).map((evidence) => (
+            <div key={evidence.id} className="flex items-center justify-between p-4 border border-gray-200 rounded hover:bg-gray-50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{evidence.title}</p>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Badge variant="outline" className="text-xs">{evidence.type}</Badge>
+                    <span>•</span>
+                    <span>Added {new Date(evidence.attachedAt).toLocaleDateString()}</span>
+                    <span>•</span>
+                    <span>by {evidence.attachedBy}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm">View</Button>
+                <Button variant="ghost" size="sm">
+                  <Link2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+          
+          {workspace.evidence.length > 8 && (
+            <Button variant="ghost" className="w-full">
+              View All {workspace.evidence.length} Evidence Items
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      {/* AI Evidence Insights */}
+      {navigationMode !== 'traditional' && (
+        <Card className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+          <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+            🔍 Evidence Analysis Insights
+          </h4>
+          <div className="space-y-2">
+            <div className="p-3 bg-white rounded border border-purple-200">
+              <p className="text-sm text-gray-700">
+                📊 Financial statements show consistent 15% YoY growth. Cross-referenced with management interviews - claims verified.
+              </p>
+            </div>
+            <div className="p-3 bg-white rounded border border-purple-200">
+              <p className="text-sm text-gray-700">
+                ⚠️ Customer interview #3 mentions competitive pressure not reflected in market analysis. Recommend follow-up.
+              </p>
+            </div>
+            <div className="p-3 bg-white rounded border border-purple-200">
+              <p className="text-sm text-gray-700">
+                ✅ All regulatory compliance documents verified. No red flags detected in legal review.
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+
+  const renderCollaboration = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900">Team Collaboration</h3>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline">
+            <Users className="w-4 h-4 mr-2" />
+            Invite Member
+          </Button>
+          <Button size="sm">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            New Discussion
+          </Button>
+        </div>
+      </div>
+
+      {/* Team Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="w-5 h-5 text-blue-500" />
+            <span className="font-medium">Team Members</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{workspace.participants.length}</p>
+          <p className="text-sm text-gray-600">Active contributors</p>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <MessageSquare className="w-5 h-5 text-green-500" />
+            <span className="font-medium">Discussions</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{workspace.comments.length}</p>
+          <p className="text-sm text-gray-600">Open conversations</p>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Activity className="w-5 h-5 text-purple-500" />
+            <span className="font-medium">Recent Activity</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{workspace.activities.length}</p>
+          <p className="text-sm text-gray-600">Last 7 days</p>
+        </Card>
+      </div>
+
+      {/* Team Members */}
+      <Card className="p-6">
+        <h4 className="font-semibold text-gray-900 mb-4">Team Members</h4>
+        <div className="space-y-3">
+          {workspace.participants.map((participant, index) => {
+            // Mock display data since participant type only has basic fields
+            const mockNames = ['Sarah Chen', 'Mike Johnson', 'Alex Rodriguez', 'Emma Wilson'];
+            const mockName = mockNames[index % mockNames.length] || 'Team Member';
+            const isOnline = index % 2 === 0; // Alternate online status for demo
+            
+            return (
+              <div key={participant.id} className="flex items-center justify-between p-3 border border-gray-200 rounded">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                    {mockName.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{mockName}</p>
+                    <p className="text-sm text-gray-600">{participant.role}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline">{participant.role}</Badge>
+                  <div className="flex items-center gap-1 text-sm text-gray-600">
+                    <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                    {isOnline ? 'Online' : 'Offline'}
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    <MessageSquare className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* Recent Discussions */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="font-semibold text-gray-900">Recent Discussions</h4>
+          <Button size="sm" variant="outline">View All</Button>
+        </div>
+        
+        <div className="space-y-4">
+          {workspace.comments.slice(0, 5).map((comment) => (
+            <div key={comment.id} className="p-4 border border-gray-200 rounded">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                    {comment.authorName.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{comment.authorName}</p>
+                    <p className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="text-xs">Comment</Badge>
+              </div>
+              
+              <p className="text-gray-700 mb-3">{comment.content}</p>
+              
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm">Reply</Button>
+                <Button variant="ghost" size="sm">
+                  <Link2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* AI Collaboration Insights */}
+      {navigationMode !== 'traditional' && (
+        <Card className="p-4 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+          <h4 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
+            🤝 Collaboration Insights
+          </h4>
+          <div className="space-y-2">
+            <div className="p-3 bg-white rounded border border-green-200">
+              <p className="text-sm text-gray-700">
+                💡 Sarah's financial analysis complements Mike's market research. Consider scheduling a joint review session.
+              </p>
+            </div>
+            <div className="p-3 bg-white rounded border border-green-200">
+              <p className="text-sm text-gray-700">
+                ⏰ 3 open discussions need resolution before the investment committee meeting on Friday.
+              </p>
+            </div>
+            <div className="p-3 bg-white rounded border border-green-200">
+              <p className="text-sm text-gray-700">
+                📈 Team productivity is 23% higher when using structured discussion templates. Want me to suggest formats?
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+
   const renderActivity = () => (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
@@ -428,16 +697,8 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
         {activeTab === 'work-products' && renderWorkProducts()}
         {activeTab === 'analysis' && renderAnalysis()}
         {activeTab === 'activity' && renderActivity()}
-        {activeTab === 'evidence' && (
-          <div className="flex items-center justify-center h-64">
-            <p className="text-gray-500">Evidence management coming soon...</p>
-          </div>
-        )}
-        {activeTab === 'collaboration' && (
-          <div className="flex items-center justify-center h-64">
-            <p className="text-gray-500">Team collaboration features coming soon...</p>
-          </div>
-        )}
+        {activeTab === 'evidence' && renderEvidence()}
+        {activeTab === 'collaboration' && renderCollaboration()}
       </div>
     </div>
   );

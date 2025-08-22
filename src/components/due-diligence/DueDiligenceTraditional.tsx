@@ -8,12 +8,9 @@ import { DDTabs } from './DDTabs'
 import { RiskAnalysisHub } from './RiskAnalysisHub'
 import { DocumentManagement } from './DocumentManagement'
 import { FindingsManagement } from './FindingsManagement'
-import { RiskWorkflowAutomation } from './RiskWorkflowAutomation'
-import { AIAutomationHub } from './AIAutomationHub'
 import { DueDiligenceDashboard } from './DueDiligenceDashboard'
 import { OperationalAssessment } from './OperationalAssessment'
 import { ManagementTeamAssessment } from './ManagementTeamAssessment'
-import { PredictiveAnalytics } from './PredictiveAnalytics'
 import { 
   CheckSquare,
   AlertTriangle,
@@ -24,7 +21,8 @@ import {
   Settings,
   Download,
   Share,
-  ArrowLeft
+  ArrowLeft,
+  User
 } from 'lucide-react'
 
 interface DueDiligenceTraditionalProps {
@@ -102,28 +100,32 @@ export function DueDiligenceTraditional({
       <div className="lg:col-span-2 space-y-6">
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">{project?.tasksCompleted || 0}/{project?.tasksTotal || 0}</div>
+              <div className="text-2xl font-bold text-gray-900">{project?.tasksCompleted || 0}/{project?.tasksTotal || 0}</div>
               <div className="text-sm text-gray-600">Tasks Complete</div>
+              <div className="text-xs text-gray-500 mt-1">Manual tracking</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-orange-600">{project?.findingsCount || 0}</div>
+              <div className="text-2xl font-bold text-gray-900">{project?.findingsCount || 0}</div>
               <div className="text-sm text-gray-600">Active Findings</div>
+              <div className="text-xs text-gray-500 mt-1">Expert review</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-red-600">{project?.risksCount || 0}</div>
+              <div className="text-2xl font-bold text-gray-900">{project?.risksCount || 0}</div>
               <div className="text-sm text-gray-600">Risk Items</div>
+              <div className="text-xs text-gray-500 mt-1">Manual assessment</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-gray-200">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">{project?.documentsCount || 0}</div>
+              <div className="text-2xl font-bold text-gray-900">{project?.documentsCount || 0}</div>
               <div className="text-sm text-gray-600">Documents</div>
+              <div className="text-xs text-gray-500 mt-1">Human reviewed</div>
             </CardContent>
           </Card>
         </div>
@@ -239,11 +241,18 @@ export function DueDiligenceTraditional({
   // If a project is selected, show project details with navigation
   return (
     <div className="p-6">
-      {/* Mode Indicator */}
-      <div className="mb-6">
-        <Badge className="bg-gray-100 text-gray-800 border border-gray-300">
-          Traditional Mode
-        </Badge>
+      {/* Header - Traditional Theme */}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <div className="flex items-center space-x-3">
+            <h1 className="text-3xl font-bold text-gray-900">Due Diligence Project</h1>
+            <Badge className="bg-gray-100 text-gray-800 border border-gray-300 flex items-center space-x-1">
+              <User className="h-3 w-3" />
+              <span>Traditional Mode</span>
+            </Badge>
+          </div>
+          <p className="text-gray-600 mt-1">Complete manual control over due diligence processes</p>
+        </div>
       </div>
 
       {/* Traditional Navigation Tabs */}
@@ -271,32 +280,34 @@ export function DueDiligenceTraditional({
         {activeTab === 'findings' && (
           <FindingsManagement projectId={project?.id} />
         )}
-        {activeTab === 'workflows' && (
-          <RiskWorkflowAutomation projectId={project?.id} />
-        )}
         {activeTab === 'operational' && (
           <OperationalAssessment projectId={project?.id} mode="traditional" />
         )}
         {activeTab === 'management' && (
           <ManagementTeamAssessment projectId={project?.id} mode="traditional" />
         )}
-        {activeTab === 'automation' && (
-          <AIAutomationHub projectId={project?.id} />
-        )}
-        {activeTab === 'predictive' && (
-          <PredictiveAnalytics 
-            projectId={project?.id} 
-            projectData={project}
-            navigationMode="traditional"
-          />
-        )}
         {activeTab === 'analytics' && (
           <div className="text-center py-12">
             <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600">Analytics & Reporting</h3>
-            <p className="text-gray-500">Project insights and performance metrics</p>
+            <h3 className="text-lg font-semibold text-gray-600">Manual Analytics & Reporting</h3>
+            <p className="text-gray-500">Traditional project insights and performance metrics</p>
           </div>
         )}
+      </div>
+
+      {/* Manual Process Notice */}
+      <div className="mt-6 p-4 bg-gray-100 border border-gray-200 rounded-lg">
+        <div className="flex items-start space-x-3">
+          <User className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-1">Traditional Manual Process</h4>
+            <p className="text-sm text-gray-600">
+              You have complete control over the due diligence process. All analysis, risk assessment, 
+              and decision-making is performed manually without AI assistance. Use the tabs above to 
+              navigate through different aspects of your due diligence workflow.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )
