@@ -415,32 +415,91 @@ export default function OpportunityDetailPage() {
         // const response = await fetch(`/api/deal-screening/opportunities/${opportunityId}`);
         // const data = await response.json();
         
-        // Mock data for now
-        const mockOpportunity: DealOpportunity = {
-          id: opportunityId,
-          name: 'TechCorp Series B',
-          description: 'AI-powered enterprise software company with strong growth metrics and proven market traction in the North American market.',
-          seller: 'TechCorp Ventures',
-          assetType: 'direct',
-          vintage: '2023',
-          sector: 'Technology',
-          geography: 'North America',
-          askPrice: 50000000,
-          navPercentage: 0.85,
-          expectedReturn: 0.25,
-          expectedRisk: 0.15,
-          expectedMultiple: 2.8,
-          expectedIRR: 25.5,
-          expectedHoldingPeriod: 4,
-          scores: [],
-          status: 'screening',
-          aiConfidence: 0.87,
-          similarDeals: ['deal-2', 'deal-5'],
-          aiRecommendations,
-          createdAt: '2024-01-15T10:30:00Z',
-          updatedAt: '2024-01-15T14:20:00Z',
-          additionalData: {},
+        // Mock data that matches the dashboard opportunities
+        const mockOpportunities: Record<string, DealOpportunity> = {
+          '1': {
+            id: '1',
+            name: 'TechVenture Fund III',
+            description: 'Institutional LP secondary sale of a technology-focused fund with strong track record.',
+            seller: 'Institutional LP',
+            assetType: 'fund',
+            vintage: '2020',
+            sector: 'Technology',
+            geography: 'North America',
+            askPrice: 45000000,
+            navPercentage: 0.85,
+            expectedReturn: 0.185,
+            expectedRisk: 0.15,
+            expectedMultiple: 2.3,
+            expectedIRR: 18.5,
+            expectedHoldingPeriod: 4,
+            scores: [],
+            status: 'screening',
+            aiConfidence: 0.87,
+            similarDeals: ['deal-2', 'deal-5'],
+            aiRecommendations,
+            createdAt: '2024-01-15T10:30:00Z',
+            updatedAt: '2024-01-15T14:20:00Z',
+            additionalData: {},
+          },
+          '2': {
+            id: '2',
+            name: 'Healthcare Direct Investment',
+            description: 'Strategic partner direct investment in healthcare technology company.',
+            seller: 'Strategic Partner',
+            assetType: 'direct',
+            vintage: '2021',
+            sector: 'Healthcare',
+            geography: 'Europe',
+            askPrice: 28000000,
+            navPercentage: 0.92,
+            expectedReturn: 0.221,
+            expectedRisk: 0.12,
+            expectedMultiple: 2.8,
+            expectedIRR: 22.1,
+            expectedHoldingPeriod: 3,
+            scores: [],
+            status: 'screening',
+            aiConfidence: 0.93,
+            similarDeals: ['deal-1', 'deal-3'],
+            aiRecommendations,
+            createdAt: '2024-01-16T11:30:00Z',
+            updatedAt: '2024-01-16T15:20:00Z',
+            additionalData: {},
+          },
+          '3': {
+            id: '3',
+            name: 'Infrastructure Co-Investment',
+            description: 'Fund manager co-investment opportunity in infrastructure assets.',
+            seller: 'Fund Manager',
+            assetType: 'co-investment',
+            vintage: '2022',
+            sector: 'Infrastructure',
+            geography: 'Asia',
+            askPrice: 67000000,
+            navPercentage: 0.78,
+            expectedReturn: 0.158,
+            expectedRisk: 0.18,
+            expectedMultiple: 2.1,
+            expectedIRR: 15.8,
+            expectedHoldingPeriod: 6,
+            scores: [],
+            status: 'screening',
+            aiConfidence: 0.76,
+            similarDeals: ['deal-4'],
+            aiRecommendations,
+            createdAt: '2024-01-17T09:15:00Z',
+            updatedAt: '2024-01-17T16:45:00Z',
+            additionalData: {},
+          }
         };
+        
+        const mockOpportunity = mockOpportunities[opportunityId];
+        
+        if (!mockOpportunity) {
+          setError('Opportunity not found');
+          return;
+        }
         
         setOpportunity(mockOpportunity);
       } catch (err) {

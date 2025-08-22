@@ -10,7 +10,7 @@ import { persist } from 'zustand/middleware'
 export interface Project {
   id: string
   name: string
-  type: 'model' | 'analysis' | 'forecast' | 'research' | 'portfolio' | 'deal' | 'dd'
+  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis'
   status: 'active' | 'completed' | 'draft' | 'review'
   lastActivity: Date
   priority: 'high' | 'medium' | 'low'
@@ -83,16 +83,100 @@ interface AutonomousActions {
   
   // Data loading
   loadProjectsForType: (projectType: string) => Promise<void>
+  initializeProjects: () => void
 }
 
 type AutonomousStore = AutonomousState & AutonomousActions
 
-// Generate initial empty projects structure
+// Generate initial projects structure with mock data
 const getInitialProjects = (): Record<string, Project[]> => {
   return {
     dashboard: [],
     portfolio: [],
-    'due-diligence': [],
+    'due-diligence': [
+      {
+        id: 'dd-techcorp-2024',
+        name: 'TechCorp Series B Due Diligence',
+        type: 'company',
+        status: 'active',
+        lastActivity: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+        priority: 'high',
+        unreadMessages: 3,
+        metadata: {
+          value: '$45M',
+          progress: 67,
+          team: ['Sarah Chen', 'Mike Rodriguez', 'Dr. Kim'],
+          sector: 'Technology',
+          dealType: 'Growth Equity',
+          stage: 'Commercial Due Diligence'
+        }
+      },
+      {
+        id: 'dd-healthcare-direct',
+        name: 'HealthTech Direct Investment DD',
+        type: 'company',
+        status: 'active',
+        lastActivity: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+        priority: 'high',
+        unreadMessages: 1,
+        metadata: {
+          value: '$28M',
+          progress: 45,
+          team: ['Emma Thompson', 'David Park'],
+          sector: 'Healthcare',
+          dealType: 'Direct Investment',
+          stage: 'Financial Due Diligence'
+        }
+      },
+      {
+        id: 'dd-infrastructure-coinvest',
+        name: 'Infrastructure Co-Investment DD',
+        type: 'company',
+        status: 'review',
+        lastActivity: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+        priority: 'medium',
+        metadata: {
+          value: '$67M',
+          progress: 89,
+          team: ['James Wilson', 'Lisa Chang', 'Alex Kumar'],
+          sector: 'Infrastructure',
+          dealType: 'Co-Investment',
+          stage: 'Legal Due Diligence'
+        }
+      },
+      {
+        id: 'dd-fintech-secondary',
+        name: 'FinTech Secondary Purchase DD',
+        type: 'company',
+        status: 'completed',
+        lastActivity: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+        priority: 'low',
+        metadata: {
+          value: '$35M',
+          progress: 100,
+          team: ['Rachel Green', 'Tom Martinez'],
+          sector: 'Financial Services',
+          dealType: 'Secondary',
+          stage: 'Completed'
+        }
+      },
+      {
+        id: 'dd-cleantech-venture',
+        name: 'CleanTech Venture Due Diligence',
+        type: 'company',
+        status: 'draft',
+        lastActivity: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+        priority: 'medium',
+        metadata: {
+          value: '$22M',
+          progress: 15,
+          team: ['Sophie Davis'],
+          sector: 'Clean Technology',
+          dealType: 'Venture Capital',
+          stage: 'Initial Assessment'
+        }
+      }
+    ],
     workspace: [],
     'deal-screening': [],
     'deal-structuring': [],
@@ -292,6 +376,11 @@ export const useAutonomousStore = create<AutonomousStore>()(
         } catch (error) {
           console.error(`Failed to load ${projectType} projects:`, error)
         }
+      },
+
+      // Initialize projects with mock data (useful for clearing cache)
+      initializeProjects: () => {
+        set({ projects: getInitialProjects() })
       }
     }),
     {

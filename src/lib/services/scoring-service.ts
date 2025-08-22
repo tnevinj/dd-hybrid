@@ -19,12 +19,9 @@ export interface ScoringResult {
   completionRate: number; // 0-1, percentage of criteria scored
   averageScore: number; // 0-100 scale
   weightedAverage: number; // 0-100 scale, weighted by criterion importance
-  scoreBreakdown: {
-    financial: number;
-    operational: number;
-    strategic: number;
-    risk: number;
-  };
+  scoredCriteria: number; // Count of scored criteria
+  totalCriteria: number; // Total criteria in template
+  scoreBreakdown: Record<string, number>; // Dynamic category scores
 }
 
 export class ScoringService {
@@ -46,7 +43,8 @@ export class ScoringService {
       financial: { score: 0, weight: 0, count: 0 },
       operational: { score: 0, weight: 0, count: 0 },
       strategic: { score: 0, weight: 0, count: 0 },
-      risk: { score: 0, weight: 0, count: 0 }
+      risk: { score: 0, weight: 0, count: 0 },
+      other: { score: 0, weight: 0, count: 0 }
     };
 
     // Process each criterion in the template
@@ -79,13 +77,15 @@ export class ScoringService {
         totalRawScore += score.value;
         scoredCriteria++;
         
-        // Track category scores
-        const category = criterion.category as keyof typeof categoryScores;
-        if (categoryScores[category]) {
-          categoryScores[category].score += weightedScore;
-          categoryScores[category].weight += criterion.weight;
-          categoryScores[category].count++;
+        // Track category scores - map category to known categories or use 'other'
+        let category = criterion.category.toLowerCase() as keyof typeof categoryScores;
+        if (!categoryScores[category]) {
+          category = 'other';
         }
+        
+        categoryScores[category].score += weightedScore;
+        categoryScores[category].weight += criterion.weight;
+        categoryScores[category].count++;
       }
     });
 
@@ -98,16 +98,12 @@ export class ScoringService {
     const totalScore = Math.round(weightedAverage * 100);
     
     // Calculate category breakdowns (already normalized, just convert to 0-100 scale)
-    const scoreBreakdown = {
-      financial: categoryScores.financial.weight > 0 ? 
-        Math.round((categoryScores.financial.score / categoryScores.financial.weight) * 100) : 0,
-      operational: categoryScores.operational.weight > 0 ? 
-        Math.round((categoryScores.operational.score / categoryScores.operational.weight) * 100) : 0,
-      strategic: categoryScores.strategic.weight > 0 ? 
-        Math.round((categoryScores.strategic.score / categoryScores.strategic.weight) * 100) : 0,
-      risk: categoryScores.risk.weight > 0 ? 
-        Math.round((categoryScores.risk.score / categoryScores.risk.weight) * 100) : 0,
-    };
+    const scoreBreakdown: Record<string, number> = {};
+    
+    Object.entries(categoryScores).forEach(([categoryKey, data]) => {
+      scoreBreakdown[categoryKey] = data.weight > 0 ? 
+        Math.round((data.score / data.weight) * 100) : 0;
+    });
 
     return {
       totalScore,
@@ -115,6 +111,8 @@ export class ScoringService {
       completionRate,
       averageScore: Math.round(averageScore * 10) / 10, // Round to 1 decimal
       weightedAverage: Math.round(weightedAverage * 100),
+      scoredCriteria,
+      totalCriteria: template.criteria.length,
       scoreBreakdown
     };
   }

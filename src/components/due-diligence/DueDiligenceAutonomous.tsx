@@ -36,7 +36,8 @@ export function DueDiligenceAutonomous({ onSwitchMode }: DueDiligenceAutonomousP
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
-    toggleContextPanel
+    toggleContextPanel,
+    initializeProjects
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
@@ -44,7 +45,12 @@ export function DueDiligenceAutonomous({ onSwitchMode }: DueDiligenceAutonomousP
   // Initialize project type for due diligence
   React.useEffect(() => {
     setActiveProjectType('due-diligence');
-  }, [setActiveProjectType]);
+    // If no due diligence projects exist, initialize with mock data
+    const dueDiligenceProjects = projects['due-diligence'] || [];
+    if (dueDiligenceProjects.length === 0) {
+      initializeProjects();
+    }
+  }, [setActiveProjectType, initializeProjects, projects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);

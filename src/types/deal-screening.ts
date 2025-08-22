@@ -1,12 +1,17 @@
 // Import from unified domain types
-export { 
-  ScreeningCriterion as DealScreeningCriterion,
-  ScreeningTemplate as DealScreeningTemplate,
-  DealOpportunity
+import { 
+  ScreeningCriterion,
+  ScreeningTemplate,
+  DealOpportunity as BaseDealOpportunity
 } from './investment-domain';
 
 // Re-export common types for convenience
 export type { Priority, RiskLevel, AssetType } from './shared-domain';
+
+// Define local type aliases to avoid conflicts
+export type DealScreeningCriterion = ScreeningCriterion;
+export type DealScreeningTemplate = ScreeningTemplate;
+export type DealOpportunity = BaseDealOpportunity;
 
 export interface TemplateAnalytics {
   usageCount: number;
@@ -19,28 +24,7 @@ export interface TemplateAnalytics {
   automationRate?: number; // AI-specific metric
 }
 
-export interface DealScreeningTemplate {
-  id: string;
-  name: string;
-  description: string;
-  criteria: DealScreeningCriterion[];
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  isDefault: boolean;
-  aiEnhanced?: boolean; // Hybrid-specific
-  automationLevel?: 'none' | 'assisted' | 'autonomous'; // Hybrid-specific
-  analytics?: TemplateAnalytics;
-  modeSpecificConfig?: {
-    traditional: { showAllCriteria: boolean; enableShortcuts: boolean };
-    assisted: { aiSuggestions: boolean; autoScoring: boolean; showConfidence: boolean };
-    autonomous: { aiSuggestions: boolean; autoScoring: boolean; requireApproval: boolean };
-  };
-  assetTypeSpecific?: {
-    assetType: 'fund' | 'direct' | 'co-investment' | 'gp-led' | 'other';
-    specificCriteria: string[]; // IDs of criteria specific to this asset type
-  };
-}
+// DealScreeningTemplate is now defined as a type alias above
 
 // DealOpportunity is now imported from unified types above
 
@@ -281,6 +265,69 @@ export interface PendingApproval {
   data: any;
 }
 
+// Advanced Scoring Engine Types
+export interface ScoringFunction {
+  id: string;
+  name: string;
+  type: 'linear' | 'exponential' | 'logarithmic' | 'threshold' | 'custom' | 'ml_enhanced';
+  description: string;
+  formula: string;
+  parameters: Record<string, number>;
+  performanceMetrics?: {
+    accuracy: number;
+    precision: number;
+    recall: number;
+    historicalPerformance: Array<{ period: string; score: number }>;
+  };
+}
+
+export interface ConditionalCriterion extends DealScreeningCriterion {
+  conditions: Array<{
+    dependentCriterionId: string;
+    operator: '>' | '<' | '=' | '>=' | '<=';
+    value: number;
+    action: 'show' | 'hide' | 'require' | 'adjust_weight';
+    adjustmentValue?: number;
+  }>;
+  dynamicWeighting?: {
+    basedOn: string[];
+    formula: string;
+  };
+}
+
+export interface MLScoringModel {
+  id: string;
+  name: string;
+  type: 'regression' | 'classification' | 'ensemble';
+  features: string[];
+  trainingData: Array<{
+    inputs: Record<string, number>;
+    output: number;
+    actualOutcome?: number;
+  }>;
+  metrics: {
+    mse: number;
+    r2: number;
+    crossValidationScore: number;
+  };
+  lastTrained: string;
+}
+
+export interface IndustryCriterionLibrary {
+  industry: string;
+  criteriaTemplates: Array<{
+    criterion: DealScreeningCriterion;
+    benchmarks: {
+      excellent: number;
+      good: number;
+      average: number;
+      poor: number;
+    };
+    industryWeighting: number;
+    riskFactors: string[];
+  }>;
+}
+
 export interface DealScreeningState {
   // Core data
   templates: DealScreeningTemplate[];
@@ -290,6 +337,12 @@ export interface DealScreeningState {
   screeningResults: DealScreeningResult[];
   historicalDeals: HistoricalDeal[];
   comparisonList: string[]; // Array of opportunity IDs to compare
+  
+  // Advanced Scoring Engine Data
+  scoringFunctions: ScoringFunction[];
+  mlModels: MLScoringModel[];
+  industryLibraries: IndustryCriterionLibrary[];
+  conditionalCriteria: ConditionalCriterion[];
   
   // Navigation state
   navigationState: DealScreeningNavigationState;

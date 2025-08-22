@@ -180,28 +180,89 @@ export function DueDiligenceTraditionalRefactored({
 
   // Enhanced event handlers
   const handleCreateProject = () => {
-    alert('Due Diligence Project Creation Wizard would open here. In a real implementation, this would launch:\n\n• Project setup and team assignment\n• Automated checklist generation\n• Risk framework configuration\n• Timeline and milestone planning\n• Document workspace creation')
+    // Create a new project and add it to the list
+    const newProject = {
+      id: (mockDDProjects.length + 1).toString(),
+      name: `New DD Project ${mockDDProjects.length + 1}`,
+      targetCompany: 'New Target Company',
+      dealValue: 50000000,
+      sector: 'Technology',
+      stage: 'Early Stage',
+      location: 'TBD',
+      status: 'In Progress',
+      priority: 'Medium',
+      progress: 0,
+      riskLevel: 'Medium',
+      startDate: new Date().toISOString().split('T')[0],
+      targetClose: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      leadAnalyst: 'Current User',
+      teamSize: 1,
+      totalTasks: 0,
+      completedTasks: 0,
+      findings: [],
+      riskAssessment: {
+        overall: 5.0,
+        financial: 5.0,
+        operational: 5.0,
+        strategic: 5.0,
+        legal: 5.0,
+        market: 5.0
+      },
+      keyMetrics: {
+        revenue: 0,
+        ebitda: 0,
+        employees: 0,
+        marketShare: 0
+      }
+    }
+    
+    mockDDProjects.push(newProject)
+    setSelectedProject(newProject.id)
+    alert(`Created new due diligence project: "${newProject.name}"\n\nNext steps:\n• Configure project parameters\n• Assign team members\n• Set up document workspace\n• Define risk framework\n• Create task checklist`)
   }
 
   const handleViewProject = (id: string) => {
     setSelectedProject(id)
+    setActiveTab('overview')
     const project = mockDDProjects.find(p => p.id === id)
     if (project) {
-      alert(`Opening comprehensive DD workspace for "${project.name}":\n\n• Risk assessment dashboard\n• Document analysis platform\n• Team collaboration tools\n• Findings management system\n• Automated reporting engine`)
+      // In a real app, this would navigate to a dedicated project workspace
+      alert(`Viewing project details for "${project.name}"\n\nCurrent Status:\n• Progress: ${project.progress}% (${project.completedTasks}/${project.totalTasks} tasks)\n• Risk Level: ${project.riskLevel}\n• Team Size: ${project.teamSize} members\n• Target Close: ${project.targetClose}\n\n✅ Project workspace is now loaded in the interface above`)
     }
   }
 
   const handleRiskAnalysis = (id: string) => {
     const project = mockDDProjects.find(p => p.id === id)
     if (project) {
-      alert(`Advanced Risk Analysis for "${project.name}":\n\n• Overall Risk Score: ${project.riskAssessment.overall}/10\n• Financial Risk: ${project.riskAssessment.financial}/10\n• Operational Risk: ${project.riskAssessment.operational}/10\n• Strategic Risk: ${project.riskAssessment.strategic}/10\n• Market Risk: ${project.riskAssessment.market}/10\n\nRecommendation: ${project.riskAssessment.overall > 8 ? 'LOW RISK - Proceed' : project.riskAssessment.overall > 6 ? 'MEDIUM RISK - Monitor closely' : 'HIGH RISK - Detailed mitigation required'}`)
+      setSelectedProject(id)
+      setActiveTab('risk-analysis')
+      alert(`Risk Analysis Report for "${project.name}":\n\n📊 Overall Risk Score: ${project.riskAssessment.overall}/10\n💰 Financial Risk: ${project.riskAssessment.financial}/10\n⚙️ Operational Risk: ${project.riskAssessment.operational}/10\n🎯 Strategic Risk: ${project.riskAssessment.strategic}/10\n⚖️ Legal Risk: ${project.riskAssessment.legal}/10\n📈 Market Risk: ${project.riskAssessment.market}/10\n\n${project.riskAssessment.overall > 8 ? '✅ LOW RISK - Recommend proceed' : project.riskAssessment.overall > 6 ? '⚠️ MEDIUM RISK - Monitor closely' : '🚨 HIGH RISK - Detailed mitigation required'}\n\n📋 View detailed risk analysis in the Risk Analysis tab above`)
     }
   }
 
   const handleGenerateReport = (id: string) => {
     const project = mockDDProjects.find(p => p.id === id)
     if (project) {
-      alert(`Generating comprehensive DD report for "${project.name}":\n\n• Executive summary with key findings\n• Risk assessment and mitigation strategies\n• Financial analysis and projections\n• Market and competitive analysis\n• Management team evaluation\n• Regulatory and legal review\n\nEstimated completion: 15 minutes`)
+      setSelectedProject(id)
+      setActiveTab('reports')
+      
+      // Simulate report generation
+      const sections = [
+        'Executive Summary',
+        'Company Overview',
+        'Financial Analysis',
+        'Risk Assessment',
+        'Market Analysis',
+        'Management Evaluation',
+        'Legal Review',
+        'Recommendations'
+      ]
+      
+      const reportContent = sections.map(section => 
+        `${section}: ${project.progress >= 50 ? 'Complete' : project.progress >= 25 ? 'In Progress' : 'Pending'}`
+      ).join('\n• ')
+      
+      alert(`📄 Due Diligence Report Generated for "${project.name}"\n\nReport Sections:\n• ${reportContent}\n\n📈 Overall Completion: ${project.progress}%\n🎯 Recommendation: ${project.riskAssessment.overall > 8 ? 'PROCEED' : project.riskAssessment.overall > 6 ? 'PROCEED WITH CAUTION' : 'DETAILED REVIEW REQUIRED'}\n\n📋 View full report in the Reports tab above`)
     }
   }
 

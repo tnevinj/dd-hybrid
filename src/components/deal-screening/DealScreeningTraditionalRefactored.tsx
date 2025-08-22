@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -145,6 +146,8 @@ export function DealScreeningTraditionalRefactored({
   onSwitchMode
 }: TraditionalModeProps) {
   
+  const router = useRouter()
+  
   // Local state for traditional mode
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredOpportunities, setFilteredOpportunities] = useState(mockOpportunities)
@@ -159,17 +162,18 @@ export function DealScreeningTraditionalRefactored({
   }
 
   const handleViewOpportunity = (id: string) => {
-    setSelectedOpportunityForAnalysis(id)
     const opportunity = mockOpportunities.find(o => o.id === id)
     if (opportunity) {
-      alert(`Opening comprehensive analysis for "${opportunity.name}":\n\n• Detailed market analysis\n• Competitive positioning\n• Risk assessment framework\n• Financial modeling tools\n• Comparable transactions analysis`)
+      // Navigate to the opportunity details page
+      router.push(`/deal-screening/opportunity/${id}`)
     }
   }
 
   const handleScreenOpportunity = (id: string) => {
     const opportunity = mockOpportunities.find(o => o.id === id)
     if (opportunity) {
-      alert(`Launching screening analysis for "${opportunity.name}":\n\n• Automated screening score: 8.2/10\n• Risk-return profile analysis\n• Market fit assessment: 87%\n• Strategic alignment score: 9.1/10\n• Benchmark comparison vs portfolio\n\nRecommendation: PROCEED to detailed due diligence`)
+      // Navigate to the screening workflow page
+      router.push(`/deal-screening/opportunity/${id}/screen`)
     }
   }
 

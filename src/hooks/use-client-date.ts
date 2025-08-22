@@ -44,20 +44,15 @@ export function formatTimeAgoSafe(date: Date): string {
 }
 
 export function formatDateSafe(date: Date | string): string {
-  // Use consistent ISO format during SSR to avoid hydration mismatch
+  // Use consistent format on both server and client to avoid hydration mismatch
   const dateObj = typeof date === 'string' ? new Date(date) : date
   
-  if (typeof window === 'undefined') {
-    // Return consistent ISO date format during SSR
-    return dateObj.toISOString().split('T')[0]
-  }
-  
-  // Use toLocaleDateString on client side
+  // Always return consistent ISO format to prevent hydration mismatches
   try {
-    return dateObj.toLocaleDateString()
-  } catch (error) {
-    // Fallback to ISO format
     return dateObj.toISOString().split('T')[0]
+  } catch (error) {
+    // Fallback for invalid dates
+    return 'Invalid Date'
   }
 }
 

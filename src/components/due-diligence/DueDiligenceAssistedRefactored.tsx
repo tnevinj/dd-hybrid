@@ -173,20 +173,75 @@ export function DueDiligenceAssistedRefactored({
 
   // AI-Enhanced event handlers
   const handleCreateProject = () => {
-    alert('AI-Powered DD Project Creation would launch:\n\n• Intelligent project setup with ML-powered risk framework\n• Automated team assignment based on expertise matching\n• Smart checklist generation tailored to sector and deal type\n• Predictive timeline modeling with milestone optimization\n• Integration with Deal Screening data for context\n• AI-powered document template selection\n• Cross-module data synchronization setup')
+    // Create AI-enhanced project
+    const aiProject = {
+      id: (mockAIEnhancedDDProjects.length + 1).toString(),
+      name: `AI-Enhanced DD Project ${mockAIEnhancedDDProjects.length + 1}`,
+      targetCompany: 'AI-Suggested Target',
+      dealValue: Math.floor(Math.random() * 100000000) + 50000000,
+      sector: 'Technology',
+      stage: 'Growth',
+      location: 'Silicon Valley, CA',
+      status: 'In Progress',
+      priority: 'High',
+      progress: Math.floor(Math.random() * 30),
+      riskLevel: 'Medium',
+      aiRiskScore: Math.round((Math.random() * 3 + 6) * 10) / 10,
+      aiConfidence: Math.floor(Math.random() * 20) + 80,
+      startDate: new Date().toISOString().split('T')[0],
+      targetClose: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      leadAnalyst: 'AI Assistant + Current User',
+      teamSize: Math.floor(Math.random() * 5) + 3,
+      totalTasks: Math.floor(Math.random() * 50) + 40,
+      completedTasks: 0,
+      aiRecommendations: [
+        {
+          id: `ai-rec-${Date.now()}`,
+          type: 'optimization',
+          title: 'AI-Recommended Initial Focus Areas',
+          description: 'Machine learning analysis suggests prioritizing financial due diligence first',
+          priority: 'medium',
+          confidence: 0.82,
+          action: 'Begin with financial data analysis'
+        }
+      ],
+      findings: [],
+      riskAssessment: {
+        overall: Math.round((Math.random() * 3 + 6) * 10) / 10,
+        financial: Math.round((Math.random() * 3 + 6) * 10) / 10,
+        operational: Math.round((Math.random() * 3 + 6) * 10) / 10,
+        strategic: Math.round((Math.random() * 3 + 6) * 10) / 10,
+        legal: Math.round((Math.random() * 3 + 6) * 10) / 10,
+        market: Math.round((Math.random() * 3 + 6) * 10) / 10
+      },
+      aiInsights: {
+        predictedOutcome: 'Proceed with AI Optimization',
+        timeToComplete: Math.floor(Math.random() * 20) + 20,
+        successProbability: Math.round((Math.random() * 0.3 + 0.7) * 100) / 100,
+        valueAtRisk: Math.floor(Math.random() * 20000000) + 5000000
+      }
+    }
+    
+    mockAIEnhancedDDProjects.push(aiProject)
+    setSelectedProject(aiProject.id)
+    alert(`🤖 AI-Enhanced DD Project Created: "${aiProject.name}"\n\n✨ AI Optimizations Applied:\n• ML-powered risk assessment framework\n• Intelligent task prioritization\n• Automated team expertise matching\n• Predictive timeline optimization\n• Cross-module data integration\n• Smart document templates\n\n📊 AI Confidence: ${aiProject.aiConfidence}%\n🎯 Predicted Success: ${(aiProject.aiInsights.successProbability * 100).toFixed(0)}%`)
   }
 
   const handleViewProject = (id: string) => {
+    setSelectedProject(id)
+    setActiveTab('overview')
     const project = mockAIEnhancedDDProjects.find(p => p.id === id)
     if (project) {
-      alert(`AI-Enhanced DD Workspace for "${project.name}":\n\n• Predictive risk analysis with ML-powered scoring\n• Automated document analysis and red flag detection\n• Real-time benchmark comparisons with similar deals\n• AI-powered stakeholder sentiment analysis\n• Intelligent task prioritization and resource allocation\n• Cross-team collaboration with smart notifications\n• Predictive completion timeline with risk adjustments`)
+      alert(`🤖 AI-Enhanced Workspace Activated for "${project.name}"\n\n🧠 AI Features Enabled:\n• ML Risk Scoring: ${project.aiRiskScore}/10\n• Predictive Analytics: ${project.aiConfidence}% confidence\n• Success Probability: ${(project.aiInsights.successProbability * 100).toFixed(0)}%\n• Completion Timeline: ${project.aiInsights.timeToComplete} days\n• Active Recommendations: ${project.aiRecommendations.length}\n\n✅ AI workspace is now loaded with enhanced analytics above`)
     }
   }
 
   const handleAIRiskAnalysis = (id: string) => {
     const project = mockAIEnhancedDDProjects.find(p => p.id === id)
     if (project) {
-      alert(`AI-Powered Risk Analysis for "${project.name}":\n\n• ML Risk Score: ${project.aiRiskScore}/10 (${project.aiConfidence}% confidence)\n• Predicted Outcome: ${project.aiInsights.predictedOutcome}\n• Success Probability: ${(project.aiInsights.successProbability * 100).toFixed(0)}%\n• Value at Risk: $${(project.aiInsights.valueAtRisk / 1000000).toFixed(1)}M\n• Time to Complete: ${project.aiInsights.timeToComplete} days\n\n• Real-time market sentiment monitoring\n• Competitive risk assessment with pattern recognition\n• Regulatory change impact analysis`)
+      setSelectedProject(id)
+      setActiveTab('analytics')
+      alert(`🤖 AI Risk Analysis Complete for "${project.name}":\n\n📊 ML Risk Score: ${project.aiRiskScore}/10\n🎯 AI Confidence: ${project.aiConfidence}%\n📈 Predicted Outcome: ${project.aiInsights.predictedOutcome}\n✅ Success Probability: ${(project.aiInsights.successProbability * 100).toFixed(0)}%\n💰 Value at Risk: $${(project.aiInsights.valueAtRisk / 1000000).toFixed(1)}M\n⏱️ AI Timeline: ${project.aiInsights.timeToComplete} days\n\n🔍 Advanced AI Features:\n• Real-time market sentiment monitoring\n• Pattern recognition risk assessment\n• Regulatory impact analysis\n• Cross-deal similarity matching\n\n📋 View full AI analytics in the Predictive Analytics tab above`)
     }
   }
 
@@ -194,7 +249,14 @@ export function DueDiligenceAssistedRefactored({
     const allRecommendations = mockAIEnhancedDDProjects.flatMap(p => p.aiRecommendations)
     const recommendation = allRecommendations.find(r => r.id === recommendationId)
     if (recommendation) {
-      alert(`Executing AI Recommendation: "${recommendation.title}"\n\n${recommendation.description}\n\nConfidence Level: ${(recommendation.confidence * 100).toFixed(0)}%\nPriority: ${recommendation.priority}\nAction: ${recommendation.action}\n\n• Implementation wizard would guide next steps\n• Automated workflow creation and team notification\n• Progress tracking with ML-powered monitoring\n• Integration with project management systems`)
+      // Execute the AI recommendation and provide feedback
+      setActiveTab('recommendations')
+      alert(`🤖 Executing AI Recommendation: "${recommendation.title}"\n\n📋 Action: ${recommendation.action}\n📊 Confidence: ${(recommendation.confidence * 100).toFixed(0)}%\n🎯 Priority: ${recommendation.priority.toUpperCase()}\n\n✨ AI Implementation:\n${recommendation.description}\n\n🔄 Status: Executed\n📈 Expected Impact: Positive\n⏱️ Processing Time: ~2 minutes\n\n✅ View all AI insights in the AI Insights tab above`)
+      
+      // Call the prop function if provided
+      if (onExecuteAIAction) {
+        onExecuteAIAction(recommendation.action)
+      }
     }
   }
 

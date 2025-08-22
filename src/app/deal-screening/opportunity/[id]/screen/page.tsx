@@ -1126,9 +1126,85 @@ export default function DealScreeningPage() {
 
   const fetchOpportunity = async () => {
     try {
-      const response = await fetch(`/api/deal-screening/opportunities/${opportunityId}`);
-      const data = await response.json();
-      setOpportunity(data.opportunity);
+      // Use mock data for now - same as opportunity detail page
+      const mockOpportunities: Record<string, DealOpportunity> = {
+        '1': {
+          id: '1',
+          name: 'TechVenture Fund III',
+          description: 'Institutional LP secondary sale of a technology-focused fund with strong track record.',
+          seller: 'Institutional LP',
+          assetType: 'fund',
+          vintage: '2020',
+          sector: 'Technology',
+          geography: 'North America',
+          askPrice: 45000000,
+          navPercentage: 0.85,
+          expectedReturn: 0.185,
+          expectedRisk: 0.15,
+          expectedMultiple: 2.3,
+          expectedIRR: 18.5,
+          expectedHoldingPeriod: 4,
+          scores: [],
+          status: 'screening',
+          createdAt: '2024-01-15T10:30:00Z',
+          updatedAt: '2024-01-15T14:20:00Z',
+          additionalData: {},
+        },
+        '2': {
+          id: '2',
+          name: 'Healthcare Direct Investment',
+          description: 'Strategic partner direct investment in healthcare technology company.',
+          seller: 'Strategic Partner',
+          assetType: 'direct',
+          vintage: '2021',
+          sector: 'Healthcare',
+          geography: 'Europe',
+          askPrice: 28000000,
+          navPercentage: 0.92,
+          expectedReturn: 0.221,
+          expectedRisk: 0.12,
+          expectedMultiple: 2.8,
+          expectedIRR: 22.1,
+          expectedHoldingPeriod: 3,
+          scores: [],
+          status: 'screening',
+          createdAt: '2024-01-16T11:30:00Z',
+          updatedAt: '2024-01-16T15:20:00Z',
+          additionalData: {},
+        },
+        '3': {
+          id: '3',
+          name: 'Infrastructure Co-Investment',
+          description: 'Fund manager co-investment opportunity in infrastructure assets.',
+          seller: 'Fund Manager',
+          assetType: 'co-investment',
+          vintage: '2022',
+          sector: 'Infrastructure',
+          geography: 'Asia',
+          askPrice: 67000000,
+          navPercentage: 0.78,
+          expectedReturn: 0.158,
+          expectedRisk: 0.18,
+          expectedMultiple: 2.1,
+          expectedIRR: 15.8,
+          expectedHoldingPeriod: 6,
+          scores: [],
+          status: 'screening',
+          createdAt: '2024-01-17T09:15:00Z',
+          updatedAt: '2024-01-17T16:45:00Z',
+          additionalData: {},
+        }
+      };
+
+      const mockOpportunity = mockOpportunities[opportunityId];
+      if (mockOpportunity) {
+        setOpportunity(mockOpportunity);
+      }
+      
+      // In production, uncomment this to use the API:
+      // const response = await fetch(`/api/deal-screening/opportunities/${opportunityId}`);
+      // const data = await response.json();
+      // setOpportunity(data.opportunity);
     } catch (error) {
       console.error('Error fetching opportunity:', error);
     } finally {
@@ -1378,17 +1454,255 @@ export default function DealScreeningPage() {
           </>
         )}
 
-        {currentStep === 'review' && (
-          <div className="text-center py-12">
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Screening Complete!</h2>
-            <p className="text-gray-600 mb-6">Your deal screening has been saved and is ready for review.</p>
-            <div className="flex justify-center space-x-4">
+        {currentStep === 'review' && scoringResult && selectedTemplate && (
+          <div className="space-y-6">
+            {/* Results Header */}
+            <div className="text-center py-8">
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Screening Complete!</h2>
+              <p className="text-gray-600 mb-4">{opportunity?.name} has been successfully screened</p>
+              <div className="flex justify-center items-center space-x-4">
+                <Badge className="bg-green-100 text-green-800 px-4 py-2 text-lg font-bold">
+                  Final Score: {scoringResult.totalScore}/100
+                </Badge>
+                <Badge className={`px-4 py-2 text-lg ${
+                  scoringResult.totalScore >= 80 ? 'bg-green-100 text-green-800' :
+                  scoringResult.totalScore >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {scoringResult.totalScore >= 80 ? 'APPROVE' :
+                   scoringResult.totalScore >= 60 ? 'REVIEW' : 'DECLINE'}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Scoring Summary */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Overall Metrics */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <BarChart3 className="h-5 w-5 text-blue-600 mr-2" />
+                    Overall Metrics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Total Score</span>
+                      <span className="text-2xl font-bold text-blue-600">{scoringResult.totalScore}/100</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Weighted Average</span>
+                      <span className="text-lg font-semibold">{scoringResult.weightedAverage}/100</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Completion Rate</span>
+                      <span className="text-lg font-semibold">{Math.round(scoringResult.completionRate * 100)}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Criteria Scored</span>
+                      <span className="text-lg font-semibold">{scoringResult.scoredCriteria}/{scoringResult.totalCriteria}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Category Breakdown */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Target className="h-5 w-5 text-purple-600 mr-2" />
+                    Category Scores
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {Object.entries(scoringResult.scoreBreakdown)
+                      .filter(([category, score]) => score > 0) // Only show categories with scores
+                      .map(([category, score]) => (
+                      <div key={category} className="space-y-1">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-gray-700 capitalize">{category}</span>
+                          <span className={`text-sm font-bold ${
+                            score >= 80 ? 'text-green-600' :
+                            score >= 60 ? 'text-yellow-600' :
+                            'text-red-600'
+                          }`}>
+                            {score}/100
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full transition-all duration-300 ${
+                              score >= 80 ? 'bg-green-500' :
+                              score >= 60 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`}
+                            style={{ width: `${score}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Next Steps */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <ArrowRight className="h-5 w-5 text-green-600 mr-2" />
+                    Recommended Next Steps
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {scoringResult.totalScore >= 80 && (
+                      <>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Proceed to Due Diligence</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Schedule IC presentation</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Request management call</span>
+                        </div>
+                      </>
+                    )}
+                    {scoringResult.totalScore >= 60 && scoringResult.totalScore < 80 && (
+                      <>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <AlertCircle className="h-4 w-4 text-yellow-500" />
+                          <span>Additional analysis required</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <AlertCircle className="h-4 w-4 text-yellow-500" />
+                          <span>Senior team review</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <AlertCircle className="h-4 w-4 text-yellow-500" />
+                          <span>Risk mitigation planning</span>
+                        </div>
+                      </>
+                    )}
+                    {scoringResult.totalScore < 60 && (
+                      <>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <X className="h-4 w-4 text-red-500" />
+                          <span>Document decision rationale</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <X className="h-4 w-4 text-red-500" />
+                          <span>Archive opportunity</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <X className="h-4 w-4 text-red-500" />
+                          <span>Update screening criteria</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Detailed Scores Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <FileText className="h-5 w-5 text-gray-600 mr-2" />
+                  Detailed Scoring Results
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-4 font-medium text-gray-700">Criterion</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-700">Category</th>
+                        <th className="text-center py-3 px-4 font-medium text-gray-700">Weight</th>
+                        <th className="text-center py-3 px-4 font-medium text-gray-700">Score</th>
+                        <th className="text-center py-3 px-4 font-medium text-gray-700">Weighted</th>
+                        <th className="text-center py-3 px-4 font-medium text-gray-700">Source</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedTemplate.criteria.map((criterion) => {
+                        const score = scores[criterion.id];
+                        const weightedScore = score ? (score.value / 100) * criterion.weight * 100 : 0;
+                        return (
+                          <tr key={criterion.id} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-4">
+                              <div className="font-medium text-gray-900">{criterion.name}</div>
+                              <div className="text-sm text-gray-500">{criterion.description}</div>
+                            </td>
+                            <td className="py-3 px-4 text-sm text-gray-600 capitalize">{criterion.category}</td>
+                            <td className="py-3 px-4 text-center text-sm">{Math.round(criterion.weight * 100)}%</td>
+                            <td className="py-3 px-4 text-center">
+                              <span className={`font-bold ${
+                                !score ? 'text-gray-400' :
+                                score.value >= 80 ? 'text-green-600' :
+                                score.value >= 60 ? 'text-yellow-600' :
+                                'text-red-600'
+                              }`}>
+                                {score ? score.value : 'N/A'}/100
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <span className="font-medium">{weightedScore.toFixed(1)}</span>
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              {score?.aiGenerated ? (
+                                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
+                                  <Brain className="h-3 w-3 mr-1" />
+                                  AI
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-xs bg-gray-50 text-gray-700">
+                                  <User className="h-3 w-3 mr-1" />
+                                  Manual
+                                </Badge>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Action Buttons */}
+            <div className="flex justify-center space-x-4 pt-6">
               <Button variant="outline" onClick={() => router.push(`/deal-screening/opportunity/${opportunityId}`)}>
+                <FileText className="h-4 w-4 mr-2" />
                 View Opportunity
               </Button>
               <Button onClick={() => router.push('/deal-screening')}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
+              </Button>
+              <Button 
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => {
+                  // In a real app, this would save the results and trigger next workflow
+                  alert(`Screening results saved!\n\nFinal Score: ${scoringResult.totalScore}/100\nRecommendation: ${
+                    scoringResult.totalScore >= 80 ? 'APPROVE - Proceed to Due Diligence' :
+                    scoringResult.totalScore >= 60 ? 'REVIEW - Additional analysis required' :
+                    'DECLINE - Archive opportunity'
+                  }`);
+                  router.push('/deal-screening');
+                }}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Results
               </Button>
             </div>
           </div>

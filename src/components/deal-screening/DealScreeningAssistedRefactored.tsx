@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -101,6 +102,8 @@ export function DealScreeningAssistedRefactored({
   onSwitchMode
 }: AssistedModeProps) {
   
+  const router = useRouter()
+  
   // Local state for assisted mode
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredOpportunities, setFilteredOpportunities] = useState(mockOpportunities)
@@ -115,14 +118,16 @@ export function DealScreeningAssistedRefactored({
   const handleViewOpportunity = (id: string) => {
     const opportunity = mockOpportunities.find(o => o.id === id);
     if (opportunity) {
-      alert(`AI-Enhanced Deal Analysis for "${opportunity.name}":\n\n• Advanced valuation modeling with multiple methodologies\n• Real-time market sentiment analysis and news monitoring\n• Risk factor identification with mitigation strategies\n• Comparable transaction analysis with similarity scoring\n• ESG impact assessment and rating predictions\n• Portfolio fit analysis with strategic alignment scoring\n• Predictive timeline modeling for deal completion`)
+      // Navigate to the opportunity details page  
+      router.push(`/deal-screening/opportunity/${id}`)
     }
   }
 
   const handleScreenOpportunity = (id: string) => {
     const opportunity = mockOpportunities.find(o => o.id === id);
     if (opportunity) {
-      alert(`AI-Assisted Screening Process for "${opportunity.name}":\n\n• Automated initial screening with ML-powered scoring\n• Red flag detection with risk pattern recognition\n• Comparative benchmarking against fund criteria\n• Integration with Due Diligence module for seamless handoff\n• Smart prioritization based on strategic fit and ROI\n• Automated report generation with key findings\n• Cross-team collaboration workflow setup`)
+      // Navigate to the screening workflow page
+      router.push(`/deal-screening/opportunity/${id}/screen`)
     }
   }
 
