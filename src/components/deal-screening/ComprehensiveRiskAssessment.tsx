@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,21 +11,9 @@ import {
   Plus,
   Trash2,
   Edit,
-  Save,
-  AlertTriangle,
-  Info,
-  Filter,
-  Download,
+  CheckCircle,
   ChevronDown,
   ChevronUp,
-  BarChart3,
-  PieChart,
-  Radar,
-  TrendingUp,
-  TrendingDown,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
 } from 'lucide-react';
 import { DealOpportunity } from '@/types/deal-screening';
 import { useAnthropic } from '@/hooks/use-anthropic';
@@ -511,4 +498,228 @@ export const ComprehensiveRiskAssessment: React.FC<ComprehensiveRiskAssessmentPr
                           <div>
                             <Label>Risk Score: {factor.score || 0}</Label>
                             <Slider
-                              value
+                              value={[factor.score || 50]}
+                              onValueChange={(value) => handleScoreChange(factor.id, value)}
+                              min={0}
+                              max={100}
+                              step={1}
+                            />
+                          </div>
+                          
+                          <div>
+                            <Label>Impact Level</Label>
+                            <Select
+                              value={factor.impact || 'medium'}
+                              onValueChange={(value: string) => 
+                                handleImpactChange(factor.id, value as 'low' | 'medium' | 'high')
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select impact" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="low">Low Impact</SelectItem>
+                                <SelectItem value="medium">Medium Impact</SelectItem>
+                                <SelectItem value="high">High Impact</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div>
+                            <Label>Mitigation Strategy</Label>
+                            <Textarea
+                              value={factor.mitigationStrategy || ''}
+                              onChange={(e) => handleMitigationChange(factor.id, e.target.value)}
+                              placeholder="Describe mitigation strategy..."
+                              className="min-h-[60px]"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                )}
+              </Card>
+            );
+          })}
+          
+          <Button
+            variant="outline"
+            onClick={handleAddRiskFactor}
+            className="w-full mt-4"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Custom Risk Factor
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  };
+  
+  // Render risk assessment results
+  const renderRiskAssessmentResults = () => {
+    if (!activeAssessment) return null;
+    
+    const riskLevel = getRiskLevel(activeAssessment.overallScore);
+    const categoryBreakdown = prepareCategoryBreakdown();
+    
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Risk Assessment Results</CardTitle>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                onClick={handleToggleViewMode}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Assessment
+              </Button>
+              {activeAssessment.status === 'draft' && (
+                <Button onClick={handleMarkComplete}>
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Mark Complete
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="text-center p-4 border rounded-lg">
+              <div className="text-3xl font-bold mb-2">{activeAssessment.overallScore}</div>
+              <Badge className={riskLevel.color}>{riskLevel.level}</Badge>
+              <p className="text-sm text-gray-600 mt-2">Overall Risk Score</p>
+            </div>
+            
+            <div className="text-center p-4 border rounded-lg">
+              <div className="text-3xl font-bold mb-2">
+                {activeAssessment.factors.filter(f => f.score !== undefined).length}
+              </div>
+              <p className="text-sm text-gray-600">Risk Factors Assessed</p>
+            </div>
+            
+            <div className="text-center p-4 border rounded-lg">
+              <div className="text-3xl font-bold mb-2">
+                {activeAssessment.factors.filter(f => f.mitigationStrategy).length}
+              </div>
+              <p className="text-sm text-gray-600">Mitigation Strategies</p>
+            </div>
+          </div>
+          
+          <Separator className="my-6" />
+          
+          <div className="mb-6">
+            <h4 className="font-semibold mb-3">Category Breakdown</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categoryBreakdown.map((category, index) => (
+                category && (
+                  <div key={index} className="p-3 border rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium">{category.category}</span>
+                      <Badge className={category.color}>{Math.round(category.score)}</Badge>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full ${
+                          category.score <= 30 ? 'bg-green-500' : 
+                          category.score <= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                        }`}
+                        style={{ width: `${category.score}%` }}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">
+                      Weight: {category.weight.toFixed(1)}% • Factors: {category.count}
+                    </div>
+                  </div>
+                )
+              ))}
+            </div>
+          </div>
+          
+          <Separator className="my-6" />
+          
+          <div className="mb-6">
+            <h4 className="font-semibold mb-3">Assessment Notes</h4>
+            <div className="p-4 border rounded-lg bg-gray-50">
+              <p className="whitespace-pre-wrap">{activeAssessment.notes}</p>
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold mb-3">Risk Factors</h4>
+            <div className="space-y-3">
+              {activeAssessment.factors.map((factor, index) => (
+                <div key={factor.id} className="p-3 border rounded-lg">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h5 className="font-medium">{factor.name}</h5>
+                      <p className="text-sm text-gray-600">{factor.description}</p>
+                    </div>
+                    <Badge className={
+                      factor.score && factor.score <= 30 ? 'bg-green-100 text-green-800 border-green-200' :
+                      factor.score && factor.score <= 60 ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                      'bg-red-100 text-red-800 border-red-200'
+                    }>
+                      {factor.score || 'N/A'}
+                    </Badge>
+                  </div>
+                  
+                  {factor.mitigationStrategy && (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium">Mitigation:</p>
+                      <p className="text-sm text-gray-600">{factor.mitigationStrategy}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+  
+  // Main render
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Comprehensive Risk Assessment</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="opportunity-select">Select Opportunity</Label>
+              <Select
+                value={selectedOpportunityId}
+                onValueChange={handleOpportunityChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select an opportunity" />
+                </SelectTrigger>
+                <SelectContent>
+                  {opportunities.map(opportunity => (
+                    <SelectItem key={opportunity.id} value={opportunity.id}>
+                      {opportunity.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex items-end">
+              <Badge variant={viewMode === 'form' ? 'default' : 'secondary'}>
+                {viewMode === 'form' ? 'Edit Mode' : 'View Mode'}
+              </Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {viewMode === 'form' ? renderRiskFactorForm() : renderRiskAssessmentResults()}
+    </div>
+  );
+};

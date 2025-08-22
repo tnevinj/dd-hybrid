@@ -355,13 +355,7 @@ export function ContentAssembler({
     setAvailableTemplates(templates);
   }, [projectContext]);
 
-  // Initialize sections from external template prop (if provided)
-  useEffect(() => {
-    if (template && !currentTemplate) {
-      setCurrentTemplate(template);
-      setShowTemplateSelector(false);
-    }
-  }, [template, currentTemplate]);
+  // Note: Template initialization moved after handleTemplateSelect function definition
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -815,6 +809,18 @@ export function ContentAssembler({
   const handleShowTemplateSelector = () => {
     setShowTemplateSelector(true);
   };
+
+  // Initialize sections from external template prop (if provided)
+  // This useEffect is placed here after handleTemplateSelect is defined
+  useEffect(() => {
+    if (template && !currentTemplate) {
+      console.log('Initializing template from external prop:', template);
+      setCurrentTemplate(template);
+      setShowTemplateSelector(false);
+      // Auto-trigger template selection to initialize sections
+      handleTemplateSelect(template);
+    }
+  }, [template, currentTemplate]);
 
   const handleGenerateAIStructure = async () => {
     setIsGenerating(true);

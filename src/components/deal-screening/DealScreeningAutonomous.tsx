@@ -6,6 +6,7 @@ import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
 import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
 import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
 import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
+import { useAutonomousStore, type Project } from '@/stores/autonomous-store';
 import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +14,7 @@ import { Settings, Menu, X } from 'lucide-react';
 import { DealOpportunity, AIRecommendation, AutomatedAction, PendingApproval } from '@/types/deal-screening';
 import { WorkProductCreator } from '@/components/work-product';
 import { WorkProduct, WorkProductCreateRequest } from '@/types/work-product';
-import { getAutonomousConfig, generateMockProjects, getAvailableActions, generateContextData } from '@/lib/autonomous-mode-config';
+import { getAutonomousConfig, generateMockProjects, getAvailableActions, generateContextData, type AutonomousProject } from '@/lib/autonomous-mode-config';
 import type { HybridMode } from '@/components/shared';
 
 interface DealScreeningAutonomousProps {
@@ -21,9 +22,12 @@ interface DealScreeningAutonomousProps {
 }
 
 export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomousProps) {
+  // Navigation store for mode and module management
+  const { currentMode, setCurrentModule } = useNavigationStoreRefactored();
+  
+  // Autonomous store for project management and UI state
   const {
     selectedProject,
-    projects,
     selectProject,
     setActiveProjectType,
     setProjectsForType,
@@ -31,7 +35,7 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
     contextPanelCollapsed,
     toggleSidebar,
     toggleContextPanel
-  } = useNavigationStoreRefactored();
+  } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
   const [showWorkProductCreator, setShowWorkProductCreator] = useState(false);
@@ -42,11 +46,22 @@ export function DealScreeningAutonomous({ onSwitchMode }: DealScreeningAutonomou
   // Initialize project type for deal screening using standardized config
   React.useEffect(() => {
     setActiveProjectType('deal-screening');
+    setCurrentModule('deal-screening');
     
-    // Generate mock projects using standardized configuration
-    const mockProjects = generateMockProjects('deal-screening', 4);
+    // Generate mock projects using standardized configuration and convert to Project type
+    const autonomousProjects = generateMockProjects('deal-screening', 4);
+    const mockProjects: Project[] = autonomousProjects.map(ap => ({
+      id: ap.id,
+      name: ap.name,
+      type: ap.type as Project['type'], // Convert string to the specific type
+      status: ap.status === 'paused' ? 'draft' : ap.status, // Map 'paused' to 'draft'
+      lastActivity: ap.lastActivity,
+      priority: ap.priority,
+      ...(ap.unreadMessages !== undefined && { unreadMessages: ap.unreadMessages }),
+      ...(ap.metadata !== undefined && { metadata: ap.metadata })
+    }));
     setProjectsForType('deal-screening', mockProjects);
-  }, [setActiveProjectType, setProjectsForType]);
+  }, [setActiveProjectType, setProjectsForType, setCurrentModule]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);

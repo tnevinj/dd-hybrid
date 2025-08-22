@@ -1,12 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
 import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
 import { useAutonomousStore } from '@/stores/autonomous-store';
+import { ContentTransformationWorkflow } from '@/components/content-transformation/ContentTransformationWorkflow';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X } from 'lucide-react';
+import type { ProjectContext, WorkProduct } from '@/types/work-product';
 
 interface Project {
   id: string;
@@ -41,6 +44,8 @@ export function DueDiligenceAutonomous({ onSwitchMode }: DueDiligenceAutonomousP
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
+  const [showContentWorkflow, setShowContentWorkflow] = useState(false);
+  const router = useRouter();
 
   // Initialize project type for due diligence
   React.useEffect(() => {
@@ -54,6 +59,44 @@ export function DueDiligenceAutonomous({ onSwitchMode }: DueDiligenceAutonomousP
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
+  };
+
+  const handleCreateWorkProduct = (project: Project) => {
+    selectProject(project);
+    setShowContentWorkflow(true);
+  };
+
+  const handleWorkProductSave = (workProduct: WorkProduct) => {
+    // Handle saving the work product
+    console.log('Work product saved:', workProduct);
+    setShowContentWorkflow(false);
+    // You might want to refresh the project data or show a success message here
+  };
+
+  const handleWorkflowCancel = () => {
+    setShowContentWorkflow(false);
+  };
+
+  // Create project context for content transformation
+  const createProjectContext = (project: Project): ProjectContext => {
+    return {
+      projectId: project.id,
+      projectName: project.name,
+      projectType: 'due-diligence',
+      dealValue: project.metadata?.dealValue || 0,
+      sector: project.metadata?.sector || 'Technology',
+      stage: project.metadata?.stage || 'Growth',
+      geography: project.metadata?.geography || 'North America',
+      riskRating: project.metadata?.riskRating || 'Medium',
+      teamMembers: project.metadata?.team || [],
+      timeline: {
+        startDate: new Date(project.metadata?.createdAt || Date.now()),
+        targetClose: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days from now
+        currentPhase: 'Due Diligence'
+      },
+      stakeholders: project.metadata?.team || [],
+      confidenceScore: project.metadata?.confidenceScore || 0.8
+    };
   };
 
   return (
@@ -129,9 +172,26 @@ export function DueDiligenceAutonomous({ onSwitchMode }: DueDiligenceAutonomousP
           <ContextPanel
             project={selectedProject || undefined}
             projectType="due-diligence"
+            onCreateWorkProduct={handleCreateWorkProduct}
           />
         )}
       </div>
+
+      {/* Content Transformation Workflow Modal */}
+      {showContentWorkflow && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-7xl w-full min-h-[95vh] my-4">
+            <div className="max-h-[calc(100vh-2rem)] overflow-y-auto">
+              <ContentTransformationWorkflow
+                projectContext={createProjectContext(selectedProject)}
+                onSave={handleWorkProductSave}
+                onCancel={handleWorkflowCancel}
+                navigationMode="autonomous"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
