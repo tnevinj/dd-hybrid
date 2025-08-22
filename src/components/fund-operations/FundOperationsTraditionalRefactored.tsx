@@ -685,4 +685,50 @@ export function FundOperationsTraditionalRefactored({
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="overview">
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold text-gray-600">Overview Content</h3>
+            <p className="text-gray-500">Fund operations overview implementation needed</p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="capital-calls">
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold text-gray-600">Capital Calls Management</h3>
+            <p className="text-gray-500">Capital calls implementation needed</p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="distributions">
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold text-gray-600">Distribution Management</h3>
+            <p className="text-gray-500">Distributions implementation needed</p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="nav-reports">
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold text-gray-600">NAV Reports</h3>
+            <p className="text-gray-500">NAV reporting implementation needed</p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="expenses">
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold text-gray-600">Expense Management</h3>
+            <p className="text-gray-500">Expense tracking implementation needed</p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold text-gray-600">Analytics Dashboard</h3>
+            <p className="text-gray-500">Analytics implementation needed</p>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
+
 export default FundOperationsTraditionalRefactored
