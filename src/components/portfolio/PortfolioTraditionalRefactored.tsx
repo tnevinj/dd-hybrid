@@ -34,6 +34,7 @@ import {
   Globe
 } from 'lucide-react'
 import type { TraditionalModeProps } from '@/types/shared'
+import { useUnifiedPortfolio } from './contexts/UnifiedPortfolioContext'
 
 // Mock portfolio data for immediate functionality
 const mockPortfolioData = {
@@ -129,26 +130,71 @@ export function PortfolioTraditionalRefactored({
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null)
 
-  // Use provided metrics or fallback to mock data
-  const portfolioMetrics = metrics || mockPortfolioData
+  // Use provided metrics or fallback to empty data structure
+  const portfolioMetrics = metrics || {
+    totalValue: 0,
+    totalAssets: 0,
+    performanceYTD: 0,
+    assets: []
+  }
+
+  // Use UnifiedPortfolioContext for real data operations
+  const { state, createAsset, updateAsset, deleteAsset } = useUnifiedPortfolio();
 
   // Portfolio-specific event handlers with actual functionality
   const handleCreateAsset = () => {
-    alert('Asset creation form would open here. In a real implementation, this would navigate to an asset creation wizard.')
+    // In a real implementation, this would open a modal or form
+    // For now, create a sample asset
+    const sampleAsset = {
+      name: 'New Asset',
+      assetType: 'traditional' as const,
+      description: 'New investment asset',
+      acquisitionDate: new Date().toISOString().split('T')[0],
+      acquisitionValue: 1000000,
+      currentValue: 1000000,
+      location: {
+        country: 'United States',
+        region: 'North America',
+        city: 'New York'
+      },
+      sector: 'Technology',
+      tags: ['new', 'technology'],
+      riskRating: 'medium' as const,
+      specificMetrics: {
+        companyStage: 'seed',
+        fundingRounds: 1,
+        employeeCount: 10,
+        revenue: 500000,
+        ebitda: -200000,
+        debtToEquity: 0.1,
+        boardSeats: 1,
+        ownershipPercentage: 20
+      }
+    };
+    
+    createAsset(sampleAsset).catch(error => {
+      console.error('Error creating asset:', error);
+      alert('Failed to create asset. Please try again.');
+    });
   }
 
   const handleViewAsset = (id: string) => {
-    setSelectedAsset(id)
-    alert(`Viewing detailed analytics for asset ${id}. In a real implementation, this would open a comprehensive asset detail view.`)
+    setSelectedAsset(id);
+    // In a real implementation, this would navigate to asset detail view
+    console.log('Viewing asset:', id);
   }
 
   const handleEditAsset = (id: string) => {
-    alert(`Editing asset ${id}. In a real implementation, this would open an asset editing interface.`)
+    // In a real implementation, this would open an edit form
+    console.log('Editing asset:', id);
   }
 
-  const filteredAssets = mockPortfolioData.assets.filter(asset =>
+  // Use real assets from context or fallback to empty array
+  const assets = state.currentPortfolio?.assets || [];
+  const filteredAssets = assets.filter(asset =>
     asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    asset.sector.toLowerCase().includes(searchTerm.toLowerCase())
+    asset.sector?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    asset.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
   const formatCurrency = (amount: number) => {
@@ -379,15 +425,15 @@ export function PortfolioTraditionalRefactored({
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="font-semibold text-lg">{asset.name}</h3>
-                        <p className="text-sm text-gray-600">{asset.type} • {asset.sector}</p>
+                        <p className="text-sm text-gray-600">{asset.assetType} • {asset.sector}</p>
                         <div className="flex items-center mt-2 text-sm text-gray-500">
                           <MapPin className="h-3 w-3 mr-1" />
-                          {asset.location}
+                          {asset.location.country}
                         </div>
                       </div>
                       <div className="flex space-x-2">
-                        <Badge className={getRiskColor(asset.riskLevel)}>
-                          {asset.riskLevel} Risk
+                        <Badge className={getRiskColor(asset.riskRating)}>
+                          {asset.riskRating} Risk
                         </Badge>
                         <Badge className={getStatusColor(asset.status)}>
                           {asset.status}
@@ -402,8 +448,8 @@ export function PortfolioTraditionalRefactored({
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Performance</p>
-                        <p className={`font-semibold ${asset.performance > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {asset.performance > 0 ? '+' : ''}{asset.performance}%
+                        <p className={`font-semibold ${asset.performance.totalReturn > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {asset.performance.totalReturn > 0 ? '+' : ''}{(asset.performance.totalReturn * 100).toFixed(1)}%
                         </p>
                       </div>
                     </div>
@@ -411,15 +457,15 @@ export function PortfolioTraditionalRefactored({
                     <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
                       <div>
                         <p className="text-gray-600">IRR</p>
-                        <p className="font-medium">{asset.irr}%</p>
+                        <p className="font-medium">{(asset.performance.irr * 100).toFixed(1)}%</p>
                       </div>
                       <div>
                         <p className="text-gray-600">MOIC</p>
-                        <p className="font-medium">{asset.moic}x</p>
+                        <p className="font-medium">{asset.performance.moic.toFixed(2)}x</p>
                       </div>
                       <div>
                         <p className="text-gray-600">Updated</p>
-                        <p className="font-medium">{new Date(asset.lastUpdate).toLocaleDateString()}</p>
+                        <p className="font-medium">{asset.lastUpdated ? new Date(asset.lastUpdated).toLocaleDateString() : 'N/A'}</p>
                       </div>
                     </div>
 

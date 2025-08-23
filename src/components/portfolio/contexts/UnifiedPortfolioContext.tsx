@@ -181,22 +181,175 @@ export function UnifiedPortfolioProvider({
   const [analytics, setAnalytics] = React.useState<PortfolioAnalytics | null>(null);
   const [professionalMetrics, setProfessionalMetrics] = React.useState<ProfessionalMetrics | null>(null);
 
+  // Helper function to convert unified investment to portfolio asset
+  const convertInvestmentToAsset = useCallback((investment: any): UnifiedAsset => {
+    const baseAsset = {
+      id: investment.id,
+      name: investment.name,
+      assetType: investment.assetType as AssetType,
+      description: investment.description,
+      acquisitionDate: investment.acquisitionDate,
+      acquisitionValue: investment.acquisitionValue || 0,
+      currentValue: investment.currentValue || 0,
+      location: investment.location || {
+        country: '',
+        region: '',
+        city: ''
+      },
+      performance: {
+        irr: investment.performance?.irr || 0,
+        moic: investment.performance?.moic || 0,
+        totalReturn: investment.performance?.totalReturn || 0
+      },
+      esgMetrics: investment.esgMetrics || {
+        environmentalScore: 0,
+        socialScore: 0,
+        governanceScore: 0,
+        overallScore: 0,
+        sustainabilityCertifications: []
+      },
+      status: investment.status as any || 'active',
+      riskRating: investment.riskRating as any || 'medium',
+      sector: investment.sector,
+      tags: investment.tags || [],
+      lastUpdated: investment.lastUpdated,
+    };
+
+    // Add asset type specific properties
+    if (investment.assetType === 'traditional') {
+      return {
+        ...baseAsset,
+        assetType: 'traditional',
+        specificMetrics: investment.specificMetrics || {
+          companyStage: 'seed',
+          fundingRounds: 1,
+          employeeCount: 10,
+          revenue: 0,
+          ebitda: 0,
+          debtToEquity: 0,
+          boardSeats: 0,
+          ownershipPercentage: 0
+        },
+        companyInfo: investment.companyInfo || {
+          foundedYear: new Date().getFullYear(),
+          businessModel: '',
+          keyProducts: [],
+          competitiveAdvantages: []
+        }
+      } as UnifiedAsset;
+    } else if (investment.assetType === 'real_estate') {
+      return {
+        ...baseAsset,
+        assetType: 'real_estate',
+        specificMetrics: investment.specificMetrics || {
+          propertyType: 'office',
+          totalSqFt: 0,
+          occupancyRate: 0,
+          avgLeaseLength: 0,
+          capRate: 0,
+          noiYield: 0,
+          vacancyRate: 0,
+          avgRentPsf: 0
+        },
+        propertyDetails: investment.propertyDetails || {
+          yearBuilt: new Date().getFullYear(),
+          amenities: [],
+          zoning: '',
+          propertyTaxes: 0
+        },
+        leaseInfo: investment.leaseInfo || {
+          majorTenants: []
+        }
+      } as UnifiedAsset;
+    } else {
+      return {
+        ...baseAsset,
+        assetType: 'infrastructure',
+        specificMetrics: investment.specificMetrics || {
+          assetCategory: 'energy',
+          capacityUtilization: 0,
+          operationalEfficiency: 0,
+          maintenanceScore: 0,
+          regulatoryCompliance: 0,
+          contractedRevenue: 0,
+          availabilityRate: 0,
+          averageLifespan: 0
+        },
+        operationalData: investment.operationalData || {
+          commissionDate: new Date().toISOString().split('T')[0],
+          designLife: 0,
+          currentAge: 0
+        },
+        contractualInfo: investment.contractualInfo || {
+          contractType: 'availability',
+          contractorName: '',
+          contractExpiry: new Date().toISOString().split('T')[0],
+          renewalOptions: 0
+        }
+      } as UnifiedAsset;
+    }
+  }, []);
+
   const loadPortfolios = useCallback(async (): Promise<void> => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      // Use actual API endpoint instead of mock data
-      const response = await fetch('/api/portfolio', {
+      // Use unified investments API to get all internal investments (portfolio assets)
+      const response = await fetch('/api/investments?investmentType=internal', {
         method: 'GET',
         credentials: 'include',
       });
       
       if (!response.ok) {
-        throw new Error('Failed to load portfolios');
+        throw new Error('Failed to load investments');
       }
       
-      const data = await response.json();
-      const portfolios = data.portfolios || [];
+      const investments = await response.json();
+      
+      // Group investments by portfolio to create portfolio objects
+      const portfolioMap = new Map<string, Portfolio>();
+      
+      investments.forEach((investment: any) => {
+        if (investment.portfolioId) {
+          if (!portfolioMap.has(investment.portfolioId)) {
+            portfolioMap.set(investment.portfolioId, {
+              id: investment.portfolioId,
+              name: `Portfolio ${investment.portfolioId}`,
+              description: `Portfolio containing investment assets`,
+              assetTypes: [],
+              assets: [],
+              totalValue: 0,
+              totalInvested: 0,
+              totalRealized: 0,
+              unrealizedValue: 0,
+              performanceMetrics: {
+                irr: 0,
+                moic: 0,
+                totalReturn: 0
+              },
+              riskProfile: 'medium' as const,
+              managerId: 'default',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            });
+          }
+          
+          const portfolio = portfolioMap.get(investment.portfolioId)!;
+          const asset = convertInvestmentToAsset(investment);
+          
+          portfolio.assets.push(asset);
+          portfolio.totalValue += asset.currentValue;
+          portfolio.totalInvested += asset.acquisitionValue;
+          portfolio.unrealizedValue = portfolio.totalValue - portfolio.totalInvested;
+          
+          // Update asset types
+          if (!portfolio.assetTypes.includes(asset.assetType)) {
+            portfolio.assetTypes.push(asset.assetType);
+          }
+        }
+      });
+      
+      const portfolios = Array.from(portfolioMap.values());
       dispatch({ type: 'SET_PORTFOLIOS', payload: portfolios });
       
       // Set the first portfolio as current if available
@@ -207,7 +360,7 @@ export function UnifiedPortfolioProvider({
       console.error('Error loading portfolios:', error);
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
     }
-  }, []);
+  }, [convertInvestmentToAsset]);
 
   const selectPortfolio = useCallback(async (portfolioId: string): Promise<void> => {
     dispatch({ type: 'SET_LOADING', payload: true });
@@ -489,8 +642,8 @@ export function UnifiedPortfolioProvider({
       const assets = state.currentPortfolio.assets;
 
       // Try to get cached analytics first
-      const cachedAnalytics = portfolioCache.getCachedAnalytics(portfolioId, assets);
-      const cachedProfessionalMetrics = portfolioCache.getCachedProfessionalMetrics(portfolioId, assets);
+      const cachedAnalytics = portfolioCache?.getCachedAnalytics?.(portfolioId, assets);
+      const cachedProfessionalMetrics = portfolioCache?.getCachedProfessionalMetrics?.(portfolioId, assets);
 
       if (cachedAnalytics && cachedProfessionalMetrics) {
         setAnalytics(cachedAnalytics);

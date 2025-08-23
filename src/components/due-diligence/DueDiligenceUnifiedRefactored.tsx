@@ -1,12 +1,12 @@
 /**
- * Enhanced Due Diligence Traditional Component
- * Comprehensive risk assessment and project management platform
+ * Due Diligence Component with Unified Data Integration
+ * Uses the unified investments API for real data
  */
 
 'use client'
 
 import * as React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -15,7 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import type { TraditionalModeProps } from '@/types/shared'
 import { formatCurrencySafe, formatDateSafe } from '@/hooks/use-client-date'
-import { useRouter } from 'next/navigation'
 import { 
   CheckSquare,
   AlertTriangle,
@@ -47,200 +46,157 @@ import {
   Info
 } from 'lucide-react'
 
-// Comprehensive mock data for due diligence projects
-const mockDDProjects = [
-  {
-    id: '1',
-    name: 'TechCorp Acquisition',
-    targetCompany: 'TechCorp Solutions',
-    dealValue: 125000000,
-    sector: 'Technology',
-    stage: 'Series B',
-    location: 'San Francisco, CA',
-    status: 'In Progress',
-    priority: 'High',
-    progress: 78,
-    riskLevel: 'Medium',
-    startDate: '2024-10-15',
-    targetClose: '2025-01-15',
-    leadAnalyst: 'Sarah Johnson',
-    teamSize: 8,
-    totalTasks: 87,
-    completedTasks: 68,
-    findings: [
-      { type: 'Critical', count: 2, description: 'Revenue concentration risk, regulatory compliance gaps' },
-      { type: 'High', count: 5, description: 'Management team turnover, customer dependencies' },
-      { type: 'Medium', count: 12, description: 'Technology debt, market competition' },
-      { type: 'Low', count: 8, description: 'Documentation gaps, process improvements' }
-    ],
-    riskAssessment: {
-      overall: 7.2,
-      financial: 8.1,
-      operational: 6.8,
-      strategic: 7.5,
-      legal: 7.0,
-      market: 6.9
-    },
-    keyMetrics: {
-      revenue: 45000000,
-      ebitda: 12000000,
-      employees: 120,
-      marketShare: 15
-    }
-  },
-  {
-    id: '2',
-    name: 'HealthTech Direct Investment',
-    targetCompany: 'MedDevice Inc',
-    dealValue: 85000000,
-    sector: 'Healthcare',
-    stage: 'Growth',
-    location: 'Boston, MA',
-    status: 'In Progress',
-    priority: 'High',
-    progress: 45,
-    riskLevel: 'Low',
-    startDate: '2024-11-01',
-    targetClose: '2025-02-28',
-    leadAnalyst: 'Michael Chen',
-    teamSize: 6,
-    totalTasks: 65,
-    completedTasks: 29,
-    findings: [
-      { type: 'Critical', count: 0, description: 'None identified' },
-      { type: 'High', count: 2, description: 'Regulatory approval timeline, IP protection' },
-      { type: 'Medium', count: 8, description: 'Market competition, scaling challenges' },
-      { type: 'Low', count: 5, description: 'Team structure, operational processes' }
-    ],
-    riskAssessment: {
-      overall: 8.4,
-      financial: 8.7,
-      operational: 8.2,
-      strategic: 8.6,
-      legal: 8.1,
-      market: 8.0
-    },
-    keyMetrics: {
-      revenue: 28000000,
-      ebitda: 8500000,
-      employees: 85,
-      marketShare: 8
-    }
-  },
-  {
-    id: '3',
-    name: 'Infrastructure Co-Investment',
-    targetCompany: 'Green Energy Partners',
-    dealValue: 200000000,
-    sector: 'Infrastructure',
-    stage: 'Mature',
-    location: 'Austin, TX',
-    status: 'Final Review',
-    priority: 'Medium',
-    progress: 92,
-    riskLevel: 'Low',
-    startDate: '2024-08-20',
-    targetClose: '2024-12-30',
-    leadAnalyst: 'Emily Rodriguez',
-    teamSize: 10,
-    totalTasks: 103,
-    completedTasks: 95,
-    findings: [
-      { type: 'Critical', count: 0, description: 'None identified' },
-      { type: 'High', count: 1, description: 'Environmental compliance monitoring' },
-      { type: 'Medium', count: 6, description: 'Regulatory changes, market dynamics' },
-      { type: 'Low', count: 4, description: 'Process optimization opportunities' }
-    ],
-    riskAssessment: {
-      overall: 8.8,
-      financial: 9.1,
-      operational: 8.5,
-      strategic: 9.0,
-      legal: 8.7,
-      market: 8.4
-    },
-    keyMetrics: {
-      revenue: 75000000,
-      ebitda: 22000000,
-      employees: 200,
-      marketShare: 22
-    }
-  }
-]
+interface DueDiligenceProject {
+  id: string;
+  name: string;
+  targetCompany: string;
+  dealValue: number;
+  sector: string;
+  stage: string;
+  location: string;
+  status: string;
+  priority: string;
+  progress: number;
+  riskLevel: string;
+  startDate: string;
+  targetClose?: string;
+  leadAnalyst: string;
+  teamSize: number;
+  totalTasks: number;
+  completedTasks: number;
+  findings: any[];
+  riskAssessment: {
+    overall: number;
+    financial: number;
+    operational: number;
+    strategic: number;
+    legal: number;
+    market: number;
+  };
+  keyMetrics: {
+    revenue: number;
+    ebitda: number;
+    employees: number;
+    marketShare: number;
+  };
+  lastUpdated: string;
+}
 
-export function DueDiligenceTraditionalRefactored({ 
+export function DueDiligenceUnifiedRefactored({ 
   metrics, 
   isLoading = false,
   onSwitchMode
 }: TraditionalModeProps) {
-  const router = useRouter()
   const [activeTab, setActiveTab] = useState('overview')
-  const [selectedProject, setSelectedProject] = useState<string>(mockDDProjects[0].id)
+  const [selectedProject, setSelectedProject] = useState<string>('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [projects, setProjects] = useState<DueDiligenceProject[]>([])
+  const [isLoadingData, setIsLoadingData] = useState(true)
 
-  const currentProject = mockDDProjects.find(p => p.id === selectedProject) || mockDDProjects[0]
-
-  // Enhanced event handlers
-  const handleCreateProject = () => {
-    // Create a new project and add it to the list
-    const newProject = {
-      id: (mockDDProjects.length + 1).toString(),
-      name: `New DD Project ${mockDDProjects.length + 1}`,
-      targetCompany: 'New Target Company',
-      dealValue: 50000000,
-      sector: 'Technology',
-      stage: 'Early Stage',
-      location: 'TBD',
-      status: 'In Progress',
-      priority: 'Medium',
-      progress: 0,
-      riskLevel: 'Medium',
-      startDate: new Date().toISOString().split('T')[0],
-      targetClose: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      leadAnalyst: 'Current User',
-      teamSize: 1,
-      totalTasks: 0,
-      completedTasks: 0,
-      findings: [],
-      riskAssessment: {
-        overall: 5.0,
-        financial: 5.0,
-        operational: 5.0,
-        strategic: 5.0,
-        legal: 5.0,
-        market: 5.0
-      },
-      keyMetrics: {
-        revenue: 0,
-        ebitda: 0,
-        employees: 0,
-        marketShare: 0
+  // Fetch due diligence projects from API
+  useEffect(() => {
+    const fetchDueDiligenceProjects = async () => {
+      try {
+        setIsLoadingData(true)
+        const response = await fetch('/api/due-diligence?includeDetails=true')
+        const data = await response.json()
+        
+        if (data.success) {
+          setProjects(data.projects)
+          if (data.projects.length > 0) {
+            setSelectedProject(data.projects[0].id)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching due diligence projects:', error)
+      } finally {
+        setIsLoadingData(false)
       }
     }
-    
-    mockDDProjects.push(newProject)
-    setSelectedProject(newProject.id)
-    alert(`Created new due diligence project: "${newProject.name}"\n\nNext steps:\n• Configure project parameters\n• Assign team members\n• Set up document workspace\n• Define risk framework\n• Create task checklist`)
+
+    fetchDueDiligenceProjects()
+  }, [])
+
+  const currentProject = projects.find(p => p.id === selectedProject) || projects[0]
+
+  // Enhanced event handlers
+  const handleCreateProject = async () => {
+    try {
+      const newProjectData = {
+        name: `New DD Project ${projects.length + 1}`,
+        targetCompany: 'New Target Company',
+        dealValue: 50000000,
+        sector: 'Technology',
+        stage: 'initial',
+        location: 'TBD',
+        status: 'in-progress',
+        priority: 'medium',
+        progress: 0,
+        riskLevel: 'medium',
+        startDate: new Date().toISOString().split('T')[0],
+        targetClose: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        leadAnalyst: 'Current User',
+        teamSize: 1,
+        totalTasks: 0,
+        completedTasks: 0,
+        findings: [],
+        riskAssessment: {
+          overall: 5.0,
+          financial: 5.0,
+          operational: 5.0,
+          strategic: 5.0,
+          legal: 5.0,
+          market: 5.0
+        },
+        keyMetrics: {
+          revenue: 0,
+          ebitda: 0,
+          employees: 0,
+          marketShare: 0
+        }
+      }
+
+      const response = await fetch('/api/due-diligence', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProjectData)
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        setProjects(prev => [...prev, result.project])
+        setSelectedProject(result.project.id)
+        alert(`Created new due diligence project: "${result.project.name}"\n\nNext steps:\n• Configure project parameters\n• Assign team members\n• Set up document workspace\n• Define risk framework\n• Create task checklist`)
+      }
+    } catch (error) {
+      console.error('Error creating project:', error)
+      alert('Failed to create due diligence project')
+    }
   }
 
   const handleViewProject = (id: string) => {
-    const project = mockDDProjects.find(p => p.id === id)
+    setSelectedProject(id)
+    setActiveTab('overview')
+    const project = projects.find(p => p.id === id)
     if (project) {
-      // Navigate to the dedicated project detail page
-      router.push(`/due-diligence/${id}`)
+      alert(`Viewing project details for "${project.name}"\n\nCurrent Status:\n• Progress: ${project.progress}% (${project.completedTasks}/${project.totalTasks} tasks)\n• Risk Level: ${project.riskLevel}\n• Team Size: ${project.teamSize} members\n• Target Close: ${project.targetClose}\n\n✅ Project workspace is now loaded in the interface above`)
     }
   }
 
   const handleRiskAnalysis = (id: string) => {
-    const project = mockDDProjects.find(p => p.id === id)
+    const project = projects.find(p => p.id === id)
     if (project) {
-      // Navigate to project detail page
-      router.push(`/due-diligence/${id}`)
+      setSelectedProject(id)
+      setActiveTab('risk-analysis')
+      alert(`Risk Analysis Report for "${project.name}":\n\n📊 Overall Risk Score: ${project.riskAssessment.overall}/10\n💰 Financial Risk: ${project.riskAssessment.financial}/10\n⚙️ Operational Risk: ${project.riskAssessment.operational}/10\n🎯 Strategic Risk: ${project.riskAssessment.strategic}/10\n⚖️ Legal Risk: ${project.riskAssessment.legal}/10\n📈 Market Risk: ${project.riskAssessment.market}/10\n\n${project.riskAssessment.overall > 8 ? '✅ LOW RISK - Recommend proceed' : project.riskAssessment.overall > 6 ? '⚠️ MEDIUM RISK - Monitor closely' : '🚨 HIGH RISK - Detailed mitigation required'}\n\n📋 View detailed risk analysis in the Risk Analysis tab above`)
     }
   }
 
   const handleGenerateReport = (id: string) => {
-    const project = mockDDProjects.find(p => p.id === id)
+    const project = projects.find(p => p.id === id)
     if (project) {
       setSelectedProject(id)
       setActiveTab('reports')
@@ -265,7 +221,6 @@ export function DueDiligenceTraditionalRefactored({
     }
   }
 
-
   const getRiskColor = (level: string) => {
     switch (level.toLowerCase()) {
       case 'low': return 'bg-green-100 text-green-800'
@@ -277,14 +232,14 @@ export function DueDiligenceTraditionalRefactored({
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'in progress': return 'bg-blue-100 text-blue-800'
-      case 'final review': return 'bg-purple-100 text-purple-800'
+      case 'in-progress': return 'bg-blue-100 text-blue-800'
+      case 'final-review': return 'bg-purple-100 text-purple-800'
       case 'completed': return 'bg-green-100 text-green-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
 
-  if (isLoading) {
+  if (isLoading || isLoadingData) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600 mb-4"></div>
@@ -292,6 +247,17 @@ export function DueDiligenceTraditionalRefactored({
       </div>
     )
   }
+
+  // Calculate metrics from real data
+  const totalDealValue = projects.reduce((sum, p) => sum + p.dealValue, 0)
+  const averageProgress = projects.length > 0 
+    ? Math.round(projects.reduce((sum, p) => sum + p.progress, 0) / projects.length)
+    : 0
+  const averageRisk = projects.length > 0
+    ? Math.round(projects.reduce((sum, p) => sum + p.riskAssessment.overall, 0) / projects.length * 10) / 10
+    : 5.0
+  const activeProjects = projects.filter(p => p.status !== 'completed').length
+  const highPriority = projects.filter(p => p.priority === 'high').length
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -309,16 +275,16 @@ export function DueDiligenceTraditionalRefactored({
           {/* Enhanced DD Metrics Display */}
           <div className="flex items-center space-x-6 text-sm text-gray-600">
             <div>
-              <span className="font-medium">Active Projects:</span> {mockDDProjects.length}
+              <span className="font-medium">Active Projects:</span> {activeProjects}
             </div>
             <div>
-              <span className="font-medium">Avg Risk Score:</span> {(mockDDProjects.reduce((sum, p) => sum + p.riskAssessment.overall, 0) / mockDDProjects.length).toFixed(1)}/10
+              <span className="font-medium">Avg Risk Score:</span> {averageRisk}/10
             </div>
             <div>
-              <span className="font-medium">Total Deal Value:</span> {formatCurrencySafe(mockDDProjects.reduce((sum, p) => sum + p.dealValue, 0))}
+              <span className="font-medium">Total Deal Value:</span> {formatCurrencySafe(totalDealValue)}
             </div>
             <div>
-              <span className="font-medium">Avg Progress:</span> {Math.round(mockDDProjects.reduce((sum, p) => sum + p.progress, 0) / mockDDProjects.length)}%
+              <span className="font-medium">Avg Progress:</span> {averageProgress}%
             </div>
           </div>
         </div>
@@ -342,8 +308,8 @@ export function DueDiligenceTraditionalRefactored({
                     <Building className="h-8 w-8 text-blue-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">Active Projects</p>
-                      <p className="text-2xl font-bold text-gray-900">{mockDDProjects.length}</p>
-                      <p className="text-xs text-blue-600">2 high priority</p>
+                      <p className="text-2xl font-bold text-gray-900">{activeProjects}</p>
+                      <p className="text-xs text-blue-600">{highPriority} high priority</p>
                     </div>
                   </div>
                 </CardContent>
@@ -355,8 +321,8 @@ export function DueDiligenceTraditionalRefactored({
                     <Shield className="h-8 w-8 text-green-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">Avg Risk Score</p>
-                      <p className="text-2xl font-bold text-gray-900">{(mockDDProjects.reduce((sum, p) => sum + p.riskAssessment.overall, 0) / mockDDProjects.length).toFixed(1)}/10</p>
-                      <p className="text-xs text-green-600">Low risk portfolio</p>
+                      <p className="text-2xl font-bold text-gray-900">{averageRisk}/10</p>
+                      <p className="text-xs text-green-600">Risk assessment</p>
                     </div>
                   </div>
                 </CardContent>
@@ -368,8 +334,8 @@ export function DueDiligenceTraditionalRefactored({
                     <DollarSign className="h-8 w-8 text-purple-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">Total Deal Value</p>
-                      <p className="text-2xl font-bold text-gray-900">{formatCurrencySafe(mockDDProjects.reduce((sum, p) => sum + p.dealValue, 0))}</p>
-                      <p className="text-xs text-purple-600">Across 3 deals</p>
+                      <p className="text-2xl font-bold text-gray-900">{formatCurrencySafe(totalDealValue)}</p>
+                      <p className="text-xs text-purple-600">Across {projects.length} deals</p>
                     </div>
                   </div>
                 </CardContent>
@@ -381,7 +347,7 @@ export function DueDiligenceTraditionalRefactored({
                     <Target className="h-8 w-8 text-orange-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">Avg Progress</p>
-                      <p className="text-2xl font-bold text-gray-900">{Math.round(mockDDProjects.reduce((sum, p) => sum + p.progress, 0) / mockDDProjects.length)}%</p>
+                      <p className="text-2xl font-bold text-gray-900">{averageProgress}%</p>
                       <p className="text-xs text-orange-600">On track</p>
                     </div>
                   </div>
@@ -390,74 +356,76 @@ export function DueDiligenceTraditionalRefactored({
             </div>
 
             {/* Current Project Spotlight */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Eye className="h-5 w-5 mr-2 text-blue-600" />
-                  Current Project Spotlight: {currentProject.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="lg:col-span-2">
-                    <div className="space-y-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{currentProject.targetCompany}</h3>
-                          <p className="text-gray-600">{currentProject.sector} • {currentProject.stage} • {currentProject.location}</p>
-                          <p className="text-sm text-gray-500 mt-1">Lead: {currentProject.leadAnalyst} • Team: {currentProject.teamSize} members</p>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Badge className={getRiskColor(currentProject.riskLevel)}>
-                            {currentProject.riskLevel.toUpperCase()} RISK
-                          </Badge>
-                          <Badge className={getStatusColor(currentProject.status)}>
-                            {currentProject.status.toUpperCase()}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-sm text-gray-600">Deal Value</p>
-                          <p className="text-lg font-semibold">{formatCurrencySafe(currentProject.dealValue)}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Target Close</p>
-                          <p className="text-lg font-semibold">{formatDateSafe(currentProject.targetClose)}</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Progress</span>
-                          <span>{currentProject.progress}% ({currentProject.completedTasks}/{currentProject.totalTasks} tasks)</span>
-                        </div>
-                        <Progress value={currentProject.progress} className="h-2" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Risk Assessment</h4>
-                    <div className="space-y-3">
-                      {Object.entries(currentProject.riskAssessment).map(([key, value]) => (
-                        key !== 'overall' && (
-                          <div key={key} className="flex items-center justify-between">
-                            <span className="text-sm capitalize text-gray-600">{key}</span>
-                            <span className={`text-sm font-medium ${
-                              value >= 8 ? 'text-green-600' : value >= 6 ? 'text-yellow-600' : 'text-red-600'
-                            }`}>
-                              {value}/10
-                            </span>
+            {currentProject && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Eye className="h-5 w-5 mr-2 text-blue-600" />
+                    Current Project Spotlight: {currentProject.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2">
+                      <div className="space-y-4">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">{currentProject.targetCompany}</h3>
+                            <p className="text-gray-600">{currentProject.sector} • {currentProject.stage} • {currentProject.location}</p>
+                            <p className="text-sm text-gray-500 mt-1">Lead: {currentProject.leadAnalyst} • Team: {currentProject.teamSize} members</p>
                           </div>
-                        )
-                      ))}
+                          <div className="flex space-x-2">
+                            <Badge className={getRiskColor(currentProject.riskLevel)}>
+                              {currentProject.riskLevel.toUpperCase()} RISK
+                            </Badge>
+                            <Badge className={getStatusColor(currentProject.status)}>
+                              {currentProject.status.toUpperCase()}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-600">Deal Value</p>
+                            <p className="text-lg font-semibold">{formatCurrencySafe(currentProject.dealValue)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Target Close</p>
+                            <p className="text-lg font-semibold">{formatDateSafe(currentProject.targetClose)}</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Progress</span>
+                            <span>{currentProject.progress}% ({currentProject.completedTasks}/{currentProject.totalTasks} tasks)</span>
+                          </div>
+                          <Progress value={currentProject.progress} className="h-2" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-3">Risk Assessment</h4>
+                      <div className="space-y-3">
+                        {Object.entries(currentProject.riskAssessment).map(([key, value]) => (
+                          key !== 'overall' && (
+                            <div key={key} className="flex items-center justify-between">
+                              <span className="text-sm capitalize text-gray-600">{key}</span>
+                              <span className={`text-sm font-medium ${
+                                value >= 8 ? 'text-green-600' : value >= 6 ? 'text-yellow-600' : 'text-red-600'
+                              }`}>
+                                {value}/10
+                              </span>
+                            </div>
+                          )
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="projects" className="space-y-6">
@@ -482,7 +450,7 @@ export function DueDiligenceTraditionalRefactored({
 
             {/* Projects Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {mockDDProjects.filter(project =>
+              {projects.filter(project =>
                 project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 project.targetCompany.toLowerCase().includes(searchTerm.toLowerCase())
               ).map((project) => (
@@ -573,7 +541,7 @@ export function DueDiligenceTraditionalRefactored({
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {mockDDProjects.map((project) => (
+                  {projects.map((project) => (
                     <div key={project.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-4">
                         <div>
@@ -645,7 +613,7 @@ export function DueDiligenceTraditionalRefactored({
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {mockDDProjects.map((project) => (
+              {projects.map((project) => (
                 <Card key={project.id}>
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">

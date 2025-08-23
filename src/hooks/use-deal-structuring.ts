@@ -5,7 +5,9 @@ import {
   DealStructuringProject, 
   DealStructuringMetrics, 
   DealStructuringActivity, 
-  DealStructuringDeadline 
+  DealStructuringDeadline,
+  DealStructureType,
+  DealStage
 } from '@/types/deal-structuring';
 
 interface UseDealStructuringReturn {
@@ -31,8 +33,8 @@ export function useDealStructuring(): UseDealStructuringReturn {
       setIsLoading(true);
       setError(null);
 
-      // Fetch dashboard data from API
-      const response = await fetch('/api/deal-structuring/dashboard?includeDetails=true', {
+      // Fetch dashboard data from API - using unified endpoint
+      const response = await fetch('/api/deal-structuring?includeDetails=true', {
         credentials: 'include'
       });
       
@@ -51,15 +53,10 @@ export function useDealStructuring(): UseDealStructuringReturn {
           lastUpdated: new Date(deal.lastUpdated)
         }));
         
-        const processedActivities = (data.activities || []).map((activity: any) => ({
-          ...activity,
-          date: new Date(activity.date)
-        }));
-        
-        const processedDeadlines = (data.deadlines || []).map((deadline: any) => ({
-          ...deadline,
-          dueDate: new Date(deadline.dueDate)
-        }));
+        // Unified API doesn't return activities and deadlines yet
+        // For now, use empty arrays until those features are implemented
+        const processedActivities: DealStructuringActivity[] = [];
+        const processedDeadlines: DealStructuringDeadline[] = [];
         
         setDeals(processedDeals);
         setActivities(processedActivities);
@@ -85,8 +82,8 @@ export function useDealStructuring(): UseDealStructuringReturn {
         {
           id: '1',
           name: 'TechCorp Secondary',
-          type: 'SINGLE_ASSET_CONTINUATION',
-          stage: 'STRUCTURING',
+          type: DealStructureType.SINGLE_ASSET_CONTINUATION,
+          stage: DealStage.STRUCTURING,
           targetValue: 150000000,
           currentValuation: 145000000,
           progress: 75,
@@ -121,8 +118,8 @@ export function useDealStructuring(): UseDealStructuringReturn {
         {
           id: '2', 
           name: 'GreenEnergy Fund II',
-          type: 'MULTI_ASSET_CONTINUATION',
-          stage: 'DUE_DILIGENCE',
+          type: DealStructureType.MULTI_ASSET_CONTINUATION,
+          stage: DealStage.DUE_DILIGENCE,
           targetValue: 200000000,
           progress: 45,
           team: [
@@ -143,8 +140,8 @@ export function useDealStructuring(): UseDealStructuringReturn {
         {
           id: '3',
           name: 'HealthTech Acquisition',
-          type: 'LBO_STRUCTURE',
-          stage: 'INVESTMENT_COMMITTEE',
+          type: DealStructureType.LBO_STRUCTURE,
+          stage: DealStage.INVESTMENT_COMMITTEE,
           targetValue: 100000000,
           progress: 90,
           team: [

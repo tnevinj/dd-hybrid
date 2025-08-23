@@ -1071,7 +1071,7 @@ export function ManagementTeamAssessment({ projectId, mode = 'assisted' }: Manag
                       Current: {role.currentHolder} • Time to readiness: {role.timeToReadiness} months
                     </div>
                     <div className="text-xs text-gray-700">
-                      <strong>Development Plan:</strong> {program.developmentPlan.join(', ')}
+                      <strong>Development Plan:</strong> {role.developmentPlan.join(', ')}
                     </div>
                   </div>
                 ))}

@@ -175,7 +175,7 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleDefinition> = {
     ],
     defaultModules: [
       'dashboard', 'deal-screening', 'due-diligence', 'market-intelligence',
-      'advanced-analytics'
+      'advanced-analytics', 'workspaces'
     ],
     dashboardLayout: 'investment',
     category: 'internal'
@@ -456,6 +456,16 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       requiredPermissions: ['admin_access'],
       allowedRoles: ['admin'],
       category: 'admin'
+    },
+    {
+      id: 'workspaces',
+      label: 'Workspaces',
+      icon: 'Layout',
+      href: '/workspaces',
+      description: 'Collaborative workspaces for deal analysis and documentation',
+      requiredPermissions: [],
+      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst', 'fund_operations', 'portfolio_operations'],
+      category: 'primary'
     },
     {
       id: 'role-demo',

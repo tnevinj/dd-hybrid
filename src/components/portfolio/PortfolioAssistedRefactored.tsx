@@ -24,15 +24,19 @@ export function PortfolioAssistedRefactored({
 
   // AI-Enhanced Portfolio event handlers
   const handleCreateAsset = () => {
-    alert('AI-Assisted Asset Creation would launch:\n\n• Smart asset classification using market data\n• Automated due diligence checklist generation\n• Risk assessment with ML-powered scoring\n• Suggested valuation models based on comps\n• Integration with Deal Screening recommendations\n• Predictive performance modeling\n• Auto-populated ESG compliance tracking')
+    // AI-assisted asset creation would integrate with the UnifiedPortfolioContext
+    // This would trigger AI-powered asset creation workflow
+    console.log('AI-Assisted Asset Creation triggered');
   }
 
   const handleViewAsset = (id: string) => {
-    alert(`AI-Enhanced Asset Analysis for Asset ${id}:\n\n• Real-time performance analytics with predictive modeling\n• Risk factor identification and mitigation suggestions\n• Market sentiment analysis and competitive positioning\n• Automated benchmark comparisons with peer assets\n• ESG impact scoring and improvement recommendations\n• Cross-portfolio correlation analysis\n• Predictive exit scenario modeling with timing optimization`)
+    // AI-enhanced asset analysis would use real data from context
+    console.log(`AI-Enhanced Asset Analysis for Asset ${id}`);
   }
 
   const handleEditAsset = (id: string) => {
-    alert(`AI-Powered Asset Management for Asset ${id}:\n\n• Intelligent field suggestions based on asset type\n• Automated data validation with market comparisons\n• Risk recalculation with real-time scoring updates\n• Performance optimization recommendations\n• Compliance check automation with regulatory updates\n• Integration with Due Diligence findings\n• Smart notification of stakeholders for significant changes`)
+    // AI-powered asset management would use real data from context
+    console.log(`AI-Powered Asset Management for Asset ${id}`);
   }
 
   if (isLoading) {
@@ -100,17 +104,17 @@ export function PortfolioAssistedRefactored({
                           
                           {/* Recommendation Type Indicator */}
                           <div className="flex items-center space-x-2 mb-3">
-                            {rec.type === 'optimization' && <TrendingUp className="h-4 w-4 text-blue-500" />}
-                            {rec.type === 'risk' && <Shield className="h-4 w-4 text-red-500" />}
-                            {rec.type === 'opportunity' && <Sparkles className="h-4 w-4 text-green-500" />}
-                            {rec.type === 'rebalancing' && <Zap className="h-4 w-4 text-purple-500" />}
+                            {rec.type === 'suggestion' && <TrendingUp className="h-4 w-4 text-blue-500" />}
+                            {rec.type === 'automation' && <Zap className="h-4 w-4 text-purple-500" />}
+                            {rec.type === 'warning' && <Shield className="h-4 w-4 text-red-500" />}
+                            {rec.type === 'insight' && <Sparkles className="h-4 w-4 text-green-500" />}
                             <span className="text-xs text-gray-500 capitalize">{rec.type}</span>
                             <span className="text-xs text-gray-500">
                               • {Math.round(rec.confidence * 100)}% confidence
                             </span>
-                            {rec.estimatedImpact && (
+                            {rec.actions[0]?.estimatedImpact && (
                               <span className="text-xs text-gray-500">
-                                • {rec.estimatedImpact} impact
+                                • {rec.actions[0].estimatedImpact} impact
                               </span>
                             )}
                           </div>

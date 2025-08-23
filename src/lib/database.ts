@@ -587,6 +587,98 @@ const initSchema = () => {
     );
   `);
 
+  // Deal Structuring tables
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS deal_structuring_projects (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL, -- 'single_asset_continuation', 'multi_asset_continuation', 'tender_offer', 'feeder_fund', 'preferred_equity', 'revenue_participation', 'lbo_structure', 'synthetic_secondary'
+      stage TEXT NOT NULL, -- 'screening', 'structuring', 'due_diligence', 'investment_committee', 'execution', 'completed'
+      target_value INTEGER NOT NULL, -- Target value in cents
+      current_valuation INTEGER, -- Current valuation in cents
+      progress INTEGER DEFAULT 0, -- Progress percentage 0-100
+      team JSON NOT NULL, -- JSON array of team members
+      last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+      key_metrics JSON, -- JSON object of key metrics
+      risk_level TEXT DEFAULT 'medium', -- 'low', 'medium', 'high'
+      next_milestone TEXT,
+      ai_recommendations JSON, -- JSON array of AI recommendations
+      workspace_id TEXT REFERENCES workspaces(id) ON DELETE SET NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS deal_structuring_activities (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      deal_id TEXT NOT NULL REFERENCES deal_structuring_projects(id) ON DELETE CASCADE,
+      type TEXT NOT NULL, -- 'financial', 'legal', 'strategic', 'operational'
+      status TEXT NOT NULL, -- 'completed', 'in_progress', 'pending'
+      date DATETIME DEFAULT CURRENT_TIMESTAMP,
+      user TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS deal_structuring_deadlines (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      due_date DATETIME NOT NULL,
+      deal_id TEXT NOT NULL REFERENCES deal_structuring_projects(id) ON DELETE CASCADE,
+      priority TEXT NOT NULL, -- 'high', 'medium', 'low'
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // Unified Investments table - combines portfolio assets and deal opportunities
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS investments (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      investment_type TEXT NOT NULL, -- 'internal' | 'external' | 'co_investment' | 'fund'
+      asset_type TEXT NOT NULL, -- 'traditional', 'real_estate', 'infrastructure', 'fund', 'direct', 'co-investment', 'gp-led', 'other'
+      description TEXT,
+      status TEXT NOT NULL, -- 'screening', 'due_diligence', 'structuring', 'active', 'divested', 'rejected'
+      current_value INTEGER, -- Current valuation in cents
+      target_value INTEGER, -- Target/ask price in cents
+      acquisition_value INTEGER, -- For internal investments (acquisition cost)
+      expected_return REAL,
+      expected_risk REAL,
+      expected_multiple REAL,
+      expected_irr REAL,
+      expected_holding_period INTEGER, -- In months
+      geography TEXT,
+      sector TEXT,
+      risk_rating TEXT, -- 'low', 'medium', 'high'
+      esg_scores JSON, -- { environmental: number, social: number, governance: number, overall: number }
+      specific_metrics JSON, -- Asset-type specific metrics
+      portfolio_id TEXT REFERENCES portfolios(id) ON DELETE SET NULL, -- For internal investments
+      deal_id TEXT REFERENCES deal_structuring_projects(id) ON DELETE SET NULL, -- For external investments
+      workspace_id TEXT REFERENCES workspaces(id) ON DELETE SET NULL,
+      seller TEXT, -- For external investments
+      vintage TEXT, -- For fund investments
+      nav_percentage REAL, -- Price as percentage of NAV
+      due_diligence_project_id TEXT,
+      submission_id TEXT,
+      ai_confidence REAL, -- 0-1 AI confidence score
+      similar_investments JSON, -- Array of similar investment IDs
+      ai_recommendations JSON, -- Array of AI recommendations
+      acquisition_date DATE, -- For internal investments
+      location_country TEXT,
+      location_region TEXT,
+      location_city TEXT,
+      jobs_created INTEGER,
+      carbon_footprint INTEGER, -- Can be negative for carbon-negative assets
+      sustainability_certifications JSON,
+      tags JSON, -- Array of tags
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
   // Create indexes for better query performance
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_workspaces_status ON workspaces(status);
@@ -629,6 +721,15 @@ const initSchema = () => {
     CREATE INDEX IF NOT EXISTS idx_qualification_documents_assessment_id ON qualification_documents(qualification_assessment_id);
     CREATE INDEX IF NOT EXISTS idx_qualification_documents_type ON qualification_documents(document_type);
     CREATE INDEX IF NOT EXISTS idx_qualification_documents_status ON qualification_documents(verification_status);
+    
+    -- Investments indexes
+    CREATE INDEX IF NOT EXISTS idx_investments_type ON investments(investment_type);
+    CREATE INDEX IF NOT EXISTS idx_investments_asset_type ON investments(asset_type);
+    CREATE INDEX IF NOT EXISTS idx_investments_status ON investments(status);
+    CREATE INDEX IF NOT EXISTS idx_investments_portfolio_id ON investments(portfolio_id);
+    CREATE INDEX IF NOT EXISTS idx_investments_deal_id ON investments(deal_id);
+    CREATE INDEX IF NOT EXISTS idx_investments_workspace_id ON investments(workspace_id);
+    CREATE INDEX IF NOT EXISTS idx_investments_updated_at ON investments(updated_at);
   `);
 
   console.log('Database schema initialized successfully');

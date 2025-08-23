@@ -4,6 +4,14 @@ export { TemplateService } from './template-service';
 export { PortfolioService, PortfolioAssetService } from './portfolio-service';
 export { DealOpportunityService, DealScreeningTemplateService, DealScoreService } from './deal-screening-service';
 export { 
+  DealStructuringService, 
+  DealStructuringActivityService, 
+  DealStructuringDeadlineService 
+} from './deal-structuring-service';
+export { 
+  InvestmentService 
+} from './investment-service';
+export { 
   OperationalAssessmentService, 
   OperationalMetricsService, 
   OperationalProcessService, 
@@ -51,7 +59,7 @@ export type {
   DealScreeningTemplate,
   DealScore,
   CreateOpportunityData,
-  CreateTemplateData 
+  CreateTemplateData as CreateScreeningTemplateData 
 } from './deal-screening-service';
 
 export type {
@@ -80,3 +88,9 @@ export type {
   CulturalFitAssessment,
   QualificationDocument
 } from './qualification-assessment-service';
+
+export type {
+  Investment,
+  CreateInvestmentData,
+  UpdateInvestmentData
+} from './investment-service';

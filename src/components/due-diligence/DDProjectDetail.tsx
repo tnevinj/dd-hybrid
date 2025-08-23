@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
+import { useAIStore } from '@/stores/ai-store'
 import { useDueDiligence } from '@/contexts/DueDiligenceContext'
 import { DDTabs } from './DDTabs'
 import { DueDiligenceTraditional } from './DueDiligenceTraditional'
@@ -30,7 +31,8 @@ interface DDProjectDetailProps {
 
 export function DDProjectDetail({ projectId }: DDProjectDetailProps) {
   const router = useRouter()
-  const { currentMode, addRecommendation } = useNavigationStoreRefactored()
+  const { currentMode } = useNavigationStoreRefactored()
+  const { addRecommendation } = useAIStore()
   const { state, setCurrentProject } = useDueDiligence()
 
   // Mock project data - replace with real API call

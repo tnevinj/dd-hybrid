@@ -14,6 +14,7 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import type { AssistedModeProps } from '@/types/shared'
+import { useRouter } from 'next/navigation'
 import { 
   Brain,
   Zap,
@@ -165,6 +166,7 @@ export function DueDiligenceAssistedRefactored({
   onDismissRecommendation,
   onSwitchMode
 }: AssistedModeProps) {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('overview')
   const [selectedProject, setSelectedProject] = useState<string>(mockAIEnhancedDDProjects[0].id)
   const [searchTerm, setSearchTerm] = useState('')
@@ -228,20 +230,18 @@ export function DueDiligenceAssistedRefactored({
   }
 
   const handleViewProject = (id: string) => {
-    setSelectedProject(id)
-    setActiveTab('overview')
     const project = mockAIEnhancedDDProjects.find(p => p.id === id)
     if (project) {
-      alert(`🤖 AI-Enhanced Workspace Activated for "${project.name}"\n\n🧠 AI Features Enabled:\n• ML Risk Scoring: ${project.aiRiskScore}/10\n• Predictive Analytics: ${project.aiConfidence}% confidence\n• Success Probability: ${(project.aiInsights.successProbability * 100).toFixed(0)}%\n• Completion Timeline: ${project.aiInsights.timeToComplete} days\n• Active Recommendations: ${project.aiRecommendations.length}\n\n✅ AI workspace is now loaded with enhanced analytics above`)
+      // Navigate to the AI-enhanced project detail page
+      router.push(`/due-diligence/${id}`)
     }
   }
 
   const handleAIRiskAnalysis = (id: string) => {
     const project = mockAIEnhancedDDProjects.find(p => p.id === id)
     if (project) {
-      setSelectedProject(id)
-      setActiveTab('analytics')
-      alert(`🤖 AI Risk Analysis Complete for "${project.name}":\n\n📊 ML Risk Score: ${project.aiRiskScore}/10\n🎯 AI Confidence: ${project.aiConfidence}%\n📈 Predicted Outcome: ${project.aiInsights.predictedOutcome}\n✅ Success Probability: ${(project.aiInsights.successProbability * 100).toFixed(0)}%\n💰 Value at Risk: $${(project.aiInsights.valueAtRisk / 1000000).toFixed(1)}M\n⏱️ AI Timeline: ${project.aiInsights.timeToComplete} days\n\n🔍 Advanced AI Features:\n• Real-time market sentiment monitoring\n• Pattern recognition risk assessment\n• Regulatory impact analysis\n• Cross-deal similarity matching\n\n📋 View full AI analytics in the Predictive Analytics tab above`)
+      // Navigate to AI-enhanced project detail page
+      router.push(`/due-diligence/${id}`)
     }
   }
 
