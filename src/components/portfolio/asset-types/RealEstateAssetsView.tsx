@@ -59,7 +59,7 @@ export function RealEstateAssetsView() {
   };
 
   const filteredAssets = realEstateAssets.filter(asset => {
-    if (filterType !== 'all' && asset.specificMetrics.propertyType !== filterType) {
+    if (filterType !== 'all' && asset.specificMetrics?.propertyType !== filterType) {
       return false;
     }
     return true;
@@ -72,9 +72,9 @@ export function RealEstateAssetsView() {
       case 'occupancy':
         return b.specificMetrics.occupancyRate - a.specificMetrics.occupancyRate;
       case 'yield':
-        return b.specificMetrics.noiYield - a.specificMetrics.noiYield;
+        return (b.specificMetrics?.noiYield || 0) - (a.specificMetrics?.noiYield || 0);
       case 'sqft':
-        return b.specificMetrics.totalSqFt - a.specificMetrics.totalSqFt;
+        return (b.specificMetrics?.totalSqFt || 0) - (a.specificMetrics?.totalSqFt || 0);
       default:
         return 0;
     }
@@ -82,7 +82,7 @@ export function RealEstateAssetsView() {
 
   const calculatePropertyTypeMetrics = () => {
     const typeMetrics = realEstateAssets.reduce((acc, asset) => {
-      const type = asset.specificMetrics.propertyType;
+      const type = asset.specificMetrics?.propertyType || 'unknown';
       if (!acc[type]) {
         acc[type] = {
           count: 0,
@@ -95,10 +95,10 @@ export function RealEstateAssetsView() {
       }
       acc[type].count++;
       acc[type].totalValue += asset.currentValue;
-      acc[type].totalSqFt += asset.specificMetrics.totalSqFt;
-      acc[type].avgOccupancy += asset.specificMetrics.occupancyRate;
-      acc[type].avgYield += asset.specificMetrics.noiYield;
-      acc[type].avgCapRate += asset.specificMetrics.capRate;
+      acc[type].totalSqFt += asset.specificMetrics?.totalSqFt || 0;
+      acc[type].avgOccupancy += asset.specificMetrics?.occupancyRate || 0;
+      acc[type].avgYield += asset.specificMetrics?.noiYield || 0;
+      acc[type].avgCapRate += asset.specificMetrics?.capRate || 0;
       return acc;
     }, {} as Record<string, any>);
 
@@ -115,10 +115,10 @@ export function RealEstateAssetsView() {
   const typeMetrics = calculatePropertyTypeMetrics();
 
   const portfolioMetrics = {
-    totalSqFt: realEstateAssets.reduce((sum, asset) => sum + asset.specificMetrics.totalSqFt, 0),
-    avgOccupancy: realEstateAssets.reduce((sum, asset) => sum + asset.specificMetrics.occupancyRate, 0) / realEstateAssets.length,
-    avgYield: realEstateAssets.reduce((sum, asset) => sum + asset.specificMetrics.noiYield, 0) / realEstateAssets.length,
-    avgCapRate: realEstateAssets.reduce((sum, asset) => sum + asset.specificMetrics.capRate, 0) / realEstateAssets.length,
+    totalSqFt: realEstateAssets.reduce((sum, asset) => sum + (asset.specificMetrics?.totalSqFt || 0), 0),
+    avgOccupancy: realEstateAssets.reduce((sum, asset) => sum + (asset.specificMetrics?.occupancyRate || 0), 0) / realEstateAssets.length,
+    avgYield: realEstateAssets.reduce((sum, asset) => sum + (asset.specificMetrics?.noiYield || 0), 0) / realEstateAssets.length,
+    avgCapRate: realEstateAssets.reduce((sum, asset) => sum + (asset.specificMetrics?.capRate || 0), 0) / realEstateAssets.length,
     totalTenants: realEstateAssets.reduce((sum, asset) => sum + asset.leaseInfo.majorTenants.length, 0),
   };
 
@@ -352,7 +352,7 @@ export function RealEstateAssetsView() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedAssets.map((asset) => {
-                const occupancyStatus = getOccupancyStatus(asset.specificMetrics.occupancyRate);
+                const occupancyStatus = getOccupancyStatus(asset.specificMetrics?.occupancyRate || 0);
                 return (
                   <tr key={asset.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -366,26 +366,26 @@ export function RealEstateAssetsView() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge className={getPropertyTypeColor(asset.specificMetrics.propertyType)}>
-                        {getPropertyTypeLabel(asset.specificMetrics.propertyType)}
+                      <Badge className={getPropertyTypeColor(asset.specificMetrics?.propertyType)}>
+                        {getPropertyTypeLabel(asset.specificMetrics?.propertyType)}
                       </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {formatCurrency(asset.currentValue)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {asset.specificMetrics.totalSqFt.toLocaleString()}
+                      {asset.specificMetrics?.totalSqFt?.toLocaleString() || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-1">
                           <div className={`text-sm font-medium ${occupancyStatus.color}`}>
-                            {formatPercentage(asset.specificMetrics.occupancyRate)}
+                            {formatPercentage(asset.specificMetrics?.occupancyRate || 0)}
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
                             <div
                               className="bg-blue-600 h-1.5 rounded-full"
-                              style={{ width: `${asset.specificMetrics.occupancyRate}%` }}
+                              style={{ width: `${asset.specificMetrics?.occupancyRate || 0}%` }}
                             ></div>
                           </div>
                         </div>
@@ -393,15 +393,15 @@ export function RealEstateAssetsView() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span className={
-                        asset.specificMetrics.noiYield >= 8 ? 'text-green-600' :
-                        asset.specificMetrics.noiYield >= 6 ? 'text-yellow-600' :
+                        (asset.specificMetrics?.noiYield || 0) >= 8 ? 'text-green-600' :
+                        (asset.specificMetrics?.noiYield || 0) >= 6 ? 'text-yellow-600' :
                         'text-red-600'
                       }>
-                        {formatPercentage(asset.specificMetrics.noiYield)}
+                        {formatPercentage(asset.specificMetrics?.noiYield || 0)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatPercentage(asset.specificMetrics.capRate)}
+                      {formatPercentage(asset.specificMetrics?.capRate || 0)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="space-y-1">
@@ -438,11 +438,11 @@ export function RealEstateAssetsView() {
                 <div>
                   <h4 className="font-medium text-gray-900">{asset.name}</h4>
                   <p className="text-sm text-gray-500">
-                    {formatPercentage(asset.specificMetrics.occupancyRate)} occupied • {asset.leaseInfo.majorTenants.length} tenants
+                    {formatPercentage(asset.specificMetrics?.occupancyRate || 0)} occupied • {asset.leaseInfo?.majorTenants?.length || 0} tenants
                   </p>
                 </div>
-                <Badge className={getPropertyTypeColor(asset.specificMetrics.propertyType)}>
-                  {getPropertyTypeLabel(asset.specificMetrics.propertyType)}
+                <Badge className={getPropertyTypeColor(asset.specificMetrics?.propertyType)}>
+                  {getPropertyTypeLabel(asset.specificMetrics?.propertyType)}
                 </Badge>
               </div>
               
@@ -456,7 +456,7 @@ export function RealEstateAssetsView() {
                       <div className="flex items-center space-x-2">
                         <span className="font-medium">{tenant.name}</span>
                         <span className="text-gray-500">
-                          ({formatPercentage(tenant.sqFt / asset.specificMetrics.totalSqFt * 100)} of space)
+                          ({formatPercentage((tenant.sqFt || 0) / (asset.specificMetrics?.totalSqFt || 1) * 100)} of space)
                         </span>
                       </div>
                       <div className="flex items-center space-x-2">
