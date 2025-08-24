@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/autonomous';
 import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
 import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
 import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
-import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored';
+import { useAutonomousStore } from '@/stores/autonomous-store';
 import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X } from 'lucide-react';
-import { PortfolioAutonomousContainer } from './containers/PortfolioAutonomousContainer';
 import { getAutonomousConfig, generateMockProjects, getAvailableActions, generateContextData } from '@/lib/autonomous-mode-config';
 import type { HybridMode } from '@/components/shared';
+import type { Project } from '@/stores/autonomous-store';
 
 interface PortfolioAutonomousProps {
   onSwitchMode?: (mode: HybridMode) => void;
@@ -21,38 +21,105 @@ interface PortfolioAutonomousProps {
 export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) {
   const {
     selectedProject,
-    projects,
     selectProject,
     setActiveProjectType,
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
     toggleContextPanel,
+    setPortfolioProjects,
     loadPortfolioProjects
-  } = useNavigationStoreRefactored();
+  } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(64); // Default header height in px
   const { exitAutonomous, navigateToModule } = useAutonomousMode();
 
-  // Initialize project type for portfolio using standardized config
+  // Initialize project type for portfolio using real data from SQLite
   React.useEffect(() => {
     setActiveProjectType('portfolio');
     
-    // Generate mock projects using standardized configuration
-    const mockProjects = generateMockProjects('portfolio', 5);
-    setPortfolioProjects(mockProjects);
-  }, [setActiveProjectType, setPortfolioProjects]);
+    // Load real portfolio projects from SQLite backend
+    const loadRealPortfolioData = async () => {
+      try {
+        await loadPortfolioProjects();
+      } catch (error) {
+        console.error('Failed to load portfolio projects:', error);
+        // Fallback to mock data if real data loading fails
+        const mockProjects = generateMockProjects('portfolio', 5);
+        const convertedProjects: Project[] = mockProjects.map(project => {
+          // Convert the project type to match ContextPanel's expected types
+          let convertedType: Project['type'];
+          if (project.type === 'dashboard' || project.type === 'workspace') {
+            convertedType = 'portfolio'; // Map dashboard/workspace to portfolio for ContextPanel
+          } else {
+            convertedType = project.type as Project['type'];
+          }
+          
+          return {
+            id: project.id,
+            name: project.name,
+            type: convertedType,
+            status: project.status === 'paused' ? 'draft' : project.status as Project['status'], // Convert paused to draft
+            lastActivity: project.lastActivity,
+            priority: project.priority,
+            unreadMessages: project.unreadMessages || 0, // Ensure number, not undefined
+            metadata: project.metadata || {}
+          };
+        });
+        setPortfolioProjects(convertedProjects);
+      }
+    };
+    
+    loadRealPortfolioData();
+  }, [setActiveProjectType, setPortfolioProjects, loadPortfolioProjects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
   };
+
+  // Update header height dynamically
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      const headerElement = document.getElementById('autonomous-portfolio-header');
+      if (headerElement) {
+        const height = headerElement.offsetHeight;
+        setHeaderHeight(height);
+        // Set CSS custom property for consistent spacing
+        document.documentElement.style.setProperty('--autonomous-header-height', `${height}px`);
+      }
+    };
+
+    updateHeaderHeight();
+    
+    // Update on window resize
+    window.addEventListener('resize', updateHeaderHeight);
+    
+    // Update when content changes (use MutationObserver for header content changes)
+    const headerElement = document.getElementById('autonomous-portfolio-header');
+    if (headerElement) {
+      const observer = new MutationObserver(updateHeaderHeight);
+      observer.observe(headerElement, { childList: true, subtree: true });
+      return () => {
+        observer.disconnect();
+        window.removeEventListener('resize', updateHeaderHeight);
+      };
+    }
+    
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, [selectedProject]);
 
   // If no project selected, show project-based autonomous interface
   if (!selectedProject) {
     return (
       <AutonomousLayout>
         {/* Header */}
-        <div className="autonomous-header px-4 py-3">
+        <div 
+          id="autonomous-portfolio-header"
+          className="autonomous-header px-4 py-3"
+        >
           <div className="flex items-center justify-between min-h-[56px]">
             <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
               <Button
@@ -164,7 +231,10 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
   return (
     <AutonomousLayout>
       {/* Header */}
-      <div className="autonomous-header px-4 py-3">
+      <div 
+        id="autonomous-portfolio-header"
+        className="autonomous-header px-4 py-3"
+      >
         <div className="flex items-center justify-between min-h-[56px]">
           <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
             <Button
@@ -262,18 +332,23 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
           </div>
         )}
 
-        {/* Autonomous Portfolio Container */}
-        <div className="flex-1 overflow-auto">
-          <PortfolioAutonomousContainer />
+        {/* Chat Interface */}
+        <div className="flex-1">
+          <ChatInterface
+            projectId={selectedProject?.id}
+            projectType="portfolio"
+          />
         </div>
 
         {/* Context Panel */}
-        {!contextPanelCollapsed && (
+        {!contextPanelCollapsed && selectedProject && (
           <ContextPanel
-            project={selectedProject ? {
+            project={{
               ...selectedProject,
-              metadata: generateContextData(selectedProject)
-            } : undefined}
+              type: selectedProject.type === 'dashboard' || selectedProject.type === 'workspace' 
+                ? 'portfolio' 
+                : selectedProject.type as 'portfolio' | 'deal' | 'company' | 'report' | 'analysis'
+            }}
             projectType="portfolio"
           />
         )}

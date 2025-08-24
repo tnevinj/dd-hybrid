@@ -119,7 +119,7 @@ export function RealEstateAssetsView() {
     avgOccupancy: realEstateAssets.reduce((sum, asset) => sum + (asset.specificMetrics?.occupancyRate || 0), 0) / realEstateAssets.length,
     avgYield: realEstateAssets.reduce((sum, asset) => sum + (asset.specificMetrics?.noiYield || 0), 0) / realEstateAssets.length,
     avgCapRate: realEstateAssets.reduce((sum, asset) => sum + (asset.specificMetrics?.capRate || 0), 0) / realEstateAssets.length,
-    totalTenants: realEstateAssets.reduce((sum, asset) => sum + asset.leaseInfo.majorTenants.length, 0),
+    totalTenants: realEstateAssets.reduce((sum, asset) => sum + (asset.leaseInfo?.majorTenants?.length || 0), 0),
   };
 
   if (realEstateAssets.length === 0) {
@@ -405,7 +405,7 @@ export function RealEstateAssetsView() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="space-y-1">
-                        {asset.leaseInfo.majorTenants.slice(0, 2).map((tenant, index) => (
+                        {asset.leaseInfo?.majorTenants?.slice(0, 2).map((tenant, index) => (
                           <div key={index} className="text-xs">
                             <span className="font-medium">{tenant.name}</span>
                             <span className="text-gray-500 ml-1">
@@ -413,9 +413,9 @@ export function RealEstateAssetsView() {
                             </span>
                           </div>
                         ))}
-                        {asset.leaseInfo.majorTenants.length > 2 && (
+                        {asset.leaseInfo?.majorTenants && asset.leaseInfo.majorTenants.length > 2 && (
                           <div className="text-xs text-gray-500">
-                            +{asset.leaseInfo.majorTenants.length - 2} more
+                            +{asset.leaseInfo?.majorTenants?.length - 2} more
                           </div>
                         )}
                       </div>
@@ -447,7 +447,7 @@ export function RealEstateAssetsView() {
               </div>
               
               <div className="space-y-2">
-                {asset.leaseInfo.majorTenants.slice(0, 3).map((tenant, index) => {
+                {asset.leaseInfo?.majorTenants?.slice(0, 3).map((tenant, index) => {
                   const expiryDate = new Date(tenant.leaseExpiry);
                   const isExpiringSoon = expiryDate < new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // Within 1 year
                   

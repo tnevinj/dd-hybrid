@@ -53,42 +53,25 @@ export function IndustryBenchmarkingDashboard({ mode = 'traditional' }: Industry
   const loadBenchmarkData = async () => {
     setLoading(true)
     
-    // Mock fund data - in real implementation, this would come from actual fund metrics
-    const mockFundData = {
-      portfolio: {
-        irr: 19.2,
-        moic: 2.6,
-        dpi: 0.72,
-        tvpi: 2.8
-      },
-      dueDiligence: {
-        ddDuration: 68,
-        ddAccuracy: 0.91,
-        riskIdentification: 0.88,
-        postDealPerformance: 0.84
-      },
-      legal: {
-        complianceScore: 97,
-        legalCosts: 0.023,
-        documentTurnaround: 6,
-        regulatoryIssues: 0.5
-      },
-      operations: {
-        operationalEfficiency: 0.92,
-        costRatio: 0.014,
-        dataAccuracy: 0.97,
-        reportingSpeed: 8
-      }
-    }
-
     try {
-      const benchmarkData = IndustryBenchmarkingEngine.generateComprehensiveBenchmarks(mockFundData)
+      // Fetch benchmark data from API instead of using hard-coded mock data
+      const response = await fetch('/api/analytics/benchmark-data');
+      if (!response.ok) {
+        throw new Error('Failed to fetch benchmark data');
+      }
+      
+      const fundData = await response.json();
+
+      const benchmarkData = IndustryBenchmarkingEngine.generateComprehensiveBenchmarks(fundData)
       setBenchmarks(benchmarkData)
 
       const benchmarkInsights = IndustryBenchmarkingEngine.getBenchmarkInsights(benchmarkData)
       setInsights(benchmarkInsights)
     } catch (error) {
       console.error('Error loading benchmark data:', error)
+      // Fallback to null if API fails
+      setBenchmarks(null);
+      setInsights([]);
     } finally {
       setLoading(false)
     }

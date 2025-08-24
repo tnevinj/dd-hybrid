@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PortfolioService } from '@/lib/services/database';
-import { InvestmentService } from '@/lib/services/database/investment-service';
+import { PortfolioService, PortfolioAssetService } from '@/lib/services/database';
 
 export async function GET(
   request: NextRequest,
@@ -19,50 +18,42 @@ export async function GET(
       );
     }
     
-    // Get investments for this portfolio using unified investments API
-    const investments = InvestmentService.getByPortfolioId(portfolioId);
+    // Get portfolio assets for this portfolio
+    const portfolioAssets = PortfolioAssetService.getByPortfolioId(portfolioId);
     
-    // Convert unified investments to portfolio assets format
-    const convertedAssets = investments.map(investment => ({
-      id: investment.id,
-      name: investment.name,
-      assetType: investment.asset_type,
-      description: investment.description,
-      acquisitionDate: investment.acquisition_date,
-      acquisitionValue: investment.acquisition_value ? investment.acquisition_value / 100 : 0, // Convert cents to dollars
-      currentValue: investment.current_value ? investment.current_value / 100 : 0, // Convert cents to dollars
+    // Convert portfolio assets to API format
+    const convertedAssets = portfolioAssets.map(asset => ({
+      id: asset.id,
+      name: asset.name,
+      assetType: asset.asset_type,
+      description: asset.description,
+      acquisitionDate: asset.acquisition_date,
+      acquisitionValue: asset.acquisition_value / 100, // Convert cents to dollars
+      currentValue: asset.current_value / 100, // Convert cents to dollars
       location: {
-        country: investment.location_country,
-        region: investment.location_region,
-        city: investment.location_city,
+        country: asset.location_country,
+        region: asset.location_region,
+        city: asset.location_city,
       },
       performance: {
-        irr: 0, // These would need to be calculated or stored separately
-        moic: 0,
-        totalReturn: 0,
+        irr: asset.irr,
+        moic: asset.moic,
+        totalReturn: asset.total_return,
       },
-      esgMetrics: investment.esg_scores ? {
-        environmentalScore: investment.esg_scores.environmental || 0,
-        socialScore: investment.esg_scores.social || 0,
-        governanceScore: investment.esg_scores.governance || 0,
-        overallScore: investment.esg_scores.overall || 0,
-        jobsCreated: investment.jobs_created,
-        carbonFootprint: investment.carbon_footprint,
-        sustainabilityCertifications: investment.sustainability_certifications || [],
-      } : {
-        environmentalScore: 0,
-        socialScore: 0,
-        governanceScore: 0,
-        overallScore: 0,
-        jobsCreated: 0,
-        carbonFootprint: 0,
-        sustainabilityCertifications: [],
+      esgMetrics: {
+        environmentalScore: asset.environmental_score || 0,
+        socialScore: asset.social_score || 0,
+        governanceScore: asset.governance_score || 0,
+        overallScore: asset.overall_esg_score || 0,
+        jobsCreated: asset.jobs_created,
+        carbonFootprint: asset.carbon_footprint,
+        sustainabilityCertifications: asset.sustainability_certifications || [],
       },
-      status: investment.status,
-      riskRating: investment.risk_rating,
-      sector: investment.sector,
-      tags: investment.tags || [],
-      specificMetrics: investment.specific_metrics || {},
+      status: asset.status,
+      riskRating: asset.risk_rating,
+      sector: asset.sector,
+      tags: asset.tags || [],
+      specificMetrics: asset.specific_metrics || {},
     }));
     
     const portfolioWithAssets = {

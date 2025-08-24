@@ -10,7 +10,7 @@ import { persist } from 'zustand/middleware'
 export interface Project {
   id: string
   name: string
-  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis'
+  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis' | 'dashboard' | 'workspace'
   status: 'active' | 'completed' | 'draft' | 'review'
   lastActivity: Date
   priority: 'high' | 'medium' | 'low'
@@ -84,6 +84,9 @@ interface AutonomousActions {
   // Data loading
   loadProjectsForType: (projectType: string) => Promise<void>
   initializeProjects: () => void
+  
+  // Portfolio specific
+  setPortfolioProjects: (projects: Project[]) => void
 }
 
 type AutonomousStore = AutonomousState & AutonomousActions
@@ -378,9 +381,169 @@ export const useAutonomousStore = create<AutonomousStore>()(
         }
       },
 
+      // Load dashboard projects from SQLite backend
+      loadDashboardProjects: async () => {
+        try {
+          // Fetch investments for dashboard module
+          const response = await fetch('/api/investments?module=dashboard')
+          if (response.ok) {
+            const investments = await response.json()
+            const projects: Project[] = investments.map((investment: any) => ({
+              id: investment.id,
+              name: investment.name,
+              type: 'dashboard',
+              status: investment.status || 'active',
+              lastActivity: new Date(investment.lastUpdated || new Date()),
+              priority: investment.riskRating === 'high' || investment.riskRating === 'critical' ? 'high' : 
+                       investment.riskRating === 'medium' ? 'medium' : 'low',
+              unreadMessages: 0,
+              metadata: {
+                value: investment.currentValue || investment.targetValue || 0,
+                progress: investment.status === 'active' ? 100 : 
+                         investment.status === 'due_diligence' ? 75 :
+                         investment.status === 'structuring' ? 50 : 25,
+                team: ['Investment Team'],
+                sector: investment.sector || 'Multi-Sector',
+                investmentType: investment.investmentType,
+                riskRating: investment.riskRating
+              }
+            }))
+            
+            get().setProjectsForType('dashboard', projects)
+          } else {
+            throw new Error(`API failed with status: ${response.status}`)
+          }
+        } catch (error) {
+          console.error('Failed to load dashboard projects:', error)
+          throw error // Re-throw to let components handle errors
+        }
+      },
+
+      // Load workspace projects from SQLite backend
+      loadWorkspaceProjects: async () => {
+        try {
+          // Fetch investments for workspace module
+          const response = await fetch('/api/investments?module=workspace')
+          if (response.ok) {
+            const investments = await response.json()
+            const projects: Project[] = investments.map((investment: any) => ({
+              id: investment.id,
+              name: investment.name,
+              type: 'workspace',
+              status: investment.status || 'active',
+              lastActivity: new Date(investment.lastUpdated || new Date()),
+              priority: investment.riskRating === 'high' || investment.riskRating === 'critical' ? 'high' : 
+                       investment.riskRating === 'medium' ? 'medium' : 'low',
+              unreadMessages: 0,
+              metadata: {
+                value: investment.currentValue || investment.targetValue || 0,
+                progress: investment.status === 'active' ? 100 : 
+                         investment.status === 'due_diligence' ? 75 :
+                         investment.status === 'structuring' ? 50 : 25,
+                team: ['Analysis Team'],
+                sector: investment.sector || 'Multi-Sector',
+                investmentType: investment.investmentType,
+                riskRating: investment.riskRating,
+                workspaceId: investment.workspaceId
+              }
+            }))
+            
+            get().setProjectsForType('workspace', projects)
+          } else {
+            throw new Error(`API failed with status: ${response.status}`)
+          }
+        } catch (error) {
+          console.error('Failed to load workspace projects:', error)
+          throw error // Re-throw to let components handle errors
+        }
+      },
+
+      // Load due diligence projects from SQLite backend
+      loadDueDiligenceProjects: async () => {
+        try {
+          // Fetch investments for due diligence module
+          const response = await fetch('/api/investments?module=due-diligence')
+          if (response.ok) {
+            const investments = await response.json()
+            const projects: Project[] = investments.map((investment: any) => ({
+              id: investment.id,
+              name: investment.name,
+              type: 'company',
+              status: investment.status || 'active',
+              lastActivity: new Date(investment.lastUpdated || new Date()),
+              priority: investment.riskRating === 'high' || investment.riskRating === 'critical' ? 'high' : 
+                       investment.riskRating === 'medium' ? 'medium' : 'low',
+              unreadMessages: 0,
+              metadata: {
+                value: investment.currentValue || investment.targetValue || 0,
+                progress: investment.status === 'active' ? 100 : 
+                         investment.status === 'due_diligence' ? 75 :
+                         investment.status === 'structuring' ? 50 : 25,
+                team: ['Due Diligence Team'],
+                sector: investment.sector || 'Multi-Sector',
+                investmentType: investment.investmentType,
+                riskRating: investment.riskRating,
+                dueDiligenceProjectId: investment.dueDiligenceProjectId
+              }
+            }))
+            
+            get().setProjectsForType('due-diligence', projects)
+          } else {
+            throw new Error(`API failed with status: ${response.status}`)
+          }
+        } catch (error) {
+          console.error('Failed to load due diligence projects:', error)
+          throw error // Re-throw to let components handle errors
+        }
+      },
+
+      // Load portfolio projects from SQLite backend
+      loadPortfolioProjects: async () => {
+        try {
+          // Fetch investments for portfolio module
+          const response = await fetch('/api/investments?module=portfolio')
+          if (response.ok) {
+            const investments = await response.json()
+            const projects: Project[] = investments.map((investment: any) => ({
+              id: investment.id,
+              name: investment.name,
+              type: 'portfolio',
+              status: investment.status || 'active',
+              lastActivity: new Date(investment.lastUpdated || new Date()),
+              priority: investment.riskRating === 'high' || investment.riskRating === 'critical' ? 'high' : 
+                       investment.riskRating === 'medium' ? 'medium' : 'low',
+              unreadMessages: 0,
+              metadata: {
+                value: investment.currentValue || investment.targetValue || 0,
+                progress: investment.status === 'active' ? 100 : 
+                         investment.status === 'due_diligence' ? 75 :
+                         investment.status === 'structuring' ? 50 : 25,
+                team: ['Portfolio Management'],
+                sector: investment.sector || 'Multi-Sector',
+                investmentType: investment.investmentType,
+                riskRating: investment.riskRating,
+                performance: investment.expectedReturn ? `${investment.expectedReturn}%` : 'N/A'
+              }
+            }))
+            
+            get().setProjectsForType('portfolio', projects)
+          } else {
+            throw new Error(`API failed with status: ${response.status}`)
+          }
+        } catch (error) {
+          console.error('Failed to load portfolio projects:', error)
+          throw error // Re-throw to let components handle errors
+        }
+      },
+
       // Initialize projects with mock data (useful for clearing cache)
       initializeProjects: () => {
         set({ projects: getInitialProjects() })
+      },
+
+      // Portfolio specific setter
+      setPortfolioProjects: (projects: Project[]) => {
+        get().setProjectsForType('portfolio', projects)
       }
     }),
     {

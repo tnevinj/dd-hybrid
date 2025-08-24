@@ -24,7 +24,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Trophy,
-  Search
+  Search,
+  Users
 } from 'lucide-react';
 
 import {
@@ -62,18 +63,16 @@ export function CrossModuleDashboard({ className }: CrossModuleDashboardProps) {
     try {
       setLoading(true);
       
-      // In a real implementation, this would fetch data from multiple modules
-      // For now, we'll use mock data
-      const mockData = {
-        portfolioData: { avgIRR: 19.2, avgMOIC: 2.1, avgDPI: 0.35 },
-        fundOperations: { avgProcessingTime: 4.8, automationRate: 0.72, errorRate: 0.015 },
-        legalCompliance: { complianceIssues: 2, overdueReminders: 1, complianceScore: 96 },
-        dealPipeline: { avgDealSize: 28000000, conversionRate: 0.18, qualityScore: 4.1 },
-        marketIntelligence: { accuracyRate: 0.86, dataFreshness: 0.92, sourceReliability: 0.91 }
-      };
+      // Fetch data from API instead of using hard-coded mock data
+      const response = await fetch('/api/analytics/cross-module');
+      if (!response.ok) {
+        throw new Error('Failed to fetch cross-module data');
+      }
+      
+      const crossModuleData = await response.json();
 
       // Calculate cross-module metrics
-      const calculatedMetrics = CrossModuleIntelligenceEngine.calculateCrossModuleMetrics(mockData);
+      const calculatedMetrics = CrossModuleIntelligenceEngine.calculateCrossModuleMetrics(crossModuleData);
       setMetrics(calculatedMetrics);
 
       // Generate insights
@@ -86,11 +85,11 @@ export function CrossModuleDashboard({ className }: CrossModuleDashboardProps) {
       setCorrelations(moduleCorrelations);
 
       // Generate predictive models
-      const models = CrossModuleIntelligenceEngine.generatePredictiveModels(mockData);
+      const models = CrossModuleIntelligenceEngine.generatePredictiveModels(crossModuleData);
       setPredictiveModels(models);
 
       // Generate industry benchmarks
-      const benchmarks = IndustryBenchmarkingEngine.generateComprehensiveBenchmarks(mockData);
+      const benchmarks = IndustryBenchmarkingEngine.generateComprehensiveBenchmarks(crossModuleData);
       setIndustryBenchmarks(benchmarks);
 
     } catch (error) {

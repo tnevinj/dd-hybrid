@@ -52,7 +52,7 @@ export function PerformanceChart({ title = "Portfolio Performance vs Benchmark" 
     // Generate realistic performance data over time
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const baseReturn = analytics.weightedIRR;
-    const benchmark = 0.12; // 12% benchmark
+    const benchmark = 0.10; // 10% benchmark for private equity/real assets
     
     return months.map((month, index) => {
       const portfolioReturn = baseReturn + (Math.random() - 0.5) * 0.1; // Add some variance
@@ -83,7 +83,7 @@ export function PerformanceChart({ title = "Portfolio Performance vs Benchmark" 
         <CardTitle className="flex items-center justify-between">
           {title}
           <Badge variant="outline">
-            YTD: +{((analytics.weightedIRR - 0.12) * 100).toFixed(1)}%
+            YTD: +{((analytics.weightedIRR - 0.10) * 100).toFixed(1)}%
           </Badge>
         </CardTitle>
       </CardHeader>

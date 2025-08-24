@@ -19,6 +19,7 @@ interface UnifiedPortfolioContextType {
   config: PortfolioConfig;
   analytics: PortfolioAnalytics | null;
   professionalMetrics: ProfessionalMetrics | null;
+  externalMetrics: any | null;
   
   // Core Actions
   loadPortfolios: () => Promise<void>;
@@ -170,12 +171,14 @@ interface UnifiedPortfolioProviderProps {
   children: ReactNode;
   config: PortfolioConfig;
   initialPortfolioId?: string;
+  externalMetrics?: any;
 }
 
 export function UnifiedPortfolioProvider({ 
   children, 
   config,
-  initialPortfolioId 
+  initialPortfolioId,
+  externalMetrics = null
 }: UnifiedPortfolioProviderProps) {
   const [state, dispatch] = useReducer(portfolioReducer, initialState);
   const [analytics, setAnalytics] = React.useState<PortfolioAnalytics | null>(null);
@@ -294,62 +297,19 @@ export function UnifiedPortfolioProvider({
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      // Use unified investments API to get all internal investments (portfolio assets)
-      const response = await fetch('/api/investments?investmentType=internal', {
+      // Use the portfolio API to get all portfolios with their assets
+      const response = await fetch('/api/portfolio', {
         method: 'GET',
         credentials: 'include',
       });
       
       if (!response.ok) {
-        throw new Error('Failed to load investments');
+        throw new Error('Failed to load portfolios');
       }
       
-      const investments = await response.json();
+      const data = await response.json();
+      const portfolios = data.portfolios;
       
-      // Group investments by portfolio to create portfolio objects
-      const portfolioMap = new Map<string, Portfolio>();
-      
-      investments.forEach((investment: any) => {
-        if (investment.portfolioId) {
-          if (!portfolioMap.has(investment.portfolioId)) {
-            portfolioMap.set(investment.portfolioId, {
-              id: investment.portfolioId,
-              name: `Portfolio ${investment.portfolioId}`,
-              description: `Portfolio containing investment assets`,
-              assetTypes: [],
-              assets: [],
-              totalValue: 0,
-              totalInvested: 0,
-              totalRealized: 0,
-              unrealizedValue: 0,
-              performanceMetrics: {
-                irr: 0,
-                moic: 0,
-                totalReturn: 0
-              },
-              riskProfile: 'medium' as const,
-              managerId: 'default',
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            });
-          }
-          
-          const portfolio = portfolioMap.get(investment.portfolioId)!;
-          const asset = convertInvestmentToAsset(investment);
-          
-          portfolio.assets.push(asset);
-          portfolio.totalValue += asset.currentValue;
-          portfolio.totalInvested += asset.acquisitionValue;
-          portfolio.unrealizedValue = portfolio.totalValue - portfolio.totalInvested;
-          
-          // Update asset types
-          if (!portfolio.assetTypes.includes(asset.assetType)) {
-            portfolio.assetTypes.push(asset.assetType);
-          }
-        }
-      });
-      
-      const portfolios = Array.from(portfolioMap.values());
       dispatch({ type: 'SET_PORTFOLIOS', payload: portfolios });
       
       // Set the first portfolio as current if available
@@ -360,7 +320,7 @@ export function UnifiedPortfolioProvider({
       console.error('Error loading portfolios:', error);
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Unknown error' });
     }
-  }, [convertInvestmentToAsset]);
+  }, []);
 
   const selectPortfolio = useCallback(async (portfolioId: string): Promise<void> => {
     dispatch({ type: 'SET_LOADING', payload: true });
@@ -546,8 +506,8 @@ export function UnifiedPortfolioProvider({
       esgScore,
       benchmarkComparison: {
         portfolio: weightedIRR,
-        benchmark: 0.12, // This would come from actual benchmark data
-        outperformance: weightedIRR - 0.12,
+        benchmark: 0.10, // Realistic benchmark for private equity/real assets
+        outperformance: weightedIRR - 0.10,
       },
     };
 
@@ -711,8 +671,8 @@ export function UnifiedPortfolioProvider({
           esgScore,
           benchmarkComparison: {
             portfolio: weightedIRR,
-            benchmark: 0.12,
-            outperformance: weightedIRR - 0.12,
+            benchmark: 0.10,
+            outperformance: weightedIRR - 0.10,
           },
         };
 
@@ -748,6 +708,7 @@ export function UnifiedPortfolioProvider({
     config,
     analytics,
     professionalMetrics,
+    externalMetrics,
     loadPortfolios,
     selectPortfolio,
     createAsset,
@@ -767,6 +728,7 @@ export function UnifiedPortfolioProvider({
     config,
     analytics,
     professionalMetrics,
+    externalMetrics,
     loadPortfolios,
     selectPortfolio,
     createAsset,

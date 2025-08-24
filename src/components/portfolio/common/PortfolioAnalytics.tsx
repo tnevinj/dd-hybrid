@@ -39,7 +39,7 @@ export function PortfolioAnalytics() {
     const riskData = Object.entries(analytics.riskDistribution).map(([risk, value]) => ({
       risk,
       value,
-      percentage: (value / analytics.totalPortfolioValue) * 100,
+      percentage: analytics.totalPortfolioValue > 0 ? (value / analytics.totalPortfolioValue) * 100 : 0,
       count: state.currentPortfolio!.assets.filter(asset => asset.riskRating === risk).length,
     }));
 
@@ -69,7 +69,7 @@ export function PortfolioAnalytics() {
       .map(([sector, value]) => ({
         sector,
         value,
-        percentage: (value / analytics.totalPortfolioValue) * 100,
+        percentage: analytics.totalPortfolioValue > 0 ? (value / analytics.totalPortfolioValue) * 100 : 0,
         count: state.currentPortfolio!.assets.filter(asset => asset.sector === sector).length,
       }))
       .sort((a, b) => b.value - a.value);
@@ -80,7 +80,7 @@ export function PortfolioAnalytics() {
       .map(([country, value]) => ({
         country,
         value,
-        percentage: (value / analytics.totalPortfolioValue) * 100,
+        percentage: analytics.totalPortfolioValue > 0 ? (value / analytics.totalPortfolioValue) * 100 : 0,
         count: state.currentPortfolio!.assets.filter(asset => asset.location.country === country).length,
       }))
       .sort((a, b) => b.value - a.value);
@@ -144,7 +144,7 @@ export function PortfolioAnalytics() {
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">
-              {((analytics.totalPortfolioValue - analytics.totalInvested) / analytics.totalInvested * 100).toFixed(1)}%
+              {analytics.totalInvested > 0 ? ((analytics.totalPortfolioValue - analytics.totalInvested) / analytics.totalInvested * 100).toFixed(1) : 0}%
             </div>
             <div className="text-sm text-gray-600">Risk-Adjusted Return</div>
           </div>
@@ -180,7 +180,7 @@ export function PortfolioAnalytics() {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">ESG Performance Distribution</h3>
         <div className="space-y-4">
           {Object.entries(esgDistribution).map(([category, value]) => {
-            const percentage = (value / analytics.totalPortfolioValue) * 100;
+            const percentage = analytics.totalPortfolioValue > 0 ? (value / analytics.totalPortfolioValue) * 100 : 0;
             const count = state.currentPortfolio!.assets.filter(asset => {
               const score = asset.esgMetrics.overallScore;
               const assetCategory = score >= 8 ? 'Excellent' : score >= 6 ? 'Good' : score >= 4 ? 'Fair' : 'Poor';

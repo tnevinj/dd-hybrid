@@ -59,98 +59,31 @@ export function InvestmentRecommendationDashboard({ mode = 'traditional' }: Inve
   }, [])
 
   const loadInvestmentData = async () => {
-    setLoading(true)
+    setLoading(true);
     
-    // Mock investment opportunities
-    const mockOpportunities: InvestmentOpportunity[] = [
-      {
-        dealId: 'DEAL-001',
-        companyName: 'TechFlow AI',
-        sector: 'Technology',
-        dealSize: 125000000,
-        requestedValuation: 500000000,
-        revenueGrowth: 0.45,
-        profitability: 0.18,
-        marketPosition: 'Leader',
-        managementQuality: 9,
-        competitiveAdvantages: ['Proprietary AI algorithms', 'Strong customer moats', 'Network effects', 'Patent portfolio'],
-        riskFactors: ['Technology disruption risk', 'Key person dependency'],
-        dealSource: 'Investment Bank',
-        timeline: '45 days'
-      },
-      {
-        dealId: 'DEAL-002',
-        companyName: 'HealthTech Solutions',
-        sector: 'Healthcare',
-        dealSize: 85000000,
-        requestedValuation: 340000000,
-        revenueGrowth: 0.28,
-        profitability: 0.22,
-        marketPosition: 'Strong',
-        managementQuality: 8,
-        competitiveAdvantages: ['FDA approvals', 'Hospital partnerships', 'Clinical data'],
-        riskFactors: ['Regulatory changes', 'Reimbursement risk'],
-        dealSource: 'Direct Approach',
-        timeline: '60 days'
-      },
-      {
-        dealId: 'DEAL-003',
-        companyName: 'FinServ Innovations',
-        sector: 'Financial Services',
-        dealSize: 200000000,
-        requestedValuation: 800000000,
-        revenueGrowth: 0.15,
-        profitability: 0.25,
-        marketPosition: 'Growing',
-        managementQuality: 7,
-        competitiveAdvantages: ['Regulatory licenses', 'Customer data', 'Technology platform'],
-        riskFactors: ['Regulatory risk', 'Competition from incumbents', 'Technology obsolescence'],
-        dealSource: 'Investment Bank',
-        timeline: '90 days'
-      },
-      {
-        dealId: 'DEAL-004',
-        companyName: 'EcoManufacturing Corp',
-        sector: 'Industrial',
-        dealSize: 150000000,
-        requestedValuation: 450000000,
-        revenueGrowth: 0.12,
-        profitability: 0.14,
-        marketPosition: 'Emerging',
-        managementQuality: 6,
-        competitiveAdvantages: ['Sustainable processes', 'Cost efficiency'],
-        riskFactors: ['Commodity price volatility', 'Environmental regulations', 'Market cyclicality'],
-        dealSource: 'Proprietary',
-        timeline: '75 days'
-      },
-      {
-        dealId: 'DEAL-005',
-        companyName: 'Consumer Direct Co',
-        sector: 'Consumer',
-        dealSize: 75000000,
-        requestedValuation: 300000000,
-        revenueGrowth: 0.35,
-        profitability: 0.08,
-        marketPosition: 'Growing',
-        managementQuality: 8,
-        competitiveAdvantages: ['Brand loyalty', 'Direct-to-consumer model'],
-        riskFactors: ['Supply chain disruption', 'Consumer spending volatility'],
-        dealSource: 'Direct Approach',
-        timeline: '50 days'
-      }
-    ]
-
     try {
-      setOpportunities(mockOpportunities)
-      const recs = engine.generatePortfolioRecommendations(mockOpportunities)
-      setRecommendations(recs)
+      // Fetch investment opportunities from API instead of using hard-coded mock data
+      const response = await fetch('/api/analytics/investment-opportunities');
+      if (!response.ok) {
+        throw new Error('Failed to fetch investment opportunities');
+      }
       
-      const analyticsData = engine.getRecommendationAnalytics(recs)
-      setAnalytics(analyticsData)
+      const opportunities = await response.json();
+      setOpportunities(opportunities);
+      
+      const recs = engine.generatePortfolioRecommendations(opportunities);
+      setRecommendations(recs);
+      
+      const analyticsData = engine.getRecommendationAnalytics(recs);
+      setAnalytics(analyticsData);
     } catch (error) {
-      console.error('Error loading investment data:', error)
+      console.error('Error loading investment data:', error);
+      // Fallback to empty arrays if API fails
+      setOpportunities([]);
+      setRecommendations([]);
+      setAnalytics({});
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 

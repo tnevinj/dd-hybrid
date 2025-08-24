@@ -8,12 +8,13 @@ import { Progress } from '@/components/ui/progress';
 import { AssetType } from '@/types/portfolio';
 
 export function PortfolioOverview() {
-  let state, analytics;
+  let state, analytics, externalMetrics;
   
   try {
     const context = useUnifiedPortfolio();
     state = context.state;
     analytics = context.analytics;
+    externalMetrics = context.externalMetrics;
   } catch (error) {
     // Context not available, show fallback UI
     return (
@@ -119,7 +120,7 @@ export function PortfolioOverview() {
           </div>
           <div className="mt-4 flex items-center text-sm">
             <span className="text-green-600">
-              +{formatPercentage((analytics.totalPortfolioValue - analytics.totalInvested) / analytics.totalInvested)}
+              +{analytics.totalInvested > 0 ? formatPercentage((analytics.totalPortfolioValue - analytics.totalInvested) / analytics.totalInvested) : '0%'}
             </span>
             <span className="text-gray-500 ml-1">vs invested</span>
           </div>
@@ -184,6 +185,65 @@ export function PortfolioOverview() {
         </Card>
       </div>
 
+      {/* External Metrics Section (if available) */}
+      {externalMetrics && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {externalMetrics.totalAssets && (
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Assets</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {externalMetrics.totalAssets}
+                  </p>
+                </div>
+                <div className="p-3 bg-indigo-100 rounded-full">
+                  <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {externalMetrics.performanceYTD && (
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">YTD Performance</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {externalMetrics.performanceYTD}%
+                  </p>
+                </div>
+                <div className="p-3 bg-orange-100 rounded-full">
+                  <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {externalMetrics.aiEfficiencyGains && (
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">AI Efficiency</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    +{externalMetrics.aiEfficiencyGains}%
+                  </p>
+                </div>
+                <div className="p-3 bg-teal-100 rounded-full">
+                  <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+              </div>
+            </Card>
+          )}
+        </div>
+      )}
+
       {/* Asset Allocation and Composition */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Asset Type Allocation */}
@@ -191,7 +251,7 @@ export function PortfolioOverview() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Asset Type Allocation</h3>
           <div className="space-y-4">
             {Object.entries(analytics.assetAllocation).map(([assetType, value]) => {
-              const percentage = (value / analytics.totalPortfolioValue) * 100;
+              const percentage = analytics.totalPortfolioValue > 0 ? (value / analytics.totalPortfolioValue) * 100 : 0;
               return (
                 <div key={assetType} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -225,7 +285,7 @@ export function PortfolioOverview() {
               .sort(([, a], [, b]) => b - a)
               .slice(0, 5)
               .map(([country, value]) => {
-                const percentage = (value / analytics.totalPortfolioValue) * 100;
+                const percentage = analytics.totalPortfolioValue > 0 ? (value / analytics.totalPortfolioValue) * 100 : 0;
                 return (
                   <div key={country} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -254,7 +314,7 @@ export function PortfolioOverview() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Risk Distribution</h3>
           <div className="space-y-3">
             {Object.entries(analytics.riskDistribution).map(([risk, value]) => {
-              const percentage = (value / analytics.totalPortfolioValue) * 100;
+              const percentage = analytics.totalPortfolioValue > 0 ? (value / analytics.totalPortfolioValue) * 100 : 0;
               const count = currentPortfolio.assets.filter(asset => asset.riskRating === risk).length;
               return (
                 <div key={risk} className="flex items-center justify-between">

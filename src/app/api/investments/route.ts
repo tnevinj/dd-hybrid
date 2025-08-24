@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     const sector = searchParams.get('sector');
     const portfolioId = searchParams.get('portfolioId');
     const workspaceId = searchParams.get('workspaceId');
+    const module = searchParams.get('module');
     
     // Get investments from database
     let investments;
@@ -24,6 +25,54 @@ export async function GET(request: NextRequest) {
       investments = InvestmentService.getByWorkspaceId(workspaceId);
     } else {
       investments = InvestmentService.getAll();
+    }
+    
+    // Apply module-specific filtering
+    if (module) {
+      switch (module) {
+        case 'dashboard':
+          // Dashboard: Show all investments with focus on active and recent ones
+          investments = investments.filter(inv => 
+            inv.status === 'active' || 
+            inv.status === 'due_diligence' ||
+            inv.status === 'structuring'
+          );
+          break;
+          
+        case 'deal-screening':
+          // Deal Screening: Focus on external investments for assessment
+          investments = investments.filter(inv => 
+            inv.investment_type === 'external' && 
+            (inv.status === 'screening' || inv.status === 'due_diligence')
+          );
+          break;
+          
+        case 'due-diligence':
+          // Due Diligence: Active due diligence processes
+          investments = investments.filter(inv => 
+            inv.status === 'due_diligence'
+          );
+          break;
+          
+        case 'portfolio':
+          // Portfolio: Current active holdings
+          investments = investments.filter(inv => 
+            inv.status === 'active' && 
+            inv.investment_type === 'internal'
+          );
+          break;
+          
+        case 'workspace':
+          // Workspace: Investments associated with workspaces for analysis
+          investments = investments.filter(inv => 
+            inv.workspace_id != null
+          );
+          break;
+          
+        default:
+          // No additional filtering for unknown modules
+          break;
+      }
     }
     
     // Apply filters
