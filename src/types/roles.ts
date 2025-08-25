@@ -366,6 +366,15 @@ export const getAllNavigationItems = (): RoleBasedNavigationItem[] => {
       category: 'primary'
     },
     {
+      id: 'exits',
+      label: 'Exit Management',
+      icon: 'TrendingUp',
+      href: '/exits',
+      requiredPermissions: [],
+      allowedRoles: [],
+      category: 'primary'
+    },
+    {
       id: 'fund-operations',
       label: 'Fund Operations',
       icon: 'Building',
@@ -460,7 +469,6 @@ export const getAllNavigationItems = (): RoleBasedNavigationItem[] => {
       label: 'Workspaces',
       icon: 'Layout',
       href: '/workspaces',
-      description: 'Collaborative workspaces for deal analysis and documentation',
       requiredPermissions: [],
       allowedRoles: [],
       category: 'primary'
@@ -470,7 +478,6 @@ export const getAllNavigationItems = (): RoleBasedNavigationItem[] => {
       label: 'Access Control',
       icon: 'Users',
       href: '/role-demo',
-      description: 'Role-based access control and permissions overview',
       requiredPermissions: [],
       allowedRoles: [],
       category: 'secondary'

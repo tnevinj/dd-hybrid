@@ -99,14 +99,15 @@ const navigation: NavigationItem[] = [
     ]
   },
   {
+    name: 'Exit Management',
+    href: '/exits',
+    icon: TrendingUp,
+    aiEnhanced: true
+  },
+  {
     name: 'Workspaces',
     href: '/workspaces',
-    icon: Users,
-    children: [
-      { name: 'My Workspaces', href: '/workspaces', icon: Home },
-      { name: 'Collaboration', href: '/workspaces/collaboration', icon: Users },
-      { name: 'Work Products', href: '/workspaces/work-products', icon: FileText },
-    ]
+    icon: Users
   },
   {
     name: 'Settings',

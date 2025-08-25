@@ -47,8 +47,7 @@ const defaultNavigationItems: NavigationItem[] = [
     label: 'Workspaces',
     icon: 'FolderOpen',
     href: '/workspaces',
-    aiEnhanced: true,
-    description: 'Manage and organize your work projects'
+    aiEnhanced: true
   },
   {
     id: 'deal-screening',
@@ -81,6 +80,14 @@ const defaultNavigationItems: NavigationItem[] = [
     href: '/portfolio',
     aiEnhanced: true,
     description: 'Portfolio management with analytics and optimization'
+  },
+  {
+    id: 'exits',
+    label: 'Exit Management',
+    icon: 'TrendingUp',
+    href: '/exits',
+    aiEnhanced: true,
+    description: 'Comprehensive exit strategy and process management'
   },
   {
     id: 'investment-committee',
@@ -159,8 +166,7 @@ const defaultNavigationItems: NavigationItem[] = [
     label: 'Admin Management',
     icon: 'Settings',
     href: '/admin-management',
-    aiEnhanced: false,
-    description: 'System administration and user management'
+    aiEnhanced: false
   }
 ]
 

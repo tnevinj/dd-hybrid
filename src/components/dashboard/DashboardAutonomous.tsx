@@ -168,30 +168,38 @@ export function DashboardAutonomous({
       </div>
 
       {/* Main Layout */}
-      <div className="autonomous-content">
+      <div 
+        className="autonomous-content"
+        style={{ height: 'calc(100vh - var(--autonomous-header-height))' }}
+      >
         {/* Project Selector Sidebar */}
         {!sidebarCollapsed && (
-          <ProjectSelector
-            projectType="dashboard"
-            selectedProjectId={selectedProject?.id}
-            onProjectSelect={handleProjectSelect}
-          />
+          <div className="overflow-y-auto">
+            <ProjectSelector
+              projectType="dashboard"
+              selectedProjectId={selectedProject?.id}
+              onProjectSelect={handleProjectSelect}
+            />
+          </div>
         )}
 
         {/* Chat Interface */}
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col">
           <ChatInterface
             projectId={selectedProject?.id}
             projectType="dashboard"
+            className="flex-1"
           />
         </div>
 
         {/* Context Panel */}
         {!contextPanelCollapsed && (
-          <ContextPanel
-            project={selectedProject || undefined}
-            projectType="dashboard"
-          />
+          <div className="overflow-y-auto">
+            <ContextPanel
+              project={selectedProject || undefined}
+              projectType="dashboard"
+            />
+          </div>
         )}
       </div>
     </AutonomousLayout>

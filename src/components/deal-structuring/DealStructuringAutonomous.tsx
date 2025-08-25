@@ -161,9 +161,12 @@ export function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAuton
       </div>
 
       {/* Main content with 3-panel layout */}
-      <div className="autonomous-content">
+      <div 
+        className="autonomous-content"
+        style={{ height: 'calc(100vh - var(--autonomous-header-height))' }}
+      >
           {/* Project Selector - Left Panel */}
-          <div className={`${sidebarCollapsed ? 'w-0' : 'w-80'} transition-all duration-300 overflow-hidden border-r border-gray-200 bg-white`}>
+          <div className={`${sidebarCollapsed ? 'w-0' : 'w-80'} transition-all duration-300 overflow-hidden border-r border-gray-200 bg-white overflow-y-auto`}>
           <ProjectSelector
             selectedProjectId={selectedProject?.id}
             onProjectSelect={handleProjectSelect}
@@ -284,7 +287,7 @@ Focus on being proactive and providing actionable insights while maintaining tra
           </div>
 
           {/* Context Panel - Right Panel */}
-          <div className={`${contextPanelCollapsed ? 'w-0' : 'w-80'} transition-all duration-300 overflow-hidden border-l border-gray-200 bg-white`}>
+          <div className={`${contextPanelCollapsed ? 'w-0' : 'w-80'} transition-all duration-300 overflow-hidden border-l border-gray-200 bg-white overflow-y-auto`}>
             <ContextPanel
               project={selectedProject}
               projectType="deal-structuring"

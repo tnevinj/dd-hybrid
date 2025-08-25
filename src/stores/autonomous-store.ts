@@ -10,7 +10,7 @@ import { persist } from 'zustand/middleware'
 export interface Project {
   id: string
   name: string
-  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis' | 'dashboard' | 'workspace'
+  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis' | 'dashboard' | 'workspace' | 'exit'
   status: 'active' | 'completed' | 'draft' | 'review'
   lastActivity: Date
   priority: 'high' | 'medium' | 'low'
@@ -87,6 +87,9 @@ interface AutonomousActions {
   
   // Portfolio specific
   setPortfolioProjects: (projects: Project[]) => void
+  
+  // Exit specific
+  setExitProjects: (projects: Project[]) => void
 }
 
 type AutonomousStore = AutonomousState & AutonomousActions
@@ -544,6 +547,11 @@ export const useAutonomousStore = create<AutonomousStore>()(
       // Portfolio specific setter
       setPortfolioProjects: (projects: Project[]) => {
         get().setProjectsForType('portfolio', projects)
+      },
+
+      // Exit specific setter
+      setExitProjects: (projects: Project[]) => {
+        get().setProjectsForType('exit', projects)
       }
     }),
     {

@@ -288,6 +288,94 @@ export const AUTONOMOUS_CONFIGS: Record<string, ModuleAutonomousConfig> = {
     ]
   },
 
+  'exit': {
+    moduleId: 'exit',
+    systemPrompt: 'You are an AI exit management specialist with expertise in exit strategy optimization, market timing, and exit process orchestration. Your capabilities include: exit opportunity identification and scoring, market timing analysis and predictions, autonomous exit preparation workflows, valuation modeling and optimization, and stakeholder coordination and communications. Provide strategic exit insights with clear timing recommendations and actionable next steps.',
+    availableActions: [
+      {
+        id: 'exit-opportunity-analysis',
+        label: 'Exit Opportunity Analysis',
+        description: 'Comprehensive analysis of exit readiness and market opportunities',
+        category: 'analysis',
+        estimatedTime: 45,
+        complexity: 'high'
+      },
+      {
+        id: 'market-timing-analysis',
+        label: 'Market Timing Analysis',
+        description: 'AI-driven market timing assessment and optimal window identification',
+        category: 'analysis',
+        estimatedTime: 30,
+        complexity: 'medium'
+      },
+      {
+        id: 'valuation-modeling',
+        label: 'Exit Valuation Modeling',
+        description: 'Advanced valuation modeling with multiple methodologies',
+        category: 'modeling',
+        estimatedTime: 60,
+        complexity: 'high',
+        requiresApproval: true
+      },
+      {
+        id: 'process-automation',
+        label: 'Exit Process Automation',
+        description: 'Automated exit preparation workflow and task management',
+        category: 'automation',
+        estimatedTime: 35,
+        complexity: 'medium'
+      },
+      {
+        id: 'buyer-identification',
+        label: 'Strategic Buyer Analysis',
+        description: 'Identify and analyze potential strategic and financial buyers',
+        category: 'insights',
+        estimatedTime: 40,
+        complexity: 'medium'
+      },
+      {
+        id: 'exit-forecasting',
+        label: 'Exit Performance Forecasting',
+        description: 'Predictive modeling of exit outcomes and returns',
+        category: 'forecasting',
+        estimatedTime: 50,
+        complexity: 'high'
+      }
+    ],
+    projectTypes: [
+      {
+        id: 'exit-opportunity',
+        label: 'Exit Opportunity',
+        description: 'Individual company exit preparation and management',
+        defaultActions: ['exit-opportunity-analysis', 'market-timing-analysis']
+      },
+      {
+        id: 'portfolio-exit',
+        label: 'Portfolio Exit Strategy',
+        description: 'Multi-company exit portfolio optimization',
+        defaultActions: ['exit-forecasting', 'market-timing-analysis']
+      },
+      {
+        id: 'market-analysis',
+        label: 'Exit Market Analysis',
+        description: 'Sector-wide exit market intelligence and timing',
+        defaultActions: ['market-timing-analysis', 'buyer-identification']
+      }
+    ],
+    contextPanelSections: [
+      {
+        id: 'exit-pipeline',
+        title: 'Exit Pipeline',
+        data: { active: 5, pipeline_value: '$450M', avg_score: 8.2 }
+      },
+      {
+        id: 'market-conditions',
+        title: 'Market Conditions',
+        data: { timing: 'excellent', sector_performance: '+15%', volatility: 'low' }
+      }
+    ]
+  },
+
   'due-diligence': {
     moduleId: 'due-diligence',
     systemPrompt: 'You are an AI due diligence specialist with expertise in comprehensive investment analysis, document review, and risk assessment. Your capabilities include: automated document analysis and extraction, financial and operational due diligence, regulatory and compliance review, management team assessment, and risk identification and mitigation. Provide thorough due diligence insights with clear risk ratings.',
@@ -460,6 +548,20 @@ function generateProjectMetadata(moduleId: string, projectType: string): Record<
         documentsReviewed: Math.floor(Math.random() * 150) + 50,
         findings: Math.floor(Math.random() * 20) + 5,
         riskRating: ['Low', 'Medium', 'High', 'Critical'][Math.floor(Math.random() * 4)]
+      }
+
+    case 'exit':
+      return {
+        ...baseMetadata,
+        companyName: ['TechFlow Solutions', 'HealthTech Innovations', 'GreenEnergy Dynamics', 'DataCorp Analytics', 'BioVentures Inc.'][Math.floor(Math.random() * 5)],
+        exitStrategy: ['Strategic Sale', 'IPO', 'Management Buyout', 'Secondary Sale'][Math.floor(Math.random() * 4)],
+        currentValuation: ['$85M', '$150M', '$220M', '$340M'][Math.floor(Math.random() * 4)],
+        targetValue: ['$120M', '$200M', '$280M', '$450M'][Math.floor(Math.random() * 4)],
+        aiExitScore: Math.floor(Math.random() * 30) + 70,
+        marketTiming: ['excellent', 'good', 'fair'][Math.floor(Math.random() * 3)],
+        holdingPeriod: Math.floor(Math.random() * 4) + 2 + ' years',
+        expectedIRR: (Math.random() * 15 + 15).toFixed(1) + '%',
+        sector: ['Technology', 'Healthcare', 'Energy', 'Financial Services'][Math.floor(Math.random() * 4)]
       }
 
     default:

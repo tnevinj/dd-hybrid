@@ -679,6 +679,316 @@ const initSchema = () => {
     );
   `);
 
+  // Exit Management tables - comprehensive exit strategy and process management
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exit_opportunities (
+      id TEXT PRIMARY KEY,
+      portfolio_asset_id TEXT REFERENCES portfolio_assets(id) ON DELETE CASCADE,
+      investment_id TEXT REFERENCES investments(id) ON DELETE CASCADE,
+      workspace_id TEXT REFERENCES workspaces(id) ON DELETE SET NULL,
+      company_name TEXT NOT NULL,
+      sector TEXT,
+      exit_strategy TEXT NOT NULL, -- 'ipo', 'strategic-sale', 'secondary-sale', 'management-buyout', 'dividend-recapitalization', 'other'
+      status TEXT DEFAULT 'planning', -- 'planning', 'preparation', 'execution', 'completed', 'cancelled'
+      preparation_stage TEXT DEFAULT 'not-started', -- 'not-started', 'planning', 'preparation', 'execution', 'completed'
+      progress INTEGER DEFAULT 0, -- Progress percentage 0-100
+      
+      -- Valuation and financial data
+      current_valuation INTEGER, -- Current valuation in cents
+      target_exit_value INTEGER, -- Target exit value in cents
+      ai_predicted_value INTEGER, -- AI-predicted exit value in cents
+      original_investment INTEGER, -- Original investment amount in cents
+      expected_irr REAL, -- Expected IRR
+      expected_moic REAL, -- Expected multiple on invested capital
+      
+      -- Timing
+      target_exit_date DATE,
+      ai_optimal_exit_date DATE, -- AI-suggested optimal timing
+      actual_exit_date DATE,
+      holding_period_months INTEGER,
+      
+      -- Market conditions and scoring
+      market_timing_score REAL DEFAULT 0, -- 0-10 market timing assessment
+      ai_exit_score REAL DEFAULT 0, -- 0-10 AI-driven exit readiness score
+      market_conditions TEXT DEFAULT 'fair', -- 'excellent', 'good', 'fair', 'poor'
+      
+      -- Process management
+      exit_team_lead TEXT,
+      exit_advisors JSON DEFAULT '[]', -- Array of external advisors
+      potential_buyers JSON DEFAULT '[]', -- Array of potential buyers/acquirers
+      key_selling_points JSON DEFAULT '[]', -- Array of key selling points
+      areas_for_improvement JSON DEFAULT '[]', -- Areas needing improvement before exit
+      
+      -- Documentation and compliance
+      exit_memo_id TEXT, -- Reference to exit memo work product
+      valuation_report_id TEXT, -- Reference to valuation report
+      legal_documents JSON DEFAULT '[]', -- Array of legal document references
+      compliance_status TEXT DEFAULT 'pending', -- 'pending', 'in-progress', 'completed'
+      
+      -- AI insights and automation
+      ai_insights JSON DEFAULT '[]', -- Array of AI-generated insights
+      automation_level TEXT DEFAULT 'manual', -- 'manual', 'assisted', 'autonomous'
+      
+      -- Metadata
+      priority TEXT DEFAULT 'medium', -- 'low', 'medium', 'high'
+      risk_factors JSON DEFAULT '[]', -- Array of identified risks
+      mitigation_strategies JSON DEFAULT '[]', -- Array of risk mitigation strategies
+      
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exit_processes (
+      id TEXT PRIMARY KEY,
+      exit_opportunity_id TEXT NOT NULL REFERENCES exit_opportunities(id) ON DELETE CASCADE,
+      process_name TEXT NOT NULL,
+      process_category TEXT NOT NULL, -- 'financial', 'legal', 'operational', 'marketing', 'strategic', 'compliance'
+      status TEXT DEFAULT 'not-started', -- 'not-started', 'in-progress', 'completed', 'on-hold', 'cancelled'
+      
+      -- Process details
+      description TEXT,
+      owner TEXT, -- Process owner/responsible party
+      team_members JSON DEFAULT '[]', -- Array of team members involved
+      dependencies JSON DEFAULT '[]', -- Array of dependent process IDs
+      
+      -- Timeline
+      start_date DATE,
+      target_completion_date DATE,
+      actual_completion_date DATE,
+      estimated_hours INTEGER,
+      actual_hours INTEGER,
+      
+      -- Progress and quality
+      progress INTEGER DEFAULT 0, -- Progress percentage 0-100
+      quality_score REAL DEFAULT 0, -- Quality assessment 0-10
+      automation_level TEXT DEFAULT 'manual', -- 'manual', 'assisted', 'autonomous'
+      
+      -- Tasks and deliverables
+      tasks JSON DEFAULT '[]', -- Array of process tasks
+      deliverables JSON DEFAULT '[]', -- Array of expected deliverables
+      documents JSON DEFAULT '[]', -- Array of related documents
+      
+      -- AI enhancement
+      ai_recommendations JSON DEFAULT '[]', -- AI-generated process recommendations
+      ai_risk_assessment JSON DEFAULT '{}', -- AI risk assessment for this process
+      
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exit_tasks (
+      id TEXT PRIMARY KEY,
+      exit_opportunity_id TEXT NOT NULL REFERENCES exit_opportunities(id) ON DELETE CASCADE,
+      exit_process_id TEXT REFERENCES exit_processes(id) ON DELETE CASCADE,
+      task_name TEXT NOT NULL,
+      task_category TEXT NOT NULL, -- 'financial', 'legal', 'operational', 'marketing', 'strategic', 'compliance'
+      
+      -- Task details
+      description TEXT,
+      priority TEXT DEFAULT 'medium', -- 'low', 'medium', 'high', 'critical'
+      status TEXT DEFAULT 'pending', -- 'pending', 'in-progress', 'completed', 'on-hold', 'cancelled'
+      
+      -- Assignment and ownership
+      assignee TEXT,
+      reviewer TEXT,
+      approver TEXT,
+      
+      -- Timeline
+      due_date DATE,
+      completion_date DATE,
+      estimated_hours INTEGER,
+      actual_hours INTEGER,
+      
+      -- Dependencies and blocking
+      dependencies JSON DEFAULT '[]', -- Array of dependent task IDs
+      blocking_factors JSON DEFAULT '[]', -- Array of factors blocking completion
+      
+      -- Progress and deliverables
+      progress INTEGER DEFAULT 0, -- Progress percentage 0-100
+      deliverables JSON DEFAULT '[]', -- Array of task deliverables
+      documents JSON DEFAULT '[]', -- Array of related documents
+      notes TEXT,
+      
+      -- AI automation
+      automation_eligible BOOLEAN DEFAULT FALSE,
+      ai_suggestions JSON DEFAULT '[]', -- AI suggestions for task completion
+      
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exit_market_intelligence (
+      id TEXT PRIMARY KEY,
+      exit_opportunity_id TEXT REFERENCES exit_opportunities(id) ON DELETE CASCADE,
+      sector TEXT NOT NULL,
+      geography TEXT,
+      
+      -- Market timing and conditions
+      market_timing_score REAL DEFAULT 0, -- 0-10 market timing assessment
+      market_conditions TEXT DEFAULT 'fair', -- 'excellent', 'good', 'fair', 'poor'
+      market_trends JSON DEFAULT '[]', -- Array of relevant market trends
+      
+      -- Valuation multiples and benchmarks
+      peer_multiples JSON DEFAULT '{}', -- Peer company valuation multiples
+      transaction_multiples JSON DEFAULT '{}', -- Recent transaction multiples
+      public_market_multiples JSON DEFAULT '{}', -- Public market multiples
+      
+      -- Buyer landscape
+      strategic_buyers JSON DEFAULT '[]', -- Array of potential strategic buyers
+      financial_buyers JSON DEFAULT '[]', -- Array of potential financial buyers
+      competitive_landscape JSON DEFAULT '[]', -- Competitive landscape analysis
+      
+      -- Market data sources
+      data_sources JSON DEFAULT '[]', -- Array of data sources used
+      data_freshness_date DATE,
+      confidence_score REAL DEFAULT 0, -- 0-1 confidence in market intelligence
+      
+      -- AI analysis
+      ai_market_insights JSON DEFAULT '[]', -- AI-generated market insights
+      ai_timing_recommendation TEXT, -- AI recommendation on market timing
+      ai_strategy_recommendations JSON DEFAULT '[]', -- AI strategy recommendations
+      
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exit_valuations (
+      id TEXT PRIMARY KEY,
+      exit_opportunity_id TEXT NOT NULL REFERENCES exit_opportunities(id) ON DELETE CASCADE,
+      valuation_type TEXT NOT NULL, -- 'dcf', 'comparable-companies', 'precedent-transactions', 'asset-based', 'ai-model'
+      valuation_date DATE DEFAULT (date('now')),
+      
+      -- Valuation results
+      enterprise_value INTEGER, -- Enterprise value in cents
+      equity_value INTEGER, -- Equity value in cents
+      per_share_value INTEGER, -- Per share value in cents
+      valuation_multiple REAL, -- Valuation multiple (EV/Revenue, EV/EBITDA, etc.)
+      
+      -- Methodology and assumptions
+      methodology_description TEXT,
+      key_assumptions JSON DEFAULT '{}', -- Key valuation assumptions
+      sensitivity_analysis JSON DEFAULT '{}', -- Sensitivity analysis results
+      discount_rate REAL, -- Discount rate used
+      terminal_growth_rate REAL, -- Terminal growth rate
+      
+      -- Market comparables
+      comparable_companies JSON DEFAULT '[]', -- Array of comparable companies
+      transaction_comparables JSON DEFAULT '[]', -- Array of transaction comparables
+      
+      -- Quality and confidence
+      confidence_level TEXT DEFAULT 'medium', -- 'low', 'medium', 'high'
+      quality_score REAL DEFAULT 0, -- 0-10 quality assessment
+      peer_review_status TEXT DEFAULT 'pending', -- 'pending', 'reviewed', 'approved'
+      
+      -- AI enhancement
+      ai_generated BOOLEAN DEFAULT FALSE,
+      ai_confidence_score REAL DEFAULT 0, -- 0-1 AI confidence in valuation
+      ai_adjustments JSON DEFAULT '[]', -- AI-suggested adjustments
+      
+      -- Version control
+      version TEXT DEFAULT '1.0',
+      previous_version_id TEXT REFERENCES exit_valuations(id),
+      
+      created_by TEXT,
+      reviewed_by TEXT,
+      approved_by TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exit_documents (
+      id TEXT PRIMARY KEY,
+      exit_opportunity_id TEXT NOT NULL REFERENCES exit_opportunities(id) ON DELETE CASCADE,
+      document_name TEXT NOT NULL,
+      document_type TEXT NOT NULL, -- 'memo', 'report', 'presentation', 'model', 'contract', 'compliance', 'marketing'
+      document_category TEXT, -- 'internal', 'external', 'confidential', 'public'
+      
+      -- Document details
+      description TEXT,
+      file_path TEXT,
+      file_size INTEGER,
+      mime_type TEXT,
+      
+      -- Document status and workflow
+      status TEXT DEFAULT 'draft', -- 'draft', 'review', 'approved', 'final', 'archived'
+      version TEXT DEFAULT '1.0',
+      version_history JSON DEFAULT '[]', -- Array of version information
+      
+      -- Authorship and review
+      author TEXT,
+      reviewers JSON DEFAULT '[]', -- Array of reviewers
+      approvers JSON DEFAULT '[]', -- Array of approvers
+      
+      -- Access and security
+      access_level TEXT DEFAULT 'internal', -- 'public', 'internal', 'confidential', 'restricted'
+      sharing_restrictions JSON DEFAULT '[]', -- Array of sharing restrictions
+      
+      -- AI generation
+      ai_generated BOOLEAN DEFAULT FALSE,
+      ai_template_used TEXT,
+      generation_metadata JSON DEFAULT '{}', -- Metadata about AI generation process
+      
+      -- Metadata
+      tags JSON DEFAULT '[]', -- Array of document tags
+      expiry_date DATE, -- For documents with expiry
+      
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exit_analytics (
+      id TEXT PRIMARY KEY,
+      exit_opportunity_id TEXT REFERENCES exit_opportunities(id) ON DELETE CASCADE,
+      analysis_date DATE DEFAULT (date('now')),
+      analysis_type TEXT NOT NULL, -- 'performance', 'market-timing', 'readiness', 'risk-assessment', 'ai-insights'
+      
+      -- Analysis results
+      overall_score REAL DEFAULT 0, -- 0-10 overall score
+      detailed_scores JSON DEFAULT '{}', -- Detailed breakdown of scores
+      recommendations JSON DEFAULT '[]', -- Array of recommendations
+      risks JSON DEFAULT '[]', -- Array of identified risks
+      opportunities JSON DEFAULT '[]', -- Array of identified opportunities
+      
+      -- Market and timing analysis
+      market_timing_score REAL DEFAULT 0,
+      sector_conditions JSON DEFAULT '{}',
+      competitive_position JSON DEFAULT '{}',
+      
+      -- Readiness assessment
+      financial_readiness_score REAL DEFAULT 0,
+      operational_readiness_score REAL DEFAULT 0,
+      legal_readiness_score REAL DEFAULT 0,
+      strategic_readiness_score REAL DEFAULT 0,
+      
+      -- AI-driven insights
+      ai_generated BOOLEAN DEFAULT FALSE,
+      ai_model_version TEXT,
+      ai_confidence_score REAL DEFAULT 0,
+      ai_insights JSON DEFAULT '[]',
+      
+      -- Quality and validation
+      data_quality_score REAL DEFAULT 0,
+      validation_status TEXT DEFAULT 'pending', -- 'pending', 'validated', 'approved'
+      peer_review_completed BOOLEAN DEFAULT FALSE,
+      
+      created_by TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
   // Create indexes for better query performance
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_workspaces_status ON workspaces(status);
@@ -730,6 +1040,45 @@ const initSchema = () => {
     CREATE INDEX IF NOT EXISTS idx_investments_deal_id ON investments(deal_id);
     CREATE INDEX IF NOT EXISTS idx_investments_workspace_id ON investments(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_investments_updated_at ON investments(updated_at);
+    
+    -- Exit management indexes
+    CREATE INDEX IF NOT EXISTS idx_exit_opportunities_portfolio_asset_id ON exit_opportunities(portfolio_asset_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_opportunities_investment_id ON exit_opportunities(investment_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_opportunities_status ON exit_opportunities(status);
+    CREATE INDEX IF NOT EXISTS idx_exit_opportunities_exit_strategy ON exit_opportunities(exit_strategy);
+    CREATE INDEX IF NOT EXISTS idx_exit_opportunities_sector ON exit_opportunities(sector);
+    CREATE INDEX IF NOT EXISTS idx_exit_opportunities_target_exit_date ON exit_opportunities(target_exit_date);
+    CREATE INDEX IF NOT EXISTS idx_exit_opportunities_market_conditions ON exit_opportunities(market_conditions);
+    CREATE INDEX IF NOT EXISTS idx_exit_opportunities_updated_at ON exit_opportunities(updated_at);
+    
+    CREATE INDEX IF NOT EXISTS idx_exit_processes_exit_opportunity_id ON exit_processes(exit_opportunity_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_processes_status ON exit_processes(status);
+    CREATE INDEX IF NOT EXISTS idx_exit_processes_process_category ON exit_processes(process_category);
+    CREATE INDEX IF NOT EXISTS idx_exit_processes_owner ON exit_processes(owner);
+    
+    CREATE INDEX IF NOT EXISTS idx_exit_tasks_exit_opportunity_id ON exit_tasks(exit_opportunity_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_tasks_exit_process_id ON exit_tasks(exit_process_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_tasks_status ON exit_tasks(status);
+    CREATE INDEX IF NOT EXISTS idx_exit_tasks_assignee ON exit_tasks(assignee);
+    CREATE INDEX IF NOT EXISTS idx_exit_tasks_due_date ON exit_tasks(due_date);
+    CREATE INDEX IF NOT EXISTS idx_exit_tasks_priority ON exit_tasks(priority);
+    
+    CREATE INDEX IF NOT EXISTS idx_exit_market_intelligence_exit_opportunity_id ON exit_market_intelligence(exit_opportunity_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_market_intelligence_sector ON exit_market_intelligence(sector);
+    CREATE INDEX IF NOT EXISTS idx_exit_market_intelligence_data_freshness_date ON exit_market_intelligence(data_freshness_date);
+    
+    CREATE INDEX IF NOT EXISTS idx_exit_valuations_exit_opportunity_id ON exit_valuations(exit_opportunity_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_valuations_valuation_type ON exit_valuations(valuation_type);
+    CREATE INDEX IF NOT EXISTS idx_exit_valuations_valuation_date ON exit_valuations(valuation_date);
+    
+    CREATE INDEX IF NOT EXISTS idx_exit_documents_exit_opportunity_id ON exit_documents(exit_opportunity_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_documents_document_type ON exit_documents(document_type);
+    CREATE INDEX IF NOT EXISTS idx_exit_documents_status ON exit_documents(status);
+    CREATE INDEX IF NOT EXISTS idx_exit_documents_access_level ON exit_documents(access_level);
+    
+    CREATE INDEX IF NOT EXISTS idx_exit_analytics_exit_opportunity_id ON exit_analytics(exit_opportunity_id);
+    CREATE INDEX IF NOT EXISTS idx_exit_analytics_analysis_type ON exit_analytics(analysis_type);
+    CREATE INDEX IF NOT EXISTS idx_exit_analytics_analysis_date ON exit_analytics(analysis_date);
   `);
 
   console.log('Database schema initialized successfully');

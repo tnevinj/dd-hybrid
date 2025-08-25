@@ -347,7 +347,10 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
       </div>
 
       {/* Main Layout */}
-      <div className="autonomous-content">
+      <div 
+        className="autonomous-content"
+        style={{ height: 'calc(100vh - var(--autonomous-header-height))' }}
+      >
         {/* Project Selector Sidebar */}
         {!sidebarCollapsed && (
           <div className="w-80 border-r border-gray-200 overflow-y-auto">
@@ -359,7 +362,7 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
           </div>
         )}
 
-        {/* Chat Interface - Fixed height container to prevent pushing down */}
+        {/* Chat Interface - Fixed height container */}
         <div className="flex-1 flex flex-col">
           <ChatInterface
             projectId={selectedProject?.id || ''}
