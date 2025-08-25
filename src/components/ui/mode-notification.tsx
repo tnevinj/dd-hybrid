@@ -17,9 +17,9 @@ const modeStyles = {
     description: 'text-gray-600'
   },
   assisted: {
-    container: 'bg-purple-50 border-purple-200',
-    title: 'text-purple-800',
-    description: 'text-purple-600'
+    container: 'bg-blue-50 border-blue-200',
+    title: 'text-blue-800',
+    description: 'text-blue-600'
   },
   autonomous: {
     container: 'bg-green-50 border-green-200',
@@ -61,7 +61,7 @@ export function ModeNotification({ mode, title, description, className, onClose 
           className={cn(
             'ml-2 p-1 rounded-full hover:bg-black/5 transition-colors flex-shrink-0',
             mode === 'autonomous' ? 'hover:bg-green-200' : 
-            mode === 'assisted' ? 'hover:bg-purple-200' : 'hover:bg-gray-200'
+            mode === 'assisted' ? 'hover:bg-blue-200' : 'hover:bg-gray-200'
           )}
           aria-label="Close notification"
         >

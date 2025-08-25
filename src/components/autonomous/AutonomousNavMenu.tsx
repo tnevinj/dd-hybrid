@@ -49,7 +49,7 @@ const NAVIGATION_MODULES: NavigationModule[] = [
     icon: FolderOpen,
     href: '/workspaces?mode=autonomous',
     description: 'Collaborative workspace management',
-    color: 'text-purple-600',
+    color: 'text-blue-600',
   },
   {
     id: 'due-diligence',
@@ -163,8 +163,8 @@ export function AutonomousNavMenu({ currentModule, onNavigate, className }: Auto
                     disabled={isCurrentModule}
                     className={cn(
                       "w-full text-left p-3 rounded-md transition-colors duration-150",
-                      "hover:bg-gray-50 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500",
-                      isCurrentModule ? "bg-purple-50 cursor-default" : "cursor-pointer"
+                      "hover:bg-gray-50 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                      isCurrentModule ? "bg-blue-50 cursor-default" : "cursor-pointer"
                     )}
                   >
                     <div className="flex items-start space-x-3">
@@ -174,13 +174,13 @@ export function AutonomousNavMenu({ currentModule, onNavigate, className }: Auto
                         <div className="flex items-center justify-between">
                           <span className={cn(
                             "font-medium truncate",
-                            isCurrentModule ? "text-purple-900" : "text-gray-900"
+                            isCurrentModule ? "text-blue-900" : "text-gray-900"
                           )}>
                             {module.name}
                           </span>
                           
                           {isCurrentModule ? (
-                            <Badge variant="outline" className="ml-2 text-xs bg-purple-100 text-purple-700 border-purple-200">
+                            <Badge variant="outline" className="ml-2 text-xs bg-blue-100 text-blue-700 border-blue-200">
                               Current
                             </Badge>
                           ) : (
@@ -190,7 +190,7 @@ export function AutonomousNavMenu({ currentModule, onNavigate, className }: Auto
                         
                         <p className={cn(
                           "text-sm mt-1 leading-relaxed",
-                          isCurrentModule ? "text-purple-700" : "text-gray-600"
+                          isCurrentModule ? "text-blue-700" : "text-gray-600"
                         )}>
                           {module.description}
                         </p>

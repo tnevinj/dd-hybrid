@@ -797,7 +797,7 @@ const PrecedentTransactionCard: React.FC<PrecedentTransactionCardProps> = ({
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-sm text-gray-600 mb-1">Implied Premium</div>
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-blue-600">
                       {(results.valuation.impliedPremium * 100).toFixed(1)}%
                     </div>
                   </CardContent>
@@ -984,12 +984,12 @@ const PrecedentTransactionCard: React.FC<PrecedentTransactionCardProps> = ({
             </div>
 
             {mode !== 'traditional' && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <h5 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h5 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
                   <Activity className="h-4 w-4" />
                   AI-Enhanced Transaction Analysis
                 </h5>
-                <p className="text-purple-800 text-sm">
+                <p className="text-blue-800 text-sm">
                   Advanced algorithms have analyzed transaction patterns, market timing, and buyer behavior to optimize premium 
                   estimates. Consider macro-economic indicators and sector-specific M&A trends for enhanced accuracy.
                 </p>

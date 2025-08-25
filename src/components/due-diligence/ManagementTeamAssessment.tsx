@@ -442,10 +442,10 @@ export function ManagementTeamAssessment({ projectId, mode = 'assisted' }: Manag
               {displayData.teamMembers.filter(m => m.tenure > 3).length} with 3+ years tenure
             </div>
           </div>
-          <div className="text-center p-4 bg-purple-50 rounded-lg">
-            <div className="text-3xl font-bold text-purple-600">{displayData.successionPlanning.successionReadiness}%</div>
-            <div className="text-sm text-purple-700">Succession Coverage</div>
-            <div className="text-xs text-purple-600 mt-1">
+          <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-3xl font-bold text-blue-600">{displayData.successionPlanning.successionReadiness}%</div>
+            <div className="text-sm text-blue-700">Succession Coverage</div>
+            <div className="text-xs text-blue-600 mt-1">
               {displayData.successionPlanning.criticalRoles.length} key roles identified
             </div>
           </div>
@@ -859,8 +859,8 @@ export function ManagementTeamAssessment({ projectId, mode = 'assisted' }: Manag
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-purple-100 rounded-lg">
-            <Users className="w-6 h-6 text-purple-600" />
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Users className="w-6 h-6 text-blue-600" />
           </div>
           <div>
             <h2 className="text-xl font-semibold">Management Team Assessment</h2>
@@ -908,7 +908,7 @@ export function ManagementTeamAssessment({ projectId, mode = 'assisted' }: Manag
                 className={`
                   flex items-center space-x-2 py-3 border-b-2 text-sm font-medium transition-colors
                   ${isActive 
-                    ? 'border-purple-500 text-purple-600' 
+                    ? 'border-blue-500 text-blue-600' 
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }
                 `}

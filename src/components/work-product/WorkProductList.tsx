@@ -90,7 +90,7 @@ export function WorkProductList({
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-green-900 mb-2 flex items-center gap-2">
               🤖 Work Product AI Insights
-              {navigationMode === 'autonomous' && <Badge className="bg-purple-100 text-purple-700">Autonomous Mode</Badge>}
+              {navigationMode === 'autonomous' && <Badge className="bg-blue-100 text-blue-700">Autonomous Mode</Badge>}
             </h3>
             
             <div className="space-y-2">
@@ -122,7 +122,7 @@ export function WorkProductList({
 
               {navigationMode === 'autonomous' && (
                 <div className="space-y-2">
-                  <div className="p-3 bg-white rounded border border-purple-200">
+                  <div className="p-3 bg-white rounded border border-blue-200">
                     <p className="text-sm text-gray-700">
                       🔄 I've automatically generated document outlines for your workspace.
                       Ready to populate: DD Report (85% complete), Risk Assessment (60% complete).
@@ -130,7 +130,7 @@ export function WorkProductList({
                     <Button size="sm" variant="outline" className="mt-2">Review Generated Documents</Button>
                   </div>
                   
-                  <div className="p-3 bg-white rounded border border-purple-200">
+                  <div className="p-3 bg-white rounded border border-blue-200">
                     <p className="text-sm text-gray-700">
                       📝 I can automatically update all work products when new evidence is added.
                       Current queue: 3 documents pending updates.

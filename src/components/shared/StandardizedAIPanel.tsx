@@ -81,11 +81,11 @@ const RecommendationTypeIcon: React.FC<{ type: string }> = ({ type }) => {
     case 'warning':
       return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
     case 'insight':
-      return <Brain className="h-4 w-4 text-purple-600" />;
+      return <Brain className="h-4 w-4 text-blue-600" />;
     case 'optimization':
       return <Target className="h-4 w-4 text-indigo-600" />;
     default:
-      return <Sparkles className="h-4 w-4 text-purple-600" />;
+      return <Sparkles className="h-4 w-4 text-blue-600" />;
   }
 };
 
@@ -108,7 +108,7 @@ const RecommendationCard: React.FC<{
       case 'low':
         return 'bg-gray-50 border-gray-200';
       default:
-        return 'bg-purple-50 border-purple-200';
+        return 'bg-blue-50 border-blue-200';
     }
   };
 
@@ -255,9 +255,9 @@ const AIMetricsSection: React.FC<{ metrics: AIMetrics }> = ({ metrics }) => (
     
     {metrics.tasksAutomated !== undefined && (
       <div className="bg-white/70 p-3 rounded border text-center">
-        <Zap className="h-5 w-5 text-purple-600 mx-auto mb-1" />
+        <Zap className="h-5 w-5 text-blue-600 mx-auto mb-1" />
         <p className="text-xs font-medium text-gray-600">Automated</p>
-        <p className="text-lg font-bold text-purple-900">{metrics.tasksAutomated}</p>
+        <p className="text-lg font-bold text-blue-900">{metrics.tasksAutomated}</p>
       </div>
     )}
     
@@ -303,14 +303,14 @@ export const StandardizedAIPanel: React.FC<StandardizedAIPanelProps> = ({
   }
 
   return (
-    <Card className={`border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 ${className}`}>
+    <Card className={`border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50 ${className}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Brain className="h-5 w-5 text-purple-600" />
-            <CardTitle className="text-purple-900">{title}</CardTitle>
+            <Brain className="h-5 w-5 text-blue-600" />
+            <CardTitle className="text-blue-900">{title}</CardTitle>
             {moduleContext && (
-              <Badge variant="outline" className="text-xs text-purple-700 border-purple-300">
+              <Badge variant="outline" className="text-xs text-blue-700 border-blue-300">
                 {moduleContext}
               </Badge>
             )}
@@ -318,7 +318,7 @@ export const StandardizedAIPanel: React.FC<StandardizedAIPanelProps> = ({
           
           <div className="flex items-center space-x-2">
             {activeRecommendations.length > 0 && (
-              <Badge className="bg-purple-100 text-purple-800 border-purple-300">
+              <Badge className="bg-blue-100 text-blue-800 border-blue-300">
                 {activeRecommendations.length} insight{activeRecommendations.length !== 1 ? 's' : ''}
               </Badge>
             )}
@@ -328,7 +328,7 @@ export const StandardizedAIPanel: React.FC<StandardizedAIPanelProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="text-purple-600 hover:text-purple-700"
+                className="text-blue-600 hover:text-blue-700"
               >
                 {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
@@ -337,7 +337,7 @@ export const StandardizedAIPanel: React.FC<StandardizedAIPanelProps> = ({
         </div>
         
         {activeRecommendations.length > 0 && (
-          <p className="text-purple-700 text-sm">
+          <p className="text-blue-700 text-sm">
             Your AI assistant has identified {activeRecommendations.length} opportunity{activeRecommendations.length !== 1 ? 'ies' : 'y'} for optimization
             {moduleContext && ` in ${moduleContext.toLowerCase()}`}
           </p>
@@ -386,16 +386,16 @@ export const QuickAIInsights: React.FC<{
   insights: string[];
   className?: string;
 }> = ({ insights, className }) => (
-  <div className={`bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4 ${className}`}>
+  <div className={`bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
     <div className="flex items-center space-x-2 mb-3">
-      <Sparkles className="h-4 w-4 text-purple-600" />
-      <h4 className="font-semibold text-purple-900">Quick AI Insights</h4>
+      <Sparkles className="h-4 w-4 text-blue-600" />
+      <h4 className="font-semibold text-blue-900">Quick AI Insights</h4>
     </div>
     <div className="space-y-2">
       {insights.map((insight, index) => (
         <div key={index} className="flex items-start space-x-2">
-          <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0" />
-          <p className="text-sm text-purple-800">{insight}</p>
+          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+          <p className="text-sm text-blue-800">{insight}</p>
         </div>
       ))}
     </div>
@@ -410,9 +410,9 @@ export const AIProcessingStatus: React.FC<{
   estimatedTimeRemaining?: string;
   className?: string;
 }> = ({ status, progress, itemsProcessed, totalItems, estimatedTimeRemaining, className }) => (
-  <div className={`bg-white border border-purple-200 rounded-lg p-4 ${className}`}>
+  <div className={`bg-white border border-blue-200 rounded-lg p-4 ${className}`}>
     <div className="flex items-center space-x-2 mb-3">
-      <Brain className="h-4 w-4 text-purple-600" />
+      <Brain className="h-4 w-4 text-blue-600" />
       <h4 className="font-semibold text-gray-900">AI Processing Status</h4>
     </div>
     

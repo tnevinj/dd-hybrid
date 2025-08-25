@@ -375,7 +375,7 @@ export function LPPortalAutonomous({
                         <Button 
                           size="sm" 
                           onClick={() => onExecuteAction(action)}
-                          className="bg-purple-600 hover:bg-purple-700"
+                          className="bg-blue-600 hover:bg-blue-700"
                         >
                           <Play className="h-4 w-4 mr-1" />
                           {action.autoExecutable ? 'Auto-Execute' : 'Review & Decide'}
@@ -399,7 +399,7 @@ export function LPPortalAutonomous({
                       {action.type === 'RESPOND' && <MessageSquare className="h-6 w-6 text-blue-600" />}
                       {action.type === 'REVIEW' && <Eye className="h-6 w-6 text-orange-600" />}
                       {action.type === 'APPROVE' && <CheckCircle className="h-6 w-6 text-green-600" />}
-                      {action.type === 'DECIDE' && <Target className="h-6 w-6 text-purple-600" />}
+                      {action.type === 'DECIDE' && <Target className="h-6 w-6 text-blue-600" />}
                     </div>
                   </div>
                 </CardContent>
@@ -411,13 +411,13 @@ export function LPPortalAutonomous({
 
       {/* Strategic Decisions */}
       {autonomousData.decisionsRequired.length > 0 && (
-        <Card className="border-purple-200 bg-purple-50/50">
+        <Card className="border-blue-200 bg-blue-50/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-purple-800">
+            <CardTitle className="flex items-center gap-2 text-blue-800">
               <Target className="h-5 w-5" />
               Strategic Decision Required
             </CardTitle>
-            <CardDescription className="text-purple-700">
+            <CardDescription className="text-blue-700">
               AI has completed analysis - your strategic input needed
             </CardDescription>
           </CardHeader>
@@ -603,7 +603,7 @@ export function LPPortalAutonomous({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-purple-600" />
+            <Sparkles className="h-5 w-5 text-blue-600" />
             Portfolio Intelligence Summary
           </CardTitle>
         </CardHeader>
@@ -679,9 +679,9 @@ export function LPPortalAutonomous({
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">{autonomousData.automationMetrics.tasksAutomated}</div>
+            <div className="text-2xl font-bold text-blue-600">{autonomousData.automationMetrics.tasksAutomated}</div>
             <div className="text-sm text-gray-600">Tasks Automated</div>
-            <div className="text-xs text-purple-600 mt-1">This month</div>
+            <div className="text-xs text-blue-600 mt-1">This month</div>
           </CardContent>
         </Card>
         <Card>

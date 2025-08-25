@@ -37,9 +37,9 @@ describe('ModeNotification', () => {
       />
     )
     
-    // Should have purple styling for assisted mode
-    expect(container.querySelector('.bg-purple-50')).toBeInTheDocument()
-    expect(container.querySelector('.border-purple-200')).toBeInTheDocument()
+    // Should have blue styling for assisted mode
+    expect(container.querySelector('.bg-blue-50')).toBeInTheDocument()
+    expect(container.querySelector('.border-blue-200')).toBeInTheDocument()
     
     rerender(
       <ModeNotification

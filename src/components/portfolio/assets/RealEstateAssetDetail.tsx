@@ -70,7 +70,7 @@ export function RealEstateAssetDetail({ asset }: RealEstateAssetDetailProps) {
       case 'industrial':
         return 'bg-orange-100 text-orange-800'
       case 'residential':
-        return 'bg-purple-100 text-purple-800'
+        return 'bg-blue-100 text-blue-800'
       case 'mixed_use':
         return 'bg-gray-100 text-gray-800'
       default:

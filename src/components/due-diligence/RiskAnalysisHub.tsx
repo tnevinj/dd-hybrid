@@ -300,14 +300,14 @@ export function RiskAnalysisHub({ projectId }: RiskAnalysisHubProps) {
       </div>
 
       {/* AI Insights Banner */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Brain className="w-5 h-5 text-purple-600" />
+              <Brain className="w-5 h-5 text-blue-600" />
               <div>
-                <h3 className="font-semibold text-purple-800">Risk Pattern Analysis Complete</h3>
-                <p className="text-sm text-purple-600">
+                <h3 className="font-semibold text-blue-800">Risk Pattern Analysis Complete</h3>
+                <p className="text-sm text-blue-600">
                   Found 2 high-confidence risk patterns with proven mitigation strategies
                 </p>
               </div>
@@ -323,11 +323,11 @@ export function RiskAnalysisHub({ projectId }: RiskAnalysisHubProps) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-600">Risk Score</span>
-              <Brain className="w-4 h-4 text-purple-500" />
+              <Brain className="w-4 h-4 text-blue-500" />
             </div>
             <div className="text-2xl font-bold text-red-600">7.2/10</div>
             <div className="text-xs text-red-600 mb-2">Above average</div>
-            <div className="text-xs text-purple-600 bg-purple-50 p-2 rounded">
+            <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded">
               💡 Customer concentration main driver
             </div>
           </CardContent>
@@ -361,15 +361,15 @@ export function RiskAnalysisHub({ projectId }: RiskAnalysisHubProps) {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-400">
+        <Card className="border-l-4 border-l-blue-400">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-600">Confidence</span>
-              <Target className="w-4 h-4 text-purple-500" />
+              <Target className="w-4 h-4 text-blue-500" />
             </div>
-            <div className="text-2xl font-bold text-purple-600">91%</div>
-            <div className="text-xs text-purple-600 mb-2">AI accuracy</div>
-            <div className="text-xs text-purple-600 bg-purple-50 p-2 rounded">
+            <div className="text-2xl font-bold text-blue-600">91%</div>
+            <div className="text-xs text-blue-600 mb-2">AI accuracy</div>
+            <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded">
               🎯 High prediction reliability
             </div>
           </CardContent>
@@ -490,7 +490,7 @@ function RiskCard({ risk, mode }: RiskCardProps) {
   }
 
   return (
-    <div className={`border rounded-lg p-4 ${mode === 'assisted' && risk.aiGenerated ? 'border-l-4 border-l-purple-400' : ''}`}>
+    <div className={`border rounded-lg p-4 ${mode === 'assisted' && risk.aiGenerated ? 'border-l-4 border-l-blue-400' : ''}`}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
@@ -518,7 +518,7 @@ function RiskCard({ risk, mode }: RiskCardProps) {
             Score: {risk.riskScore}/10
           </div>
           {mode === 'assisted' && risk.confidenceLevel > 0 && (
-            <div className="text-xs text-purple-600">
+            <div className="text-xs text-blue-600">
               {Math.round(risk.confidenceLevel * 100)}% confident
             </div>
           )}

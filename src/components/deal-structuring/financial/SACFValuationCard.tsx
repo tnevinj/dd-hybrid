@@ -278,8 +278,8 @@ const SACFValuationCard: React.FC<SACFValuationCardProps> = ({
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-50 rounded-lg">
-              <Building className="h-5 w-5 text-purple-600" />
+            <div className="p-2 bg-blue-50 rounded-lg">
+              <Building className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">SACF Valuation Analysis</h3>
@@ -312,7 +312,7 @@ const SACFValuationCard: React.FC<SACFValuationCardProps> = ({
               onClick={() => setActiveTab(key as any)}
               className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === key
-                  ? 'bg-white text-purple-600 shadow-sm'
+                  ? 'bg-white text-blue-600 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -645,7 +645,7 @@ const SACFValuationCard: React.FC<SACFValuationCardProps> = ({
               </div>
               <div className="border rounded-lg p-4 text-center">
                 <h5 className="font-medium text-gray-900 mb-2">Blended Valuation</h5>
-                <div className="text-2xl font-bold text-purple-600">{formatCurrency(results.assetValuation.blendedValuation)}</div>
+                <div className="text-2xl font-bold text-blue-600">{formatCurrency(results.assetValuation.blendedValuation)}</div>
                 <div className="text-sm text-gray-500">Weighted Average</div>
               </div>
             </div>
@@ -674,7 +674,7 @@ const SACFValuationCard: React.FC<SACFValuationCardProps> = ({
               <h4 className="font-medium text-gray-900 mb-4">SACF Pricing Analysis</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">{formatCurrency(results.sacfPricing.sacfPrice)}</div>
+                  <div className="text-lg font-bold text-blue-600">{formatCurrency(results.sacfPricing.sacfPrice)}</div>
                   <div className="text-sm text-gray-600">SACF Price</div>
                 </div>
                 <div className="text-center">
@@ -783,7 +783,7 @@ const SACFValuationCard: React.FC<SACFValuationCardProps> = ({
                   <div className="text-sm text-gray-600">Management Fees</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">{formatCurrency(results.fundEconomics.projectedCarriedInterest)}</div>
+                  <div className="text-lg font-bold text-blue-600">{formatCurrency(results.fundEconomics.projectedCarriedInterest)}</div>
                   <div className="text-sm text-gray-600">Carried Interest</div>
                 </div>
                 <div className="text-center">
@@ -871,8 +871,8 @@ const SACFValuationCard: React.FC<SACFValuationCardProps> = ({
         {results && (
           <div className="border-t pt-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">{formatCurrency(results.sacfPricing.sacfPrice)}</div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{formatCurrency(results.sacfPricing.sacfPrice)}</div>
                 <div className="text-sm text-gray-600">SACF Valuation</div>
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">
@@ -893,12 +893,12 @@ const SACFValuationCard: React.FC<SACFValuationCardProps> = ({
 
         {/* AI Assistance (for assisted/autonomous modes) */}
         {mode !== 'traditional' && (
-          <div className="border rounded-lg p-4 bg-purple-50">
+          <div className="border rounded-lg p-4 bg-blue-50">
             <div className="flex items-start gap-3">
-              <Zap className="h-5 w-5 text-purple-600 mt-0.5" />
+              <Zap className="h-5 w-5 text-blue-600 mt-0.5" />
               <div>
-                <h4 className="font-medium text-purple-900">AI SACF Insights</h4>
-                <ul className="text-sm text-purple-800 mt-2 space-y-1">
+                <h4 className="font-medium text-blue-900">AI SACF Insights</h4>
+                <ul className="text-sm text-blue-800 mt-2 space-y-1">
                   <li>• Asset valuation shows strong fundamentals with 15-20% upside potential</li>
                   <li>• Liquidity discount of 10% is within market range for growth-stage assets</li>
                   <li>• 60% LP rollover rate indicates strong confidence in continued value creation</li>

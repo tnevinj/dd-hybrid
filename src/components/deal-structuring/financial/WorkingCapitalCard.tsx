@@ -407,10 +407,10 @@ const WorkingCapitalCard: React.FC<WorkingCapitalCardProps> = ({
 
               <Card className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="h-4 w-4 text-purple-600" />
+                  <DollarSign className="h-4 w-4 text-blue-600" />
                   <span className="text-sm font-medium">Cash Impact</span>
                 </div>
-                <div className="text-2xl font-bold text-purple-600">$48M</div>
+                <div className="text-2xl font-bold text-blue-600">$48M</div>
                 <p className="text-xs text-gray-500">Estimated benefit</p>
               </Card>
             </div>
@@ -916,7 +916,7 @@ const WorkingCapitalCard: React.FC<WorkingCapitalCardProps> = ({
                   <Card className="p-4">
                     <div className="text-center">
                       <div className="text-sm text-gray-600 mb-1">Cash Impact</div>
-                      <div className="text-2xl font-bold text-purple-600">${(results.summary.totalCashImpact / 1000000).toFixed(0)}M</div>
+                      <div className="text-2xl font-bold text-blue-600">${(results.summary.totalCashImpact / 1000000).toFixed(0)}M</div>
                     </div>
                   </Card>
                 </div>

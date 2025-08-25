@@ -3,26 +3,36 @@
 @import "../styles/responsive-patterns.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #111827;
   --card: #ffffff;
-  --card-foreground: #171717;
+  --card-foreground: #111827;
   --popover: #ffffff;
-  --popover-foreground: #171717;
-  --primary: #2563eb;
+  --popover-foreground: #111827;
+  --primary: #1e3a8a;
   --primary-foreground: #ffffff;
   --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
-  --destructive: #ef4444;
+  --secondary-foreground: #1e3a8a;
+  --muted: #f9fafb;
+  --muted-foreground: #6b7280;
+  --accent: #f3f4f6;
+  --accent-foreground: #1e3a8a;
+  --destructive: #991b1b;
   --destructive-foreground: #ffffff;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #2563eb;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #1e3a8a;
   --radius: 0.5rem;
+  --success: #065f46;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #ffffff;
+  --gold: #d4af37;
+  --navy: #1e3a8a;
+  --charcoal: #374151;
+  --forest-green: #065f46;
+  --burgundy: #991b1b;
+  --slate-blue: #1e40af;
 }
 
 @theme inline {

@@ -256,7 +256,7 @@ export function FundOperationsTraditionalStandardized({
               <div className="text-xs text-gray-500 mt-1">DPI: {currentFund.dpi}</div>
             </div>
             <div className="text-center p-4 border rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">{currentFund.netIRR}</div>
+              <div className="text-2xl font-bold text-blue-600">{currentFund.netIRR}</div>
               <div className="text-sm text-gray-600">Net IRR</div>
               <div className="text-xs text-gray-500 mt-1">TVPI: {currentFund.tvpi}</div>
             </div>

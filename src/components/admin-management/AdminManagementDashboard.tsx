@@ -1074,7 +1074,7 @@ export function AdminManagementDashboard({
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <BarChart className="w-5 h-5 text-purple-600" />
+                      <BarChart className="w-5 h-5 text-blue-600" />
                       Security Metrics (30 Days)
                     </CardTitle>
                   </CardHeader>

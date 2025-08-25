@@ -479,7 +479,7 @@ export function FundOperationsTraditionalRefactored({
         <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
-              <Calculator className="h-5 w-5 text-purple-600" />
+              <Calculator className="h-5 w-5 text-blue-600" />
               <p className="text-sm text-gray-600 font-medium">Avg Net IRR</p>
             </div>
             <p className="text-3xl font-bold text-gray-900">{formatPercentage(fundOperationsData.avgNetIRR)}</p>
@@ -622,25 +622,25 @@ export function FundOperationsTraditionalRefactored({
             </CardContent>
           </Card>
 
-          <Card className="border-purple-200 bg-purple-50">
+          <Card className="border-blue-200 bg-blue-50">
             <CardContent className="p-6">
-              <h3 className="font-semibold text-purple-900 mb-4">Fund Structure</h3>
+              <h3 className="font-semibold text-blue-900 mb-4">Fund Structure</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-purple-700">Strategy</span>
-                  <span className="text-sm font-medium text-purple-900">{currentFund.strategy}</span>
+                  <span className="text-sm text-blue-700">Strategy</span>
+                  <span className="text-sm font-medium text-blue-900">{currentFund.strategy}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-purple-700">Geography</span>
-                  <span className="text-sm font-medium text-purple-900">{currentFund.geography}</span>
+                  <span className="text-sm text-blue-700">Geography</span>
+                  <span className="text-sm font-medium text-blue-900">{currentFund.geography}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-purple-700">Mgmt Fee</span>
-                  <span className="text-sm font-medium text-purple-900">{formatPercentage(currentFund.managementFeeRate)}</span>
+                  <span className="text-sm text-blue-700">Mgmt Fee</span>
+                  <span className="text-sm font-medium text-blue-900">{formatPercentage(currentFund.managementFeeRate)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-purple-700">Carry</span>
-                  <span className="text-sm font-medium text-purple-900">{formatPercentage(currentFund.carriedInterestRate)}</span>
+                  <span className="text-sm text-blue-700">Carry</span>
+                  <span className="text-sm font-medium text-blue-900">{formatPercentage(currentFund.carriedInterestRate)}</span>
                 </div>
               </div>
             </CardContent>

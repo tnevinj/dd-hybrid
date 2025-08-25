@@ -263,7 +263,7 @@ export function GPPortalAssisted({ data, onViewDetails, onAcceptSuggestion }: GP
                   <p className="text-xs text-gray-600">2.5 hours/week</p>
                 </div>
                 <div className="bg-white p-3 rounded-lg border text-center">
-                  <Target className="h-6 w-6 text-purple-600 mx-auto mb-1" />
+                  <Target className="h-6 w-6 text-blue-600 mx-auto mb-1" />
                   <p className="text-xs font-medium">Success Rate</p>
                   <p className="text-xs text-gray-600">Above average</p>
                 </div>
@@ -488,7 +488,7 @@ export function GPPortalAssisted({ data, onViewDetails, onAcceptSuggestion }: GP
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-purple-500" />
+                  <Zap className="h-5 w-5 text-blue-500" />
                   Automation Center
                 </CardTitle>
                 <CardDescription>

@@ -414,7 +414,7 @@ export function DDChecklistEnhanced({ projectId, dealType = 'saas' }: DDChecklis
     switch (status) {
       case 'completed': return 'text-green-600 bg-green-50 border-green-200'
       case 'in_progress': return 'text-blue-600 bg-blue-50 border-blue-200'
-      case 'review': return 'text-purple-600 bg-purple-50 border-purple-200'
+      case 'review': return 'text-blue-600 bg-blue-50 border-blue-200'
       case 'blocked': return 'text-red-600 bg-red-50 border-red-200'
       default: return 'text-gray-600 bg-gray-50 border-gray-200'
     }
@@ -424,7 +424,7 @@ export function DDChecklistEnhanced({ projectId, dealType = 'saas' }: DDChecklis
     switch (status) {
       case 'completed': return <CheckCircle className="w-4 h-4 text-green-600" />
       case 'in_progress': return <Clock className="w-4 h-4 text-blue-600" />
-      case 'review': return <Eye className="w-4 h-4 text-purple-600" />
+      case 'review': return <Eye className="w-4 h-4 text-blue-600" />
       case 'blocked': return <AlertTriangle className="w-4 h-4 text-red-600" />
       default: return <Circle className="w-4 h-4 text-gray-400" />
     }
@@ -567,7 +567,7 @@ export function DDChecklistEnhanced({ projectId, dealType = 'saas' }: DDChecklis
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold flex items-center">
-            <Brain className="w-5 h-5 mr-2 text-purple-500" />
+            <Brain className="w-5 h-5 mr-2 text-blue-500" />
             AI-Enhanced DD Checklist
             <Badge variant="ai" className="ml-3">Smart Automation</Badge>
           </h2>
@@ -645,8 +645,8 @@ export function DDChecklistEnhanced({ projectId, dealType = 'saas' }: DDChecklis
                 {(groupedItems[category.id] || []).map((item) => (
                   <div key={item.id} className={`
                     border rounded-lg p-4 transition-all
-                    ${item.aiAutomatable ? 'border-l-4 border-l-purple-400' : ''}
-                    ${selectedItems.has(item.id) ? 'bg-purple-50 border-purple-200' : ''}
+                    ${item.aiAutomatable ? 'border-l-4 border-l-blue-400' : ''}
+                    ${selectedItems.has(item.id) ? 'bg-blue-50 border-blue-200' : ''}
                   `}>
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-start space-x-3 flex-1">
@@ -657,7 +657,7 @@ export function DDChecklistEnhanced({ projectId, dealType = 'saas' }: DDChecklis
                               type="checkbox"
                               checked={selectedItems.has(item.id)}
                               onChange={() => toggleItemSelection(item.id)}
-                              className="rounded text-purple-600"
+                              className="rounded text-blue-600"
                             />
                           )}
                         </div>
@@ -674,12 +674,12 @@ export function DDChecklistEnhanced({ projectId, dealType = 'saas' }: DDChecklis
                           <p className="text-sm text-gray-600 mt-1">{item.description}</p>
                           
                           {item.aiSuggestion && currentMode.mode === 'assisted' && (
-                            <div className="mt-2 p-2 bg-purple-50 rounded text-sm">
+                            <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
                               <div className="flex items-start space-x-2">
-                                <Lightbulb className="w-4 h-4 text-purple-600 mt-0.5" />
+                                <Lightbulb className="w-4 h-4 text-blue-600 mt-0.5" />
                                 <div>
-                                  <span className="font-medium text-purple-800">AI Insight:</span>
-                                  <p className="text-purple-700">{item.aiSuggestion}</p>
+                                  <span className="font-medium text-blue-800">AI Insight:</span>
+                                  <p className="text-blue-700">{item.aiSuggestion}</p>
                                 </div>
                               </div>
                             </div>
@@ -754,11 +754,11 @@ export function DDChecklistEnhanced({ projectId, dealType = 'saas' }: DDChecklis
       <Card>
         <CardContent className="p-6">
           <div className="flex items-start space-x-4">
-            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-              <Brain className="w-4 h-4 text-purple-600" />
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <Brain className="w-4 h-4 text-blue-600" />
             </div>
             <div className="flex-1">
-              <div className="bg-purple-50 rounded-lg p-4 mb-4">
+              <div className="bg-blue-50 rounded-lg p-4 mb-4">
                 <p className="text-sm mb-2">
                   <strong>DD Checklist Analysis:</strong> I&apos;ve identified {checklistItems.filter(i => i.aiAutomatable).length} items that can be automated immediately.
                 </p>

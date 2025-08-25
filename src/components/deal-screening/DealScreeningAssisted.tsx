@@ -253,7 +253,7 @@ const QuickActionsPanel: React.FC<{
   <Card className="mb-6">
     <CardHeader>
       <CardTitle className="flex items-center space-x-2">
-        <Zap className="h-5 w-5 text-purple-600" />
+        <Zap className="h-5 w-5 text-blue-600" />
         <span>AI-Powered Quick Actions</span>
       </CardTitle>
     </CardHeader>
@@ -433,7 +433,7 @@ export const DealScreeningAssisted: React.FC<DealScreeningAssistedProps> = ({
       </Card>
       
       {/* AI Performance Summary */}
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+      <Card className="bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -450,7 +450,7 @@ export const DealScreeningAssisted: React.FC<DealScreeningAssistedProps> = ({
                 <p className="text-sm text-gray-600">Accuracy</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-purple-600">12</p>
+                <p className="text-3xl font-bold text-blue-600">12</p>
                 <p className="text-sm text-gray-600">Tasks Automated</p>
               </div>
             </div>

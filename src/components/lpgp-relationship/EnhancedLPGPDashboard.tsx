@@ -994,7 +994,7 @@ export function EnhancedLPGPDashboard({
                 <p className="text-sm font-medium text-gray-600">Active Contacts</p>
                 <p className="text-2xl font-bold text-gray-900">{aggregateMetrics.totalContacts}</p>
               </div>
-              <Users className="h-8 w-8 text-purple-600" />
+              <Users className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>

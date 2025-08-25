@@ -62,7 +62,7 @@ export function AIHintToast({ hint, onDismiss, className }: AIHintToastProps) {
   const getColors = () => {
     switch (hint.type) {
       case 'tip': return 'border-blue-200 bg-blue-50 text-blue-800'
-      case 'pattern': return 'border-purple-200 bg-purple-50 text-purple-800'
+      case 'pattern': return 'border-blue-200 bg-blue-50 text-blue-800'
       case 'efficiency': return 'border-green-200 bg-green-50 text-green-800'
       default: return 'border-gray-200 bg-gray-50 text-gray-800'
     }

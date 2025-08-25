@@ -177,8 +177,8 @@ export function EnhancedPortfolioDashboard({
                   {analytics.totalInvestments || 0}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-6 w-6 text-purple-600" />
+              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-blue-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center">
@@ -586,7 +586,7 @@ function AssistedPortfolioContent({ analytics, companies }: { analytics: Portfol
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Bell className="h-5 w-5 mr-2 text-purple-600" />
+              <Bell className="h-5 w-5 mr-2 text-blue-600" />
               Company-Specific Insights
             </CardTitle>
           </CardHeader>
@@ -750,10 +750,10 @@ function AutonomousPortfolioContent({ analytics, companies }: { analytics: Portf
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center">
-              <Zap className="h-5 w-5 mr-2 text-purple-600" />
+              <Zap className="h-5 w-5 mr-2 text-blue-600" />
               Autonomous Portfolio Management
             </div>
-            <Badge variant="outline" className="border-purple-200 text-purple-700 bg-purple-50">
+            <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">
               {autonomousActions.filter(a => a.status === 'in_progress').length} Active Operations
             </Badge>
           </CardTitle>
@@ -768,9 +768,9 @@ function AutonomousPortfolioContent({ analytics, companies }: { analytics: Portf
               <div className="text-2xl font-bold text-blue-600">{optimizationMetrics.automaticAdjustments}</div>
               <div className="text-sm text-blue-700">Auto Adjustments (24h)</div>
             </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
-              <div className="text-2xl font-bold text-purple-600">{optimizationMetrics.projectedAlpha}%</div>
-              <div className="text-sm text-purple-700">Projected Alpha</div>
+            <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="text-2xl font-bold text-blue-600">{optimizationMetrics.projectedAlpha}%</div>
+              <div className="text-sm text-blue-700">Projected Alpha</div>
             </div>
           </div>
 

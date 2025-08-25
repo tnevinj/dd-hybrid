@@ -235,21 +235,21 @@ export function DueDiligenceDashboard({ className, mode }: DueDiligenceDashboard
       </div>
 
       {/* AI Insights Banner */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Brain className="w-5 h-5 text-purple-600" />
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Brain className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-purple-800">AI Analysis Complete</h3>
-                <p className="text-sm text-purple-600">
+                <h3 className="font-semibold text-blue-800">AI Analysis Complete</h3>
+                <p className="text-sm text-blue-600">
                   Found 3 efficiency opportunities and 2 risk patterns across projects
                 </p>
               </div>
             </div>
-            <Button variant="outline" size="sm" className="border-purple-200">
+            <Button variant="outline" size="sm" className="border-blue-200">
               View Details
             </Button>
           </div>
@@ -302,9 +302,9 @@ export function DueDiligenceDashboard({ className, mode }: DueDiligenceDashboard
     <div className="space-y-6">
       {/* Minimal AI-First Interface */}
       <div className="text-center">
-        <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full mb-4">
-          <Brain className="w-5 h-5 text-purple-600" />
-          <span className="font-medium text-purple-800">Autonomous Mode Active</span>
+        <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-100 rounded-full mb-4">
+          <Brain className="w-5 h-5 text-blue-600" />
+          <span className="font-medium text-blue-800">Autonomous Mode Active</span>
         </div>
         <h1 className="text-2xl font-bold mb-2">Due Diligence Command Center</h1>
         <p className="text-gray-600">AI handling routine tasks - focusing on decisions that need you</p>
@@ -315,8 +315,8 @@ export function DueDiligenceDashboard({ className, mode }: DueDiligenceDashboard
         <CardContent className="p-6">
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <Brain className="w-4 h-4 text-purple-600" />
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <Brain className="w-4 h-4 text-blue-600" />
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900 mb-1">AI Assistant</p>
@@ -383,7 +383,7 @@ export function DueDiligenceDashboard({ className, mode }: DueDiligenceDashboard
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">3</div>
+            <div className="text-2xl font-bold text-blue-600">3</div>
             <div className="text-sm text-gray-600">Decisions Pending</div>
           </CardContent>
         </Card>
@@ -491,21 +491,21 @@ interface AIEnhancedMetricCardProps extends MetricCardProps {
 
 function AIEnhancedMetricCard({ title, value, icon, trend, trendUp, aiInsight, aiAction }: AIEnhancedMetricCardProps) {
   return (
-    <Card className="border-l-4 border-l-purple-400">
+    <Card className="border-l-4 border-l-blue-400">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-600">{title}</span>
           <div className="flex items-center space-x-1">
             <div className="text-gray-400">{icon}</div>
-            <Brain className="w-3 h-3 text-purple-500" />
+            <Brain className="w-3 h-3 text-blue-500" />
           </div>
         </div>
         <div className="text-2xl font-bold mb-1">{value}</div>
         <div className={`text-xs mb-2 ${trendUp ? 'text-green-600' : 'text-red-600'}`}>
           {trend}
         </div>
-        <div className="text-xs text-purple-600 mb-1">{aiInsight}</div>
-        <Button variant="ghost" size="sm" className="text-xs h-6 p-1 text-purple-600">
+        <div className="text-xs text-blue-600 mb-1">{aiInsight}</div>
+        <Button variant="ghost" size="sm" className="text-xs h-6 p-1 text-blue-600">
           {aiAction}
         </Button>
       </CardContent>
@@ -590,7 +590,7 @@ function ProjectsList({ projects, mode, onProjectClick }: ProjectsListProps) {
             <div>
               <h3 className="font-semibold">{project.name}</h3>
               {project.aiInsight && (
-                <p className="text-xs text-purple-600 flex items-center mt-1">
+                <p className="text-xs text-blue-600 flex items-center mt-1">
                   <Brain className="w-3 h-3 mr-1" />
                   {project.aiInsight}
                 </p>

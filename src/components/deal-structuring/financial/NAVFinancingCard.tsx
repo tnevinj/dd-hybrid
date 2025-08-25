@@ -643,7 +643,7 @@ const NAVFinancingCard: React.FC<NAVFinancingCardProps> = ({
                   <div className="text-sm text-gray-600">Total Current NAV</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">
+                  <div className="text-lg font-bold text-blue-600">
                     {((inputs.navPortfolio.reduce((sum, pos) => sum + pos.diversificationScore, 0) / inputs.navPortfolio.length) * 100).toFixed(0)}%
                   </div>
                   <div className="text-sm text-gray-600">Avg Diversification</div>
@@ -895,7 +895,7 @@ const NAVFinancingCard: React.FC<NAVFinancingCardProps> = ({
               </div>
               <div className="border rounded-lg p-4 text-center">
                 <h5 className="font-medium text-gray-900 mb-2">Utilization</h5>
-                <div className="text-2xl font-bold text-purple-600">{formatPercentage(results.financingCapacity.utilizationAtDrawdown)}</div>
+                <div className="text-2xl font-bold text-blue-600">{formatPercentage(results.financingCapacity.utilizationAtDrawdown)}</div>
                 <div className="text-sm text-gray-500">At Drawdown</div>
               </div>
               <div className="border rounded-lg p-4 text-center">
@@ -1181,8 +1181,8 @@ const NAVFinancingCard: React.FC<NAVFinancingCardProps> = ({
                 <div className="text-2xl font-bold text-red-600">{formatPercentage(results.costAnalysis.allInCostOfFunds)}</div>
                 <div className="text-sm text-gray-600">All-In Cost</div>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">{formatPercentage(results.financingCapacity.loanToValueRatio)}</div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{formatPercentage(results.financingCapacity.loanToValueRatio)}</div>
                 <div className="text-sm text-gray-600">LTV Ratio</div>
               </div>
             </div>

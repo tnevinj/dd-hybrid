@@ -1102,20 +1102,20 @@ export function WorkflowAutomationDashboard({
                       </div>
                     </div>
 
-                    <div className="mt-4 p-3 bg-purple-50 rounded-lg">
-                      <h5 className="font-medium text-purple-800 mb-2">Integration Opportunities</h5>
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                      <h5 className="font-medium text-blue-800 mb-2">Integration Opportunities</h5>
                       <div className="space-y-1 text-xs">
                         <div className="flex justify-between">
                           <span>Advanced Analytics → Auto-reporting</span>
-                          <span className="text-purple-600">High impact</span>
+                          <span className="text-blue-600">High impact</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Legal Management → Document workflow</span>
-                          <span className="text-purple-600">Medium impact</span>
+                          <span className="text-blue-600">Medium impact</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Fund Operations → Expense approval</span>
-                          <span className="text-purple-600">Low impact</span>
+                          <span className="text-blue-600">Low impact</span>
                         </div>
                       </div>
                     </div>

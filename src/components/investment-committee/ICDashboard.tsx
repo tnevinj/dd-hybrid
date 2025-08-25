@@ -193,8 +193,8 @@ export function ICDashboard({
                 {formatCurrency(metrics.approvedAmount)}
               </p>
             </div>
-            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="h-6 w-6 text-purple-600" />
+            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="h-6 w-6 text-blue-600" />
             </div>
           </div>
           <div className="mt-4 flex items-center">
@@ -225,22 +225,22 @@ export function ICDashboard({
       </Card>
       
       {/* AI-Enhanced Metrics */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-pink-50">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-purple-700">AI Decision Forecast</p>
-              <p className="text-2xl font-bold text-purple-900">
+              <p className="text-sm font-medium text-blue-700">AI Decision Forecast</p>
+              <p className="text-2xl font-bold text-blue-900">
                 {metrics.predictedApprovals} approvals
               </p>
             </div>
-            <div className="h-12 w-12 bg-purple-200 rounded-lg flex items-center justify-center">
-              <Brain className="h-6 w-6 text-purple-700" />
+            <div className="h-12 w-12 bg-blue-200 rounded-lg flex items-center justify-center">
+              <Brain className="h-6 w-6 text-blue-700" />
             </div>
           </div>
           <div className="mt-4 flex items-center">
-            <Zap className="h-4 w-4 text-purple-600 mr-1" />
-            <span className="text-sm text-purple-700">
+            <Zap className="h-4 w-4 text-blue-600 mr-1" />
+            <span className="text-sm text-blue-700">
               {metrics.aiConfidence}% confidence • {metrics.consensusLevel}% consensus
             </span>
           </div>
@@ -817,10 +817,10 @@ function AutonomousICContent({ proposals, meetings }: { proposals: ICProposal[],
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center">
-              <Zap className="h-5 w-5 mr-2 text-purple-600" />
+              <Zap className="h-5 w-5 mr-2 text-blue-600" />
               Autonomous Operations Center
             </div>
-            <Badge variant="outline" className="border-purple-200 text-purple-700 bg-purple-50">
+            <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">
               {autonomousActions.filter(a => a.status === 'in_progress').length} Active
             </Badge>
           </CardTitle>

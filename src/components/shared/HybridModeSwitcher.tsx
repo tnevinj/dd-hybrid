@@ -52,7 +52,7 @@ const DEFAULT_MODES: ModeConfig[] = [
     label: 'Help me Drive', 
     icon: Brain, 
     description: 'AI-enhanced workflows with intelligent recommendations',
-    color: 'purple',
+    color: 'blue',
     features: [
       'AI recommendations',
       'Smart automation',
@@ -203,7 +203,7 @@ export function HybridModeSwitcher({
       case 'traditional':
         return 'border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-900'
       case 'assisted':
-        return 'border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-900'
+        return 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-900'
       case 'autonomous':
         return 'border-green-300 bg-green-50 hover:bg-green-100 text-green-900'
       default:
@@ -214,7 +214,7 @@ export function HybridModeSwitcher({
   const getIconColor = (color: string) => {
     switch (color) {
       case 'gray': return 'text-gray-600'
-      case 'purple': return 'text-purple-600'
+      case 'blue': return 'text-blue-600'
       case 'green': return 'text-green-600'
       default: return 'text-gray-600'
     }

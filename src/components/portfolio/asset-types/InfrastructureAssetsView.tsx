@@ -37,7 +37,7 @@ export function InfrastructureAssetsView() {
       case 'water':
         return 'bg-cyan-100 text-cyan-800';
       case 'telecom':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-blue-100 text-blue-800';
       case 'social':
         return 'bg-green-100 text-green-800';
       default:
@@ -56,7 +56,7 @@ export function InfrastructureAssetsView() {
       case 'usage':
         return 'bg-blue-100 text-blue-800';
       case 'hybrid':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -255,8 +255,8 @@ export function InfrastructureAssetsView() {
         <Card className="p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="p-3 bg-purple-100 rounded-full">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-blue-100 rounded-full">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
               </div>

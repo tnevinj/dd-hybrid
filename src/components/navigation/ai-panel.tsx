@@ -139,16 +139,16 @@ export function AIPanel({ className }: AIPanelProps) {
         {/* AI Learning Progress */}
         <div>
           <h3 className="text-sm font-medium mb-3 flex items-center">
-            <Brain className="w-4 h-4 mr-2 text-purple-600" />
+            <Brain className="w-4 h-4 mr-2 text-blue-600" />
             AI Learning Progress
           </h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="text-gray-600">Workflow Pattern Recognition</span>
-              <span className="text-purple-600 font-medium">87%</span>
+              <span className="text-blue-600 font-medium">87%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-1.5">
-              <div className="bg-purple-500 h-1.5 rounded-full" style={{ width: '87%' }} />
+              <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: '87%' }} />
             </div>
             
             <div className="flex items-center justify-between text-xs">

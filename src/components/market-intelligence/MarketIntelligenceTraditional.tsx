@@ -351,7 +351,7 @@ export const MarketIntelligenceTraditional: React.FC<{ metrics?: any }> = ({ met
                             <div key={sector.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                               <div className="flex items-center space-x-3">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                                  index === 0 ? 'bg-green-500' : index === 1 ? 'bg-blue-500' : 'bg-purple-500'
+                                  index === 0 ? 'bg-green-500' : index === 1 ? 'bg-blue-500' : 'bg-blue-500'
                                 }`}>
                                   {index + 1}
                                 </div>
@@ -481,7 +481,7 @@ export const MarketIntelligenceTraditional: React.FC<{ metrics?: any }> = ({ met
                         <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${
                           index % 5 === 0 ? 'bg-blue-500' :
                           index % 5 === 1 ? 'bg-green-500' :
-                          index % 5 === 2 ? 'bg-purple-500' :
+                          index % 5 === 2 ? 'bg-blue-500' :
                           index % 5 === 3 ? 'bg-red-500' : 'bg-orange-500'
                         }`}>
                           {sector.name.charAt(0)}

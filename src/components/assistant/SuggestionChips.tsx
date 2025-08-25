@@ -32,7 +32,7 @@ const SuggestionChips: React.FC<SuggestionChipsProps> = ({
   const getModeChipStyle = () => {
     switch (mode) {
       case 'autonomous':
-        return 'hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 border-purple-100';
+        return 'hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 border-blue-100';
       case 'assisted':
         return 'hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 border-blue-100';
       default:
@@ -61,7 +61,7 @@ const SuggestionChips: React.FC<SuggestionChipsProps> = ({
   const getModeIcon = () => {
     switch (mode) {
       case 'autonomous':
-        return <Zap className="h-3 w-3 text-purple-600" />;
+        return <Zap className="h-3 w-3 text-blue-600" />;
       case 'assisted':
         return <Brain className="h-3 w-3 text-blue-600" />;
       default:

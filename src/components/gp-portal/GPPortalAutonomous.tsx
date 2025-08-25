@@ -177,7 +177,7 @@ export function GPPortalAutonomous({ data, onExecuteAction, onRequireDecision }:
   return (
     <div className="space-y-6">
       {/* Welcome Header with AI Status */}
-      <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+      <Card className="bg-gradient-to-r from-blue-50 to-blue-50 border-blue-200">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -191,8 +191,8 @@ export function GPPortalAutonomous({ data, onExecuteAction, onRequireDecision }:
             </div>
             <div className="text-right">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="h-5 w-5 text-purple-600" />
-                <span className="font-semibold text-purple-700">AI Active</span>
+                <Sparkles className="h-5 w-5 text-blue-600" />
+                <span className="font-semibold text-blue-700">AI Active</span>
               </div>
               <Badge className="bg-green-100 text-green-800">
                 {autonomousData.performanceSummary.efficiency}% efficiency
@@ -252,7 +252,7 @@ export function GPPortalAutonomous({ data, onExecuteAction, onRequireDecision }:
                         <Button 
                           size="sm" 
                           onClick={() => onExecuteAction(action)}
-                          className="bg-purple-600 hover:bg-purple-700"
+                          className="bg-blue-600 hover:bg-blue-700"
                         >
                           <Play className="h-4 w-4 mr-1" />
                           Take Action
@@ -275,7 +275,7 @@ export function GPPortalAutonomous({ data, onExecuteAction, onRequireDecision }:
                     <div className="ml-4">
                       {action.type === 'REVIEW_REQUIRED' && <FileText className="h-6 w-6 text-orange-600" />}
                       {action.type === 'APPROVAL_NEEDED' && <CheckCircle className="h-6 w-6 text-blue-600" />}
-                      {action.type === 'FOLLOW_UP' && <MessageSquare className="h-6 w-6 text-purple-600" />}
+                      {action.type === 'FOLLOW_UP' && <MessageSquare className="h-6 w-6 text-blue-600" />}
                       {action.type === 'DEADLINE_APPROACHING' && <AlertTriangle className="h-6 w-6 text-red-600" />}
                     </div>
                   </div>
@@ -461,7 +461,7 @@ export function GPPortalAutonomous({ data, onExecuteAction, onRequireDecision }:
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">{data.companies.length}</div>
+            <div className="text-2xl font-bold text-blue-600">{data.companies.length}</div>
             <div className="text-sm text-gray-600">Companies</div>
             <div className="text-xs text-green-600 mt-1">All verified ✓</div>
           </CardContent>

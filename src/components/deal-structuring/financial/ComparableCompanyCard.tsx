@@ -569,7 +569,7 @@ const ComparableCompanyCard: React.FC<ComparableCompanyCardProps> = ({
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-sm text-gray-600 mb-1">EV/Revenue</div>
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-blue-600">
                       {results.valuation.impliedMultiples.ev_revenue.toFixed(2)}x
                     </div>
                   </CardContent>
@@ -702,12 +702,12 @@ const ComparableCompanyCard: React.FC<ComparableCompanyCardProps> = ({
             </div>
 
             {mode !== 'traditional' && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <h5 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h5 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
                   <Activity className="h-4 w-4" />
                   AI-Enhanced Analysis
                 </h5>
-                <p className="text-purple-800 text-sm">
+                <p className="text-blue-800 text-sm">
                   Advanced machine learning models have identified additional valuation drivers and peer group optimization opportunities. 
                   Consider expanding the analysis to include private market comparables and cross-industry peer analysis for enhanced precision.
                 </p>

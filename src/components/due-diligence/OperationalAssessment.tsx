@@ -478,9 +478,9 @@ export function OperationalAssessment({ projectId, mode = 'assisted' }: Operatio
               <div className="text-lg font-bold text-green-600">{opportunity.expectedROI.toFixed(1)}x</div>
               <div className="text-xs text-green-700">Expected ROI</div>
             </div>
-            <div className="text-center p-2 bg-purple-50 rounded">
-              <div className="text-lg font-bold text-purple-600">${(opportunity.estimatedCost / 1000).toFixed(0)}K</div>
-              <div className="text-xs text-purple-700">Investment</div>
+            <div className="text-center p-2 bg-blue-50 rounded">
+              <div className="text-lg font-bold text-blue-600">${(opportunity.estimatedCost / 1000).toFixed(0)}K</div>
+              <div className="text-xs text-blue-700">Investment</div>
             </div>
             <div className="text-center p-2 bg-orange-50 rounded">
               <div className="text-lg font-bold text-orange-600">{opportunity.estimatedTimeframe}mo</div>
@@ -627,9 +627,9 @@ export function OperationalAssessment({ projectId, mode = 'assisted' }: Operatio
                   <div className="text-2xl font-bold text-green-600">{displayData.improvementOpportunities.length}</div>
                   <div className="text-sm text-green-700">Improvement Opportunities</div>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600">{operationalData.status?.toUpperCase() || 'DRAFT'}</div>
-                  <div className="text-sm text-purple-700">Assessment Confidence</div>
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">{operationalData.status?.toUpperCase() || 'DRAFT'}</div>
+                  <div className="text-sm text-blue-700">Assessment Confidence</div>
                 </div>
               </div>
             </Card>

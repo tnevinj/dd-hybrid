@@ -1794,8 +1794,8 @@ const TenderOfferCard: React.FC<TenderOfferCardProps> = ({
                           {results.executiveSummary.recommendedStrategy.confidenceLevel}
                         </Badge>
                       </div>
-                      <div className="text-center p-4 bg-purple-50 rounded-lg">
-                        <div className="text-2xl font-bold text-purple-600">
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">
                           ${(results.executiveSummary.keyMetrics.estimatedProceeds / 1000000).toFixed(0)}M
                         </div>
                         <div className="text-sm text-muted-foreground">Estimated Proceeds</div>

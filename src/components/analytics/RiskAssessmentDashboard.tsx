@@ -307,10 +307,10 @@ export function RiskAssessmentDashboard({ mode = 'traditional' }: RiskAssessment
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Cross-Module</CardTitle>
-            <Brain className="h-4 w-4 text-purple-600" />
+            <Brain className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{crossModuleRisks.length}</div>
+            <div className="text-2xl font-bold text-blue-600">{crossModuleRisks.length}</div>
             <p className="text-xs text-gray-600">Systemic risks</p>
           </CardContent>
         </Card>
@@ -392,7 +392,7 @@ export function RiskAssessmentDashboard({ mode = 'traditional' }: RiskAssessment
             <Card className="mb-6">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Zap className="h-5 w-5 mr-2 text-purple-600" />
+                  <Zap className="h-5 w-5 mr-2 text-blue-600" />
                   Cross-Module Risks
                 </CardTitle>
                 <p className="text-sm text-gray-600">Systemic risks affecting multiple areas</p>
@@ -400,24 +400,24 @@ export function RiskAssessmentDashboard({ mode = 'traditional' }: RiskAssessment
               <CardContent>
                 <div className="space-y-4">
                   {crossModuleRisks.map((risk, idx) => (
-                    <div key={idx} className="p-4 border rounded-lg bg-purple-50">
+                    <div key={idx} className="p-4 border rounded-lg bg-blue-50">
                       <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-purple-900">{risk.description}</h4>
+                        <h4 className="font-semibold text-blue-900">{risk.description}</h4>
                         <Badge className={getSeverityColor(risk.severity)}>
                           {risk.severity}
                         </Badge>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-purple-700 font-medium">Impact:</span> {risk.impact}/10
+                          <span className="text-blue-700 font-medium">Impact:</span> {risk.impact}/10
                         </div>
                         <div>
-                          <span className="text-purple-700 font-medium">Probability:</span> {(risk.probability * 100).toFixed(0)}%
+                          <span className="text-blue-700 font-medium">Probability:</span> {(risk.probability * 100).toFixed(0)}%
                         </div>
                       </div>
                       <div className="mt-3">
-                        <h5 className="text-sm font-medium text-purple-800 mb-1">Mitigation:</h5>
-                        <ul className="text-xs text-purple-700 space-y-1">
+                        <h5 className="text-sm font-medium text-blue-800 mb-1">Mitigation:</h5>
+                        <ul className="text-xs text-blue-700 space-y-1">
                           {risk.mitigation.map((action, actionIdx) => (
                             <li key={actionIdx} className="flex items-center">
                               <ChevronRight className="h-3 w-3 mr-1" />

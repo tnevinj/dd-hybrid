@@ -368,7 +368,7 @@ export function UnifiedIntelligenceSystem({
       case 'OPPORTUNITY': return <TrendingUp className="h-4 w-4 text-green-600" />;
       case 'RISK': return <AlertTriangle className="h-4 w-4 text-red-600" />;
       case 'TREND': return <BarChart3 className="h-4 w-4 text-blue-600" />;
-      case 'ACTION': return <Target className="h-4 w-4 text-purple-600" />;
+      case 'ACTION': return <Target className="h-4 w-4 text-blue-600" />;
       default: return <Activity className="h-4 w-4 text-gray-600" />;
     }
   };
@@ -424,9 +424,9 @@ export function UnifiedIntelligenceSystem({
               </div>
               
               <div>
-                <div className="text-2xl font-bold text-purple-600 mb-2">{overview.confidenceLevel}%</div>
-                <p className="text-sm text-purple-700">AI Confidence</p>
-                <p className="text-xs text-purple-600 mt-1">Prediction accuracy</p>
+                <div className="text-2xl font-bold text-blue-600 mb-2">{overview.confidenceLevel}%</div>
+                <p className="text-sm text-blue-700">AI Confidence</p>
+                <p className="text-xs text-blue-600 mt-1">Prediction accuracy</p>
               </div>
             </div>
           </CardContent>
@@ -660,19 +660,19 @@ export function UnifiedIntelligenceSystem({
 
   const renderCorrelationsTab = () => (
     <div className="space-y-6">
-      <Card className="border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+      <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-pink-50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-3 text-xl text-purple-800">
+          <CardTitle className="flex items-center gap-3 text-xl text-blue-800">
             <NetworkIcon className="h-6 w-6" />
             Cross-Module Intelligence Network
           </CardTitle>
-          <p className="text-purple-700">AI-detected correlations and interconnections</p>
+          <p className="text-blue-700">AI-detected correlations and interconnections</p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600 mb-2">{correlations.length}</div>
-              <p className="text-sm text-purple-700">Active Correlations</p>
+              <div className="text-2xl font-bold text-blue-600 mb-2">{correlations.length}</div>
+              <p className="text-sm text-blue-700">Active Correlations</p>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600 mb-2">
@@ -746,7 +746,7 @@ export function UnifiedIntelligenceSystem({
                   rec.category === 'INVESTMENT' ? 'bg-green-100 text-green-800' :
                   rec.category === 'RISK_MANAGEMENT' ? 'bg-red-100 text-red-800' :
                   rec.category === 'OPERATIONAL' ? 'bg-blue-100 text-blue-800' :
-                  'bg-purple-100 text-purple-800'
+                  'bg-blue-100 text-blue-800'
                 }>
                   {rec.category}
                 </Badge>

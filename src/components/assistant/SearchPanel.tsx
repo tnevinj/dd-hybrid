@@ -32,7 +32,7 @@ const SearchPanel: React.FC<SearchPanelProps> = ({
   const getModeIcon = () => {
     switch (mode) {
       case 'autonomous':
-        return <Zap className="h-4 w-4 text-purple-600" />;
+        return <Zap className="h-4 w-4 text-blue-600" />;
       case 'assisted':
         return <Brain className="h-4 w-4 text-blue-600" />;
       default:

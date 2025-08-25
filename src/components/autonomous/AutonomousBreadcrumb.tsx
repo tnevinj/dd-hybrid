@@ -74,13 +74,13 @@ export function AutonomousBreadcrumb({
             <div className={cn(
               "flex items-center space-x-1 px-2 py-1 rounded-md transition-colors",
               isActive 
-                ? "text-purple-700 bg-purple-50 font-medium" 
+                ? "text-blue-700 bg-blue-50 font-medium" 
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             )}>
               {item.icon && (
                 <item.icon className={cn(
                   "w-4 h-4 flex-shrink-0",
-                  isActive ? "text-purple-600" : "text-gray-500"
+                  isActive ? "text-blue-600" : "text-gray-500"
                 )} />
               )}
               <span className="truncate max-w-[200px] sm:max-w-none">

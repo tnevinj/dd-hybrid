@@ -97,7 +97,7 @@ const ModeKPICard: React.FC<ModeKPICardProps> = ({
 
   const getAIInsightColor = (type: string) => {
     switch (type) {
-      case 'optimization': return 'text-purple-600';
+      case 'optimization': return 'text-blue-600';
       case 'warning': return 'text-amber-600';
       case 'success': return 'text-green-600';
       default: return 'text-blue-600';
@@ -200,7 +200,7 @@ const ModeKPICard: React.FC<ModeKPICardProps> = ({
             {/* AI Enhanced Badge */}
             {!badge && (
               <div className="absolute top-2 right-2">
-                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
                   <Bot className="h-3 w-3 mr-1" />
                   {mode === 'assisted' ? 'AI Enhanced' : 'AI Managed'}
                 </Badge>
@@ -209,7 +209,7 @@ const ModeKPICard: React.FC<ModeKPICardProps> = ({
             
             {/* AI Activity Indicator */}
             <div className="absolute top-2 left-2">
-              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             </div>
           </>
         )}
@@ -217,7 +217,7 @@ const ModeKPICard: React.FC<ModeKPICardProps> = ({
         {/* Mode-specific enhancements */}
         {mode === 'autonomous' && (
           <div className="absolute bottom-2 right-2">
-            <Sparkles className="h-4 w-4 text-purple-500 animate-pulse" />
+            <Sparkles className="h-4 w-4 text-blue-500 animate-pulse" />
           </div>
         )}
       </CardContent>

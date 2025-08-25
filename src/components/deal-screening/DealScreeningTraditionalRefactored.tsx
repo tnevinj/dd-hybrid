@@ -365,7 +365,7 @@ export function DealScreeningTraditionalRefactored({
                       </div>
                       <div className="text-center">
                         <p className="text-xs text-gray-500 mb-1">Strategic Align</p>
-                        <p className="text-lg font-bold text-purple-600">{opportunity.strategicAlignment}/10</p>
+                        <p className="text-lg font-bold text-blue-600">{opportunity.strategicAlignment}/10</p>
                       </div>
                       <div className="text-center">
                         <p className="text-xs text-gray-500 mb-1">Exit Timeline</p>
@@ -434,7 +434,7 @@ export function DealScreeningTraditionalRefactored({
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center space-x-2">
-                <TrendingUp className="h-5 w-5 text-purple-600" />
+                <TrendingUp className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
                   <p className="text-2xl font-bold text-gray-900">{metrics.conversionRate || '42%'}</p>

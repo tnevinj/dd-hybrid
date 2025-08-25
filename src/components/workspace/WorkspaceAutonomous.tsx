@@ -233,7 +233,7 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
           <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
             <Badge 
               variant="outline" 
-              className="bg-purple-50 text-purple-700 border-purple-200 hidden sm:inline-flex"
+              className="bg-blue-50 text-blue-700 border-blue-200 hidden sm:inline-flex"
             >
               AI Managing
             </Badge>
@@ -351,11 +351,11 @@ export function WorkspaceAutonomous({ onSwitchMode }: WorkspaceAutonomousProps) 
             className="bg-white rounded-lg max-w-7xl w-full max-h-[95vh] overflow-hidden shadow-2xl"
             style={getZIndexStyle(ZIndex.MODAL_CONTENT)}
           >
-            <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-violet-50 to-purple-50">
+            <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-violet-50 to-blue-50">
               <div className="flex items-center gap-3">
                 <Wand2 className="w-5 h-5 text-violet-600" />
                 <h2 className="text-lg font-semibold text-gray-900">AI Content Assembler - {selectedProject.name}</h2>
-                <Badge variant="outline" className="bg-purple-100 text-purple-700">Smart Creation</Badge>
+                <Badge variant="outline" className="bg-blue-100 text-blue-700">Smart Creation</Badge>
               </div>
               <Button variant="ghost" size="sm" onClick={() => setShowContentAssembler(false)}>
                 <X className="w-4 h-4" />

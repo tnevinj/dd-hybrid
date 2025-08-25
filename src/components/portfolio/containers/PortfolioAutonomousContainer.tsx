@@ -30,7 +30,7 @@ export function PortfolioAutonomousContainer({
 
   return (
     <UnifiedPortfolioProvider config={defaultConfig}>
-      <div className="p-6 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 min-h-screen">
+      <div className="p-6 bg-gradient-to-br from-green-50 via-blue-50 to-blue-50 min-h-screen">
         <div className="max-w-7xl mx-auto">
         {/* Autonomous Mode Header */}
         <div className="mb-6">
@@ -68,11 +68,11 @@ export function PortfolioAutonomousContainer({
                 <div className="text-xs text-blue-600">Last run: 1m ago</div>
               </div>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-              <Globe className="w-5 h-5 text-purple-600" />
+            <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <Globe className="w-5 h-5 text-blue-600" />
               <div>
                 <div className="font-medium text-sm text-gray-900">Market Intelligence</div>
-                <div className="text-xs text-purple-600">Analyzing trends</div>
+                <div className="text-xs text-blue-600">Analyzing trends</div>
               </div>
             </div>
           </div>
@@ -108,7 +108,7 @@ export function PortfolioAutonomousContainer({
               <div className="text-xs text-gray-600 mt-1">Multi-user workflows</div>
             </div>
             <div className="text-center p-3">
-              <Settings className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+              <Settings className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <div className="font-medium text-sm text-gray-900">Custom Dashboards</div>
               <div className="text-xs text-gray-600 mt-1">Personalized views</div>
             </div>

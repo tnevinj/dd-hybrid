@@ -581,7 +581,7 @@ export function LegalManagementAssistedStandardized({
         {activeView === 'compliance' && (
           <div className="text-center py-12">
             <div className="flex items-center justify-center mb-4">
-              <Shield className="w-12 h-12 text-purple-400 mr-2" />
+              <Shield className="w-12 h-12 text-blue-400 mr-2" />
               <Brain className="w-8 h-8 text-blue-500" />
             </div>
             <h3 className="text-lg font-semibold text-gray-600">AI Compliance Monitoring</h3>
@@ -593,7 +593,7 @@ export function LegalManagementAssistedStandardized({
           <div className="text-center py-12">
             <div className="flex items-center justify-center mb-4">
               <Zap className="w-12 h-12 text-yellow-400 mr-2" />
-              <Brain className="w-8 h-8 text-purple-500" />
+              <Brain className="w-8 h-8 text-blue-500" />
             </div>
             <h3 className="text-lg font-semibold text-gray-600">Legal Process Automation</h3>
             <p className="text-gray-500">AI-powered workflow automation and document generation</p>

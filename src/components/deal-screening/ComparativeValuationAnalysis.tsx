@@ -433,10 +433,10 @@ export function ComparativeValuationAnalysis({
               </div>
               
               <div>
-                <div className="text-3xl font-bold text-purple-600 mb-2">
+                <div className="text-3xl font-bold text-blue-600 mb-2">
                   {formatPercentage(analysis.recommendation.upside / 100)}
                 </div>
-                <p className="text-sm text-purple-700">Potential Upside</p>
+                <p className="text-sm text-blue-700">Potential Upside</p>
               </div>
             </div>
           </CardContent>

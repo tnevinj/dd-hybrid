@@ -47,7 +47,7 @@ const getTypeColor = (type: AIInsight['type']): string => {
   switch (type) {
     case 'alert': return 'text-red-600 bg-red-50 border-red-200';
     case 'prediction': return 'text-blue-600 bg-blue-50 border-blue-200';
-    case 'pattern': return 'text-purple-600 bg-purple-50 border-purple-200';
+    case 'pattern': return 'text-blue-600 bg-blue-50 border-blue-200';
     case 'recommendation': return 'text-green-600 bg-green-50 border-green-200';
     default: return 'text-gray-600 bg-gray-50 border-gray-200';
   }
@@ -93,8 +93,8 @@ export function AIInsightsPanel({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Brain className="h-5 w-5 text-purple-600" />
-            <CardTitle className="text-purple-900">{title}</CardTitle>
+            <Brain className="h-5 w-5 text-blue-600" />
+            <CardTitle className="text-blue-900">{title}</CardTitle>
             <Badge variant="outline" className="text-xs">
               {sortedInsights.length}
             </Badge>

@@ -94,23 +94,23 @@ export function FundOperationsAssisted({
     <div className="p-6 space-y-6">
       {/* AI Assistance Panel */}
       {showAIPanel && (
-        <Card className="border-purple-200 bg-purple-50/50">
+        <Card className="border-blue-200 bg-blue-50/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Bot className="h-5 w-5 text-purple-600" />
-                <CardTitle className="text-purple-900">AI Assistant Active</CardTitle>
+                <Bot className="h-5 w-5 text-blue-600" />
+                <CardTitle className="text-blue-900">AI Assistant Active</CardTitle>
               </div>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setShowAIPanel(false)}
-                className="text-purple-600 hover:text-purple-700"
+                className="text-blue-600 hover:text-blue-700"
               >
                 Hide AI Panel
               </Button>
             </div>
-            <p className="text-purple-700 text-sm">
+            <p className="text-blue-700 text-sm">
               Your AI assistant has identified {activeSuggestions.length} opportunities to optimize fund operations
             </p>
           </CardHeader>
@@ -118,7 +118,7 @@ export function FundOperationsAssisted({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Active Recommendations */}
               <div>
-                <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                   <Lightbulb className="h-4 w-4" />
                   Smart Recommendations ({activeSuggestions.length})
                 </h4>
@@ -167,7 +167,7 @@ export function FundOperationsAssisted({
 
               {/* AI Automation Opportunities */}
               <div>
-                <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                   <Zap className="h-4 w-4" />
                   Automation Available
                 </h4>
@@ -216,7 +216,7 @@ export function FundOperationsAssisted({
             </div>
 
             {/* Quick AI Insights */}
-            <div className="mt-4 pt-4 border-t border-purple-200">
+            <div className="mt-4 pt-4 border-t border-blue-200">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div className="bg-white p-3 rounded-lg border text-center">
                   <TrendingUp className="h-6 w-6 text-green-600 mx-auto mb-1" />
@@ -229,7 +229,7 @@ export function FundOperationsAssisted({
                   <p className="text-xs text-gray-600">8.5 hours/week</p>
                 </div>
                 <div className="bg-white p-3 rounded-lg border text-center">
-                  <Target className="h-6 w-6 text-purple-600 mx-auto mb-1" />
+                  <Target className="h-6 w-6 text-blue-600 mx-auto mb-1" />
                   <p className="text-xs font-medium">Accuracy Rate</p>
                   <p className="text-xs text-gray-600">98.2%</p>
                 </div>
@@ -248,7 +248,7 @@ export function FundOperationsAssisted({
       {!showAIPanel && (
         <Button 
           onClick={() => setShowAIPanel(true)}
-          className="w-full bg-purple-600 hover:bg-purple-700"
+          className="w-full bg-blue-600 hover:bg-blue-700"
         >
           <Bot className="h-4 w-4 mr-2" />
           Show AI Assistant ({activeSuggestions.length} recommendations available)
@@ -316,8 +316,8 @@ export function FundOperationsAssisted({
                   {formatCurrency(metrics.currentNAV)}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Calculator className="h-6 w-6 text-purple-600" />
+              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Calculator className="h-6 w-6 text-blue-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center justify-between">
@@ -327,7 +327,7 @@ export function FundOperationsAssisted({
                   {formatPercentage(metrics.avgNetIRR)} Avg Net IRR
                 </span>
               </div>
-              <span className="text-xs text-purple-600">🎯 AI Optimized</span>
+              <span className="text-xs text-blue-600">🎯 AI Optimized</span>
             </div>
           </CardContent>
         </Card>
@@ -362,7 +362,7 @@ export function FundOperationsAssisted({
           <select
             value={selectedFund}
             onChange={(e) => setSelectedFund(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {(funds || []).map(fund => (
               <option key={fund.id} value={fund.id}>
@@ -399,7 +399,7 @@ export function FundOperationsAssisted({
                 <h3 className="font-semibold text-gray-900">Fund Overview</h3>
                 <div className="flex items-center gap-2">
                   <Badge variant="default">{currentFund.status}</Badge>
-                  <Badge variant="outline" className="bg-purple-50 text-purple-700 text-xs">
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 text-xs">
                     <Bot className="h-3 w-3 mr-1" />
                     AI Monitored
                   </Badge>
@@ -417,7 +417,7 @@ export function FundOperationsAssisted({
                   <div className="text-right">
                     <span className="text-sm font-medium">{formatCurrency(currentFund.commitments)}</span>
                     {activeSuggestions.some(rec => rec.type === 'optimization') && (
-                      <p className="text-xs text-purple-600">💡 Optimization available</p>
+                      <p className="text-xs text-blue-600">💡 Optimization available</p>
                     )}
                   </div>
                 </div>
@@ -453,7 +453,7 @@ export function FundOperationsAssisted({
                   <span className="text-sm text-gray-600">Net IRR</span>
                   <div className="text-right">
                     <span className="text-sm font-medium text-green-600">15.8%</span>
-                    <p className="text-xs text-purple-600">🎯 AI predicted: 16.2%</p>
+                    <p className="text-xs text-blue-600">🎯 AI predicted: 16.2%</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
@@ -527,19 +527,19 @@ export function FundOperationsAssisted({
           <TabsTrigger value="overview" className="relative">
             Overview
             {activeSuggestions.some(s => s.type === 'optimization') && (
-              <div className="absolute -top-1 -right-1 h-2 w-2 bg-purple-500 rounded-full" />
+              <div className="absolute -top-1 -right-1 h-2 w-2 bg-blue-500 rounded-full" />
             )}
           </TabsTrigger>
           <TabsTrigger value="capital-calls" className="relative">
             Capital Calls
             {activeSuggestions.some(s => s.title.toLowerCase().includes('capital call')) && (
-              <div className="absolute -top-1 -right-1 h-2 w-2 bg-purple-500 rounded-full" />
+              <div className="absolute -top-1 -right-1 h-2 w-2 bg-blue-500 rounded-full" />
             )}
           </TabsTrigger>
           <TabsTrigger value="distributions" className="relative">
             Distributions
             {activeSuggestions.some(s => s.type === 'automation') && (
-              <div className="absolute -top-1 -right-1 h-2 w-2 bg-purple-500 rounded-full" />
+              <div className="absolute -top-1 -right-1 h-2 w-2 bg-blue-500 rounded-full" />
             )}
           </TabsTrigger>
           <TabsTrigger value="nav-reports">NAV Reports</TabsTrigger>
@@ -559,7 +559,7 @@ export function FundOperationsAssisted({
                     <Calendar className="h-5 w-5 mr-2" />
                     Recent Activities
                   </div>
-                  <Badge variant="outline" className="bg-purple-50 text-purple-700">
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700">
                     <Bot className="h-3 w-3 mr-1" />
                     AI Enhanced
                   </Badge>
@@ -579,7 +579,7 @@ export function FundOperationsAssisted({
                         <p className="text-sm text-gray-600">{activity.description}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <p className="text-xs text-gray-500">{activity.date}</p>
-                          <Badge variant="outline" className="bg-purple-50 text-purple-700 text-xs">
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 text-xs">
                             <Bot className="h-3 w-3 mr-1" />
                             {activity.aiNote}
                           </Badge>
@@ -616,7 +616,7 @@ export function FundOperationsAssisted({
                             <TrendingUp className="h-3 w-3 mr-1" />
                             Above benchmark
                           </Badge>
-                          <span className="text-xs text-purple-600">AI Score: 8.{index + 2}/10</span>
+                          <span className="text-xs text-blue-600">AI Score: 8.{index + 2}/10</span>
                         </div>
                       </div>
                       <div className="text-right">
@@ -665,7 +665,7 @@ function EnhancedCapitalCallsTable({ fundId }: { fundId: string }) {
             Capital Calls
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-purple-50 text-purple-700">
+            <Badge variant="outline" className="bg-blue-50 text-blue-700">
               <Bot className="h-3 w-3 mr-1" />
               AI Optimized Timing
             </Badge>
@@ -789,7 +789,7 @@ function EnhancedNAVReportsTable({ fundId }: { fundId: string }) {
             NAV Reports
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-purple-50 text-purple-700">
+            <Badge variant="outline" className="bg-blue-50 text-blue-700">
               <CheckCircle className="h-3 w-3 mr-1" />
               AI Validated
             </Badge>
@@ -840,7 +840,7 @@ function AIInsightsDashboard({ recommendations }: { recommendations: any[] }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-purple-500" />
+            <Sparkles className="h-5 w-5 text-blue-500" />
             All AI Recommendations
           </CardTitle>
         </CardHeader>

@@ -474,7 +474,7 @@ const FeeAnalysisCard: React.FC<FeeAnalysisCardProps> = ({
                   <div className="text-sm text-gray-600">Excess Returns</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">
+                  <div className="text-lg font-bold text-blue-600">
                     {formatCurrency(results.carriedInterestAnalysis.carriedInterest)}
                   </div>
                   <div className="text-sm text-gray-600">Carried Interest</div>
@@ -647,7 +647,7 @@ const FeeAnalysisCard: React.FC<FeeAnalysisCardProps> = ({
                       <div className="text-sm text-gray-600">Net IRR</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-purple-600">
+                      <div className="text-lg font-bold text-blue-600">
                         {formatCurrency(scenario.carriedInterest)}
                       </div>
                       <div className="text-sm text-gray-600">Carried Interest</div>
@@ -673,8 +673,8 @@ const FeeAnalysisCard: React.FC<FeeAnalysisCardProps> = ({
                 <div className="text-2xl font-bold text-green-600">{formatCurrency(results.totalManagementFees)}</div>
                 <div className="text-sm text-gray-600">Management Fees</div>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">{formatCurrency(results.projectedCarriedInterest)}</div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{formatCurrency(results.projectedCarriedInterest)}</div>
                 <div className="text-sm text-gray-600">Carried Interest</div>
               </div>
               <div className="text-center p-4 bg-blue-50 rounded-lg">

@@ -126,7 +126,7 @@ export function ReportGenerator({ workspace, onGenerateReport, onPreviewReport }
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-emerald-900 mb-2">
               🤖 AI Report Generator
-              {navigationMode === 'autonomous' && <Badge className="ml-2 bg-purple-100 text-purple-700">Autonomous</Badge>}
+              {navigationMode === 'autonomous' && <Badge className="ml-2 bg-blue-100 text-blue-700">Autonomous</Badge>}
             </h3>
             
             {navigationMode === 'assisted' && (
@@ -160,7 +160,7 @@ export function ReportGenerator({ workspace, onGenerateReport, onPreviewReport }
 
             {navigationMode === 'autonomous' && (
               <div className="space-y-2">
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     🔄 I've automatically selected optimal report configurations based on your workspace data.
                     Ready to generate: Due Diligence Report (recommended), Risk Assessment (supplementary).
@@ -168,7 +168,7 @@ export function ReportGenerator({ workspace, onGenerateReport, onPreviewReport }
                   <Button size="sm" variant="outline" className="mt-2">Auto-Generate Reports</Button>
                 </div>
                 
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     📊 All reports will be continuously updated as you add new evidence and analysis.
                     Current data completeness: 85% financial, 70% market, 90% risk.

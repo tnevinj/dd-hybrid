@@ -144,11 +144,11 @@ export function AssetFinancials({ asset }: AssetFinancialsProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Cash-on-Cash</p>
-                <p className="text-2xl font-bold text-purple-600">
+                <p className="text-2xl font-bold text-blue-600">
                   {formatPercentage(calculateCashOnCashReturn())}
                 </p>
               </div>
-              <PieChart className="h-8 w-8 text-purple-600" />
+              <PieChart className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
@@ -410,7 +410,7 @@ export function AssetFinancials({ asset }: AssetFinancialsProps) {
                 <div className="text-sm text-gray-600">Cash-on-Cost Return</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="text-2xl font-bold text-blue-600">
                   {formatPercentage(calculateCashOnCashReturn())}
                 </div>
                 <div className="text-sm text-gray-600">Current Cash Yield</div>
@@ -447,7 +447,7 @@ export function AssetFinancials({ asset }: AssetFinancialsProps) {
                 </div>
                 <div className="flex items-center justify-between border-t pt-2">
                   <span className="text-sm font-medium text-gray-900">Total Return</span>
-                  <span className="text-sm font-bold text-purple-600">
+                  <span className="text-sm font-bold text-blue-600">
                     {formatCurrency((asset.currentValue - asset.acquisitionValue) + cashFlowData.reduce((sum, item) => sum + item.cashFlow, 0))}
                   </span>
                 </div>
@@ -470,7 +470,7 @@ export function AssetFinancials({ asset }: AssetFinancialsProps) {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Total Return %</span>
-                  <span className="text-sm font-semibold text-purple-600">
+                  <span className="text-sm font-semibold text-blue-600">
                     {formatPercentage(asset.performance.totalReturn)}
                   </span>
                 </div>

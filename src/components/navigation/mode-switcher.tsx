@@ -58,7 +58,7 @@ export function ModeSwitcher({ className, showOnboarding = false, onModeSelect }
       subtitle: 'AI-Assisted Navigation',
       description: 'Smart suggestions and contextual assistance',
       icon: <Sparkles className="w-5 h-5" />,
-      color: 'bg-purple-50 border-purple-200 text-purple-800',
+      color: 'bg-blue-50 border-blue-200 text-blue-800',
       benefits: [
         'Smart recommendations',
         'Contextual insights',
@@ -137,7 +137,7 @@ export function ModeSwitcher({ className, showOnboarding = false, onModeSelect }
         label: 'AI Autonomous',
         description: 'Let AI handle routine tasks',
         icon: <Zap className="w-4 h-4" />,
-        color: 'text-purple-600',
+        color: 'text-blue-600',
         features: ['Minimal interface', 'AI-first workflows', 'Natural language']
       }
     ]
@@ -220,7 +220,7 @@ export function ModeSwitcher({ className, showOnboarding = false, onModeSelect }
   // Full onboarding view
   return (
     <div className="space-y-6">
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-blue-50 to-gray-50 border-blue-200">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Brain className="w-5 h-5 text-blue-600" />

@@ -320,11 +320,11 @@ export function PredictiveCashFlowForecasting({
             </div>
             
             <div>
-              <div className="text-2xl font-bold text-purple-600 mb-2">
+              <div className="text-2xl font-bold text-blue-600 mb-2">
                 {formatCurrency(forecasts.reduce((sum, f) => sum + f.netCashFlow, 0))}
               </div>
-              <p className="text-sm text-purple-700">Net Cash Flow</p>
-              <p className="text-xs text-purple-600 mt-1">12-month projection</p>
+              <p className="text-sm text-blue-700">Net Cash Flow</p>
+              <p className="text-xs text-blue-600 mt-1">12-month projection</p>
             </div>
             
             <div>
@@ -451,7 +451,7 @@ export function PredictiveCashFlowForecasting({
             </SelectContent>
           </Select>
         </div>
-        <Badge variant="outline" className="bg-purple-50 text-purple-700">
+        <Badge variant="outline" className="bg-blue-50 text-blue-700">
           Monte Carlo: 10,000 simulations
         </Badge>
       </div>
@@ -503,9 +503,9 @@ export function PredictiveCashFlowForecasting({
 
       {/* Selected Scenario Details */}
       {selectedScenario && scenarios.find(s => s.scenario === selectedScenario) && (
-        <Card className="border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+        <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-pink-50">
           <CardHeader>
-            <CardTitle className="text-purple-800">
+            <CardTitle className="text-blue-800">
               {selectedScenario} Case Detailed Analysis
             </CardTitle>
           </CardHeader>
@@ -515,11 +515,11 @@ export function PredictiveCashFlowForecasting({
               return (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-semibold mb-3 text-purple-700">Key Assumptions</h4>
+                    <h4 className="font-semibold mb-3 text-blue-700">Key Assumptions</h4>
                     <ul className="space-y-2 text-sm">
                       {scenario.keyAssumptions.map((assumption, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                          <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
                           <span>{assumption}</span>
                         </li>
                       ))}
@@ -527,7 +527,7 @@ export function PredictiveCashFlowForecasting({
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold mb-3 text-purple-700">Critical Events</h4>
+                    <h4 className="font-semibold mb-3 text-blue-700">Critical Events</h4>
                     <div className="space-y-3">
                       {scenario.criticalEvents.map((event, idx) => (
                         <div key={idx} className="border rounded-lg p-3 bg-white">
@@ -589,7 +589,7 @@ export function PredictiveCashFlowForecasting({
                 </div>
                 
                 <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-200">
-                  <DollarSign className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <DollarSign className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <h5 className="font-medium">Bridge Financing Opportunity</h5>
                     <p className="text-sm text-gray-600">
@@ -661,7 +661,7 @@ export function PredictiveCashFlowForecasting({
             </div>
             
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-2">91%</div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">91%</div>
               <p className="text-sm text-gray-600">NAV Forecast Accuracy</p>
               <p className="text-xs text-gray-500 mt-1">Quarterly predictions</p>
             </div>

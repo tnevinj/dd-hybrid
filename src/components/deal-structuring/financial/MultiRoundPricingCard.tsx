@@ -422,7 +422,7 @@ const MultiRoundPricingCard: React.FC<MultiRoundPricingCardProps> = ({
     const colors = {
       seed: 'bg-green-100 text-green-800',
       series_a: 'bg-blue-100 text-blue-800',
-      series_b: 'bg-purple-100 text-purple-800',
+      series_b: 'bg-blue-100 text-blue-800',
       series_c: 'bg-orange-100 text-orange-800',
       series_d: 'bg-red-100 text-red-800',
       bridge: 'bg-yellow-100 text-yellow-800',
@@ -901,8 +901,8 @@ const MultiRoundPricingCard: React.FC<MultiRoundPricingCardProps> = ({
                   <div className="text-lg font-bold text-green-600">{formatCurrency(results.valuationEvolution.latestRoundValuation)}</div>
                   <div className="text-sm text-gray-600">Latest Round</div>
                 </div>
-                <div className="text-center p-3 bg-purple-50 rounded-lg">
-                  <div className="text-lg font-bold text-purple-600">{formatPercentage(results.valuationEvolution.valuationUplift)}</div>
+                <div className="text-center p-3 bg-blue-50 rounded-lg">
+                  <div className="text-lg font-bold text-blue-600">{formatPercentage(results.valuationEvolution.valuationUplift)}</div>
                   <div className="text-sm text-gray-600">Valuation Uplift</div>
                 </div>
                 <div className="text-center p-3 bg-orange-50 rounded-lg">

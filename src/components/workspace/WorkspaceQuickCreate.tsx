@@ -92,20 +92,20 @@ export function WorkspaceQuickCreate({ onCreateWorkspace, onCancel }: WorkspaceQ
     if (!showAIAssistant || navigationMode === 'traditional') return null;
 
     return (
-      <Card className="p-4 mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+      <Card className="p-4 mb-6 bg-gradient-to-r from-blue-50 to-blue-50 border-blue-200">
         <div className="flex items-start gap-3">
-          <Wand2 className="w-5 h-5 text-purple-600 mt-1" />
+          <Wand2 className="w-5 h-5 text-blue-600 mt-1" />
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-purple-900 mb-2">
+            <h3 className="text-sm font-semibold text-blue-900 mb-2">
               🤖 AI Workspace Assistant
               {navigationMode === 'autonomous' && (
-                <Badge className="ml-2 bg-purple-100 text-purple-700">Autonomous Mode</Badge>
+                <Badge className="ml-2 bg-blue-100 text-blue-700">Autonomous Mode</Badge>
               )}
             </h3>
             
             {navigationMode === 'assisted' && (
               <div className="space-y-2">
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     💡 Based on your recent activity, I recommend starting with a <strong>Due Diligence</strong> workspace.
                     You typically handle 3-4 DD projects per quarter.
@@ -120,7 +120,7 @@ export function WorkspaceQuickCreate({ onCreateWorkspace, onCancel }: WorkspaceQ
                   </Button>
                 </div>
                 
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     ⚡ I can pre-populate the workspace with your standard templates and team assignments.
                     This saves about 15 minutes of setup time.
@@ -134,7 +134,7 @@ export function WorkspaceQuickCreate({ onCreateWorkspace, onCancel }: WorkspaceQ
 
             {navigationMode === 'autonomous' && (
               <div className="space-y-2">
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     🔄 I've automatically selected the Due Diligence template based on your current deal pipeline.
                     The workspace will be configured with your team and standard checklist.
@@ -144,7 +144,7 @@ export function WorkspaceQuickCreate({ onCreateWorkspace, onCancel }: WorkspaceQ
                   </Button>
                 </div>
                 
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     📊 I can also set up automated data collection from your existing deal documents.
                     This will populate initial analysis components.

@@ -40,7 +40,7 @@ const ThandoButton: React.FC<ThandoButtonProps> = ({
   const getModeColor = () => {
     switch (mode) {
       case 'autonomous':
-        return 'from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700';
+        return 'from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700';
       case 'assisted':
         return 'from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700';
       default:
@@ -110,7 +110,7 @@ const ThandoButton: React.FC<ThandoButtonProps> = ({
             <Badge 
               variant="secondary" 
               className={`text-xs px-1 py-0.5 ${
-                mode === 'autonomous' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                mode === 'autonomous' ? 'bg-blue-100 text-blue-800' : 'bg-blue-100 text-blue-800'
               }`}
             >
               AI

@@ -550,7 +550,7 @@ export function AutomatedRiskAssessment({ projectId, dealData }: AutomatedRiskAs
   const renderRiskCard = (risk: Risk) => (
     <Card key={risk.id} className={`
       transition-all duration-200 hover:shadow-md
-      ${risk.aiGenerated ? 'border-l-4 border-l-purple-400' : ''}
+      ${risk.aiGenerated ? 'border-l-4 border-l-blue-400' : ''}
       ${risk.severity === 'critical' ? 'border-red-200 bg-red-50' : ''}
     `}>
       <CardHeader 
@@ -692,31 +692,31 @@ export function AutomatedRiskAssessment({ projectId, dealData }: AutomatedRiskAs
 
           {/* AI Insights */}
           {risk.aiGenerated && (
-            <div className="mt-6 p-4 bg-purple-50 rounded-lg">
-              <h4 className="font-medium mb-2 flex items-center text-purple-800">
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+              <h4 className="font-medium mb-2 flex items-center text-blue-800">
                 <Brain className="w-4 h-4 mr-2" />
                 AI Analysis Insights
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                 <div>
-                  <span className="font-medium text-purple-700">Triggers:</span>
-                  <ul className="text-purple-600 mt-1">
+                  <span className="font-medium text-blue-700">Triggers:</span>
+                  <ul className="text-blue-600 mt-1">
                     {risk.triggers.map((trigger, index) => (
                       <li key={index}>• {trigger}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <span className="font-medium text-purple-700">Indicators:</span>
-                  <ul className="text-purple-600 mt-1">
+                  <span className="font-medium text-blue-700">Indicators:</span>
+                  <ul className="text-blue-600 mt-1">
                     {risk.indicators.map((indicator, index) => (
                       <li key={index}>• {indicator}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <span className="font-medium text-purple-700">Similar Deals:</span>
-                  <div className="text-purple-600 mt-1">
+                  <span className="font-medium text-blue-700">Similar Deals:</span>
+                  <div className="text-blue-600 mt-1">
                     {risk.similarDeals.length > 0 ? 
                       risk.similarDeals.join(', ') : 
                       'No similar patterns found'
@@ -825,7 +825,7 @@ export function AutomatedRiskAssessment({ projectId, dealData }: AutomatedRiskAs
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold flex items-center">
-            <Brain className="w-5 h-5 mr-2 text-purple-500" />
+            <Brain className="w-5 h-5 mr-2 text-blue-500" />
             AI-Powered Risk Assessment
             <Badge variant="ai" className="ml-3">Smart Analysis</Badge>
           </h2>
@@ -859,13 +859,13 @@ export function AutomatedRiskAssessment({ projectId, dealData }: AutomatedRiskAs
 
       {/* AI Analysis Status */}
       {analysisRunning && (
-        <Card className="border-purple-200 bg-purple-50">
+        <Card className="border-blue-200 bg-blue-50">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <Brain className="w-5 h-5 text-purple-600" />
+              <Brain className="w-5 h-5 text-blue-600" />
               <div>
-                <h3 className="font-semibold text-purple-800">AI Risk Analysis in Progress</h3>
-                <p className="text-sm text-purple-600">
+                <h3 className="font-semibold text-blue-800">AI Risk Analysis in Progress</h3>
+                <p className="text-sm text-blue-600">
                   Analyzing deal data, market patterns, and industry benchmarks...
                 </p>
               </div>

@@ -39,11 +39,11 @@ const DashboardAIInsightsPanel: React.FC<{
   onExecuteAction: (actionId: string) => void
   onDismiss: (recommendationId: string) => void
 }> = ({ recommendations, onExecuteAction, onDismiss }) => (
-  <Card className="mb-6 border-2 border-purple-200">
+  <Card className="mb-6 border-2 border-blue-200">
     <CardHeader>
       <div className="flex items-center space-x-2">
-        <Sparkles className="h-5 w-5 text-purple-600" />
-        <CardTitle className="text-purple-900">Thando Dashboard Insights</CardTitle>
+        <Sparkles className="h-5 w-5 text-blue-600" />
+        <CardTitle className="text-blue-900">Thando Dashboard Insights</CardTitle>
         <Badge variant="ai" className="text-xs">
           {recommendations.length} active recommendations
         </Badge>
@@ -58,12 +58,12 @@ const DashboardAIInsightsPanel: React.FC<{
               ? 'bg-yellow-50 border-yellow-200' 
               : rec.priority === 'critical' 
               ? 'bg-red-50 border-red-200' 
-              : 'bg-purple-50 border-purple-200'
+              : 'bg-blue-50 border-blue-200'
           }`}
         >
           <div className="flex justify-between items-start mb-2">
             <h4 className="font-semibold text-gray-900 flex items-center">
-              {rec.type === 'optimization' && <Target className="w-4 h-4 mr-2 text-purple-600" />}
+              {rec.type === 'optimization' && <Target className="w-4 h-4 mr-2 text-blue-600" />}
               {rec.type === 'risk' && <AlertTriangle className="w-4 h-4 mr-2 text-yellow-600" />}
               {rec.type === 'opportunity' && <TrendingUp className="w-4 h-4 mr-2 text-green-600" />}
               {rec.type === 'automation' && <Zap className="w-4 h-4 mr-2 text-blue-600" />}
@@ -122,12 +122,12 @@ const SmartActivityCard: React.FC<{
   }
 
   return (
-    <div className="group p-3 bg-purple-50 rounded-lg border border-purple-100 hover:shadow-md transition-all duration-200">
+    <div className="group p-3 bg-blue-50 rounded-lg border border-blue-100 hover:shadow-md transition-all duration-200">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-3">
           <div className={`w-2 h-2 rounded-full ${getStatusColor(activity.status)}`} />
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900 group-hover:text-purple-700">
+            <p className="text-sm font-medium text-gray-900 group-hover:text-blue-700">
               {activity.title}
             </p>
             <p className="text-xs text-gray-500">{activity.timestamp}</p>
@@ -148,14 +148,14 @@ const SmartActivityCard: React.FC<{
 
       {/* AI-Generated Insights Preview */}
       {aiInsights.length > 0 && (
-        <div className="mt-2 p-2 bg-white rounded border border-purple-100">
+        <div className="mt-2 p-2 bg-white rounded border border-blue-100">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-purple-800">AI Analysis</p>
+            <p className="text-xs font-medium text-blue-800">AI Analysis</p>
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setShowInsights(!showInsights)}
-              className="text-xs h-6 text-purple-600"
+              className="text-xs h-6 text-blue-600"
             >
               {showInsights ? 'Hide' : 'Show'} insights
             </Button>
@@ -163,7 +163,7 @@ const SmartActivityCard: React.FC<{
           {showInsights && (
             <div className="mt-2 space-y-1">
               {aiInsights.slice(0, 2).map((insight, index) => (
-                <p key={index} className="text-xs text-purple-700">
+                <p key={index} className="text-xs text-blue-700">
                   • {insight.summary}
                 </p>
               ))}
@@ -344,20 +344,20 @@ export function DashboardAssisted({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
         <h3 className="text-xl font-semibold text-gray-700">AI is analyzing dashboard data...</h3>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-6">
       {/* Header - AI-Assisted Theme */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <div className="flex items-center space-x-3">
             <h1 className="text-3xl font-bold text-gray-900">AI-Enhanced Dashboard</h1>
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
               <Brain className="h-3 w-3" />
               <span>Assisted Mode</span>
             </Badge>
@@ -368,7 +368,7 @@ export function DashboardAssisted({
           <Button 
             variant="outline" 
             onClick={onCreateDeal} 
-            className="flex items-center space-x-2 border-purple-300 text-purple-700 hover:bg-purple-50"
+            className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50"
           >
             <Sparkles className="h-4 w-4" />
             <span>Smart New Deal</span>
@@ -376,12 +376,12 @@ export function DashboardAssisted({
           <Button 
             variant="outline" 
             onClick={onCreateWorkspace} 
-            className="flex items-center space-x-2 border-purple-300 text-purple-700 hover:bg-purple-50"
+            className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50"
           >
             <Wand2 className="h-4 w-4" />
             <span>AI Workspace</span>
           </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
             <Zap className="h-4 w-4 mr-2" />
             AI Actions
           </Button>
@@ -421,17 +421,17 @@ export function DashboardAssisted({
         {/* AI-Enhanced Search */}
         <div className="flex items-center space-x-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-purple-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-400" />
             <Input
               placeholder="AI-powered search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-64 border-purple-300 focus:border-purple-500 bg-white"
+              className="pl-10 w-64 border-blue-300 focus:border-blue-500 bg-white"
             />
           </div>
           <Button 
             variant="outline" 
-            className="flex items-center space-x-2 border-purple-300 text-purple-700 hover:bg-purple-50"
+            className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50"
           >
             <Brain className="h-4 w-4" />
             <span>AI Filters</span>
@@ -443,52 +443,52 @@ export function DashboardAssisted({
         <>
           {/* Enhanced Metrics with AI Predictions */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Active Deals</CardTitle>
-                <FileText className="h-4 w-4 text-purple-600" />
+                <FileText className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-gray-900">{metrics.activeDeals}</div>
-                <div className="flex items-center text-purple-600 text-sm mt-1">
+                <div className="flex items-center text-blue-600 text-sm mt-1">
                   <TrendingUp className="h-4 w-4 mr-1" />
                   AI-tracked growth
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Smart DD Projects</CardTitle>
-                <Activity className="h-4 w-4 text-purple-600" />
+                <Activity className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-gray-900">{metrics.ddProjects}</div>
-                <div className="flex items-center text-purple-600 text-sm mt-1">
+                <div className="flex items-center text-blue-600 text-sm mt-1">
                   <Brain className="h-4 w-4 mr-1" />
                   AI-analyzed
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Team Members</CardTitle>
-                <Users className="h-4 w-4 text-purple-600" />
+                <Users className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-gray-900">{metrics.teamMembers}</div>
-                <div className="flex items-center text-purple-600 text-sm mt-1">
+                <div className="flex items-center text-blue-600 text-sm mt-1">
                   <Target className="h-4 w-4 mr-1" />
                   AI-optimized
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Total AUM</CardTitle>
-                <DollarSign className="h-4 w-4 text-purple-600" />
+                <DollarSign className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.totalAUM)}</div>
@@ -499,14 +499,14 @@ export function DashboardAssisted({
               </CardContent>
             </Card>
 
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">AI Optimization</CardTitle>
-                <Star className="h-4 w-4 text-purple-600" />
+                <Star className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-gray-900">{metrics.aiOptimizationScore}/10</div>
-                <div className="flex items-center text-purple-600 text-sm mt-1">
+                <div className="flex items-center text-blue-600 text-sm mt-1">
                   <Lightbulb className="h-4 w-4 mr-1" />
                   Excellent score
                 </div>
@@ -517,20 +517,20 @@ export function DashboardAssisted({
           {/* Enhanced Active Deals & Workspaces */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* AI-Enhanced Active Deals */}
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center">
-                  <FileText className="w-5 h-5 mr-2 text-purple-600" />
+                  <FileText className="w-5 h-5 mr-2 text-blue-600" />
                   Smart Deal Pipeline
                 </CardTitle>
-                <Button variant="outline" size="sm" onClick={onCreateDeal} className="border-purple-300 text-purple-700">
+                <Button variant="outline" size="sm" onClick={onCreateDeal} className="border-blue-300 text-blue-700">
                   <Sparkles className="w-4 h-4 mr-2" />
                   AI New Deal
                 </Button>
               </CardHeader>
               <CardContent className="space-y-4">
                 {enhancedActiveDeals.map((deal) => (
-                  <div key={deal.id} className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                  <div key={deal.id} className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-gray-900">{deal.name}</p>
@@ -545,7 +545,7 @@ export function DashboardAssisted({
                         </Badge>
                       </div>
                     </div>
-                    <div className="text-xs text-purple-700 space-y-1">
+                    <div className="text-xs text-blue-700 space-y-1">
                       {deal.aiInsights.map((insight, index) => (
                         <p key={index}>• {insight}</p>
                       ))}
@@ -556,20 +556,20 @@ export function DashboardAssisted({
             </Card>
 
             {/* AI-Enhanced Active Workspaces */}
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center">
-                  <FolderOpen className="w-5 h-5 mr-2 text-purple-600" />
+                  <FolderOpen className="w-5 h-5 mr-2 text-blue-600" />
                   Smart Workspaces
                 </CardTitle>
-                <Button variant="outline" size="sm" onClick={onCreateWorkspace} className="border-purple-300 text-purple-700">
+                <Button variant="outline" size="sm" onClick={onCreateWorkspace} className="border-blue-300 text-blue-700">
                   <Wand2 className="w-4 h-4 mr-2" />
                   AI Workspace
                 </Button>
               </CardHeader>
               <CardContent className="space-y-4">
                 {enhancedWorkspaces.map((workspace) => (
-                  <div key={workspace.id} className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                  <div key={workspace.id} className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-3">
                         <div className={`w-2 h-2 rounded-full ${
@@ -594,7 +594,7 @@ export function DashboardAssisted({
                       </div>
                     </div>
                     {workspace.aiOptimizations > 0 && (
-                      <div className="text-xs text-purple-700">
+                      <div className="text-xs text-blue-700">
                         • {workspace.aiOptimizations} AI optimizations available
                       </div>
                     )}
@@ -606,10 +606,10 @@ export function DashboardAssisted({
 
           {/* Enhanced Recent Activity & Smart Deadlines */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader>
                 <CardTitle className="text-gray-900 flex items-center">
-                  <RefreshCw className="w-5 h-5 mr-2 text-purple-600" />
+                  <RefreshCw className="w-5 h-5 mr-2 text-blue-600" />
                   Smart Activity Feed
                 </CardTitle>
               </CardHeader>
@@ -625,15 +625,15 @@ export function DashboardAssisted({
               </CardContent>
             </Card>
 
-            <Card className="border-purple-200 bg-white">
+            <Card className="border-blue-200 bg-white">
               <CardHeader>
                 <CardTitle className="text-gray-900 flex items-center">
-                  <Clock className="w-5 h-5 mr-2 text-purple-600" />
+                  <Clock className="w-5 h-5 mr-2 text-blue-600" />
                   AI-Prioritized Deadlines
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-3">
                       <Clock className="h-4 w-4 text-red-500" />
@@ -644,10 +644,10 @@ export function DashboardAssisted({
                     </div>
                     <Badge variant="destructive" className="text-xs">Thando: Urgent</Badge>
                   </div>
-                  <p className="text-xs text-purple-700">• Thando suggests reviewing financial model 2h before meeting</p>
+                  <p className="text-xs text-blue-700">• Thando suggests reviewing financial model 2h before meeting</p>
                 </div>
                 
-                <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-3">
                       <Clock className="h-4 w-4 text-orange-500" />
@@ -658,10 +658,10 @@ export function DashboardAssisted({
                     </div>
                     <Badge variant="default" className="text-xs">Thando: High</Badge>
                   </div>
-                  <p className="text-xs text-purple-700">• Draft available for review, 85% complete</p>
+                  <p className="text-xs text-blue-700">• Draft available for review, 85% complete</p>
                 </div>
                 
-                <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-3">
                       <Clock className="h-4 w-4 text-blue-500" />
@@ -672,7 +672,7 @@ export function DashboardAssisted({
                     </div>
                     <Badge variant="outline" className="text-xs">Thando: Medium</Badge>
                   </div>
-                  <p className="text-xs text-purple-700">• Optimal timing based on management availability</p>
+                  <p className="text-xs text-blue-700">• Optimal timing based on management availability</p>
                 </div>
               </CardContent>
             </Card>
@@ -687,16 +687,16 @@ export function DashboardAssisted({
       )}
 
       {/* AI Assistance Status */}
-      <div className="mt-6 p-4 bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200 rounded-lg">
+      <div className="mt-6 p-4 bg-gradient-to-r from-blue-100 to-blue-100 border border-blue-200 rounded-lg">
         <div className="flex items-start space-x-3">
-          <Brain className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+          <Brain className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-purple-900 mb-1">Thando Dashboard Management Active</h4>
-            <p className="text-sm text-purple-700">
+            <h4 className="font-semibold text-blue-900 mb-1">Thando Dashboard Management Active</h4>
+            <p className="text-sm text-blue-700">
               Thando is continuously analyzing your dashboard data for optimization opportunities, risk factors, and performance improvements. 
               All suggestions require your approval before implementation. Current Thando confidence: 94%
             </p>
-            <div className="flex items-center space-x-4 mt-2 text-xs text-purple-600">
+            <div className="flex items-center space-x-4 mt-2 text-xs text-blue-600">
               <span>• 8 deals analyzed this hour</span>
               <span>• 12 optimization opportunities found</span>
               <span>• 98% uptime</span>

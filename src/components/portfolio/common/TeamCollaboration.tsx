@@ -398,7 +398,7 @@ export function TeamCollaboration() {
     switch (status) {
       case 'completed': return 'bg-green-100 text-green-800';
       case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'review': return 'bg-purple-100 text-purple-800';
+      case 'review': return 'bg-blue-100 text-blue-800';
       case 'blocked': return 'bg-red-100 text-red-800';
       case 'todo': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -407,7 +407,7 @@ export function TeamCollaboration() {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'partner': return 'bg-purple-100 text-purple-800';
+      case 'partner': return 'bg-blue-100 text-blue-800';
       case 'principal': return 'bg-blue-100 text-blue-800';
       case 'vice_president': return 'bg-indigo-100 text-indigo-800';
       case 'associate': return 'bg-green-100 text-green-800';
@@ -494,7 +494,7 @@ export function TeamCollaboration() {
                 <CardTitle className="text-sm font-medium">Active Workflows</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="text-2xl font-bold text-blue-600">
                   {workflowInstances.filter(w => w.status === 'active').length}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">

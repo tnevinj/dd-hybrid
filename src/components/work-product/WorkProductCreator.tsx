@@ -172,14 +172,14 @@ export function WorkProductCreator({ workspaceId, onCreateWorkProduct, onCancel 
     if (!showAIAssistant || navigationMode === 'traditional') return null;
 
     return (
-      <Card className="p-4 mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
+      <Card className="p-4 mb-6 bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-200">
         <div className="flex items-start gap-3">
           <Wand2 className="w-5 h-5 text-indigo-600 mt-1" />
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-indigo-900 mb-2">
               🤖 AI Work Product Assistant
               {navigationMode === 'autonomous' && (
-                <Badge className="ml-2 bg-purple-100 text-purple-700">Autonomous Mode</Badge>
+                <Badge className="ml-2 bg-blue-100 text-blue-700">Autonomous Mode</Badge>
               )}
             </h3>
             
@@ -274,7 +274,7 @@ export function WorkProductCreator({ workspaceId, onCreateWorkProduct, onCancel 
 
 {navigationMode === 'autonomous' && workspaceProject && (
               <div className="space-y-2">
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     🔄 Optimal documents for <strong>{workspaceProject.name}</strong> ({workspaceProject.progress}% complete):
                   </p>
@@ -314,7 +314,7 @@ export function WorkProductCreator({ workspaceId, onCreateWorkProduct, onCancel 
                   </Button>
                 </div>
                 
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     📊 AI will auto-generate with real scoring data:
                   </p>
@@ -335,7 +335,7 @@ export function WorkProductCreator({ workspaceId, onCreateWorkProduct, onCancel 
 
             {navigationMode === 'autonomous' && !workspaceProject && (
               <div className="space-y-2">
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     🔄 AI will analyze workspace context and pre-select optimal document types.
                   </p>

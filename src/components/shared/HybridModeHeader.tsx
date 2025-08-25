@@ -9,7 +9,7 @@ import { HybridMode, HybridModeSwitcher } from './HybridModeSwitcher'
 export interface HybridModeHeaderProps {
   currentMode: HybridMode
   onModeChange: (mode: HybridMode) => void
-  moduleContext: 'due-diligence' | 'portfolio' | 'dashboard' | 'workspace' | 'deal-screening' | 'deal-structuring' | 'fund-operations' | 'investment-committee' | 'legal-management' | 'market-intelligence' | 'advanced-analytics' | 'lp-portal' | 'gp-portal'
+  moduleContext: 'due-diligence' | 'portfolio' | 'dashboard' | 'workspace'
   title: string
   subtitle?: string
   disabled?: boolean
@@ -23,34 +23,79 @@ export interface HybridModeHeaderProps {
 }
 
 const getGradientStyles = (mode: HybridMode, moduleContext: string) => {
-  // Base gradients for each mode
+  // Base gradients for each mode - Investment Banking Professional Colors
   const modeGradients = {
     traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
-    assisted: 'bg-gradient-to-r from-purple-600 to-blue-600',
-    autonomous: 'bg-gradient-to-r from-green-600 to-teal-600'
+    assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+    autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
   }
   
-  // Module-specific gradient variations
-  const moduleVariations = {
+  // Module-specific gradient variations - Investment Banking Professional Colors
+  const moduleVariations: Record<string, Record<HybridMode, string>> = {
     'due-diligence': {
       traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
-      assisted: 'bg-gradient-to-r from-blue-600 to-purple-600',
-      autonomous: 'bg-gradient-to-r from-green-600 to-emerald-600'
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
     },
     portfolio: {
       traditional: 'bg-gradient-to-r from-gray-600 to-stone-600',
-      assisted: 'bg-gradient-to-r from-purple-600 to-pink-600',
-      autonomous: 'bg-gradient-to-r from-green-600 to-teal-600'
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
     },
     dashboard: {
       traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
-      assisted: 'bg-gradient-to-r from-green-600 to-teal-600',
-      autonomous: 'bg-gradient-to-r from-blue-600 to-indigo-600'
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
     },
     workspace: {
       traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
-      assisted: 'bg-gradient-to-r from-purple-600 to-blue-600',
-      autonomous: 'bg-gradient-to-r from-green-600 to-teal-600'
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'deal-screening': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'deal-structuring': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'fund-operations': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'investment-committee': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'legal-management': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'market-intelligence': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'advanced-analytics': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'lp-portal': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
+    },
+    'gp-portal': {
+      traditional: 'bg-gradient-to-r from-gray-600 to-slate-600',
+      assisted: 'bg-gradient-to-r from-blue-600 to-gray-600',
+      autonomous: 'bg-gradient-to-r from-blue-800 to-gray-700'
     }
   }
   
@@ -58,11 +103,20 @@ const getGradientStyles = (mode: HybridMode, moduleContext: string) => {
 }
 
 const getModuleTitles = (moduleContext: string) => {
-  const titles = {
+  const titles: Record<string, string> = {
     'due-diligence': 'Due Diligence Hybrid Platform',
     'portfolio': 'Portfolio Management Hub',
     'dashboard': 'Investment Dashboard',
-    'workspace': 'Hybrid Workspace Management'
+    'workspace': 'Hybrid Workspace Management',
+    'deal-screening': 'Deal Screening Platform',
+    'deal-structuring': 'Deal Structuring Platform',
+    'fund-operations': 'Fund Operations Hub',
+    'investment-committee': 'Investment Committee Portal',
+    'legal-management': 'Legal Management Platform',
+    'market-intelligence': 'Market Intelligence Hub',
+    'advanced-analytics': 'Advanced Analytics Platform',
+    'lp-portal': 'Limited Partner Portal',
+    'gp-portal': 'General Partner Portal'
   }
   
   return titles[moduleContext] || 'Hybrid Platform'

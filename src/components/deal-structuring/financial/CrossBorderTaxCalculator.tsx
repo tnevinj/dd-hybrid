@@ -617,10 +617,10 @@ const CrossBorderTaxCalculator: React.FC<CrossBorderTaxCalculatorProps> = ({
 
                 <Card className="p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <BarChart3 className="h-4 w-4 text-purple-600" />
+                    <BarChart3 className="h-4 w-4 text-blue-600" />
                     <span className="text-sm text-gray-600">Transactions</span>
                   </div>
-                  <div className="text-2xl font-bold text-purple-600">
+                  <div className="text-2xl font-bold text-blue-600">
                     {transactions.length}
                   </div>
                 </Card>

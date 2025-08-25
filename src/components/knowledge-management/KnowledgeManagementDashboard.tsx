@@ -209,7 +209,7 @@ export function KnowledgeManagementDashboard({ navigationMode, onModeChange }: K
               <p className="text-sm text-muted-foreground">Learning Paths</p>
               <p className="text-2xl font-bold">{data.stats.learningPaths}</p>
             </div>
-            <GraduationCap className="h-8 w-8 text-purple-600" />
+            <GraduationCap className="h-8 w-8 text-blue-600" />
           </div>
         </CardContent>
       </Card>
@@ -347,7 +347,7 @@ export function KnowledgeManagementDashboard({ navigationMode, onModeChange }: K
           {data.experts.slice(0, 6).map((expert) => (
             <div key={expert.id} className="border rounded-lg p-4">
               <div className="flex items-start gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold">
                   {expert.name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div className="flex-1 min-w-0">

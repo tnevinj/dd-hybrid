@@ -1111,7 +1111,7 @@ export function ContentAssembler({
             </div>
             <div className="flex items-center space-x-3">
               <Badge variant="outline" className={`${
-                navigationMode === 'autonomous' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                navigationMode === 'autonomous' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                 navigationMode === 'assisted' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                 'bg-gray-50 text-gray-700 border-gray-200'
               }`}>

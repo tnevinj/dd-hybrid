@@ -676,17 +676,17 @@ export function AIConversationPanel({ className, context }: AIConversationPanelP
       message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
     }`}>
       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-        message.type === 'ai' ? 'bg-purple-100' :
+        message.type === 'ai' ? 'bg-blue-100' :
         message.type === 'user' ? 'bg-blue-100' : 'bg-gray-100'
       }`}>
-        {message.type === 'ai' ? <Bot className="w-4 h-4 text-purple-600" /> :
+        {message.type === 'ai' ? <Bot className="w-4 h-4 text-blue-600" /> :
          message.type === 'user' ? <User className="w-4 h-4 text-blue-600" /> :
          <AlertTriangle className="w-4 h-4 text-gray-600" />}
       </div>
       
       <div className={`flex-1 ${message.type === 'user' ? 'text-right' : ''}`}>
         <div className={`inline-block p-3 rounded-lg max-w-[80%] ${
-          message.type === 'ai' ? 'bg-purple-50 text-purple-900' :
+          message.type === 'ai' ? 'bg-blue-50 text-blue-900' :
           message.type === 'user' ? 'bg-blue-50 text-blue-900' : 'bg-gray-50 text-gray-900'
         }`}>
           <p className="text-sm">{message.content}</p>
@@ -729,8 +729,8 @@ export function AIConversationPanel({ className, context }: AIConversationPanelP
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Bot className="w-5 h-5 text-purple-600" />
-            <h2 className="font-semibold text-purple-900">AI Assistant</h2>
+            <Bot className="w-5 h-5 text-blue-600" />
+            <h2 className="font-semibold text-blue-900">AI Assistant</h2>
             <Badge variant="ai" className="text-xs">Autonomous</Badge>
           </div>
           

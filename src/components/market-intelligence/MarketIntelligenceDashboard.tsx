@@ -1169,23 +1169,23 @@ function AutonomousMarketContent({ data }: { data: MarketIntelligenceResponse })
   return (
     <div className="space-y-6">
       {/* Autonomous Operations Status */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center">
-              <Zap className="h-5 w-5 mr-2 text-purple-600" />
+              <Zap className="h-5 w-5 mr-2 text-blue-600" />
               Autonomous Market Intelligence
             </div>
-            <Badge variant="outline" className="border-purple-200 text-purple-700 bg-purple-50">
+            <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">
               {autonomousActions.filter(a => a.status === 'in_progress').length} Active
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
-            <div className="text-center p-3 bg-white rounded-lg border border-purple-200">
-              <div className="text-xl font-bold text-purple-600">{realTimeMonitoring.activeScans}</div>
-              <div className="text-xs text-purple-700">Active Scans</div>
+            <div className="text-center p-3 bg-white rounded-lg border border-blue-200">
+              <div className="text-xl font-bold text-blue-600">{realTimeMonitoring.activeScans}</div>
+              <div className="text-xs text-blue-700">Active Scans</div>
             </div>
             <div className="text-center p-3 bg-white rounded-lg border border-orange-200">
               <div className="text-xl font-bold text-orange-600">{realTimeMonitoring.anomaliesDetected}</div>

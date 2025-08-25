@@ -257,13 +257,13 @@ The financial model supports a potential exit valuation of $450-600M in Year 5.`
     if (!showAIAssistant || navigationMode === 'traditional') return null;
 
     return (
-      <Card className="p-4 mb-4 bg-gradient-to-r from-violet-50 to-purple-50 border-violet-200">
+      <Card className="p-4 mb-4 bg-gradient-to-r from-violet-50 to-blue-50 border-violet-200">
         <div className="flex items-start gap-3">
           <Wand2 className="w-5 h-5 text-violet-600 mt-1" />
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-violet-900 mb-2">
               🤖 AI Writing Assistant
-              {navigationMode === 'autonomous' && <Badge className="ml-2 bg-purple-100 text-purple-700">Autonomous</Badge>}
+              {navigationMode === 'autonomous' && <Badge className="ml-2 bg-blue-100 text-blue-700">Autonomous</Badge>}
             </h3>
             
             {/* Content Generation */}
@@ -348,7 +348,7 @@ The financial model supports a potential exit valuation of $450-600M in Year 5.`
               )}
 
               {navigationMode === 'autonomous' && (
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <h4 className="text-sm font-medium text-gray-900 mb-2">Autonomous Actions</h4>
                   <div className="space-y-2">
                     <Button 
@@ -392,7 +392,7 @@ The financial model supports a potential exit valuation of $450-600M in Year 5.`
 
             {navigationMode === 'autonomous' && (
               <div className="space-y-2">
-                <div className="p-3 bg-white rounded border border-purple-200">
+                <div className="p-3 bg-white rounded border border-blue-200">
                   <p className="text-sm text-gray-700">
                     🔄 I continuously monitor your TechCorp Due Diligence workspace for updates and will automatically refresh document sections when new data becomes available.
                     Current status: Active project (75% complete), 4 team members, 8 work products.

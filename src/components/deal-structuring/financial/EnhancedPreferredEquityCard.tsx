@@ -253,8 +253,8 @@ const EnhancedPreferredEquityCard: React.FC<EnhancedPreferredEquityCardProps> = 
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Layers className="h-5 w-5 text-purple-600" />
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Layers className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <h3 className="text-lg font-semibold">Enhanced Preferred Equity</h3>
@@ -396,9 +396,9 @@ const EnhancedPreferredEquityCard: React.FC<EnhancedPreferredEquityCardProps> = 
                     </div>
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-2">
-                        <BarChart3 className="h-5 w-5 text-purple-600" />
+                        <BarChart3 className="h-5 w-5 text-blue-600" />
                       </div>
-                      <div className="text-2xl font-bold text-purple-600">
+                      <div className="text-2xl font-bold text-blue-600">
                         {results.multiple.toFixed(2)}x
                       </div>
                       <div className="text-sm text-gray-600">Multiple</div>
@@ -773,12 +773,12 @@ const EnhancedPreferredEquityCard: React.FC<EnhancedPreferredEquityCardProps> = 
 
         {/* AI Insights for non-traditional modes */}
         {mode !== 'traditional' && results && (
-          <div className="p-4 bg-purple-50 rounded-lg border-l-4 border-l-purple-500">
+          <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-l-blue-500">
             <div className="flex items-start gap-3">
-              <Zap className="h-5 w-5 text-purple-600 mt-0.5" />
+              <Zap className="h-5 w-5 text-blue-600 mt-0.5" />
               <div>
-                <h5 className="font-medium text-purple-900 mb-2">AI Preferred Equity Analysis</h5>
-                <ul className="text-sm text-purple-800 space-y-1">
+                <h5 className="font-medium text-blue-900 mb-2">AI Preferred Equity Analysis</h5>
+                <ul className="text-sm text-blue-800 space-y-1">
                   <li>• Conversion rights provide significant upside capture with 67% probability</li>
                   <li>• Liquidation preference offers downside protection at 1.0x multiple</li>
                   <li>• Consider weighted average anti-dilution for balanced investor protection</li>

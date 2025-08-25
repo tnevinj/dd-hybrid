@@ -298,7 +298,7 @@ export function FindingsManagement({ projectId }: FindingsManagementProps) {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">{findingStats.overdue}</div>
+            <div className="text-2xl font-bold text-blue-600">{findingStats.overdue}</div>
             <div className="text-sm text-gray-600">Overdue</div>
           </CardContent>
         </Card>
@@ -333,14 +333,14 @@ export function FindingsManagement({ projectId }: FindingsManagementProps) {
       </div>
 
       {/* AI Analysis Banner */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-orange-50">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-orange-50">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Brain className="w-5 h-5 text-purple-600" />
+              <Brain className="w-5 h-5 text-blue-600" />
               <div>
-                <h3 className="font-semibold text-purple-800">Finding Analysis Complete</h3>
-                <p className="text-sm text-purple-600">
+                <h3 className="font-semibold text-blue-800">Finding Analysis Complete</h3>
+                <p className="text-sm text-blue-600">
                   Analyzed {findingStats.total} findings, identified {findingStats.highPriority} high-priority items with proven mitigation strategies
                 </p>
               </div>
@@ -397,15 +397,15 @@ export function FindingsManagement({ projectId }: FindingsManagementProps) {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-400">
+        <Card className="border-l-4 border-l-blue-400">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-600">Pattern Match</span>
-              <Star className="w-4 h-4 text-purple-500" />
+              <Star className="w-4 h-4 text-blue-500" />
             </div>
-            <div className="text-2xl font-bold text-purple-600">87%</div>
-            <div className="text-xs text-purple-600 mb-2">Similarity found</div>
-            <div className="text-xs text-purple-600 bg-purple-50 p-2 rounded">
+            <div className="text-2xl font-bold text-blue-600">87%</div>
+            <div className="text-xs text-blue-600 mb-2">Similarity found</div>
+            <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded">
               🎯 3 similar deals matched
             </div>
           </CardContent>
@@ -523,7 +523,7 @@ export function FindingsManagement({ projectId }: FindingsManagementProps) {
           {filteredFindings.map((finding) => (
             <div key={finding.id} className={`
               border rounded-lg p-4 hover:shadow-md transition-shadow
-              ${currentMode.mode === 'assisted' && finding.aiGenerated ? 'border-l-4 border-l-purple-400' : ''}
+              ${currentMode.mode === 'assisted' && finding.aiGenerated ? 'border-l-4 border-l-blue-400' : ''}
             `}>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
@@ -559,7 +559,7 @@ export function FindingsManagement({ projectId }: FindingsManagementProps) {
 
                   {/* AI Enhanced Data */}
                   {currentMode.mode === 'assisted' && finding.aiGenerated && (
-                    <div className="bg-purple-50 p-3 rounded text-sm mb-3">
+                    <div className="bg-blue-50 p-3 rounded text-sm mb-3">
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <div>
                           <span className="font-medium">Risk Score:</span> {finding.riskScore}/10

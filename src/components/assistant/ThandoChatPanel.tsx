@@ -205,7 +205,7 @@ const ThandoChatPanel: React.FC<ThandoChatPanelProps> = ({
   const getModeHeaderStyle = () => {
     switch (mode) {
       case 'autonomous':
-        return 'bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-indigo-950';
+        return 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950';
       case 'assisted':
         return 'bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950';
       default:
@@ -216,7 +216,7 @@ const ThandoChatPanel: React.FC<ThandoChatPanelProps> = ({
   const getModeIcon = () => {
     switch (mode) {
       case 'autonomous':
-        return <Zap className="h-4 w-4 text-purple-600" />;
+        return <Zap className="h-4 w-4 text-blue-600" />;
       case 'assisted':
         return <Brain className="h-4 w-4 text-blue-600" />;
       default:

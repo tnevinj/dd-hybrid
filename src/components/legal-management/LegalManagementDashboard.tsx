@@ -687,9 +687,9 @@ export function LegalManagementDashboard({ navigationMode, onModeChange }: Legal
                 Sarah Johnson is at 95% capacity. Consider workload redistribution.
               </p>
             </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
-              <h4 className="font-semibold text-purple-900">Predictive Insights</h4>
-              <p className="text-sm text-purple-700 mt-1">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <h4 className="font-semibold text-blue-900">Predictive Insights</h4>
+              <p className="text-sm text-blue-700 mt-1">
                 Q2 workload expected to increase 25%. Plan resource allocation accordingly.
               </p>
             </div>
@@ -746,7 +746,7 @@ export function LegalManagementDashboard({ navigationMode, onModeChange }: Legal
                 <p className="text-sm text-muted-foreground">Upcoming Audits</p>
                 <p className="text-2xl font-bold">2</p>
               </div>
-              <Calendar className="h-8 w-8 text-purple-600" />
+              <Calendar className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
@@ -921,7 +921,7 @@ export function LegalManagementDashboard({ navigationMode, onModeChange }: Legal
                 <p className="text-sm text-muted-foreground">Automated Reports</p>
                 <p className="text-2xl font-bold">78%</p>
               </div>
-              <TrendingUp className="h-8 w-8 text-purple-600" />
+              <TrendingUp className="h-8 w-8 text-blue-600" />
             </div>
             <p className="text-xs text-muted-foreground mt-2">Of total reports</p>
           </CardContent>

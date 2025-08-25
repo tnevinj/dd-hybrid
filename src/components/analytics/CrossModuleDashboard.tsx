@@ -190,7 +190,7 @@ export function CrossModuleDashboard({ className }: CrossModuleDashboardProps) {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">Deal Pipeline Quality</span>
-                <TrendingUp className="h-5 w-5 text-purple-600" />
+                <TrendingUp className="h-5 w-5 text-blue-600" />
               </div>
               <div className="text-2xl font-bold text-gray-900 mb-1">
                 {metrics.dealPipelineQuality}%
@@ -391,7 +391,7 @@ export function CrossModuleDashboard({ className }: CrossModuleDashboardProps) {
           <Card key={index}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <Brain className="h-5 w-5 text-purple-600" />
+                <Brain className="h-5 w-5 text-blue-600" />
                 {model.modelName}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -402,7 +402,7 @@ export function CrossModuleDashboard({ className }: CrossModuleDashboardProps) {
             <CardContent>
               <div className="space-y-4">
                 {/* Prediction Display */}
-                <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-50 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium">{model.prediction.metric}</span>
                     <div className="flex items-center gap-1">

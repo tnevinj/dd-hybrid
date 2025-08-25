@@ -27,7 +27,7 @@ export function PortfolioAssisted({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
         <h3 className="text-xl font-semibold text-gray-700">AI is analyzing portfolio data...</h3>
       </div>
     )
@@ -36,8 +36,8 @@ export function PortfolioAssisted({
   return (
     <div className="min-h-screen">
       {/* Mode Indicator */}
-      <div className="bg-white border-b border-purple-200 px-6 py-3">
-        <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+      <div className="bg-white border-b border-blue-200 px-6 py-3">
+        <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
           <Brain className="h-3 w-3" />
           <span>Assisted Mode</span>
         </Badge>

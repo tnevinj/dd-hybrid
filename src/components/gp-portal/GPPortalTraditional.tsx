@@ -135,10 +135,10 @@ export function GPPortalTraditional({ data, onViewDetails }: GPPortalTraditional
                           <p className="text-sm text-blue-700">Deals Approved</p>
                           <p className="text-xs text-blue-600 mt-1">+3 this quarter</p>
                         </div>
-                        <div className="text-center p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                          <p className="text-2xl font-bold text-purple-900">$2.3B</p>
-                          <p className="text-sm text-purple-700">Total AUM</p>
-                          <p className="text-xs text-purple-600 mt-1">+12% YoY</p>
+                        <div className="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                          <p className="text-2xl font-bold text-blue-900">$2.3B</p>
+                          <p className="text-sm text-blue-700">Total AUM</p>
+                          <p className="text-xs text-blue-600 mt-1">+12% YoY</p>
                         </div>
                       </div>
                     </div>
@@ -364,9 +364,9 @@ export function GPPortalTraditional({ data, onViewDetails }: GPPortalTraditional
                 <div className="space-y-4">
                   {/* LP Summary */}
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg text-center">
-                      <p className="text-2xl font-bold text-purple-900">18</p>
-                      <p className="text-sm text-purple-700">Active LPs</p>
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                      <p className="text-2xl font-bold text-blue-900">18</p>
+                      <p className="text-sm text-blue-700">Active LPs</p>
                     </div>
                     <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-center">
                       <p className="text-2xl font-bold text-green-900">96%</p>
@@ -471,7 +471,7 @@ export function GPPortalTraditional({ data, onViewDetails }: GPPortalTraditional
                         <p className="text-xs text-gray-600">Documents</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-lg font-semibold text-purple-600">{company.communications?.length || 0}</p>
+                        <p className="text-lg font-semibold text-blue-600">{company.communications?.length || 0}</p>
                         <p className="text-xs text-gray-600">Communications</p>
                       </div>
                     </div>
@@ -551,7 +551,7 @@ export function GPPortalTraditional({ data, onViewDetails }: GPPortalTraditional
                               </div>
                               <div>
                                 <p className="text-xs text-gray-500 mb-1">IRR Target</p>
-                                <p className="font-semibold text-purple-600">18.5%</p>
+                                <p className="font-semibold text-blue-600">18.5%</p>
                               </div>
                             </div>
                           </div>

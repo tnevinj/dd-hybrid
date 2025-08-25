@@ -39,9 +39,9 @@ const getModeConfig = (mode: HybridMode) => {
       return {
         icon: Brain,
         label: 'Help me Drive',
-        color: 'text-purple-600',
-        bgColor: 'bg-purple-50',
-        borderColor: 'border-purple-200',
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-50',
+        borderColor: 'border-blue-200',
         description: 'AI-enhanced workflows with intelligent recommendations',
         features: ['AI recommendations', 'Smart automation', 'Enhanced insights']
       };
@@ -193,7 +193,7 @@ export function ModeIndicator({
         )}
         
         {currentMode === 'assisted' && (
-          <div className="mt-3 flex items-center space-x-1 text-xs text-purple-600">
+          <div className="mt-3 flex items-center space-x-1 text-xs text-blue-600">
             <Brain className="h-3 w-3" />
             <span>AI recommendations available</span>
           </div>

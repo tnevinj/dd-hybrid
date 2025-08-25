@@ -278,7 +278,7 @@ export function DueDiligenceTraditionalRefactored({
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'in progress': return 'bg-blue-100 text-blue-800'
-      case 'final review': return 'bg-purple-100 text-purple-800'
+      case 'final review': return 'bg-blue-100 text-blue-800'
       case 'completed': return 'bg-green-100 text-green-800'
       default: return 'bg-gray-100 text-gray-800'
     }
@@ -365,11 +365,11 @@ export function DueDiligenceTraditionalRefactored({
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center">
-                    <DollarSign className="h-8 w-8 text-purple-600" />
+                    <DollarSign className="h-8 w-8 text-blue-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">Total Deal Value</p>
                       <p className="text-2xl font-bold text-gray-900">{formatCurrencySafe(mockDDProjects.reduce((sum, p) => sum + p.dealValue, 0))}</p>
-                      <p className="text-xs text-purple-600">Across 3 deals</p>
+                      <p className="text-xs text-blue-600">Across 3 deals</p>
                     </div>
                   </div>
                 </CardContent>

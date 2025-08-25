@@ -383,7 +383,7 @@ const ESGImpactCard: React.FC<ESGImpactCardProps> = ({
     switch (category) {
       case 'environmental': return <TreePine className="h-4 w-4 text-green-600" />;
       case 'social': return <Heart className="h-4 w-4 text-red-600" />;
-      case 'governance': return <Building className="h-4 w-4 text-purple-600" />;
+      case 'governance': return <Building className="h-4 w-4 text-blue-600" />;
       default: return <Target className="h-4 w-4 text-gray-600" />;
     }
   };
@@ -539,8 +539,8 @@ const ESGImpactCard: React.FC<ESGImpactCardProps> = ({
               </Card>
 
               <Card className="p-4 text-center">
-                <Star className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                <div className="text-3xl font-bold text-purple-600">
+                <Star className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <div className="text-3xl font-bold text-blue-600">
                   {impactMetrics.socialReturnOnInvestment}x
                 </div>
                 <div className="text-sm text-gray-600">SROI</div>
@@ -602,25 +602,25 @@ const ESGImpactCard: React.FC<ESGImpactCardProps> = ({
 
               <Card className="p-4">
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
-                  <Building className="h-4 w-4 text-purple-600" />
+                  <Building className="h-4 w-4 text-blue-600" />
                   Governance Impact
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Transparency Score</span>
-                    <span className="font-medium text-purple-600">82/100</span>
+                    <span className="font-medium text-blue-600">82/100</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Ethics Compliance</span>
-                    <span className="font-medium text-purple-600">94%</span>
+                    <span className="font-medium text-blue-600">94%</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Board Independence</span>
-                    <span className="font-medium text-purple-600">85%</span>
+                    <span className="font-medium text-blue-600">85%</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Stakeholder Engagement</span>
-                    <span className="font-medium text-purple-600">86/100</span>
+                    <span className="font-medium text-blue-600">86/100</span>
                   </div>
                 </div>
               </Card>
@@ -859,8 +859,8 @@ const ESGImpactCard: React.FC<ESGImpactCardProps> = ({
               </Card>
 
               <Card className="p-4 text-center">
-                <Globe className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-purple-600">
+                <Globe className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <div className="text-2xl font-bold text-blue-600">
                   {impactMetrics.biodiversityProtected.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600">Hectares Protected</div>
@@ -884,7 +884,7 @@ const ESGImpactCard: React.FC<ESGImpactCardProps> = ({
                   <div className="text-sm text-gray-600">Return on Impact</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">
+                  <div className="text-2xl font-bold text-blue-600">
                     {impactMetrics.socialReturnOnInvestment}x
                   </div>
                   <div className="text-sm text-gray-600">Social ROI</div>
@@ -928,7 +928,7 @@ const ESGImpactCard: React.FC<ESGImpactCardProps> = ({
                       <Progress value={results.overallScore.social} className="mt-2" />
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-purple-600">{results.overallScore.governance}</div>
+                      <div className="text-3xl font-bold text-blue-600">{results.overallScore.governance}</div>
                       <div className="text-sm text-gray-600">Governance</div>
                       <Progress value={results.overallScore.governance} className="mt-2" />
                     </div>
@@ -992,7 +992,7 @@ const ESGImpactCard: React.FC<ESGImpactCardProps> = ({
                       <div className="text-sm text-gray-600">Industry Ranking</div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold text-purple-600">{results.benchmarkComparison.percentile}th</div>
+                      <div className="text-2xl font-bold text-blue-600">{results.benchmarkComparison.percentile}th</div>
                       <div className="text-sm text-gray-600">Percentile</div>
                     </div>
                   </div>

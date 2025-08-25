@@ -63,7 +63,7 @@ const TraditionalOpportunityView: React.FC<{
               <div className="text-sm text-gray-600">Expected Multiple</div>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">{(opportunity.navPercentage * 100).toFixed(0)}%</div>
+              <div className="text-2xl font-bold text-blue-600">{(opportunity.navPercentage * 100).toFixed(0)}%</div>
               <div className="text-sm text-gray-600">NAV Percentage</div>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-lg">
@@ -188,7 +188,7 @@ const AssistedOpportunityView: React.FC<{
             </div>
           </div>
           <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">{(opportunity.navPercentage * 100).toFixed(0)}%</div>
+            <div className="text-2xl font-bold text-blue-600">{(opportunity.navPercentage * 100).toFixed(0)}%</div>
             <div className="text-sm text-gray-600">NAV Percentage</div>
             <div className="text-xs text-green-600 mt-1">
               Favorable pricing
@@ -549,7 +549,7 @@ export default function OpportunityDetailPage() {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
       case 'screening': return 'bg-yellow-100 text-yellow-800';
-      case 'analyzed': return 'bg-purple-100 text-purple-800';
+      case 'analyzed': return 'bg-blue-100 text-blue-800';
       case 'approved': return 'bg-green-100 text-green-800';
       case 'rejected': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';

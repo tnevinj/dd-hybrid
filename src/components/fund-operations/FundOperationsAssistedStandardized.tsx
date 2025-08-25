@@ -637,7 +637,7 @@ export function FundOperationsAssistedStandardized({
           <div className="text-center py-12">
             <div className="flex items-center justify-center mb-4">
               <Zap className="w-12 h-12 text-yellow-400 mr-2" />
-              <Brain className="w-8 h-8 text-purple-500" />
+              <Brain className="w-8 h-8 text-blue-500" />
             </div>
             <h3 className="text-lg font-semibold text-gray-600">Fund Operations Automation</h3>
             <p className="text-gray-500">Automated capital calls, distributions, and LP communications</p>
@@ -648,7 +648,7 @@ export function FundOperationsAssistedStandardized({
           <div className="text-center py-12">
             <div className="flex items-center justify-center mb-4">
               <BarChart3 className="w-12 h-12 text-blue-400 mr-2" />
-              <Brain className="w-8 h-8 text-purple-500" />
+              <Brain className="w-8 h-8 text-blue-500" />
             </div>
             <h3 className="text-lg font-semibold text-gray-600">Predictive Fund Analytics</h3>
             <p className="text-gray-500">AI-powered performance forecasting and risk modeling</p>

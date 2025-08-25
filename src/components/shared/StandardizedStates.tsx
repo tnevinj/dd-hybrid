@@ -60,7 +60,7 @@ export const StandardizedLoading: React.FC<StandardizedLoadingProps> = ({
     large: 'p-12'
   };
   
-  const spinnerColor = isAssisted ? 'border-purple-600' : 'border-gray-600';
+  const spinnerColor = isAssisted ? 'border-blue-600' : 'border-gray-600';
   
   return (
     <div className={`flex flex-col items-center justify-center ${containerPadding[size]} ${className}`}>
@@ -69,8 +69,8 @@ export const StandardizedLoading: React.FC<StandardizedLoadingProps> = ({
           <div className={`animate-spin rounded-full border-b-2 ${spinnerColor} ${sizeClasses[size]} mb-4`}></div>
           {isAssisted && (
             <div className="flex items-center space-x-2 mb-2">
-              <Brain className="h-4 w-4 text-purple-600 animate-pulse" />
-              <Badge className="bg-purple-100 text-purple-800 border-purple-300">AI Processing</Badge>
+              <Brain className="h-4 w-4 text-blue-600 animate-pulse" />
+              <Badge className="bg-blue-100 text-blue-800 border-blue-300">AI Processing</Badge>
             </div>
           )}
         </>
@@ -78,12 +78,12 @@ export const StandardizedLoading: React.FC<StandardizedLoadingProps> = ({
       
       {variant === 'pulse' && (
         <div className={`animate-pulse bg-gradient-to-r ${
-          isAssisted ? 'from-purple-300 to-blue-300' : 'from-gray-300 to-gray-400'
+          isAssisted ? 'from-blue-300 to-blue-300' : 'from-gray-300 to-gray-400'
         } rounded ${sizeClasses[size]} mb-4`}></div>
       )}
       
       <h3 className={`text-xl font-semibold mb-2 ${
-        isAssisted ? 'text-purple-900' : 'text-gray-700'
+        isAssisted ? 'text-blue-900' : 'text-gray-700'
       }`}>
         {message}
       </h3>
@@ -101,7 +101,7 @@ export const StandardizedLoading: React.FC<StandardizedLoadingProps> = ({
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
               className={`h-2 rounded-full transition-all duration-300 ${
-                isAssisted ? 'bg-purple-600' : 'bg-gray-600'
+                isAssisted ? 'bg-blue-600' : 'bg-gray-600'
               }`}
               style={{ width: `${progress}%` }}
             />
@@ -179,12 +179,12 @@ export const StandardizedEmpty: React.FC<StandardizedEmptyProps> = ({
   return (
     <Card className={`${cardClasses} ${className}`}>
       <CardContent className="text-center py-12">
-        <div className={`mx-auto mb-4 ${isAssisted ? 'text-purple-400' : 'text-gray-400'}`}>
+        <div className={`mx-auto mb-4 ${isAssisted ? 'text-blue-400' : 'text-gray-400'}`}>
           <IconComponent className="h-12 w-12 mx-auto" />
         </div>
         
         <h3 className={`text-lg font-semibold mb-2 ${
-          isAssisted ? 'text-purple-900' : 'text-gray-900'
+          isAssisted ? 'text-blue-900' : 'text-gray-900'
         }`}>
           {title}
         </h3>
@@ -193,14 +193,14 @@ export const StandardizedEmpty: React.FC<StandardizedEmptyProps> = ({
         
         {/* AI Suggestions */}
         {isAssisted && suggestions.length > 0 && (
-          <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="flex items-center justify-center space-x-2 mb-3">
-              <Lightbulb className="h-4 w-4 text-purple-600" />
-              <span className="text-sm font-medium text-purple-800">AI Suggestions</span>
+              <Lightbulb className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium text-blue-800">AI Suggestions</span>
             </div>
             <div className="space-y-2">
               {suggestions.map((suggestion, index) => (
-                <p key={index} className="text-sm text-purple-700">• {suggestion}</p>
+                <p key={index} className="text-sm text-blue-700">• {suggestion}</p>
               ))}
             </div>
           </div>
@@ -224,7 +224,7 @@ export const StandardizedEmpty: React.FC<StandardizedEmptyProps> = ({
           {onAction && actionLabel && (
             <Button 
               onClick={onAction}
-              className={isAssisted ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-700 hover:bg-gray-800'}
+              className={isAssisted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-700 hover:bg-gray-800'}
             >
               <Plus className="h-4 w-4 mr-2" />
               {actionLabel}
@@ -235,7 +235,7 @@ export const StandardizedEmpty: React.FC<StandardizedEmptyProps> = ({
             <Button 
               variant="outline" 
               onClick={onSecondaryAction}
-              className={isAssisted ? 'border-purple-300 text-purple-700' : 'border-gray-300 text-gray-700'}
+              className={isAssisted ? 'border-blue-300 text-blue-700' : 'border-gray-300 text-gray-700'}
             >
               {secondaryActionLabel}
             </Button>
@@ -364,12 +364,12 @@ export const StandardizedError: React.FC<StandardizedErrorProps> = ({
         
         {/* AI Error Analysis (Assisted Mode) */}
         {isAssisted && (
-          <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="flex items-center justify-center space-x-2 mb-3">
-              <Brain className="h-4 w-4 text-purple-600" />
-              <span className="text-sm font-medium text-purple-800">AI Error Analysis</span>
+              <Brain className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium text-blue-800">AI Error Analysis</span>
             </div>
-            <p className="text-sm text-purple-700">
+            <p className="text-sm text-blue-700">
               {errorType === 'network' ? 
                 "AI suggests checking your internet connection and trying again." :
                 errorType === 'permission' ?
@@ -385,7 +385,7 @@ export const StandardizedError: React.FC<StandardizedErrorProps> = ({
           {onRetry && (
             <Button 
               onClick={onRetry}
-              className={isAssisted ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-700 hover:bg-gray-800'}
+              className={isAssisted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-700 hover:bg-gray-800'}
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Try Again
@@ -524,7 +524,7 @@ export const StandardizedSuccess: React.FC<StandardizedSuccessProps> = ({
         
         {isAssisted && (
           <div className="mb-4">
-            <Badge className="bg-purple-100 text-purple-800 border-purple-300">
+            <Badge className="bg-blue-100 text-blue-800 border-blue-300">
               <Sparkles className="h-3 w-3 mr-1" />
               AI Optimized
             </Badge>
@@ -534,7 +534,7 @@ export const StandardizedSuccess: React.FC<StandardizedSuccessProps> = ({
         {onAction && actionLabel && (
           <Button 
             onClick={onAction}
-            className={isAssisted ? 'bg-purple-600 hover:bg-purple-700' : 'bg-green-600 hover:bg-green-700'}
+            className={isAssisted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'}
           >
             {actionLabel}
           </Button>

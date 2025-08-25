@@ -273,7 +273,7 @@ export function DocumentManagement({ projectId }: DocumentManagementProps) {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold text-blue-600">
               {documents.filter(d => d.aiExtracted).length}
             </div>
             <div className="text-sm text-gray-600">AI Extracted</div>
@@ -310,14 +310,14 @@ export function DocumentManagement({ projectId }: DocumentManagementProps) {
       </div>
 
       {/* AI Processing Status */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Brain className="w-5 h-5 text-purple-600" />
+              <Brain className="w-5 h-5 text-blue-600" />
               <div>
-                <h3 className="font-semibold text-purple-800">AI Document Analysis</h3>
-                <p className="text-sm text-purple-600">
+                <h3 className="font-semibold text-blue-800">AI Document Analysis</h3>
+                <p className="text-sm text-blue-600">
                   Extracted data from {documents.filter(d => d.aiExtracted).length} documents with 92% average confidence
                 </p>
               </div>
@@ -360,15 +360,15 @@ export function DocumentManagement({ projectId }: DocumentManagementProps) {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-400">
+        <Card className="border-l-4 border-l-blue-400">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-600">Data Quality</span>
-              <Star className="w-4 h-4 text-purple-500" />
+              <Star className="w-4 h-4 text-blue-500" />
             </div>
-            <div className="text-2xl font-bold text-purple-600">92%</div>
-            <div className="text-xs text-purple-600 mb-2">Confidence avg</div>
-            <div className="text-xs text-purple-600 bg-purple-50 p-2 rounded">
+            <div className="text-2xl font-bold text-blue-600">92%</div>
+            <div className="text-xs text-blue-600 mb-2">Confidence avg</div>
+            <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded">
               🎯 High accuracy rate
             </div>
           </CardContent>
@@ -516,7 +516,7 @@ export function DocumentManagement({ projectId }: DocumentManagementProps) {
       {sortedDocs.map((doc) => (
         <div key={doc.id} className={`
           border rounded-lg p-4 hover:shadow-md transition-shadow
-          ${currentMode.mode === 'assisted' && doc.aiExtracted ? 'border-l-4 border-l-purple-400' : ''}
+          ${currentMode.mode === 'assisted' && doc.aiExtracted ? 'border-l-4 border-l-blue-400' : ''}
         `}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
@@ -544,7 +544,7 @@ export function DocumentManagement({ projectId }: DocumentManagementProps) {
 
               {/* AI Extracted Data */}
               {currentMode.mode === 'assisted' && doc.extractedData && (
-                <div className="bg-purple-50 p-3 rounded text-xs mt-2">
+                <div className="bg-blue-50 p-3 rounded text-xs mt-2">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     {Object.entries(doc.extractedData).map(([key, value]) => (
                       <div key={key}>
@@ -553,7 +553,7 @@ export function DocumentManagement({ projectId }: DocumentManagementProps) {
                     ))}
                   </div>
                   {doc.confidence > 0 && (
-                    <div className="mt-2 text-purple-600">
+                    <div className="mt-2 text-blue-600">
                       Confidence: {Math.round(doc.confidence * 100)}%
                     </div>
                   )}
@@ -591,7 +591,7 @@ export function DocumentManagement({ projectId }: DocumentManagementProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {sortedDocs.map((doc) => (
         <Card key={doc.id} className={`hover:shadow-md transition-shadow cursor-pointer ${
-          currentMode.mode === 'assisted' && doc.aiExtracted ? 'border-l-4 border-l-purple-400' : ''
+          currentMode.mode === 'assisted' && doc.aiExtracted ? 'border-l-4 border-l-blue-400' : ''
         }`}>
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-3">

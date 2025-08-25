@@ -777,7 +777,7 @@ const RevenueParticipationCard: React.FC<RevenueParticipationCardProps> = ({
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-sm text-gray-600 mb-1">IRR</div>
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-blue-600">
                       {(results.investmentSummary.irr * 100).toFixed(1)}%
                     </div>
                   </CardContent>
@@ -948,12 +948,12 @@ const RevenueParticipationCard: React.FC<RevenueParticipationCardProps> = ({
             </div>
 
             {mode !== 'traditional' && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <h5 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h5 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
                   <Zap className="h-4 w-4" />
                   AI-Enhanced RPR Analysis
                 </h5>
-                <p className="text-purple-800 text-sm">
+                <p className="text-blue-800 text-sm">
                   Advanced revenue modeling algorithms have analyzed cash flow patterns, growth trajectories, and risk factors 
                   to optimize participation rates and structure terms. Consider dynamic adjustment mechanisms for enhanced performance.
                 </p>

@@ -271,7 +271,7 @@ export function AssetPerformance({ asset }: AssetPerformanceProps) {
                 </div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="text-2xl font-bold text-blue-600">
                   {((new Date().getTime() - new Date(asset.acquisitionDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)}
                 </div>
                 <div className="text-sm text-gray-600">Years Held</div>

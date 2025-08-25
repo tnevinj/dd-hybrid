@@ -430,7 +430,7 @@ export const InvestmentCommitteeTraditional: React.FC<InvestmentCommitteeTraditi
                         </div>
                         <div className="text-center">
                           <p className="text-sm text-gray-500 mb-1">Multiple</p>
-                          <p className="text-lg font-semibold text-purple-600">{proposal.keyMetrics.multiple}x</p>
+                          <p className="text-lg font-semibold text-blue-600">{proposal.keyMetrics.multiple}x</p>
                         </div>
                         <div className="text-center">
                           <p className="text-sm text-gray-500 mb-1">Payback</p>
@@ -531,9 +531,9 @@ export const InvestmentCommitteeTraditional: React.FC<InvestmentCommitteeTraditi
                     <p className="text-lg font-bold text-green-900">94%</p>
                     <p className="text-xs text-green-700">Attendance</p>
                   </div>
-                  <div className="text-center p-2 bg-purple-50 rounded">
-                    <p className="text-lg font-bold text-purple-900">89%</p>
-                    <p className="text-xs text-purple-700">Consensus</p>
+                  <div className="text-center p-2 bg-blue-50 rounded">
+                    <p className="text-lg font-bold text-blue-900">89%</p>
+                    <p className="text-xs text-blue-700">Consensus</p>
                   </div>
                 </div>
                 

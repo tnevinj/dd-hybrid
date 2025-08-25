@@ -161,7 +161,7 @@ export function DealScreeningAssistedRefactored({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
         <h3 className="text-xl font-semibold text-gray-700">AI is analyzing deal opportunities...</h3>
       </div>
     )
@@ -170,10 +170,10 @@ export function DealScreeningAssistedRefactored({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* AI-Enhanced Mode Indicator */}
-      <div className="bg-white border-b border-purple-200 px-6 py-4">
+      <div className="bg-white border-b border-blue-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
               <Brain className="h-3 w-3" />
               <span>AI-Assisted Mode</span>
             </Badge>
@@ -184,7 +184,7 @@ export function DealScreeningAssistedRefactored({
           <div className="flex items-center space-x-6 text-sm">
             <div className="text-gray-600">
               <span className="font-medium">AI Efficiency:</span> 
-              <span className="text-purple-600 ml-1">{metrics.aiEfficiencyGains}%</span>
+              <span className="text-blue-600 ml-1">{metrics.aiEfficiencyGains}%</span>
             </div>
             <div className="text-gray-600">
               <span className="font-medium">AI Analyzed:</span> 
@@ -202,10 +202,10 @@ export function DealScreeningAssistedRefactored({
         {/* AI Recommendations Panel */}
         {aiRecommendations && aiRecommendations.length > 0 && (
           <div className="mb-6">
-            <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+            <Card className="bg-gradient-to-r from-blue-50 to-blue-50 border-blue-200">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Brain className="h-5 w-5 mr-2 text-purple-600" />
+                  <Brain className="h-5 w-5 mr-2 text-blue-600" />
                   Deal Screening AI Recommendations ({aiRecommendations.length})
                 </CardTitle>
               </CardHeader>
@@ -280,13 +280,13 @@ export function DealScreeningAssistedRefactored({
 
         {/* AI Performance Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
             <CardContent className="p-4">
               <div className="flex items-center space-x-2">
-                <Brain className="h-5 w-5 text-purple-600" />
+                <Brain className="h-5 w-5 text-blue-600" />
                 <div>
-                  <p className="text-sm font-medium text-purple-800">AI Score Avg</p>
-                  <p className="text-lg font-bold text-purple-900">{metrics.avgAIConfidence || 84}%</p>
+                  <p className="text-sm font-medium text-blue-800">AI Score Avg</p>
+                  <p className="text-lg font-bold text-blue-900">{metrics.avgAIConfidence || 84}%</p>
                 </div>
               </div>
             </CardContent>
@@ -360,14 +360,14 @@ export function DealScreeningAssistedRefactored({
         {/* AI-Enhanced Deal Opportunities List */}
         <div className="grid grid-cols-1 gap-4 mb-8">
           {filteredOpportunities.map((opportunity) => (
-            <Card key={opportunity.id} className="hover:shadow-lg transition-shadow border-l-4 border-l-purple-500">
+            <Card key={opportunity.id} className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">{opportunity.name}</h3>
                       {opportunity.priorityScore === 'high' && (
-                        <Badge className="bg-purple-100 text-purple-800">
+                        <Badge className="bg-blue-100 text-blue-800">
                           <Star className="h-3 w-3 mr-1" />
                           AI Priority
                         </Badge>
@@ -378,12 +378,12 @@ export function DealScreeningAssistedRefactored({
                     </div>
                     
                     {/* AI Scores Row */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3 p-3 bg-purple-50 rounded-lg">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3 p-3 bg-blue-50 rounded-lg">
                       <div className="flex items-center space-x-2">
-                        <Brain className="h-4 w-4 text-purple-600" />
+                        <Brain className="h-4 w-4 text-blue-600" />
                         <div>
                           <p className="text-xs text-gray-600">AI Score</p>
-                          <p className="font-semibold text-purple-900">{opportunity.aiScore}%</p>
+                          <p className="font-semibold text-blue-900">{opportunity.aiScore}%</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -453,12 +453,12 @@ export function DealScreeningAssistedRefactored({
         </div>
 
         {/* AI Enhancement Summary */}
-        <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200">
+        <Card className="bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-purple-900 mb-1">AI Deal Screening Performance</h3>
-                <p className="text-purple-700">Advanced machine learning for opportunity analysis</p>
+                <h3 className="text-xl font-bold text-blue-900 mb-1">AI Deal Screening Performance</h3>
+                <p className="text-blue-700">Advanced machine learning for opportunity analysis</p>
               </div>
               <div className="grid grid-cols-3 gap-6 text-center">
                 <div>
@@ -466,7 +466,7 @@ export function DealScreeningAssistedRefactored({
                   <p className="text-sm text-gray-600">Time Saved</p>
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-purple-600">{metrics.valuationAccuracy || 91}%</p>
+                  <p className="text-3xl font-bold text-blue-600">{metrics.valuationAccuracy || 91}%</p>
                   <p className="text-sm text-gray-600">Accuracy</p>
                 </div>
                 <div>

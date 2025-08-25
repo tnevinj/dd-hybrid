@@ -106,7 +106,7 @@ const FilterDropdown: React.FC<{
         onChange={(e) => onChange(e.target.value)}
         className={`w-full p-2 border rounded-md text-sm focus:outline-none focus:ring-2 ${
           isAssisted 
-            ? 'border-purple-300 focus:ring-purple-500' 
+            ? 'border-blue-300 focus:ring-blue-500' 
             : 'border-gray-300 focus:ring-gray-500'
         }`}
       >
@@ -152,8 +152,8 @@ const SortControls: React.FC<{
           onClick={() => handleSort(option.key)}
           className={`flex items-center space-x-2 ${
             sortBy === option.key 
-              ? isAssisted ? 'bg-purple-600 text-white' : 'bg-gray-700 text-white'
-              : isAssisted ? 'border-purple-300 text-purple-700 hover:bg-purple-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+              ? isAssisted ? 'bg-blue-600 text-white' : 'bg-gray-700 text-white'
+              : isAssisted ? 'border-blue-300 text-blue-700 hover:bg-blue-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'
           }`}
         >
           <span>{option.label}</span>
@@ -173,10 +173,10 @@ const AISearchSuggestions: React.FC<{
   if (suggestions.length === 0) return null;
   
   return (
-    <div className="mt-2 p-3 bg-purple-50 border border-purple-200 rounded">
+    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded">
       <div className="flex items-center space-x-2 mb-2">
-        <Sparkles className="h-4 w-4 text-purple-600" />
-        <span className="text-sm font-medium text-purple-800">AI Suggestions</span>
+        <Sparkles className="h-4 w-4 text-blue-600" />
+        <span className="text-sm font-medium text-blue-800">AI Suggestions</span>
       </div>
       <div className="flex flex-wrap gap-2">
         {suggestions.map((suggestion, index) => (
@@ -185,7 +185,7 @@ const AISearchSuggestions: React.FC<{
             variant="outline"
             size="sm"
             onClick={() => onSelectSuggestion(suggestion)}
-            className="text-xs border-purple-300 text-purple-700 hover:bg-purple-100"
+            className="text-xs border-blue-300 text-blue-700 hover:bg-blue-100"
           >
             {suggestion}
           </Button>
@@ -264,14 +264,14 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
     <Card className={`${cardClasses} ${className}`}>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className={`text-xl ${isAssisted ? 'text-purple-900' : 'text-gray-900'}`}>
+          <CardTitle className={`text-xl ${isAssisted ? 'text-blue-900' : 'text-gray-900'}`}>
             {isAssisted ? 'Smart Search & Filters' : 'Search & Filters'}
           </CardTitle>
           
           <div className="flex items-center space-x-2">
             {/* Results Counter */}
             {filteredResults !== undefined && totalResults !== undefined && (
-              <Badge variant="outline" className={isAssisted ? 'text-purple-700 border-purple-300' : 'text-gray-600 border-gray-300'}>
+              <Badge variant="outline" className={isAssisted ? 'text-blue-700 border-blue-300' : 'text-gray-600 border-gray-300'}>
                 {filteredResults} of {totalResults} shown
               </Badge>
             )}
@@ -282,7 +282,7 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
                 variant="outline" 
                 size="sm" 
                 onClick={handleClearAll}
-                className={isAssisted ? 'text-purple-600 border-purple-300' : 'text-gray-600 border-gray-300'}
+                className={isAssisted ? 'text-blue-600 border-blue-300' : 'text-gray-600 border-gray-300'}
               >
                 <X className="h-4 w-4 mr-1" />
                 Clear All
@@ -295,7 +295,7 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className={isAssisted ? 'text-purple-600' : 'text-gray-600'}
+                className={isAssisted ? 'text-blue-600' : 'text-gray-600'}
               >
                 {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
@@ -317,7 +317,7 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
                   onChange={(e) => setLocalSearchTerm(e.target.value)}
                   className={`pl-10 ${
                     isAssisted 
-                      ? 'border-purple-300 focus:border-purple-500' 
+                      ? 'border-blue-300 focus:border-blue-500' 
                       : 'border-gray-300 focus:border-gray-500'
                   }`}
                 />
@@ -329,7 +329,7 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
               <Button 
                 variant="outline" 
                 onClick={onSmartFilter}
-                className="flex items-center space-x-2 border-purple-300 text-purple-700 hover:bg-purple-50"
+                className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50"
               >
                 <Brain className="h-4 w-4" />
                 <span>Smart Filter</span>
@@ -360,7 +360,7 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
           {/* Advanced Filters */}
           {isExpanded && filterConfigs.length > 0 && (
             <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-lg border mt-4 ${
-              isAssisted ? 'bg-purple-50 border-purple-200' : 'bg-gray-50 border-gray-200'
+              isAssisted ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'
             }`}>
               {filterConfigs.map((config) => (
                 <FilterDropdown
@@ -378,11 +378,11 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
           {sortOptions.length > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between mb-3">
-                <h4 className={`font-semibold ${isAssisted ? 'text-purple-900' : 'text-gray-900'}`}>
+                <h4 className={`font-semibold ${isAssisted ? 'text-blue-900' : 'text-gray-900'}`}>
                   Sort & Organize
                 </h4>
                 {isAssisted && (
-                  <Badge className="bg-purple-100 text-purple-800 border-purple-300">
+                  <Badge className="bg-blue-100 text-blue-800 border-blue-300">
                     <Zap className="h-3 w-3 mr-1" />
                     AI Optimized
                   </Badge>
@@ -401,7 +401,7 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
           {/* Saved Filters */}
           {savedFilters.length > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <h4 className={`font-semibold mb-3 ${isAssisted ? 'text-purple-900' : 'text-gray-900'}`}>
+              <h4 className={`font-semibold mb-3 ${isAssisted ? 'text-blue-900' : 'text-gray-900'}`}>
                 Saved Filters
               </h4>
               <div className="flex flex-wrap gap-2">
@@ -411,7 +411,7 @@ export const StandardizedSearchFilter: React.FC<StandardizedSearchFilterProps> =
                     variant="outline"
                     size="sm"
                     onClick={() => onFiltersChange(savedFilter.filters)}
-                    className={isAssisted ? 'border-purple-300 text-purple-700' : 'border-gray-300 text-gray-700'}
+                    className={isAssisted ? 'border-blue-300 text-blue-700' : 'border-gray-300 text-gray-700'}
                   >
                     {savedFilter.name}
                   </Button>
@@ -472,12 +472,12 @@ export const QuickSearchBar: React.FC<{
           onChange={(e) => setLocalTerm(e.target.value)}
           className={`pl-10 ${
             isAssisted 
-              ? 'border-purple-300 focus:border-purple-500' 
+              ? 'border-blue-300 focus:border-blue-500' 
               : 'border-gray-300 focus:border-gray-500'
           }`}
         />
         {isAssisted && localTerm && (
-          <Sparkles className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-purple-500" />
+          <Sparkles className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
         )}
       </div>
       

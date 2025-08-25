@@ -145,7 +145,7 @@ export function OperationalManagementMonitoring({
               <div className="text-2xl font-bold">{Math.round(portfolioOverview.averageManagementScore)}</div>
               <div className="text-sm text-gray-600">Avg Management</div>
             </div>
-            <Users className="w-8 h-8 text-purple-600" />
+            <Users className="w-8 h-8 text-blue-600" />
           </div>
         </Card>
         

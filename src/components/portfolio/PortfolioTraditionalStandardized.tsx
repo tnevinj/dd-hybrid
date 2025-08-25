@@ -197,7 +197,7 @@ export function PortfolioTraditionalStandardized({
                   <span className="text-sm font-medium">30%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-purple-500 h-2 rounded-full" style={{ width: '30%' }}></div>
+                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: '30%' }}></div>
                 </div>
               </div>
             </div>

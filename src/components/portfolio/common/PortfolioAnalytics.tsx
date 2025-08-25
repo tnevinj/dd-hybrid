@@ -235,7 +235,7 @@ export function PortfolioAnalytics() {
             <div className="text-sm text-gray-600">CO2 Avoided</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold text-blue-600">
               {esgScores.governance.toFixed(1)}/10
             </div>
             <div className="text-sm text-gray-600">Avg Governance</div>

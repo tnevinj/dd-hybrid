@@ -428,7 +428,7 @@ export function DecisionOutcomePrediction({
       {/* Detailed Predictions */}
       <div className="space-y-4">
         {predictions.map((prediction, index) => (
-          <Card key={index} className="border-l-4 border-l-purple-500">
+          <Card key={index} className="border-l-4 border-l-blue-500">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <div>
@@ -483,7 +483,7 @@ export function DecisionOutcomePrediction({
 
                 <div>
                   <h4 className="font-medium mb-2 text-gray-700 flex items-center gap-2">
-                    <Vote className="h-4 w-4 text-purple-500" />
+                    <Vote className="h-4 w-4 text-blue-500" />
                     Voting Pattern
                   </h4>
                   <div className="space-y-2">
@@ -545,7 +545,7 @@ export function DecisionOutcomePrediction({
                   size="sm" 
                   variant="outline"
                   onClick={() => setSelectedProposal(selectedProposal === prediction.proposalId ? '' : prediction.proposalId)}
-                  className="text-purple-700 border-purple-300 hover:bg-purple-50"
+                  className="text-blue-700 border-blue-300 hover:bg-blue-50"
                 >
                   <Eye className="h-3 w-3 mr-1" />
                   {selectedProposal === prediction.proposalId ? 'Hide' : 'Show'} Detailed Analysis
@@ -553,7 +553,7 @@ export function DecisionOutcomePrediction({
               </div>
               
               {selectedProposal === prediction.proposalId && (
-                <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <h5 className="font-semibold mb-3">Influencing Factors Analysis</h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {prediction.influencingFactors.map((factor, idx) => (
@@ -605,9 +605,9 @@ export function DecisionOutcomePrediction({
               </div>
               
               <div>
-                <div className="text-2xl font-bold text-purple-600 mb-2">{meeting.prediction.decisionEfficiency}%</div>
-                <p className="text-sm text-purple-700">Decision Efficiency</p>
-                <p className="text-xs text-purple-600">Proposals decided</p>
+                <div className="text-2xl font-bold text-blue-600 mb-2">{meeting.prediction.decisionEfficiency}%</div>
+                <p className="text-sm text-blue-700">Decision Efficiency</p>
+                <p className="text-xs text-blue-600">Proposals decided</p>
               </div>
               
               <div>
@@ -684,9 +684,9 @@ export function DecisionOutcomePrediction({
     return (
       <div className="space-y-6">
         {/* Committee Performance */}
-        <Card className="border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+        <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-pink-50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-xl text-purple-800">
+            <CardTitle className="flex items-center gap-3 text-xl text-blue-800">
               <Target className="h-6 w-6" />
               Committee Decision Patterns
             </CardTitle>
@@ -694,9 +694,9 @@ export function DecisionOutcomePrediction({
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
               <div>
-                <div className="text-2xl font-bold text-purple-600 mb-2">{patternAnalysis.historicalPerformance.decisionAccuracy}%</div>
-                <p className="text-sm text-purple-700">Prediction Accuracy</p>
-                <p className="text-xs text-purple-600">Historical performance</p>
+                <div className="text-2xl font-bold text-blue-600 mb-2">{patternAnalysis.historicalPerformance.decisionAccuracy}%</div>
+                <p className="text-sm text-blue-700">Prediction Accuracy</p>
+                <p className="text-xs text-blue-600">Historical performance</p>
               </div>
               
               <div>
@@ -718,8 +718,8 @@ export function DecisionOutcomePrediction({
               </div>
             </div>
             
-            <div className="p-4 bg-white rounded-lg border border-purple-200">
-              <h4 className="font-semibold text-purple-800 mb-2">Polarized Topics</h4>
+            <div className="p-4 bg-white rounded-lg border border-blue-200">
+              <h4 className="font-semibold text-blue-800 mb-2">Polarized Topics</h4>
               <div className="flex flex-wrap gap-2">
                 {patternAnalysis.committeeConsensus.polarizedTopics.map((topic, idx) => (
                   <Badge key={idx} variant="outline" className="bg-red-100 text-red-800">
@@ -738,7 +738,7 @@ export function DecisionOutcomePrediction({
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>{member.memberName}</span>
-                  <Badge className="bg-purple-100 text-purple-800">
+                  <Badge className="bg-blue-100 text-blue-800">
                     {member.predictedInfluence}% Influence
                   </Badge>
                 </CardTitle>
@@ -800,7 +800,7 @@ export function DecisionOutcomePrediction({
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex items-center gap-3">
-          <Brain className="h-8 w-8 animate-pulse text-purple-600" />
+          <Brain className="h-8 w-8 animate-pulse text-blue-600" />
           <span className="text-lg">Loading decision predictions...</span>
         </div>
       </div>
@@ -813,7 +813,7 @@ export function DecisionOutcomePrediction({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-3">
-            <Brain className="h-7 w-7 text-purple-600" />
+            <Brain className="h-7 w-7 text-blue-600" />
             Decision Outcome Prediction
           </h2>
           <p className="text-gray-600 mt-1">
@@ -821,7 +821,7 @@ export function DecisionOutcomePrediction({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className="bg-purple-100 text-purple-800">
+          <Badge className="bg-blue-100 text-blue-800">
             ML Model Active
           </Badge>
           <Button size="sm" variant="outline">

@@ -108,7 +108,7 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
 
   const getTypeColor = (type: AIRecommendation['type']) => {
     switch (type) {
-      case 'automation': return 'text-purple-600';
+      case 'automation': return 'text-blue-600';
       case 'optimization': return 'text-green-600';
       case 'risk': return 'text-red-600';
       case 'compliance': return 'text-blue-600';
@@ -131,7 +131,7 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
     return (
       <Button 
         onClick={onToggleVisibility}
-        className="w-full bg-purple-600 hover:bg-purple-700"
+        className="w-full bg-blue-600 hover:bg-blue-700"
       >
         <Bot className="h-4 w-4 mr-2" />
         Show AI Assistant ({activeRecommendations.length} recommendations available)
@@ -140,29 +140,29 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
   }
 
   return (
-    <Card className={`border-purple-200 bg-purple-50/50 ${className}`}>
+    <Card className={`border-blue-200 bg-blue-50/50 ${className}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-purple-600" />
-            <CardTitle className="text-purple-900">{title}</CardTitle>
+            <Bot className="h-5 w-5 text-blue-600" />
+            <CardTitle className="text-blue-900">{title}</CardTitle>
           </div>
           {onToggleVisibility && (
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={onToggleVisibility}
-              className="text-purple-600 hover:text-purple-700"
+              className="text-blue-600 hover:text-blue-700"
             >
               Hide AI Panel
             </Button>
           )}
         </div>
         {subtitle && (
-          <p className="text-purple-700 text-sm">{subtitle}</p>
+          <p className="text-blue-700 text-sm">{subtitle}</p>
         )}
         {!subtitle && (
-          <p className="text-purple-700 text-sm">
+          <p className="text-blue-700 text-sm">
             Your AI assistant has identified {activeRecommendations.length} opportunities to improve operations
           </p>
         )}
@@ -171,7 +171,7 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
         <div className={compactMode ? 'space-y-4' : 'grid grid-cols-1 lg:grid-cols-2 gap-4'}>
           {/* Main Recommendations */}
           <div className={compactMode ? '' : 'space-y-2'}>
-            <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+            <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
               <Lightbulb className="h-4 w-4" />
               Smart Recommendations ({otherRecommendations.length})
             </h4>
@@ -206,7 +206,7 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
                             variant="ghost"
                             size="sm"
                             onClick={() => toggleExpanded(recommendation.id)}
-                            className="h-6 p-1 text-xs text-purple-600 hover:text-purple-700"
+                            className="h-6 p-1 text-xs text-blue-600 hover:text-blue-700"
                           >
                             {isExpanded ? (
                               <>
@@ -294,7 +294,7 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
               
               {otherRecommendations.length > maxRecommendations && (
                 <div className="text-center">
-                  <Button variant="ghost" size="sm" className="text-purple-600">
+                  <Button variant="ghost" size="sm" className="text-blue-600">
                     Show {otherRecommendations.length - maxRecommendations} more recommendations
                   </Button>
                 </div>
@@ -305,7 +305,7 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
           {/* Automation Opportunities */}
           {showAutomationSection && automationRecommendations.length > 0 && (
             <div className={compactMode ? 'mt-4' : ''}>
-              <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+              <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                 <Zap className="h-4 w-4" />
                 Automation Available ({automationRecommendations.length})
               </h4>
@@ -343,7 +343,7 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
 
         {/* Quick AI Insights */}
         {showInsights && !compactMode && (
-          <div className="mt-4 pt-4 border-t border-purple-200">
+          <div className="mt-4 pt-4 border-t border-blue-200">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="bg-white p-3 rounded-lg border text-center">
                 <TrendingUp className="h-6 w-6 text-green-600 mx-auto mb-1" />
@@ -358,7 +358,7 @@ const AIRecommendationPanel: React.FC<AIRecommendationPanelProps> = ({
                 </p>
               </div>
               <div className="bg-white p-3 rounded-lg border text-center">
-                <Target className="h-6 w-6 text-purple-600 mx-auto mb-1" />
+                <Target className="h-6 w-6 text-blue-600 mx-auto mb-1" />
                 <p className="text-xs font-medium">Accuracy Rate</p>
                 <p className="text-xs text-gray-600">
                   {Math.round(recommendations.reduce((sum, r) => sum + r.confidence, 0) / recommendations.length * 100) || 0}%

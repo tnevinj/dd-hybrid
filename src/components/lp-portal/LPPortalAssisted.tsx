@@ -203,23 +203,23 @@ export function LPPortalAssisted({
     <div className="space-y-6">
       {/* AI Assistance Panel */}
       {showAIPanel && (
-        <Card className="border-purple-200 bg-purple-50/50">
+        <Card className="border-blue-200 bg-blue-50/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Bot className="h-5 w-5 text-purple-600" />
-                <CardTitle className="text-purple-900">AI Portfolio Assistant</CardTitle>
+                <Bot className="h-5 w-5 text-blue-600" />
+                <CardTitle className="text-blue-900">AI Portfolio Assistant</CardTitle>
               </div>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setShowAIPanel(false)}
-                className="text-purple-600 hover:text-purple-700"
+                className="text-blue-600 hover:text-blue-700"
               >
                 Hide AI Panel
               </Button>
             </div>
-            <CardDescription className="text-purple-700">
+            <CardDescription className="text-blue-700">
               {activeRecommendations.length} recommendations • {aiEnhancements.automationSuggestions.filter(s => s.enabled).length} automations active • Portfolio analysis complete
             </CardDescription>
           </CardHeader>
@@ -227,7 +227,7 @@ export function LPPortalAssisted({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* AI Recommendations */}
               <div>
-                <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                   <Lightbulb className="h-4 w-4" />
                   Smart Recommendations ({activeRecommendations.length})
                 </h4>
@@ -282,7 +282,7 @@ export function LPPortalAssisted({
 
               {/* Performance Insights */}
               <div>
-                <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                   <BarChart3 className="h-4 w-4" />
                   Performance Insights
                 </h4>
@@ -305,7 +305,7 @@ export function LPPortalAssisted({
             </div>
 
             {/* Quick Actions */}
-            <div className="mt-4 pt-4 border-t border-purple-200">
+            <div className="mt-4 pt-4 border-t border-blue-200">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Button size="sm" variant="outline" className="h-8 text-xs">
                   <MessageSquare className="h-3 w-3 mr-1" />
@@ -333,7 +333,7 @@ export function LPPortalAssisted({
       {!showAIPanel && (
         <Button 
           onClick={() => setShowAIPanel(true)}
-          className="w-full bg-purple-600 hover:bg-purple-700"
+          className="w-full bg-blue-600 hover:bg-blue-700"
         >
           <Bot className="h-4 w-4 mr-2" />
           Show AI Assistant ({activeRecommendations.length} recommendations available)
@@ -353,14 +353,14 @@ export function LPPortalAssisted({
           <TabsTrigger value="capital-calls" className="relative">
             Capital Calls
             {activeRecommendations.some(r => r.type === 'RESPONSE') && (
-              <div className="absolute -top-1 -right-1 h-2 w-2 bg-purple-500 rounded-full" />
+              <div className="absolute -top-1 -right-1 h-2 w-2 bg-blue-500 rounded-full" />
             )}
           </TabsTrigger>
           <TabsTrigger value="distributions">Distributions</TabsTrigger>
           <TabsTrigger value="co-investments" className="relative">
             Co-Investments
             {activeRecommendations.some(r => r.type === 'INVESTMENT') && (
-              <div className="absolute -top-1 -right-1 h-2 w-2 bg-purple-500 rounded-full" />
+              <div className="absolute -top-1 -right-1 h-2 w-2 bg-blue-500 rounded-full" />
             )}
           </TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
@@ -507,7 +507,7 @@ export function LPPortalAssisted({
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Zap className="h-5 w-5 text-purple-500" />
+                <Zap className="h-5 w-5 text-blue-500" />
                 Automation Center
               </CardTitle>
               <CardDescription>

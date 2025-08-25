@@ -216,17 +216,17 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
         <div>
           <div className="flex items-center space-x-3">
             <h1 className={TYPOGRAPHY.headings.h1}>Deal Screening</h1>
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
               <Brain className="h-3 w-3" />
               <span>AI-Assisted Mode</span>
             </Badge>
           </div>
-          <p className={`${TYPOGRAPHY.body.base} text-purple-700 mt-1`}>
+          <p className={`${TYPOGRAPHY.body.base} text-blue-700 mt-1`}>
             Enhanced with AI-powered deal analysis and automated screening
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button onClick={onCreateOpportunity} className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700">
+          <Button onClick={onCreateOpportunity} className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700">
             <Sparkles className="h-4 w-4" />
             <span>AI-Sourced Deal</span>
           </Button>
@@ -258,7 +258,7 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
           score={89}
           confidence={91}
           insight="High-potential opportunities identified"
-          className="border-purple-200"
+          className="border-blue-200"
         />
         
         <StandardizedKPICard
@@ -291,12 +291,12 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
           value={60}
           mode="assisted"
           timeSaved="12.4h saved today"
-          className="border-purple-200"
+          className="border-blue-200"
         />
       </div>
 
       {/* Smart Screening Assistant */}
-      <Card className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+      <Card className="mb-6 bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200">
         <CardHeader>
           <CardTitle className="flex items-center text-blue-800">
             <Target className="h-5 w-5 mr-2" />
@@ -363,15 +363,15 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl text-purple-900">AI-Enhanced Deal Analysis</CardTitle>
-                  <p className="text-sm text-purple-700 mt-1">Deals ranked by AI scoring and market analysis</p>
+                  <CardTitle className="text-xl text-blue-900">AI-Enhanced Deal Analysis</CardTitle>
+                  <p className="text-sm text-blue-700 mt-1">Deals ranked by AI scoring and market analysis</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge className="bg-green-100 text-green-800 border-green-300">
                     <CheckCircle className="h-3 w-3 mr-1" />
                     AI analysis complete
                   </Badge>
-                  <Button onClick={onCreateOpportunity} className="bg-purple-600 hover:bg-purple-700">
+                  <Button onClick={onCreateOpportunity} className="bg-blue-600 hover:bg-blue-700">
                     <Sparkles className="h-4 w-4 mr-2" />
                     AI Screen
                   </Button>
@@ -414,7 +414,7 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                     <div key={opportunity.id} className={`border rounded-lg p-6 transition-shadow ${COMPONENTS.card.assisted.accent} ${COMPONENTS.card.assisted.hover}`}>
                       {/* AI Enhancement Indicator */}
                       <div className="absolute top-2 right-2">
-                        <Badge className="bg-purple-100 text-purple-800 border border-purple-300 text-xs">
+                        <Badge className="bg-blue-100 text-blue-800 border border-blue-300 text-xs">
                           <Sparkles className="h-3 w-3 mr-1" />
                           AI Enhanced
                         </Badge>
@@ -427,7 +427,7 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                             <Badge className={`${getStatusColor(opportunity.status)} border`}>
                               {opportunity.status.replace('_', ' ')}
                             </Badge>
-                            <Badge variant="outline" className="text-purple-700 border-purple-300">
+                            <Badge variant="outline" className="text-blue-700 border-blue-300">
                               {opportunity.sector}
                             </Badge>
                           </div>
@@ -447,7 +447,7 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-2xl font-bold text-purple-600">{formatCurrency(opportunity.dealSize || 0)}</p>
+                          <p className="text-2xl font-bold text-blue-600">{formatCurrency(opportunity.dealSize || 0)}</p>
                           <p className="text-sm text-gray-500">{opportunity.stage}</p>
                         </div>
                       </div>
@@ -456,8 +456,8 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                       {opportunity.aiScore && (
                         <div className="mb-4">
                           <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm text-purple-600 font-medium">AI Deal Score</span>
-                            <span className="text-sm font-semibold text-purple-800">{opportunity.aiScore}%</span>
+                            <span className="text-sm text-blue-600 font-medium">AI Deal Score</span>
+                            <span className="text-sm font-semibold text-blue-800">{opportunity.aiScore}%</span>
                           </div>
                           <div className="w-full h-3 bg-gray-200 rounded-full">
                             <div 
@@ -470,10 +470,10 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
 
                       {/* AI Insights */}
                       <div className="mb-4 space-y-2">
-                        <div className="p-2 bg-purple-50 border border-purple-200 rounded">
+                        <div className="p-2 bg-blue-50 border border-blue-200 rounded">
                           <div className="flex items-center space-x-2">
-                            <Brain className="h-4 w-4 text-purple-600" />
-                            <span className="text-sm text-purple-800 font-medium">Market Fit: {opportunity.marketFitScore}%</span>
+                            <Brain className="h-4 w-4 text-blue-600" />
+                            <span className="text-sm text-blue-800 font-medium">Market Fit: {opportunity.marketFitScore}%</span>
                           </div>
                         </div>
                         <div className="p-2 bg-blue-50 border border-blue-200 rounded">
@@ -485,17 +485,17 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                       </div>
 
                       {/* Key Metrics with AI Enhancement */}
-                      <div className="grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg mb-4 border border-purple-200">
+                      <div className="grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-blue-50 to-blue-50 rounded-lg mb-4 border border-blue-200">
                         <div className="text-center">
-                          <p className="text-sm text-purple-600 mb-1">AI-Verified Revenue</p>
+                          <p className="text-sm text-blue-600 mb-1">AI-Verified Revenue</p>
                           <p className="text-lg font-semibold text-green-600">{formatCurrency((opportunity.revenue || 0) * 1000000)}</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-sm text-purple-600 mb-1">Growth Rate</p>
-                          <p className="text-lg font-semibold text-purple-600">{opportunity.growthRate?.toFixed(1)}%</p>
+                          <p className="text-sm text-blue-600 mb-1">Growth Rate</p>
+                          <p className="text-lg font-semibold text-blue-600">{opportunity.growthRate?.toFixed(1)}%</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-sm text-purple-600 mb-1">EBITDA Margin</p>
+                          <p className="text-sm text-blue-600 mb-1">EBITDA Margin</p>
                           <p className="text-lg font-semibold text-orange-600">{opportunity.ebitdaMargin?.toFixed(1)}%</p>
                         </div>
                       </div>
@@ -503,10 +503,10 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                       {/* Key Highlights with AI Enhancement */}
                       {opportunity.keyHighlights && (
                         <div className="mb-4">
-                          <h5 className="font-medium text-purple-900 mb-2">AI-Generated Highlights</h5>
+                          <h5 className="font-medium text-blue-900 mb-2">AI-Generated Highlights</h5>
                           <div className="flex flex-wrap gap-2">
                             {opportunity.keyHighlights.map((highlight: string, index: number) => (
-                              <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs border border-purple-300">
+                              <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs border border-blue-300">
                                 <Sparkles className="h-3 w-3 mr-1 inline" />
                                 {highlight}
                               </span>
@@ -518,22 +518,22 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                       {/* AI-Enhanced Action Buttons */}
                       <div className="flex items-center justify-between">
                         <div className="flex space-x-2">
-                          <Button size="sm" variant="outline" onClick={() => onViewOpportunity(opportunity.id)} className="border-purple-300 text-purple-700">
+                          <Button size="sm" variant="outline" onClick={() => onViewOpportunity(opportunity.id)} className="border-blue-300 text-blue-700">
                             <Brain className="h-4 w-4 mr-1" />
                             AI Analysis
                           </Button>
-                          <Button size="sm" variant="outline" className="border-purple-300 text-purple-700">
+                          <Button size="sm" variant="outline" className="border-blue-300 text-blue-700">
                             <FileText className="h-4 w-4 mr-1" />
                             Smart Docs
                           </Button>
-                          <Button size="sm" variant="outline" className="border-purple-300 text-purple-700">
+                          <Button size="sm" variant="outline" className="border-blue-300 text-blue-700">
                             <BarChart3 className="h-4 w-4 mr-1" />
                             AI Financials
                           </Button>
                         </div>
                         
                         {opportunity.status === 'NEW' && (
-                          <Button size="sm" className="bg-purple-600 hover:bg-purple-700" onClick={() => onScreenOpportunity(opportunity.id)}>
+                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={() => onScreenOpportunity(opportunity.id)}>
                             <Sparkles className="h-4 w-4 mr-1" />
                             AI Screen
                           </Button>
@@ -565,7 +565,7 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
           {/* AI Pipeline Analytics */}
           <Card className={COMPONENTS.card.assisted.base}>
             <CardHeader>
-              <CardTitle className="text-lg text-purple-900">AI Pipeline Analytics</CardTitle>
+              <CardTitle className="text-lg text-blue-900">AI Pipeline Analytics</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -574,13 +574,13 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                   score={89}
                   confidence={94}
                   insight="Strong deal flow detected"
-                  className="border-none shadow-none bg-purple-50"
+                  className="border-none shadow-none bg-blue-50"
                 />
                 
                 <div className="grid grid-cols-1 gap-3">
                   {[
                     { status: 'HIGH_SCORE', count: opportunities.filter(o => (o.aiScore || 0) > 80).length, color: 'green', label: 'High AI Score' },
-                    { status: 'SCREENING', count: opportunities.filter(o => o.status === 'SCREENING').length, color: 'purple', label: 'AI Screening' },
+                    { status: 'SCREENING', count: opportunities.filter(o => o.status === 'SCREENING').length, color: 'blue', label: 'AI Screening' },
                     { status: 'APPROVED', count: opportunities.filter(o => o.status === 'APPROVED').length, color: 'blue', label: 'AI Approved' }
                   ].map((item) => (
                     <div key={item.status} className={`p-2 bg-${item.color}-50 border border-${item.color}-200 rounded text-center`}>
@@ -594,9 +594,9 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
           </Card>
 
           {/* AI Performance Summary */}
-          <Card className={`${COMPONENTS.card.assisted.base} bg-gradient-to-r from-purple-50 to-blue-50`}>
+          <Card className={`${COMPONENTS.card.assisted.base} bg-gradient-to-r from-blue-50 to-blue-50`}>
             <CardHeader>
-              <CardTitle className="text-lg text-purple-900">AI Assistant Performance</CardTitle>
+              <CardTitle className="text-lg text-blue-900">AI Assistant Performance</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -607,7 +607,7 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
                 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center p-2 bg-white/70 rounded border">
-                    <p className="text-lg font-bold text-purple-600">91%</p>
+                    <p className="text-lg font-bold text-blue-600">91%</p>
                     <p className="text-xs text-gray-600">Screening Accuracy</p>
                   </div>
                   <div className="text-center p-2 bg-white/70 rounded border">
@@ -626,7 +626,7 @@ export const DealScreeningAssistedStandardized: React.FC<DealScreeningAssistedSt
               "Growth stage deals trending up",
               "AI identifies 12 priority deals"
             ]}
-            className="border-purple-200"
+            className="border-blue-200"
           />
         </div>
       </div>

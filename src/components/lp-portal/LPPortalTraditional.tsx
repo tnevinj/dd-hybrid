@@ -244,7 +244,7 @@ export function LPPortalTraditional({
 
         <TabsContent value="overview" className="space-y-6">
           {/* Enhanced Dashboard Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-600 rounded-lg p-6 text-white">
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-2xl font-bold mb-2">Welcome to Your LP Portal</h1>
@@ -310,7 +310,7 @@ export function LPPortalTraditional({
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <Award className="h-8 w-8 text-purple-600" />
+                  <Award className="h-8 w-8 text-blue-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">ESG Score</p>
                     <p className="text-2xl font-bold text-gray-900">{mockESGMetrics.score}/100</p>
@@ -605,9 +605,9 @@ export function LPPortalTraditional({
                       <p className="text-2xl font-bold text-blue-600">0.73</p>
                       <p className="text-sm text-gray-600">Sharpe Ratio</p>
                     </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <BarChart3 className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                      <p className="text-2xl font-bold text-purple-600">-8.4%</p>
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <BarChart3 className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                      <p className="text-2xl font-bold text-blue-600">-8.4%</p>
                       <p className="text-sm text-gray-600">Max Drawdown</p>
                     </div>
                   </div>
@@ -663,11 +663,11 @@ export function LPPortalTraditional({
                   <p className="text-sm text-gray-600 mb-2">Active Initiatives</p>
                   <Badge className="bg-blue-100 text-blue-800">+5 This Year</Badge>
                 </div>
-                <div className="text-center p-6 bg-purple-50 rounded-lg">
-                  <Shield className="h-10 w-10 text-purple-600 mx-auto mb-3" />
-                  <p className="text-3xl font-bold text-purple-600">{mockESGMetrics.carbonReduction}%</p>
+                <div className="text-center p-6 bg-blue-50 rounded-lg">
+                  <Shield className="h-10 w-10 text-blue-600 mx-auto mb-3" />
+                  <p className="text-3xl font-bold text-blue-600">{mockESGMetrics.carbonReduction}%</p>
                   <p className="text-sm text-gray-600 mb-2">Carbon Reduction</p>
-                  <Badge className="bg-purple-100 text-purple-800">2024 Target: 30%</Badge>
+                  <Badge className="bg-blue-100 text-blue-800">2024 Target: 30%</Badge>
                 </div>
                 <div className="text-center p-6 bg-orange-50 rounded-lg">
                   <Users className="h-10 w-10 text-orange-600 mx-auto mb-3" />
@@ -782,7 +782,7 @@ export function LPPortalTraditional({
             </Card>
             <Card className="cursor-pointer hover:shadow-md transition-shadow">
               <CardContent className="p-4 text-center">
-                <Mail className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                <Mail className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                 <p className="font-medium text-gray-900">Announcements</p>
                 <p className="text-sm text-gray-600">3 recent</p>
               </CardContent>
@@ -1175,9 +1175,9 @@ export function LPPortalTraditional({
                           {formatCurrency(commitment.distributedAmount)}
                         </p>
                       </div>
-                      <div className="bg-purple-50 p-3 rounded text-center">
+                      <div className="bg-blue-50 p-3 rounded text-center">
                         <p className="text-sm text-gray-600">Current NAV</p>
-                        <p className="font-semibold text-purple-600">
+                        <p className="font-semibold text-blue-600">
                           {formatCurrency(commitment.currentNAV)}
                         </p>
                       </div>

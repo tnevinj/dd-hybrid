@@ -552,8 +552,8 @@ const TaxOptimizationCard: React.FC<TaxOptimizationCardProps> = ({
                 </Card>
 
                 <Card className="p-4 text-center">
-                  <Flag className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                  <div className="text-3xl font-bold text-purple-600">
+                  <Flag className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                  <div className="text-3xl font-bold text-blue-600">
                     {results.recommendedStructure.jurisdictions.length}
                   </div>
                   <div className="text-sm text-gray-600">Jurisdictions</div>
@@ -672,7 +672,7 @@ const TaxOptimizationCard: React.FC<TaxOptimizationCardProps> = ({
                         <span>Economic Substance: {jurisdiction.economicSubstance ? 'Required' : 'Not Required'}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Gavel className="h-4 w-4 text-purple-600" />
+                        <Gavel className="h-4 w-4 text-blue-600" />
                         <span>BEPS: {jurisdiction.bepsCompliance}</span>
                       </div>
                     </div>
@@ -804,7 +804,7 @@ const TaxOptimizationCard: React.FC<TaxOptimizationCardProps> = ({
                 </div>
 
                 <div className="text-center">
-                  <FileText className="h-12 w-12 text-purple-600 mx-auto mb-3" />
+                  <FileText className="h-12 w-12 text-blue-600 mx-auto mb-3" />
                   <h5 className="font-medium mb-2">Transfer Pricing</h5>
                   <p className="text-sm text-gray-600 mb-3">
                     Arm's length pricing for intercompany transactions with comprehensive documentation.
@@ -928,7 +928,7 @@ const TaxOptimizationCard: React.FC<TaxOptimizationCardProps> = ({
                       <div className="text-sm text-gray-600">Annual Savings</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-purple-600">
+                      <div className="text-3xl font-bold text-blue-600">
                         {formatPercentage(results.taxSavingsAnalysis.savingsPercentage)}
                       </div>
                       <div className="text-sm text-gray-600">Savings Percentage</div>
@@ -1021,7 +1021,7 @@ const TaxOptimizationCard: React.FC<TaxOptimizationCardProps> = ({
                       <div className="text-sm text-gray-600">Withholding Reduction</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">{formatPercentage(results.treatyOptimization.doubleTraxationRelief)}</div>
+                      <div className="text-2xl font-bold text-blue-600">{formatPercentage(results.treatyOptimization.doubleTraxationRelief)}</div>
                       <div className="text-sm text-gray-600">Double Tax Relief</div>
                     </div>
                     <div className="text-center">

@@ -30,12 +30,12 @@ export function PortfolioAssistedContainer({
 
   return (
     <UnifiedPortfolioProvider config={defaultConfig}>
-      <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen">
+      <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-50 min-h-screen">
         <div className="max-w-7xl mx-auto">
         {/* Assisted Mode Header */}
         <div className="mb-6">
           <div className="flex items-center space-x-3 mb-3">
-            <Brain className="w-8 h-8 text-purple-600" />
+            <Brain className="w-8 h-8 text-blue-600" />
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
                 AI-Assisted Portfolio Management
@@ -44,18 +44,18 @@ export function PortfolioAssistedContainer({
                 Intelligent recommendations with human oversight and approval.
               </p>
             </div>
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300">
               AI-Enhanced
             </Badge>
           </div>
         </div>
 
         {/* AI Features Overview */}
-        <div className="bg-white rounded-lg border border-purple-200 p-6 mb-6">
+        <div className="bg-white rounded-lg border border-blue-200 p-6 mb-6">
           <h3 className="font-semibold text-gray-900 mb-4">AI-Powered Capabilities</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
-              <TrendingUp className="w-5 h-5 text-purple-600" />
+            <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+              <TrendingUp className="w-5 h-5 text-blue-600" />
               <div>
                 <div className="font-medium text-sm text-gray-900">Performance Analysis</div>
                 <div className="text-xs text-gray-600">AI-driven insights</div>
@@ -113,9 +113,9 @@ export function PortfolioAssistedContainer({
         />
 
         {/* Help Text */}
-        <div className="mt-8 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-          <h3 className="font-medium text-purple-900 mb-2">Assisted Mode Features</h3>
-          <ul className="text-sm text-purple-700 space-y-1">
+        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="font-medium text-blue-900 mb-2">Assisted Mode Features</h3>
+          <ul className="text-sm text-blue-700 space-y-1">
             <li>• AI-powered insights and recommendations with human approval</li>
             <li>• Advanced risk assessment and portfolio optimization</li>
             <li>• Real-time market intelligence and trend analysis</li>

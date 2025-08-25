@@ -963,7 +963,7 @@ export function EnhancedLegalDashboard({
                 <p className="text-sm font-medium text-gray-600">Legal Matters</p>
                 <p className="text-2xl font-bold text-gray-900">{aggregateMetrics.activeMatters}</p>
               </div>
-              <Gavel className="h-8 w-8 text-purple-600" />
+              <Gavel className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>

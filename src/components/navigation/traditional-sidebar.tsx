@@ -90,7 +90,7 @@ export function TraditionalSidebar({ enhanced = false, collapsed = false, classN
     if (!enhanced || !item.aiEnhanced) return null
     
     return (
-      <Sparkles className="w-3 h-3 text-purple-500" />
+      <Sparkles className="w-3 h-3 text-blue-500" />
     )
   }
 
@@ -161,7 +161,7 @@ export function TraditionalSidebar({ enhanced = false, collapsed = false, classN
                   <div className="flex items-center space-x-1">
                     {badge}
                     {enhanced && item.aiEnhanced && (
-                      <div className="text-xs text-purple-500">AI</div>
+                      <div className="text-xs text-blue-500">AI</div>
                     )}
                   </div>
                 )}

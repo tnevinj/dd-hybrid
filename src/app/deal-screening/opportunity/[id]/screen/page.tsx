@@ -98,7 +98,7 @@ const TemplateSelectionStep: React.FC<{
     switch (mode) {
       case 'traditional': return 'bg-gray-100 text-gray-800';
       case 'assisted': return 'bg-blue-100 text-blue-800';
-      case 'autonomous': return 'bg-purple-100 text-purple-800';
+      case 'autonomous': return 'bg-blue-100 text-blue-800';
     }
   };
 
@@ -219,12 +219,12 @@ const TemplateSelectionStep: React.FC<{
 
               {/* Mode-specific Features */}
               {mode !== 'traditional' && rec.template.aiEnhanced && (
-                <div className="mt-4 p-3 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
+                <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 to-blue-50 rounded-lg">
                   <div className="flex items-center space-x-2 mb-2">
-                    <Zap className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm font-medium text-purple-900">AI Features</span>
+                    <Zap className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-900">AI Features</span>
                   </div>
-                  <div className="text-xs text-purple-700 space-y-1">
+                  <div className="text-xs text-blue-700 space-y-1">
                     {mode === 'assisted' && (
                       <>
                         <div>• Smart scoring suggestions</div>
@@ -932,25 +932,25 @@ const AutonomousScoringInterface: React.FC<{
   return (
     <div className="space-y-6">
       {/* AI Processing Status */}
-      <Card className="border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <Bot className="h-6 w-6 text-purple-600" />
+              <Bot className="h-6 w-6 text-blue-600" />
               <div>
-                <h2 className="text-xl font-semibold text-purple-900">Autonomous AI Processing</h2>
-                <p className="text-purple-700">
+                <h2 className="text-xl font-semibold text-blue-900">Autonomous AI Processing</h2>
+                <p className="text-blue-700">
                   {aiProcessingStatus === 'processing' && `Processing criterion ${currentProcessingStep + 1} of ${template.criteria.length}...`}
                   {aiProcessingStatus === 'pending_approval' && `${pendingApprovals.length} scores need your approval`}
                   {aiProcessingStatus === 'completed' && 'All criteria processed automatically'}
                 </p>
               </div>
             </div>
-            <Badge className="bg-purple-100 text-purple-800">Autonomous Mode</Badge>
+            <Badge className="bg-blue-100 text-blue-800">Autonomous Mode</Badge>
           </div>
           
           <Progress value={progress} className="w-full mb-2" />
-          <p className="text-sm text-purple-600">{Math.round(progress)}% Complete</p>
+          <p className="text-sm text-blue-600">{Math.round(progress)}% Complete</p>
         </CardContent>
       </Card>
 
@@ -958,7 +958,7 @@ const AutonomousScoringInterface: React.FC<{
       {aiProcessingStatus === 'processing' && (
         <Card>
           <CardContent className="p-8 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Processing in Progress</h3>
             <p className="text-gray-600">
               Analyzing deal criteria using advanced algorithms and portfolio benchmarks...
@@ -1085,7 +1085,7 @@ const AutonomousScoringInterface: React.FC<{
               <p className="text-sm text-gray-600">Avg Confidence</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-purple-600">4.2hrs</p>
+              <p className="text-2xl font-bold text-blue-600">4.2hrs</p>
               <p className="text-sm text-gray-600">Time Saved</p>
             </div>
           </div>
@@ -1512,7 +1512,7 @@ export default function DealScreeningPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Target className="h-5 w-5 text-purple-600 mr-2" />
+                    <Target className="h-5 w-5 text-blue-600 mr-2" />
                     Category Scores
                   </CardTitle>
                 </CardHeader>
@@ -1714,7 +1714,7 @@ export default function DealScreeningPage() {
             <div className="text-center py-8">
               <div className="flex items-center justify-center mb-4">
                 <CheckCircle className="h-12 w-12 text-green-500 mr-3" />
-                <Zap className="h-8 w-8 text-purple-500" />
+                <Zap className="h-8 w-8 text-blue-500" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Screening Complete & Workflow Initiated!
@@ -1744,7 +1744,7 @@ export default function DealScreeningPage() {
                         ? 'bg-orange-100 text-orange-800' 
                         : workflowData.postScreeningWorkflow?.currentStage === 'due_diligence'
                         ? 'bg-blue-100 text-blue-800'
-                        : 'bg-purple-100 text-purple-800'
+                        : 'bg-blue-100 text-blue-800'
                     }`}>
                       {workflowData.postScreeningWorkflow?.currentStage?.replace('_', ' ').toUpperCase() || 'COMMITTEE REVIEW'}
                     </Badge>
@@ -1784,7 +1784,7 @@ export default function DealScreeningPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center text-lg">
-                    <Bell className="h-5 w-5 text-purple-600 mr-2" />
+                    <Bell className="h-5 w-5 text-blue-600 mr-2" />
                     Notifications
                   </CardTitle>
                 </CardHeader>

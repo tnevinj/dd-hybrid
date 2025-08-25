@@ -281,7 +281,7 @@ export function DueDiligenceAssistedRefactored({
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'in progress': return 'bg-blue-100 text-blue-800'
-      case 'final review': return 'bg-purple-100 text-purple-800'
+      case 'final review': return 'bg-blue-100 text-blue-800'
       case 'completed': return 'bg-green-100 text-green-800'
       default: return 'bg-gray-100 text-gray-800'
     }
@@ -290,7 +290,7 @@ export function DueDiligenceAssistedRefactored({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
         <h3 className="text-xl font-semibold text-gray-700">AI is analyzing due diligence data...</h3>
       </div>
     )
@@ -299,10 +299,10 @@ export function DueDiligenceAssistedRefactored({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* AI-Enhanced Mode Indicator */}
-      <div className="bg-white border-b border-purple-200 px-6 py-4">
+      <div className="bg-white border-b border-blue-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
               <Brain className="h-3 w-3" />
               <span>AI-Assisted Mode</span>
             </Badge>
@@ -313,7 +313,7 @@ export function DueDiligenceAssistedRefactored({
           <div className="flex items-center space-x-6 text-sm text-gray-600">
             <div>
               <span className="font-medium">AI Efficiency:</span> 
-              <span className="text-purple-600 ml-1">{metrics.aiEfficiencyGains || 87}%</span>
+              <span className="text-blue-600 ml-1">{metrics.aiEfficiencyGains || 87}%</span>
             </div>
             <div>
               <span className="font-medium">Risk Accuracy:</span> 
@@ -331,10 +331,10 @@ export function DueDiligenceAssistedRefactored({
         {/* AI Recommendations Panel */}
         {aiRecommendations && aiRecommendations.length > 0 && (
           <div className="mb-6">
-            <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+            <Card className="bg-gradient-to-r from-blue-50 to-blue-50 border-blue-200">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Brain className="h-5 w-5 mr-2 text-purple-600" />
+                  <Brain className="h-5 w-5 mr-2 text-blue-600" />
                   Due Diligence AI Recommendations ({aiRecommendations.length})
                 </CardTitle>
               </CardHeader>
@@ -392,14 +392,14 @@ export function DueDiligenceAssistedRefactored({
           <TabsContent value="overview" className="space-y-6">
             {/* AI-Enhanced KPI Dashboard */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
                 <CardContent className="p-6">
                   <div className="flex items-center">
-                    <Brain className="h-8 w-8 text-purple-600" />
+                    <Brain className="h-8 w-8 text-blue-600" />
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-purple-800">AI-Enhanced Projects</p>
-                      <p className="text-2xl font-bold text-purple-900">{mockAIEnhancedDDProjects.length}</p>
-                      <p className="text-xs text-purple-600">87% efficiency gain</p>
+                      <p className="text-sm font-medium text-blue-800">AI-Enhanced Projects</p>
+                      <p className="text-2xl font-bold text-blue-900">{mockAIEnhancedDDProjects.length}</p>
+                      <p className="text-xs text-blue-600">87% efficiency gain</p>
                     </div>
                   </div>
                 </CardContent>
@@ -481,7 +481,7 @@ export function DueDiligenceAssistedRefactored({
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">AI Risk Score</p>
-                        <p className="text-lg font-semibold text-purple-600">{currentProject.aiRiskScore}/10</p>
+                        <p className="text-lg font-semibold text-blue-600">{currentProject.aiRiskScore}/10</p>
                       </div>
                     </div>
 
@@ -497,12 +497,12 @@ export function DueDiligenceAssistedRefactored({
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-3">AI Insights & Predictions</h4>
                     <div className="space-y-3">
-                      <div className="p-3 bg-purple-50 rounded-lg">
+                      <div className="p-3 bg-blue-50 rounded-lg">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-purple-800">Predicted Outcome</span>
-                          <span className="text-sm font-bold text-purple-900">{currentProject.aiInsights.predictedOutcome}</span>
+                          <span className="text-sm font-medium text-blue-800">Predicted Outcome</span>
+                          <span className="text-sm font-bold text-blue-900">{currentProject.aiInsights.predictedOutcome}</span>
                         </div>
-                        <div className="text-xs text-purple-600">
+                        <div className="text-xs text-blue-600">
                           {(currentProject.aiInsights.successProbability * 100).toFixed(0)}% success probability
                         </div>
                       </div>
@@ -582,7 +582,7 @@ export function DueDiligenceAssistedRefactored({
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Success Probability</p>
-                        <p className="font-semibold text-purple-600">
+                        <p className="font-semibold text-blue-600">
                           {(project.aiInsights.successProbability * 100).toFixed(0)}%
                         </p>
                       </div>
@@ -598,12 +598,12 @@ export function DueDiligenceAssistedRefactored({
 
                     {/* AI Recommendations for this project */}
                     {project.aiRecommendations.length > 0 && (
-                      <div className="mb-4 p-3 bg-purple-50 rounded-lg">
-                        <h5 className="text-sm font-medium text-purple-800 mb-2">
+                      <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                        <h5 className="text-sm font-medium text-blue-800 mb-2">
                           AI Recommendations ({project.aiRecommendations.length})
                         </h5>
                         {project.aiRecommendations.slice(0, 1).map((rec) => (
-                          <div key={rec.id} className="text-xs text-purple-700">
+                          <div key={rec.id} className="text-xs text-blue-700">
                             <span className="font-medium">{rec.title}</span>
                             <div className="mt-1">
                               <Button
@@ -659,10 +659,10 @@ export function DueDiligenceAssistedRefactored({
                   <div className="space-y-4">
                     <h4 className="font-semibold">AI Performance Metrics</h4>
                     <div className="space-y-3">
-                      <div className="p-4 bg-purple-50 rounded-lg">
+                      <div className="p-4 bg-blue-50 rounded-lg">
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-sm font-medium">Risk Prediction Accuracy</span>
-                          <span className="text-lg font-bold text-purple-900">94.2%</span>
+                          <span className="text-lg font-bold text-blue-900">94.2%</span>
                         </div>
                         <Progress value={94} className="h-2" />
                       </div>
@@ -698,7 +698,7 @@ export function DueDiligenceAssistedRefactored({
                       </div>
                       <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <span className="text-sm">Market Intel → Predictions</span>
-                        <span className="text-sm font-medium text-purple-600">85% accuracy</span>
+                        <span className="text-sm font-medium text-blue-600">85% accuracy</span>
                       </div>
                     </div>
                   </div>

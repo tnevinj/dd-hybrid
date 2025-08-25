@@ -118,14 +118,14 @@ export const StandardizedKPICard: React.FC<StandardizedKPICardProps> = ({
       case 'warning':
         return 'border-l-4 border-l-yellow-500';
       default:
-        return isAssisted ? 'border-l-4 border-l-purple-500' : '';
+        return isAssisted ? 'border-l-4 border-l-blue-500' : '';
     }
   };
 
   // AI-specific icon color
   const getIconColor = () => {
     if (iconColor) return iconColor;
-    if (isAssisted) return 'text-purple-600';
+    if (isAssisted) return 'text-blue-600';
     return 'text-gray-600';
   };
 
@@ -141,7 +141,7 @@ export const StandardizedKPICard: React.FC<StandardizedKPICardProps> = ({
               <IconComponent className={`h-5 w-5 ${getIconColor()}`} />
             )}
             <p className={`text-sm font-medium ${
-              isAssisted ? 'text-purple-700' : 'text-gray-600'
+              isAssisted ? 'text-blue-700' : 'text-gray-600'
             }`}>
               {title}
             </p>
@@ -149,7 +149,7 @@ export const StandardizedKPICard: React.FC<StandardizedKPICardProps> = ({
           
           {/* AI Enhancement Indicator */}
           {isAIEnhanced && (
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300">
               <Brain className="h-3 w-3 mr-1" />
               AI
             </Badge>
@@ -158,7 +158,7 @@ export const StandardizedKPICard: React.FC<StandardizedKPICardProps> = ({
 
         {/* Main Value */}
         <p className={`text-3xl font-bold mb-2 ${
-          isAssisted ? 'text-purple-900' : 'text-gray-900'
+          isAssisted ? 'text-blue-900' : 'text-gray-900'
         }`}>
           {formattedValue}
         </p>
@@ -199,12 +199,12 @@ export const StandardizedKPICard: React.FC<StandardizedKPICardProps> = ({
 
         {/* AI Insight */}
         {aiInsight && (
-          <div className="mt-3 p-2 bg-purple-50 border border-purple-200 rounded">
+          <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded">
             <div className="flex items-center space-x-1 mb-1">
-              <Sparkles className="h-3 w-3 text-purple-600" />
-              <span className="text-xs font-medium text-purple-800">AI Insight</span>
+              <Sparkles className="h-3 w-3 text-blue-600" />
+              <span className="text-xs font-medium text-blue-800">AI Insight</span>
             </div>
-            <p className="text-xs text-purple-700">{aiInsight}</p>
+            <p className="text-xs text-blue-700">{aiInsight}</p>
           </div>
         )}
       </CardContent>
@@ -272,7 +272,7 @@ export const AIScoreKPICard: React.FC<{
     valueType="percentage"
     mode="assisted"
     icon={Brain}
-    iconColor="text-purple-600"
+    iconColor="text-blue-600"
     status="positive"
     isAIEnhanced={true}
     aiConfidence={confidence}

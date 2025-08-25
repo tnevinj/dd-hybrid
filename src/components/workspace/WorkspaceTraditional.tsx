@@ -66,7 +66,7 @@ export function WorkspaceTraditional({
 
   const getTypeColor = (type: string) => {
     switch (type?.toLowerCase()) {
-      case 'deal': return 'bg-purple-100 text-purple-800'
+      case 'deal': return 'bg-blue-100 text-blue-800'
       case 'portfolio': return 'bg-red-100 text-red-800'  
       case 'analysis': return 'bg-orange-100 text-orange-800'
       case 'company': return 'bg-blue-100 text-blue-800'

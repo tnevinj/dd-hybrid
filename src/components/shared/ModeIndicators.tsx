@@ -21,7 +21,7 @@ export function ModeIndicator({ mode, className = '' }: ModeIndicatorProps) {
     assisted: {
       label: 'Assisted Mode', 
       icon: Brain,
-      className: 'bg-purple-100 text-purple-800 border-purple-300'
+      className: 'bg-blue-100 text-blue-800 border-blue-300'
     },
     autonomous: {
       label: 'Autonomous Mode',
@@ -96,9 +96,9 @@ export function ProcessNotice({
     },
     assisted: {
       icon: Brain,
-      bgColor: 'bg-gradient-to-r from-purple-100 to-blue-100',
-      borderColor: 'border-purple-200',
-      iconColor: 'text-purple-600'
+      bgColor: 'bg-gradient-to-r from-blue-100 to-blue-100',
+      borderColor: 'border-blue-200',
+      iconColor: 'text-blue-600'
     },
     autonomous: {
       icon: Bot,
@@ -149,10 +149,10 @@ export function MetricCard({
       subtitleColor: 'text-gray-500'
     },
     assisted: {
-      borderColor: 'border-purple-200',
-      iconColor: 'text-purple-600',
+      borderColor: 'border-blue-200',
+      iconColor: 'text-blue-600',
       valueColor: 'text-gray-900',
-      subtitleColor: 'text-purple-600'
+      subtitleColor: 'text-blue-600'
     },
     autonomous: {
       borderColor: 'border-blue-200',

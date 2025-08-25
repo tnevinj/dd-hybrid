@@ -55,7 +55,7 @@ const MessageList: React.FC<MessageListProps> = ({
   const getAssistantMessageStyle = () => {
     switch (mode) {
       case 'autonomous':
-        return 'bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-gray-900';
+        return 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 text-gray-900';
       case 'assisted':
         return 'bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 text-gray-900';
       default:
@@ -67,7 +67,7 @@ const MessageList: React.FC<MessageListProps> = ({
   const getModeIcon = () => {
     switch (mode) {
       case 'autonomous':
-        return <Zap className="h-3 w-3 text-purple-600" />;
+        return <Zap className="h-3 w-3 text-blue-600" />;
       case 'assisted':
         return <Brain className="h-3 w-3 text-blue-600" />;
       default:

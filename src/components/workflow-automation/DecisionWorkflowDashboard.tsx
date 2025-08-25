@@ -185,7 +185,7 @@ export default function DecisionWorkflowDashboard({ userId, userRole }: Decision
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <User className="w-5 h-5 text-purple-600" />
+              <User className="w-5 h-5 text-blue-600" />
               <div>
                 <p className="text-sm text-gray-600">Awaiting My Approval</p>
                 <p className="text-2xl font-bold">{workflows.filter(w => w.requiredApprovals.some(a => a.role === userRole && !a.completed)).length}</p>

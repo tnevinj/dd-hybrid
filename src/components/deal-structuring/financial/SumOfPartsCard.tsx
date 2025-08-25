@@ -555,7 +555,7 @@ const SumOfPartsCard: React.FC<SumOfPartsCardProps> = ({
     const colors = {
       operating_business: 'bg-blue-100 text-blue-800',
       investment: 'bg-green-100 text-green-800',
-      real_estate: 'bg-purple-100 text-purple-800',
+      real_estate: 'bg-blue-100 text-blue-800',
       intangible: 'bg-orange-100 text-orange-800',
       cash_equivalent: 'bg-gray-100 text-gray-800'
     };
@@ -980,8 +980,8 @@ const SumOfPartsCard: React.FC<SumOfPartsCardProps> = ({
                         </div>
                         <div className="text-sm text-muted-foreground">Net Asset Value</div>
                       </div>
-                      <div className="text-center p-4 bg-purple-50 rounded-lg">
-                        <div className="text-2xl font-bold text-purple-600">
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">
                           ${results.valuationSummary.valuePerShare.toFixed(2)}
                         </div>
                         <div className="text-sm text-muted-foreground">Value per Share</div>

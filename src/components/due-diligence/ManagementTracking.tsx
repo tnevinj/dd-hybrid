@@ -319,7 +319,7 @@ export function ManagementTracking({ projectId, mode = 'assisted' }: ManagementT
               <div className="text-2xl font-bold">${(overallMetrics.futureOpportunityValue / 1000000).toFixed(0)}M</div>
               <div className="text-sm text-gray-600">Pipeline Value</div>
             </div>
-            <Target className="w-8 h-8 text-purple-600" />
+            <Target className="w-8 h-8 text-blue-600" />
           </div>
         </Card>
       </div>
@@ -397,8 +397,8 @@ export function ManagementTracking({ projectId, mode = 'assisted' }: ManagementT
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Building2 className="w-5 h-5 text-purple-600" />
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Building2 className="w-5 h-5 text-blue-600" />
             </div>
             <div>
               <CardTitle className="text-lg">{gp.gpName}</CardTitle>
@@ -740,12 +740,12 @@ export function ManagementTracking({ projectId, mode = 'assisted' }: ManagementT
             </div>
             <div className="text-sm text-blue-700">Pipeline Value</div>
           </div>
-          <div className="text-center p-4 bg-purple-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">
+          <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-2xl font-bold text-blue-600">
               {gpRelationships.flatMap(gp => gp.futureOpportunities)
                             .filter(opp => opp.probability > 0.7).length}
             </div>
-            <div className="text-sm text-purple-700">High Probability</div>
+            <div className="text-sm text-blue-700">High Probability</div>
           </div>
           <div className="text-center p-4 bg-orange-50 rounded-lg">
             <div className="text-2xl font-bold text-orange-600">

@@ -284,7 +284,7 @@ export function AssetOverview({ asset }: AssetOverviewProps) {
               <div className="text-sm text-gray-600">Social</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
+              <div className="text-2xl font-bold text-blue-600">
                 {asset.esgMetrics.governanceScore.toFixed(1)}
               </div>
               <div className="text-sm text-gray-600">Governance</div>

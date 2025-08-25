@@ -206,21 +206,21 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
         <div>
           <div className="flex items-center space-x-3">
             <h1 className={TYPOGRAPHY.headings.h1}>Investment Committee Dashboard</h1>
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
               <Brain className="h-3 w-3" />
               <span>AI-Assisted Mode</span>
             </Badge>
           </div>
-          <p className={`${TYPOGRAPHY.body.base} text-purple-700 mt-1`}>
+          <p className={`${TYPOGRAPHY.body.base} text-blue-700 mt-1`}>
             Enhanced with artificial intelligence for smarter decision-making
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button onClick={onCreateProposal} className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700">
+          <Button onClick={onCreateProposal} className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700">
             <Sparkles className="h-4 w-4" />
             <span>Smart Proposal</span>
           </Button>
-          <Button onClick={onScheduleMeeting} variant="outline" className="flex items-center space-x-2 border-purple-300 text-purple-700">
+          <Button onClick={onScheduleMeeting} variant="outline" className="flex items-center space-x-2 border-blue-300 text-blue-700">
             <Calendar className="h-4 w-4" />
             <span>AI Schedule</span>
           </Button>
@@ -252,7 +252,7 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
           score={87}
           confidence={94}
           insight="12% improvement this quarter"
-          className="border-purple-200"
+          className="border-blue-200"
         />
 
         <StandardizedKPICard
@@ -297,12 +297,12 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
           value={35}
           mode="assisted"
           timeSaved="6.3h saved today"
-          className="border-purple-200"
+          className="border-blue-200"
         />
       </div>
 
       {/* Smart Meeting Preparation */}
-      <Card className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+      <Card className="mb-6 bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200">
         <CardHeader>
           <CardTitle className="flex items-center text-blue-800">
             <Calendar className="h-5 w-5 mr-2" />
@@ -369,15 +369,15 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl text-purple-900">AI-Enhanced Proposal Review</CardTitle>
-                  <p className="text-sm text-purple-700 mt-1">Proposals ranked by AI analysis and committee fit</p>
+                  <CardTitle className="text-xl text-blue-900">AI-Enhanced Proposal Review</CardTitle>
+                  <p className="text-sm text-blue-700 mt-1">Proposals ranked by AI analysis and committee fit</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge className="bg-green-100 text-green-800 border-green-300">
                     <CheckCircle className="h-3 w-3 mr-1" />
                     AI analysis complete
                   </Badge>
-                  <Button onClick={onCreateProposal} className="bg-purple-600 hover:bg-purple-700">
+                  <Button onClick={onCreateProposal} className="bg-blue-600 hover:bg-blue-700">
                     <Sparkles className="h-4 w-4 mr-2" />
                     AI-Enhanced Vote
                   </Button>
@@ -420,7 +420,7 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
                     <div key={proposal.id} className={`border rounded-lg p-6 transition-shadow ${COMPONENTS.card.assisted.accent} ${COMPONENTS.card.assisted.hover}`}>
                       {/* AI Enhancement Indicator */}
                       <div className="absolute top-2 right-2">
-                        <Badge className="bg-purple-100 text-purple-800 border border-purple-300 text-xs">
+                        <Badge className="bg-blue-100 text-blue-800 border border-blue-300 text-xs">
                           <Sparkles className="h-3 w-3 mr-1" />
                           AI Enhanced
                         </Badge>
@@ -444,7 +444,7 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-2xl font-bold text-purple-600">{formatCurrency(proposal.requestedAmount || 0)}</p>
+                          <p className="text-2xl font-bold text-blue-600">{formatCurrency(proposal.requestedAmount || 0)}</p>
                           <p className="text-sm text-gray-500">{proposal.meetingDate?.toLocaleDateString?.() || 'TBD'}</p>
                         </div>
                       </div>
@@ -453,8 +453,8 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
                       {proposal.aiScore && (
                         <div className="mb-4">
                           <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm text-purple-600 font-medium">AI Committee Score</span>
-                            <span className="text-sm font-semibold text-purple-800">{proposal.aiScore}%</span>
+                            <span className="text-sm text-blue-600 font-medium">AI Committee Score</span>
+                            <span className="text-sm font-semibold text-blue-800">{proposal.aiScore}%</span>
                           </div>
                           <div className="w-full h-3 bg-gray-200 rounded-full">
                             <div 
@@ -469,10 +469,10 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
                       {proposal.aiInsights && (
                         <div className="mb-4 space-y-2">
                           {proposal.aiInsights.slice(0, 2).map((insight, index) => (
-                            <div key={index} className="p-2 bg-purple-50 border border-purple-200 rounded">
+                            <div key={index} className="p-2 bg-blue-50 border border-blue-200 rounded">
                               <div className="flex items-center space-x-2">
-                                <Brain className="h-4 w-4 text-purple-600" />
-                                <span className="text-sm text-purple-800">{insight}</span>
+                                <Brain className="h-4 w-4 text-blue-600" />
+                                <span className="text-sm text-blue-800">{insight}</span>
                               </div>
                             </div>
                           ))}
@@ -481,17 +481,17 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
 
                       {/* Key Metrics using consistent formatting */}
                       {proposal.keyMetrics && (
-                        <div className="grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg mb-4 border border-purple-200">
+                        <div className="grid grid-cols-3 gap-4 p-4 bg-gradient-to-r from-blue-50 to-blue-50 rounded-lg mb-4 border border-blue-200">
                           <div className="text-center">
-                            <p className="text-sm text-purple-600 mb-1">AI-Verified IRR</p>
+                            <p className="text-sm text-blue-600 mb-1">AI-Verified IRR</p>
                             <p className="text-lg font-semibold text-green-600">{proposal.keyMetrics.irr?.toFixed(1)}%</p>
                           </div>
                           <div className="text-center">
-                            <p className="text-sm text-purple-600 mb-1">Multiple</p>
-                            <p className="text-lg font-semibold text-purple-600">{proposal.keyMetrics.multiple?.toFixed(1)}x</p>
+                            <p className="text-sm text-blue-600 mb-1">Multiple</p>
+                            <p className="text-lg font-semibold text-blue-600">{proposal.keyMetrics.multiple?.toFixed(1)}x</p>
                           </div>
                           <div className="text-center">
-                            <p className="text-sm text-purple-600 mb-1">Payback</p>
+                            <p className="text-sm text-blue-600 mb-1">Payback</p>
                             <p className="text-lg font-semibold text-orange-600">{proposal.keyMetrics.paybackPeriod?.toFixed(1)}y</p>
                           </div>
                         </div>
@@ -528,15 +528,15 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
                           {/* AI-Enhanced Action Buttons */}
                           <div className="flex items-center justify-between">
                             <div className="flex space-x-2">
-                              <Button size="sm" variant="outline" onClick={() => onViewProposal(proposal.id)} className="border-purple-300 text-purple-700">
+                              <Button size="sm" variant="outline" onClick={() => onViewProposal(proposal.id)} className="border-blue-300 text-blue-700">
                                 <Eye className="h-4 w-4 mr-1" />
                                 AI Analysis
                               </Button>
-                              <Button size="sm" variant="outline" className="border-purple-300 text-purple-700">
+                              <Button size="sm" variant="outline" className="border-blue-300 text-blue-700">
                                 <FileText className="h-4 w-4 mr-1" />
                                 Smart Docs
                               </Button>
-                              <Button size="sm" variant="outline" className="border-purple-300 text-purple-700">
+                              <Button size="sm" variant="outline" className="border-blue-300 text-blue-700">
                                 <Brain className="h-4 w-4 mr-1" />
                                 AI Insights
                               </Button>
@@ -570,7 +570,7 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
           {/* Committee Overview Card */}
           <Card className={COMPONENTS.card.assisted.base}>
             <CardHeader>
-              <CardTitle className="text-lg text-purple-900">AI Committee Overview</CardTitle>
+              <CardTitle className="text-lg text-blue-900">AI Committee Overview</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -579,7 +579,7 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
                   score={89}
                   confidence={94}
                   insight="AI predicts 94% attendance"
-                  className="border-none shadow-none bg-purple-50"
+                  className="border-none shadow-none bg-blue-50"
                 />
                 
                 <div className="grid grid-cols-2 gap-2">
@@ -587,9 +587,9 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
                     <p className="text-lg font-bold text-green-900">96%</p>
                     <p className="text-xs text-green-700">AI Accuracy</p>
                   </div>
-                  <div className="text-center p-2 bg-purple-50 rounded border border-purple-200">
-                    <p className="text-lg font-bold text-purple-900">85m</p>
-                    <p className="text-xs text-purple-700">AI Optimized</p>
+                  <div className="text-center p-2 bg-blue-50 rounded border border-blue-200">
+                    <p className="text-lg font-bold text-blue-900">85m</p>
+                    <p className="text-xs text-blue-700">AI Optimized</p>
                   </div>
                 </div>
               </div>
@@ -597,9 +597,9 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
           </Card>
 
           {/* AI Performance Summary */}
-          <Card className={`${COMPONENTS.card.assisted.base} bg-gradient-to-r from-purple-50 to-blue-50`}>
+          <Card className={`${COMPONENTS.card.assisted.base} bg-gradient-to-r from-blue-50 to-blue-50`}>
             <CardHeader>
-              <CardTitle className="text-lg text-purple-900">AI Assistant Performance</CardTitle>
+              <CardTitle className="text-lg text-blue-900">AI Assistant Performance</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -610,7 +610,7 @@ export const InvestmentCommitteeAssistedStandardized: React.FC<InvestmentCommitt
                 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center p-2 bg-white/70 rounded border">
-                    <p className="text-lg font-bold text-purple-600">94%</p>
+                    <p className="text-lg font-bold text-blue-600">94%</p>
                     <p className="text-xs text-gray-600">Prediction Accuracy</p>
                   </div>
                   <div className="text-center p-2 bg-white/70 rounded border">

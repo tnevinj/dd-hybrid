@@ -39,7 +39,7 @@ const roleIcons = {
 }
 
 const roleColors = {
-  senior_partner: 'text-purple-600 bg-purple-50 border-purple-200',
+  senior_partner: 'text-blue-600 bg-blue-50 border-blue-200',
   investment_director: 'text-blue-600 bg-blue-50 border-blue-200',
   principal: 'text-blue-600 bg-blue-50 border-blue-200',
   associate: 'text-green-600 bg-green-50 border-green-200',

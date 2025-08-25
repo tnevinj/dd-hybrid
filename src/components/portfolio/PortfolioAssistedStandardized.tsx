@@ -560,7 +560,7 @@ export function PortfolioAssistedStandardized({
         {activeView === 'predictions' && (
           <div className="text-center py-12">
             <div className="flex items-center justify-center mb-4">
-              <TrendingUp className="w-12 h-12 text-purple-400 mr-2" />
+              <TrendingUp className="w-12 h-12 text-blue-400 mr-2" />
               <Brain className="w-8 h-8 text-blue-500" />
             </div>
             <h3 className="text-lg font-semibold text-gray-600">AI Predictive Analytics</h3>

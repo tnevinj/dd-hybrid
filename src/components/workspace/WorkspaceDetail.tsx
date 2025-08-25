@@ -102,7 +102,7 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-blue-900 mb-2 flex items-center gap-2">
               🤖 AI Insights
-              {navigationMode === 'autonomous' && <Badge className="bg-purple-100 text-purple-700">Autonomous Mode</Badge>}
+              {navigationMode === 'autonomous' && <Badge className="bg-blue-100 text-blue-700">Autonomous Mode</Badge>}
             </h3>
             
             <div className="space-y-2">
@@ -134,7 +134,7 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
 
               {navigationMode === 'autonomous' && (
                 <div className="space-y-2">
-                  <div className="p-3 bg-white rounded border border-purple-200">
+                  <div className="p-3 bg-white rounded border border-blue-200">
                     <p className="text-sm text-gray-700">
                       🔄 I've automatically completed document categorization and initial risk scoring. 
                       Found 3 items that need your attention.
@@ -142,7 +142,7 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
                     <Button size="sm" variant="outline" className="mt-2">Review Decisions</Button>
                   </div>
                   
-                  <div className="p-3 bg-white rounded border border-purple-200">
+                  <div className="p-3 bg-white rounded border border-blue-200">
                     <p className="text-sm text-gray-700">
                       📊 Financial model analysis is 85% complete. Waiting for management interview data 
                       before finalizing revenue projections.
@@ -400,7 +400,7 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
 
         <Card className="p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Target className="w-5 h-5 text-purple-500" />
+            <Target className="w-5 h-5 text-blue-500" />
             <span className="font-medium">Analysis</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">{workspace.evidence.filter(e => e.type === 'MODEL').length}</p>
@@ -457,22 +457,22 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
 
       {/* AI Evidence Insights */}
       {navigationMode !== 'traditional' && (
-        <Card className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
-          <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+        <Card className="p-4 bg-gradient-to-r from-blue-50 to-blue-50 border-blue-200">
+          <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
             🔍 Evidence Analysis Insights
           </h4>
           <div className="space-y-2">
-            <div className="p-3 bg-white rounded border border-purple-200">
+            <div className="p-3 bg-white rounded border border-blue-200">
               <p className="text-sm text-gray-700">
                 📊 Financial statements show consistent 15% YoY growth. Cross-referenced with management interviews - claims verified.
               </p>
             </div>
-            <div className="p-3 bg-white rounded border border-purple-200">
+            <div className="p-3 bg-white rounded border border-blue-200">
               <p className="text-sm text-gray-700">
                 ⚠️ Customer interview #3 mentions competitive pressure not reflected in market analysis. Recommend follow-up.
               </p>
             </div>
-            <div className="p-3 bg-white rounded border border-purple-200">
+            <div className="p-3 bg-white rounded border border-blue-200">
               <p className="text-sm text-gray-700">
                 ✅ All regulatory compliance documents verified. No red flags detected in legal review.
               </p>
@@ -521,7 +521,7 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
 
         <Card className="p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Activity className="w-5 h-5 text-purple-500" />
+            <Activity className="w-5 h-5 text-blue-500" />
             <span className="font-medium">Recent Activity</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">{workspace.activities.length}</p>
@@ -542,7 +542,7 @@ export function WorkspaceDetail({ workspace, onBack, onUpdateWorkspace }: Worksp
             return (
               <div key={participant.id} className="flex items-center justify-between p-3 border border-gray-200 rounded">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
                     {mockName.charAt(0)}
                   </div>
                   <div>

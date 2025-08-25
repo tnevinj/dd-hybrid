@@ -286,9 +286,9 @@ const WaterfallModelingCard: React.FC<WaterfallModelingCardProps> = ({
               <Card>
                 <CardContent className="p-4 text-center">
                   <div className="flex items-center justify-center mb-2">
-                    <DollarSign className="h-5 w-5 text-purple-600" />
+                    <DollarSign className="h-5 w-5 text-blue-600" />
                   </div>
-                  <div className="text-2xl font-bold text-purple-600">
+                  <div className="text-2xl font-bold text-blue-600">
                     {formatCurrency(results.totalDistribution)}
                   </div>
                   <div className="text-sm text-gray-600">Total Distribution</div>

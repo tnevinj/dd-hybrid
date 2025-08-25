@@ -196,7 +196,7 @@ export function AssetESGMetrics({ asset }: AssetESGMetricsProps) {
                   {asset.esgMetrics.governanceScore.toFixed(1)}
                 </p>
               </div>
-              <Building className="h-8 w-8 text-purple-600" />
+              <Building className="h-8 w-8 text-blue-600" />
             </div>
             <Progress value={asset.esgMetrics.governanceScore * 10} className="h-2 mt-2" />
           </CardContent>
@@ -256,7 +256,7 @@ export function AssetESGMetrics({ asset }: AssetESGMetricsProps) {
                   <div className="flex items-center space-x-3">
                     <div className={`p-2 rounded-lg ${
                       initiative.category === 'Environmental' ? 'bg-green-100' :
-                      initiative.category === 'Social' ? 'bg-blue-100' : 'bg-purple-100'
+                      initiative.category === 'Social' ? 'bg-blue-100' : 'bg-blue-100'
                     }`}>
                       {initiative.icon}
                     </div>
@@ -342,7 +342,7 @@ export function AssetESGMetrics({ asset }: AssetESGMetricsProps) {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-600">Governance</span>
-                  <span className="text-sm font-semibold text-purple-600">
+                  <span className="text-sm font-semibold text-blue-600">
                     +0.2 vs last year
                   </span>
                 </div>
@@ -379,12 +379,12 @@ export function AssetESGMetrics({ asset }: AssetESGMetricsProps) {
                   SDG 13
                 </Badge>
               </div>
-              <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+              <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
                 <div className="flex items-center space-x-2">
-                  <Shield className="h-4 w-4 text-purple-600" />
+                  <Shield className="h-4 w-4 text-blue-600" />
                   <span className="text-sm">Peace, Justice & Strong Institutions</span>
                 </div>
-                <Badge variant="outline" className="text-xs text-purple-600">
+                <Badge variant="outline" className="text-xs text-blue-600">
                   SDG 16
                 </Badge>
               </div>
@@ -416,7 +416,7 @@ export function AssetESGMetrics({ asset }: AssetESGMetricsProps) {
               <div className="text-xs text-gray-500 mt-1">60% achieved</div>
             </div>
             <div className="text-center p-4 border rounded-lg">
-              <div className="text-3xl font-bold text-purple-600 mb-2">100%</div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">100%</div>
               <div className="text-sm text-gray-600 mb-2">ESG Integration</div>
               <Progress value={80} className="h-2" />
               <div className="text-xs text-gray-500 mt-1">80% complete</div>

@@ -319,7 +319,7 @@ export function CustomDashboard() {
     switch (category) {
       case 'display': return 'bg-blue-100 text-blue-800';
       case 'notifications': return 'bg-green-100 text-green-800';
-      case 'data': return 'bg-purple-100 text-purple-800';
+      case 'data': return 'bg-blue-100 text-blue-800';
       case 'analysis': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -448,7 +448,7 @@ export function CustomDashboard() {
                     <div className={`w-2 h-2 rounded-full ${
                       activity.type === 'alert' ? 'bg-red-400' :
                       activity.type === 'update' ? 'bg-blue-400' :
-                      activity.type === 'task' ? 'bg-green-400' : 'bg-purple-400'
+                      activity.type === 'task' ? 'bg-green-400' : 'bg-blue-400'
                     }`}></div>
                     <div className="flex-1">
                       <p className="text-sm">{activity.action}</p>

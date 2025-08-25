@@ -390,8 +390,8 @@ export function OperationalExcellence({ projectId, mode = 'assisted' }: Operatio
         <Card key={stream.id} className="p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <LineChart className="w-4 h-4 text-purple-600" />
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <LineChart className="w-4 h-4 text-blue-600" />
               </div>
               <div>
                 <h4 className="font-medium">{stream.name}</h4>
@@ -414,9 +414,9 @@ export function OperationalExcellence({ projectId, mode = 'assisted' }: Operatio
               <div className="text-lg font-bold text-green-600">{stream.valueAddTime}d</div>
               <div className="text-xs text-green-700">Value-Add Time</div>
             </div>
-            <div className="text-center p-3 bg-purple-50 rounded">
-              <div className="text-lg font-bold text-purple-600">{stream.efficiency}%</div>
-              <div className="text-xs text-purple-700">Efficiency</div>
+            <div className="text-center p-3 bg-blue-50 rounded">
+              <div className="text-lg font-bold text-blue-600">{stream.efficiency}%</div>
+              <div className="text-xs text-blue-700">Efficiency</div>
             </div>
           </div>
 
@@ -443,8 +443,8 @@ export function OperationalExcellence({ projectId, mode = 'assisted' }: Operatio
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-purple-100 rounded-lg">
-            <Target className="w-6 h-6 text-purple-600" />
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Target className="w-6 h-6 text-blue-600" />
           </div>
           <div>
             <h2 className="text-xl font-semibold">Operational Excellence</h2>
@@ -487,7 +487,7 @@ export function OperationalExcellence({ projectId, mode = 'assisted' }: Operatio
                 className={`
                   flex items-center space-x-2 py-3 border-b-2 text-sm font-medium transition-colors
                   ${isActive 
-                    ? 'border-purple-500 text-purple-600' 
+                    ? 'border-blue-500 text-blue-600' 
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }
                 `}

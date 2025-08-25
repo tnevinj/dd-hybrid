@@ -8,65 +8,75 @@
 // =============================================================================
 
 export const COLORS = {
-  // Traditional Mode (Gray-based theme)
+  // Traditional Mode (Investment Banking Professional theme)
   traditional: {
     primary: {
-      50: '#f9fafb',
-      100: '#f3f4f6', 
-      200: '#e5e7eb',
-      300: '#d1d5db',
-      600: '#4b5563',
-      700: '#374151',
-      800: '#1f2937',
-      900: '#111827',
+      50: '#eff6ff',
+      100: '#dbeafe',
+      200: '#bfdbfe',
+      300: '#93c5fd',
+      600: '#1e40af',
+      700: '#1e3a8a',
+      800: '#1e3a8a',
+      900: '#1e3a8a',
+    },
+    accent: {
+      50: '#fefce8',
+      100: '#fef9c3',
+      200: '#fef08a',
+      300: '#fde047',
+      600: '#d97706',
+      700: '#b45309',
+      800: '#92400e',
+      900: '#78350f',
     },
     surface: {
-      background: '#f9fafb',
+      background: '#f8fafc',
       card: '#ffffff',
       border: '#e5e7eb',
       hover: '#f3f4f6',
     },
     text: {
       primary: '#111827',
-      secondary: '#4b5563',
+      secondary: '#374151',
       muted: '#6b7280',
     }
   },
 
-  // Assisted Mode (Purple/Blue AI theme)
+  // Assisted Mode (Enhanced Investment Banking theme)
   assisted: {
     primary: {
-      50: '#f5f3ff',
-      100: '#ede9fe',
-      200: '#ddd6fe',
-      300: '#c4b5fd',
-      600: '#7c3aed',
-      700: '#6d28d9',
-      800: '#5b21b6',
-      900: '#4c1d95',
-    },
-    accent: {
       50: '#eff6ff',
       100: '#dbeafe',
       200: '#bfdbfe',
       300: '#93c5fd',
-      600: '#2563eb',
-      700: '#1d4ed8',
-      800: '#1e40af',
+      600: '#1e40af',
+      700: '#1e3a8a',
+      800: '#1e3a8a',
       900: '#1e3a8a',
     },
+    accent: {
+      50: '#f0fdf4',
+      100: '#dcfce7',
+      200: '#bbf7d0',
+      300: '#86efac',
+      600: '#16a34a',
+      700: '#15803d',
+      800: '#166534',
+      900: '#14532d',
+    },
     surface: {
-      background: '#f9fafb',
+      background: '#f8fafc',
       card: '#ffffff',
-      cardAccent: 'linear-gradient(to right, #f5f3ff, #eff6ff)',
-      border: '#ddd6fe',
-      borderAccent: '#c4b5fd',
-      hover: '#f5f3ff',
+      cardAccent: 'linear-gradient(to right, #eff6ff, #f0fdf4)',
+      border: '#bfdbfe',
+      borderAccent: '#93c5fd',
+      hover: '#eff6ff',
     },
     text: {
       primary: '#111827',
-      secondary: '#4c1d95',
-      accent: '#1d4ed8',
+      secondary: '#1e3a8a',
+      accent: '#166534',
       muted: '#6b7280',
     }
   },
@@ -300,11 +310,11 @@ export const AI_ELEMENTS = {
   badges: {
     enhanced: {
       traditional: 'bg-blue-100 text-blue-800 border border-blue-300',
-      assisted: 'bg-purple-100 text-purple-800 border border-purple-300',
+      assisted: 'bg-green-100 text-green-800 border border-green-300',
     },
     score: {
       traditional: 'bg-gray-100 text-gray-800 border border-gray-300',
-      assisted: 'bg-purple-100 text-purple-800 border border-purple-300',
+      assisted: 'bg-blue-100 text-blue-800 border border-blue-300',
     },
     automated: {
       traditional: 'bg-green-100 text-green-800 border border-green-300',
@@ -341,29 +351,29 @@ export const COMPONENTS = {
       focus: 'focus:ring-2 focus:ring-gray-500 focus:ring-offset-2',
     },
     assisted: {
-      base: 'bg-white border border-purple-200 rounded-lg shadow-sm',
+      base: 'bg-white border border-blue-200 rounded-lg shadow-sm',
       hover: 'hover:shadow-md transition-shadow',
-      focus: 'focus:ring-2 focus:ring-purple-500 focus:ring-offset-2',
-      accent: 'border-l-4 border-l-purple-500',
+      focus: 'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+      accent: 'border-l-4 border-l-blue-500',
     }
   },
 
   // Buttons
   button: {
     traditional: {
-      primary: 'bg-gray-700 hover:bg-gray-800 text-white',
+      primary: 'bg-blue-700 hover:bg-blue-800 text-white',
       secondary: 'border-gray-300 text-gray-700 hover:bg-gray-50',
     },
     assisted: {
-      primary: 'bg-purple-600 hover:bg-purple-700 text-white',
-      secondary: 'border-purple-300 text-purple-700 hover:bg-purple-50',
+      primary: 'bg-blue-600 hover:bg-blue-700 text-white',
+      secondary: 'border-blue-300 text-blue-700 hover:bg-blue-50',
     }
   },
 
   // Loading states
   loading: {
     traditional: 'border-b-2 border-gray-600',
-    assisted: 'border-b-2 border-purple-600',
+    assisted: 'border-b-2 border-blue-600',
   }
 } as const;
 

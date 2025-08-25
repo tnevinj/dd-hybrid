@@ -342,8 +342,8 @@ export function EnhancedFundOperationsDashboard({
                   {formatCurrency(aggregateMetrics.totalNAV)}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Calculator className="h-6 w-6 text-purple-600" />
+              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Calculator className="h-6 w-6 text-blue-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center">

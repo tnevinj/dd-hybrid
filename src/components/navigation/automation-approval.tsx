@@ -133,7 +133,7 @@ export function AutomationApproval({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header */}
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-blue-50 to-blue-50 border-blue-200">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">

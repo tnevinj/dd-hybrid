@@ -30,7 +30,7 @@ const RecommendationPanel: React.FC<RecommendationPanelProps> = ({
   const getModeIcon = () => {
     switch (mode) {
       case 'autonomous':
-        return <Zap className="h-4 w-4 text-purple-600" />;
+        return <Zap className="h-4 w-4 text-blue-600" />;
       case 'assisted':
         return <Brain className="h-4 w-4 text-blue-600" />;
       default:
@@ -41,7 +41,7 @@ const RecommendationPanel: React.FC<RecommendationPanelProps> = ({
   const getModeColor = () => {
     switch (mode) {
       case 'autonomous':
-        return 'border-purple-200 bg-purple-50';
+        return 'border-blue-200 bg-blue-50';
       case 'assisted':
         return 'border-blue-200 bg-blue-50';
       default:

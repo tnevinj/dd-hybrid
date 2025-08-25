@@ -155,9 +155,9 @@ export function DueDiligenceAssisted({
   ]
 
   const renderAIInsightsPanel = () => (
-    <Card className="border-l-4 border-l-purple-500">
+    <Card className="border-l-4 border-l-blue-500">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center text-purple-700">
+        <CardTitle className="flex items-center text-blue-700">
           <Brain className="w-5 h-5 mr-2" />
           AI Insights
         </CardTitle>
@@ -165,13 +165,13 @@ export function DueDiligenceAssisted({
       <CardContent>
         <div className="space-y-4">
           {aiInsights.map((insight) => (
-            <div key={insight.id} className="border rounded-lg p-3 bg-purple-50">
+            <div key={insight.id} className="border rounded-lg p-3 bg-blue-50">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <div className="p-1 bg-purple-100 rounded">
-                    {insight.type === 'pattern' && <TrendingUp className="w-3 h-3 text-purple-600" />}
-                    {insight.type === 'risk' && <AlertTriangle className="w-3 h-3 text-purple-600" />}
-                    {insight.type === 'efficiency' && <Zap className="w-3 h-3 text-purple-600" />}
+                  <div className="p-1 bg-blue-100 rounded">
+                    {insight.type === 'pattern' && <TrendingUp className="w-3 h-3 text-blue-600" />}
+                    {insight.type === 'risk' && <AlertTriangle className="w-3 h-3 text-blue-600" />}
+                    {insight.type === 'efficiency' && <Zap className="w-3 h-3 text-blue-600" />}
                   </div>
                   <h4 className="text-sm font-medium">{insight.title}</h4>
                 </div>
@@ -262,7 +262,7 @@ export function DueDiligenceAssisted({
   const renderOverviewTab = () => (
     <div className="space-y-6">
       {/* AI Enhancement Banner */}
-      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -315,10 +315,10 @@ export function DueDiligenceAssisted({
               <div className="text-sm text-blue-700">Ready to Automate</div>
               <div className="text-xs text-blue-600 mt-1">Could save 6 hours</div>
             </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">92%</div>
-              <div className="text-sm text-purple-700">AI Confidence</div>
-              <div className="text-xs text-purple-600 mt-1">High accuracy</div>
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">92%</div>
+              <div className="text-sm text-blue-700">AI Confidence</div>
+              <div className="text-xs text-blue-600 mt-1">High accuracy</div>
             </div>
           </div>
         </CardContent>
@@ -336,7 +336,7 @@ export function DueDiligenceAssisted({
     <div className="p-6">
       {/* Mode Indicator */}
       <div className="mb-6">
-        <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+        <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
           <Brain className="h-3 w-3" />
           <span>Assisted Mode</span>
         </Badge>
@@ -356,7 +356,7 @@ export function DueDiligenceAssisted({
           <div className="text-center py-12">
             <div className="flex items-center justify-center mb-4">
               <CheckCircle className="w-12 h-12 text-blue-400 mr-2" />
-              <Brain className="w-8 h-8 text-purple-500" />
+              <Brain className="w-8 h-8 text-blue-500" />
             </div>
             <h3 className="text-lg font-semibold text-gray-600">AI-Enhanced Task Management</h3>
             <p className="text-gray-500">Intelligent task prioritization and automation</p>

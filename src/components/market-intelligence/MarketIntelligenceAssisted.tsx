@@ -11,7 +11,7 @@ export const MarketIntelligenceAssisted: React.FC<{ metrics: any }> = ({ metrics
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Market Intelligence</h1>
           <div className="flex items-center space-x-2 mt-2">
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
               <Brain className="h-3 w-3" />
               <span>AI-Assisted Mode</span>
             </Badge>
@@ -25,11 +25,11 @@ export const MarketIntelligenceAssisted: React.FC<{ metrics: any }> = ({ metrics
       </div>
 
       {/* AI Insights Panel */}
-      <Card className="mb-6 border-2 border-purple-200">
+      <Card className="mb-6 border-2 border-blue-200">
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <Brain className="h-5 w-5 text-purple-600" />
-            <CardTitle className="text-purple-900">AI Market Insights</CardTitle>
+            <Brain className="h-5 w-5 text-blue-600" />
+            <CardTitle className="text-blue-900">AI Market Insights</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -55,14 +55,14 @@ export const MarketIntelligenceAssisted: React.FC<{ metrics: any }> = ({ metrics
 
       {/* AI-Enhanced KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card className="border-purple-200">
+        <Card className="border-blue-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
-              <Brain className="h-5 w-5 text-purple-600" />
-              <p className="text-sm text-purple-700 font-medium">AI Predictions</p>
+              <Brain className="h-5 w-5 text-blue-600" />
+              <p className="text-sm text-blue-700 font-medium">AI Predictions</p>
             </div>
-            <p className="text-3xl font-bold text-purple-900">187</p>
-            <div className="flex items-center text-purple-600 text-sm mt-1">
+            <p className="text-3xl font-bold text-blue-900">187</p>
+            <div className="flex items-center text-blue-600 text-sm mt-1">
               <TrendingUp className="h-4 w-4 mr-1" />
               96% accuracy
             </div>
@@ -114,10 +114,10 @@ export const MarketIntelligenceAssisted: React.FC<{ metrics: any }> = ({ metrics
 
       {/* Enhanced Market Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-50 border-blue-200">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Sparkles className="h-5 w-5 mr-2 text-purple-600" />
+              <Sparkles className="h-5 w-5 mr-2 text-blue-600" />
               AI-Powered Analysis
             </CardTitle>
           </CardHeader>
@@ -158,12 +158,12 @@ export const MarketIntelligenceAssisted: React.FC<{ metrics: any }> = ({ metrics
       </div>
 
       {/* AI Performance Summary */}
-      <Card className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200">
+      <Card className="mt-6 bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold text-purple-900 mb-1">AI Market Intelligence Performance</h3>
-              <p className="text-purple-700">Enhanced market analysis capabilities</p>
+              <h3 className="text-xl font-bold text-blue-900 mb-1">AI Market Intelligence Performance</h3>
+              <p className="text-blue-700">Enhanced market analysis capabilities</p>
             </div>
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
@@ -171,7 +171,7 @@ export const MarketIntelligenceAssisted: React.FC<{ metrics: any }> = ({ metrics
                 <p className="text-sm text-gray-600">Time Saved</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-purple-600">96%</p>
+                <p className="text-3xl font-bold text-blue-600">96%</p>
                 <p className="text-sm text-gray-600">Prediction Accuracy</p>
               </div>
               <div>

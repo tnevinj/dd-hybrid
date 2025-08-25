@@ -211,7 +211,7 @@ export function DecisionSupportDashboard({ mode = 'traditional' }: DecisionSuppo
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Avg. Confidence</CardTitle>
-                <Shield className="h-4 w-4 text-purple-600" />
+                <Shield className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{analytics.averageConfidence ? (analytics.averageConfidence * 100).toFixed(0) : '78'}%</div>

@@ -45,13 +45,13 @@ const ThandoAvatar: React.FC<ThandoAvatarProps> = ({
     if (mode === 'autonomous') {
       switch (expression) {
         case 'thinking':
-          return 'bg-purple-600';
+          return 'bg-blue-600';
         case 'speaking':
           return 'bg-indigo-600';
         case 'listening':
           return 'bg-violet-600';
         default:
-          return 'bg-gradient-to-br from-purple-500 to-indigo-600';
+          return 'bg-gradient-to-br from-blue-500 to-indigo-600';
       }
     } else if (mode === 'assisted') {
       switch (expression) {

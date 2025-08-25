@@ -262,7 +262,7 @@ const ModelMarketplace: React.FC<ModelMarketplaceProps> = ({
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-purple-600" />
+                  <Zap className="h-5 w-5 text-blue-600" />
                   <h3 className="text-lg font-semibold">AI Recommended</h3>
                 </div>
               </CardHeader>
@@ -270,7 +270,7 @@ const ModelMarketplace: React.FC<ModelMarketplaceProps> = ({
                 {recommendedModels.slice(0, 4).map((model) => (
                   <div key={model.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
                     <div className="flex items-center gap-3">
-                      <div className="text-purple-600">
+                      <div className="text-blue-600">
                         {getModelIcon(model.icon)}
                       </div>
                       <div>

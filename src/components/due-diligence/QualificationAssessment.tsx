@@ -273,10 +273,10 @@ export function QualificationAssessment({
                 <span className="ml-1">{currentAssessment.verification_status}</span>
               </div>
             </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-3xl font-bold text-purple-600">{currentAssessment.referenceChecks.length}</div>
-              <div className="text-sm text-purple-700">References Checked</div>
-              <div className="text-xs text-purple-600 mt-1">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-3xl font-bold text-blue-600">{currentAssessment.referenceChecks.length}</div>
+              <div className="text-sm text-blue-700">References Checked</div>
+              <div className="text-xs text-blue-600 mt-1">
                 {currentAssessment.referenceChecks.filter(r => r.response_status === 'completed').length} completed
               </div>
             </div>
@@ -649,8 +649,8 @@ export function QualificationAssessment({
           <Card key={performance.id} className="p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Briefcase className="w-5 h-5 text-purple-600" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Briefcase className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
                   <h5 className="font-medium">{performance.role_title}</h5>
@@ -680,9 +680,9 @@ export function QualificationAssessment({
                 </div>
                 <div className="text-xs text-blue-700">Cost Savings</div>
               </div>
-              <div className="text-center p-3 bg-purple-50 rounded-lg">
-                <div className="text-lg font-bold text-purple-600">{performance.stakeholder_feedback_score}%</div>
-                <div className="text-xs text-purple-700">Stakeholder Rating</div>
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <div className="text-lg font-bold text-blue-600">{performance.stakeholder_feedback_score}%</div>
+                <div className="text-xs text-blue-700">Stakeholder Rating</div>
               </div>
             </div>
 

@@ -196,33 +196,33 @@ export function DashboardTraditional({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      {/* Header - Traditional Theme */}
+    <div className="min-h-screen bg-slate-50 p-4 md:p-6">
+      {/* Header - Investment Banking Professional Theme */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-3xl font-bold text-gray-900">Executive Dashboard</h1>
-            <Badge className="bg-gray-100 text-gray-800 border border-gray-300 flex items-center space-x-1">
+            <h1 className="text-3xl font-bold text-slate-900 font-serif">Executive Dashboard</h1>
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
               <User className="h-3 w-3" />
-              <span>Traditional Mode</span>
+              <span>Professional Mode</span>
             </Badge>
           </div>
-          <p className="text-gray-600 mt-1">Complete manual control over platform operations and data analysis</p>
+          <p className="text-slate-600 mt-1">Complete control with investment-grade precision and analysis</p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={onCreateDeal} className="flex items-center space-x-2">
+          <Button variant="outline" onClick={onCreateDeal} className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50">
             <Plus className="h-4 w-4" />
             <span>New Deal</span>
           </Button>
-          <Button variant="outline" onClick={onCreateWorkspace} className="flex items-center space-x-2">
+          <Button variant="outline" onClick={onCreateWorkspace} className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50">
             <FolderOpen className="h-4 w-4" />
             <span>New Workspace</span>
           </Button>
-          <Button variant="outline" className="flex items-center space-x-2">
+          <Button variant="outline" className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50">
             <Download className="h-4 w-4" />
             <span>Export</span>
           </Button>
-          <Button variant="outline" className="flex items-center space-x-2">
+          <Button variant="outline" className="flex items-center space-x-2 border-blue-300 text-blue-700 hover:bg-blue-50">
             <Settings className="h-4 w-4" />
             <span>Settings</span>
           </Button>
@@ -464,7 +464,7 @@ export function DashboardTraditional({
         </TabsContent>
 
         <TabsContent value="cross-module" className="mt-6">
-          <CrossModuleDashboard mode="traditional" />
+          <CrossModuleDashboard />
         </TabsContent>
 
         <TabsContent value="detailed" className="mt-6">

@@ -253,7 +253,7 @@ export function InvestmentCommitteeAutonomous({ onSwitchMode }: InvestmentCommit
           <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
             <Badge 
               variant="outline" 
-              className="bg-purple-50 text-purple-700 border-purple-200 hidden sm:inline-flex"
+              className="bg-blue-50 text-blue-700 border-blue-200 hidden sm:inline-flex"
             >
               AI Committee
             </Badge>

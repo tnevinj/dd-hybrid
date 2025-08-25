@@ -70,7 +70,7 @@ export function InfrastructureAssetDetail({ asset }: InfrastructureAssetDetailPr
       case 'water':
         return 'bg-cyan-100 text-cyan-800'
       case 'telecom':
-        return 'bg-purple-100 text-purple-800'
+        return 'bg-blue-100 text-blue-800'
       case 'social':
         return 'bg-green-100 text-green-800'
       default:
@@ -85,7 +85,7 @@ export function InfrastructureAssetDetail({ asset }: InfrastructureAssetDetailPr
       case 'usage':
         return 'bg-blue-100 text-blue-800'
       case 'hybrid':
-        return 'bg-purple-100 text-purple-800'
+        return 'bg-blue-100 text-blue-800'
       default:
         return 'bg-gray-100 text-gray-800'
     }
@@ -166,7 +166,7 @@ export function InfrastructureAssetDetail({ asset }: InfrastructureAssetDetailPr
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">Availability Rate</span>
-                <span className="text-sm font-semibold text-purple-600">
+                <span className="text-sm font-semibold text-blue-600">
                   {formatPercentage(asset.specificMetrics.availabilityRate)}
                 </span>
               </div>
@@ -363,8 +363,8 @@ export function InfrastructureAssetDetail({ asset }: InfrastructureAssetDetailPr
                 </div>
                 <div className="text-sm text-gray-600">Years Remaining</div>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
                   {formatPercentage(asset.specificMetrics.availabilityRate)}
                 </div>
                 <div className="text-sm text-gray-600">Availability</div>

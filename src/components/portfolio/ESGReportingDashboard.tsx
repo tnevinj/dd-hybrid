@@ -150,8 +150,8 @@ export function ESGReportingDashboard({ navigationMode = 'traditional' }: ESGRep
                   {portfolioMetrics?.avgSocialScore.toFixed(1) || 'N/A'}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Users className="h-6 w-6 text-purple-600" />
+              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Users className="h-6 w-6 text-blue-600" />
               </div>
             </div>
             <div className="mt-4">
@@ -448,7 +448,7 @@ export function ESGReportingDashboard({ navigationMode = 'traditional' }: ESGRep
           <CardContent>
             <div className="space-y-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600">67%</div>
+                <div className="text-3xl font-bold text-blue-600">67%</div>
                 <div className="text-sm text-gray-600">Independent directors</div>
               </div>
               <Progress value={67} className="h-2" />

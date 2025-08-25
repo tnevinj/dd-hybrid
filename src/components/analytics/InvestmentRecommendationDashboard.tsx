@@ -143,7 +143,7 @@ export function InvestmentRecommendationDashboard({ mode = 'traditional' }: Inve
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <Brain className="h-8 w-8 mr-3 text-purple-600" />
+            <Brain className="h-8 w-8 mr-3 text-blue-600" />
             AI Investment Recommendations
           </h1>
           <p className="text-gray-600 mt-1">ML-powered investment decision support and portfolio optimization</p>
@@ -187,7 +187,7 @@ export function InvestmentRecommendationDashboard({ mode = 'traditional' }: Inve
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Avg Score</CardTitle>
-            <Target className="h-4 w-4 text-purple-600" />
+            <Target className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.averageScore?.toFixed(0) || 0}</div>
@@ -276,7 +276,7 @@ export function InvestmentRecommendationDashboard({ mode = 'traditional' }: Inve
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                           <Building className="h-6 w-6 text-white" />
                         </div>
                         <div>
@@ -513,7 +513,7 @@ export function InvestmentRecommendationDashboard({ mode = 'traditional' }: Inve
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Zap className="h-5 w-5 mr-2 text-purple-600" />
+                  <Zap className="h-5 w-5 mr-2 text-blue-600" />
                   AI Insights
                 </CardTitle>
               </CardHeader>

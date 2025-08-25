@@ -81,11 +81,11 @@ const FinancialModelingWorkspace: React.FC<FinancialModelingWorkspaceProps> = ({
 
       {/* AI Model Insights - Only in Assisted/Autonomous modes */}
       {viewMode !== 'traditional' && (dcfResults || lboResults) && (
-        <Card className="border-l-4 border-l-purple-500 bg-purple-50/50">
+        <Card className="border-l-4 border-l-blue-500 bg-blue-50/50">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-purple-600" />
-              <h2 className="text-lg font-semibold text-purple-900">Cross-Model AI Analysis</h2>
+              <Zap className="h-5 w-5 text-blue-600" />
+              <h2 className="text-lg font-semibold text-blue-900">Cross-Model AI Analysis</h2>
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -209,7 +209,7 @@ const FinancialModelingWorkspace: React.FC<FinancialModelingWorkspaceProps> = ({
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-purple-600" />
+                <BarChart3 className="h-5 w-5 text-blue-600" />
                 <h3 className="text-lg font-semibold">Model Comparison</h3>
               </div>
             </CardHeader>

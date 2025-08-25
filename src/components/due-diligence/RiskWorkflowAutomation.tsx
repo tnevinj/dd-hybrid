@@ -438,14 +438,14 @@ export function RiskWorkflowAutomation({ projectId }: RiskWorkflowAutomationProp
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-400">
+        <Card className="border-l-4 border-l-blue-400">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Brain className="w-4 h-4 text-purple-500 mr-1" />
+              <Brain className="w-4 h-4 text-blue-500 mr-1" />
               <span className="text-sm font-medium text-gray-600">AI Confidence</span>
             </div>
-            <div className="text-2xl font-bold text-purple-600">88%</div>
-            <div className="text-xs text-purple-600">Optimization</div>
+            <div className="text-2xl font-bold text-blue-600">88%</div>
+            <div className="text-xs text-blue-600">Optimization</div>
           </CardContent>
         </Card>
 
@@ -465,7 +465,7 @@ export function RiskWorkflowAutomation({ projectId }: RiskWorkflowAutomationProp
       <div className="space-y-4">
         {workflows.map((workflow) => (
           <Card key={workflow.id} className={`hover:shadow-md transition-shadow ${
-            workflow.aiOptimized ? 'border-l-4 border-l-purple-400' : ''
+            workflow.aiOptimized ? 'border-l-4 border-l-blue-400' : ''
           }`}>
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
@@ -486,7 +486,7 @@ export function RiskWorkflowAutomation({ projectId }: RiskWorkflowAutomationProp
                   
                   {/* AI Insights */}
                   {workflow.aiOptimized && (
-                    <div className="bg-purple-50 p-2 rounded text-xs mb-2">
+                    <div className="bg-blue-50 p-2 rounded text-xs mb-2">
                       <div className="grid grid-cols-2 gap-2">
                         <div>🎯 {workflow.steps.filter(s => s.automatable).length} steps automatable</div>
                         <div>⚡ 40% time reduction possible</div>

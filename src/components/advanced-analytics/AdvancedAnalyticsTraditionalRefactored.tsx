@@ -163,7 +163,7 @@ export const AdvancedAnalyticsTraditionalRefactored: React.FC<TraditionalModePro
         <Card className="border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-2">
-              <Brain className="h-5 w-5 text-purple-600" />
+              <Brain className="h-5 w-5 text-blue-600" />
               <p className="text-sm text-gray-600 font-medium">Active Models</p>
             </div>
             <p className="text-3xl font-bold text-gray-900">{metrics.activeModels || 23}</p>
@@ -264,7 +264,7 @@ export const AdvancedAnalyticsTraditionalRefactored: React.FC<TraditionalModePro
                     <p className="text-gray-600">Benchmark</p>
                   </div>
                   <div className="text-center">
-                    <p className="font-semibold text-purple-600">+2.3%</p>
+                    <p className="font-semibold text-blue-600">+2.3%</p>
                     <p className="text-gray-600">Alpha</p>
                   </div>
                 </div>

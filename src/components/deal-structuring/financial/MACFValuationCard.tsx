@@ -583,7 +583,7 @@ const MACFValuationCard: React.FC<MACFValuationCardProps> = ({
                   <div className="text-sm text-gray-600">Total Fair Value</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">
+                  <div className="text-lg font-bold text-blue-600">
                     {(inputs.dealInfo.portfolioAssets.reduce((sum, asset) => sum + asset.currentFairValue, 0) / 
                      inputs.dealInfo.portfolioAssets.reduce((sum, asset) => sum + asset.currentBookValue, 0)).toFixed(1)}x
                   </div>
@@ -841,7 +841,7 @@ const MACFValuationCard: React.FC<MACFValuationCardProps> = ({
               </div>
               <div className="border rounded-lg p-4 text-center">
                 <h5 className="font-medium text-gray-900 mb-2">Portfolio Multiple</h5>
-                <div className="text-2xl font-bold text-purple-600">{results.portfolioValuation.weightedAverageMultiple.toFixed(1)}x</div>
+                <div className="text-2xl font-bold text-blue-600">{results.portfolioValuation.weightedAverageMultiple.toFixed(1)}x</div>
                 <div className="text-sm text-gray-500">Weighted Average</div>
               </div>
             </div>
@@ -890,7 +890,7 @@ const MACFValuationCard: React.FC<MACFValuationCardProps> = ({
               <h4 className="font-medium text-gray-900 mb-4">MACF Pricing Analysis</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">{formatCurrency(results.macfPricing.totalFundValue)}</div>
+                  <div className="text-lg font-bold text-blue-600">{formatCurrency(results.macfPricing.totalFundValue)}</div>
                   <div className="text-sm text-gray-600">Total Fund Value</div>
                 </div>
                 <div className="text-center">
@@ -1037,7 +1037,7 @@ const MACFValuationCard: React.FC<MACFValuationCardProps> = ({
                   <div className="text-sm text-gray-600">Management Fees</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">{formatCurrency(results.fundEconomics.projectedCarriedInterest)}</div>
+                  <div className="text-lg font-bold text-blue-600">{formatCurrency(results.fundEconomics.projectedCarriedInterest)}</div>
                   <div className="text-sm text-gray-600">Carried Interest</div>
                 </div>
                 <div className="text-center">
@@ -1178,8 +1178,8 @@ const MACFValuationCard: React.FC<MACFValuationCardProps> = ({
                 <div className="text-2xl font-bold text-green-600">{formatPercentage(results.lpEconomics.projectedReturns.baseCase.irr)}</div>
                 <div className="text-sm text-gray-600">Projected IRR</div>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">{formatPercentage(results.macfPricing.discountToNAV)}</div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{formatPercentage(results.macfPricing.discountToNAV)}</div>
                 <div className="text-sm text-gray-600">Liquidity Discount</div>
               </div>
             </div>

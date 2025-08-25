@@ -212,7 +212,7 @@ export function AdvancedAnalyticsDashboard({ navigationMode, onModeChange }: Adv
               <p className="text-2xl font-bold">{data.stats.activeModels}</p>
               <p className="text-xs text-muted-foreground">of {data.stats.totalModels} total</p>
             </div>
-            <Brain className="h-8 w-8 text-purple-600" />
+            <Brain className="h-8 w-8 text-blue-600" />
           </div>
         </CardContent>
       </Card>

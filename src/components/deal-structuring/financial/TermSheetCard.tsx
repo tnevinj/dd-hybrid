@@ -454,9 +454,9 @@ const TermSheetCard: React.FC<TermSheetCardProps> = ({
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center mb-2">
-                      <TrendingUp className="h-5 w-5 text-purple-600" />
+                      <TrendingUp className="h-5 w-5 text-blue-600" />
                     </div>
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-blue-600">
                       {formatPercentage(results.summary.economicTerms.irr)}
                     </div>
                     <div className="text-sm text-gray-600">IRR</div>
@@ -519,7 +519,7 @@ const TermSheetCard: React.FC<TermSheetCardProps> = ({
                     <ul className="space-y-1 text-sm text-gray-600">
                       {results.keyInsights.recommendations.strategic.map((rec, index) => (
                         <li key={index} className="flex items-start gap-2">
-                          <span className="text-purple-500 mt-1">•</span>
+                          <span className="text-blue-500 mt-1">•</span>
                           {rec}
                         </li>
                       ))}

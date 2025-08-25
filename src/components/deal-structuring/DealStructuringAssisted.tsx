@@ -54,7 +54,7 @@ const DealStructuringAssisted: React.FC = () => {
       case 'automation': return <Zap className="h-4 w-4 text-blue-500" />;
       case 'insight': return <BarChart3 className="h-4 w-4 text-green-500" />;
       case 'warning': return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      default: return <Brain className="h-4 w-4 text-purple-500" />;
+      default: return <Brain className="h-4 w-4 text-blue-500" />;
     }
   };
 
@@ -209,7 +209,7 @@ const DealStructuringAssisted: React.FC = () => {
                 <p className="text-2xl font-bold text-gray-900">12</p>
                 <p className="text-xs text-gray-500 mt-1">5 high priority</p>
               </div>
-              <Brain className="h-8 w-8 text-purple-600" />
+              <Brain className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>

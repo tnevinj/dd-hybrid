@@ -476,23 +476,23 @@ export function PredictiveAnalytics({
 
     return (
       <div className="space-y-6">
-        <Card className="border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50">
+        <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-xl text-purple-800">
+            <CardTitle className="flex items-center gap-3 text-xl text-blue-800">
               <BarChart3 className="h-6 w-6" />
               Peer Benchmark Analysis
             </CardTitle>
-            <CardDescription className="text-purple-700">
+            <CardDescription className="text-blue-700">
               Performance comparison against sector peer group
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center">
-                <div className="text-4xl font-bold text-purple-600 mb-2">
+                <div className="text-4xl font-bold text-blue-600 mb-2">
                   {benchmarkInsight.data.percentile}th
                 </div>
-                <p className="text-sm text-purple-700 mb-4">Percentile Ranking</p>
+                <p className="text-sm text-blue-700 mb-4">Percentile Ranking</p>
                 
                 <div className="text-2xl font-semibold text-green-600 mb-2">
                   +{benchmarkInsight.data.outperformancePrediction}%

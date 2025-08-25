@@ -359,7 +359,7 @@ export const DealScreeningTraditionalStandardized: React.FC<DealScreeningTraditi
                         </div>
                         <div className="text-center">
                           <p className="text-sm text-gray-500 mb-1">Growth Rate</p>
-                          <p className="text-lg font-semibold text-purple-600">{opportunity.growthRate?.toFixed(1)}%</p>
+                          <p className="text-lg font-semibold text-blue-600">{opportunity.growthRate?.toFixed(1)}%</p>
                         </div>
                         <div className="text-center">
                           <p className="text-sm text-gray-500 mb-1">EBITDA Margin</p>
@@ -448,7 +448,7 @@ export const DealScreeningTraditionalStandardized: React.FC<DealScreeningTraditi
                   {[
                     { status: 'NEW', count: opportunities.filter(o => o.status === 'NEW').length, color: 'blue' },
                     { status: 'SCREENING', count: opportunities.filter(o => o.status === 'SCREENING').length, color: 'yellow' },
-                    { status: 'ANALYZED', count: opportunities.filter(o => o.status === 'ANALYZED').length, color: 'purple' },
+                    { status: 'ANALYZED', count: opportunities.filter(o => o.status === 'ANALYZED').length, color: 'blue' },
                     { status: 'APPROVED', count: opportunities.filter(o => o.status === 'APPROVED').length, color: 'green' }
                   ].map((item) => (
                     <div key={item.status} className={`p-2 bg-${item.color}-50 border border-${item.color}-200 rounded text-center`}>

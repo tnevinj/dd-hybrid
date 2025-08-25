@@ -27,7 +27,7 @@ const getStatusColor = (status: WorkspaceStatus): string => {
 
 const getTypeColor = (type: WorkspaceType): string => {
   switch (type) {
-    case 'SCREENING': return 'bg-purple-100 text-purple-700';
+    case 'SCREENING': return 'bg-blue-100 text-blue-700';
     case 'DUE_DILIGENCE': return 'bg-orange-100 text-orange-700';
     case 'IC_PREPARATION': return 'bg-red-100 text-red-700';
     case 'MONITORING': return 'bg-green-100 text-green-700';

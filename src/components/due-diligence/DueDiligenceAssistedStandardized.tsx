@@ -185,17 +185,17 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
           <div>
             <div className="flex items-center space-x-3">
               <h1 className={TYPOGRAPHY.headings.h1}>Due Diligence Projects</h1>
-              <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+              <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
                 <Brain className="h-3 w-3" />
                 <span>AI-Assisted Mode</span>
               </Badge>
             </div>
-            <p className={`${TYPOGRAPHY.body.base} text-purple-700 mt-1`}>
+            <p className={`${TYPOGRAPHY.body.base} text-blue-700 mt-1`}>
               Enhanced with AI-powered risk analysis and workflow automation
             </p>
           </div>
           <div className="flex space-x-2">
-            <Button onClick={onCreateProject} className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700">
+            <Button onClick={onCreateProject} className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700">
               <Sparkles className="h-4 w-4" />
               <span>AI-Assisted Project</span>
             </Button>
@@ -227,7 +227,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
             score={94}
             confidence={96}
             insight="Risk patterns identified across portfolio"
-            className="border-purple-200"
+            className="border-blue-200"
           />
           
           <StandardizedKPICard
@@ -259,12 +259,12 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
             value={45}
             mode="assisted"
             timeSaved="8.7h saved today"
-            className="border-purple-200"
+            className="border-blue-200"
           />
         </div>
 
         {/* Smart Process Preparation */}
-        <Card className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+        <Card className="mb-6 bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200">
           <CardHeader>
             <CardTitle className="flex items-center text-blue-800">
               <Brain className="h-5 w-5 mr-2" />
@@ -322,8 +322,8 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-xl text-purple-900">AI-Enhanced Project Analysis</CardTitle>
-                <p className="text-sm text-purple-700 mt-1">Projects analyzed and ranked by AI risk assessment</p>
+                <CardTitle className="text-xl text-blue-900">AI-Enhanced Project Analysis</CardTitle>
+                <p className="text-sm text-blue-700 mt-1">Projects analyzed and ranked by AI risk assessment</p>
               </div>
               <Badge className="bg-green-100 text-green-800 border-green-300">
                 <CheckCircle className="h-3 w-3 mr-1" />
@@ -356,7 +356,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                     <CardContent className="p-4">
                       {/* AI Enhancement Indicator */}
                       <div className="absolute top-2 right-2">
-                        <Badge className="bg-purple-100 text-purple-800 border border-purple-300 text-xs">
+                        <Badge className="bg-blue-100 text-blue-800 border border-blue-300 text-xs">
                           <Sparkles className="h-3 w-3 mr-1" />
                           AI Enhanced
                         </Badge>
@@ -376,8 +376,8 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                       {p.aiRiskScore && (
                         <div className="mb-3">
                           <div className="flex justify-between items-center mb-1">
-                            <span className="text-xs text-purple-600 font-medium">AI Risk Score</span>
-                            <span className="text-xs font-semibold text-purple-800">{100 - p.aiRiskScore}%</span>
+                            <span className="text-xs text-blue-600 font-medium">AI Risk Score</span>
+                            <span className="text-xs font-semibold text-blue-800">{100 - p.aiRiskScore}%</span>
                           </div>
                           <div className="w-full h-2 bg-gray-200 rounded-full">
                             <div 
@@ -389,12 +389,12 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                       )}
 
                       {/* AI Insights Preview */}
-                      <div className="mb-3 p-2 bg-purple-50 border border-purple-200 rounded text-xs">
+                      <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
                         <div className="flex items-center space-x-1 mb-1">
-                          <Brain className="h-3 w-3 text-purple-600" />
-                          <span className="text-purple-800 font-medium">AI Insight</span>
+                          <Brain className="h-3 w-3 text-blue-600" />
+                          <span className="text-blue-800 font-medium">AI Insight</span>
                         </div>
-                        <p className="text-purple-700">
+                        <p className="text-blue-700">
                           {p.aiRiskScore > 50 ? 'High attention required' : p.aiRiskScore > 30 ? 'Monitor closely' : 'Low risk profile'}
                         </p>
                       </div>
@@ -406,7 +406,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-purple-600 h-2 rounded-full" 
+                            className="bg-blue-600 h-2 rounded-full" 
                             style={{ width: `${p.progress}%` }}
                           />
                         </div>
@@ -422,7 +422,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                         </div>
                       </div>
                       
-                      <Button size="sm" className="w-full mt-3 bg-purple-600 hover:bg-purple-700" onClick={(e) => {
+                      <Button size="sm" className="w-full mt-3 bg-blue-600 hover:bg-blue-700" onClick={(e) => {
                         e.stopPropagation();
                         onViewProject(p.id);
                       }}>
@@ -445,7 +445,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Header with back button */}
       <div className="flex items-center space-x-4 mb-6">
-        <Button variant="ghost" onClick={() => onSelectProject(undefined)} className="text-purple-600 hover:text-purple-700">
+        <Button variant="ghost" onClick={() => onSelectProject(undefined)} className="text-blue-600 hover:text-blue-700">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Projects
         </Button>
@@ -453,7 +453,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
         <div className="flex-1">
           <div className="flex items-center space-x-3">
             <h1 className={TYPOGRAPHY.headings.h1}>{project.name}</h1>
-            <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+            <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
               <Brain className="h-3 w-3" />
               <span>AI-Assisted Mode</span>
             </Badge>
@@ -461,19 +461,19 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
               {project.status.replace('_', ' ')}
             </Badge>
           </div>
-          <p className="text-purple-700 mt-1">{project.targetCompany} • {project.sector} • {formatCurrency(project.dealSize)}</p>
+          <p className="text-blue-700 mt-1">{project.targetCompany} • {project.sector} • {formatCurrency(project.dealSize)}</p>
         </div>
         
         <div className="flex space-x-2">
-          <Button variant="outline" className="border-purple-300 text-purple-700">
+          <Button variant="outline" className="border-blue-300 text-blue-700">
             <Download className="h-4 w-4 mr-2" />
             AI Report
           </Button>
-          <Button variant="outline" className="border-purple-300 text-purple-700">
+          <Button variant="outline" className="border-blue-300 text-blue-700">
             <Share className="h-4 w-4 mr-2" />
             Share Insights
           </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700">
+          <Button className="bg-blue-600 hover:bg-blue-700">
             <Sparkles className="h-4 w-4 mr-2" />
             AI Settings
           </Button>
@@ -487,7 +487,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
           score={100 - (project.aiRiskScore || 25)}
           confidence={94}
           insight="Low risk profile detected"
-          className="border-purple-200"
+          className="border-blue-200"
         />
         
         <StandardizedKPICard
@@ -498,7 +498,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
           icon={Target}
           status="positive"
           isAIEnhanced={true}
-          className="border-purple-200"
+          className="border-blue-200"
         />
         
         <StandardizedKPICard
@@ -508,7 +508,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
           icon={AlertTriangle}
           status={project.riskFlags > 5 ? "warning" : "positive"}
           aiInsight="AI monitoring 24/7"
-          className="border-purple-200"
+          className="border-blue-200"
         />
         
         <StandardizedKPICard
@@ -521,7 +521,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
           trendValue="+15%"
           trendLabel="with AI"
           isAIEnhanced={true}
-          className="border-purple-200"
+          className="border-blue-200"
         />
       </div>
 
@@ -555,7 +555,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>AI-Enhanced Workstream Analysis</CardTitle>
-                    <Badge className="bg-purple-100 text-purple-800 border-purple-300">
+                    <Badge className="bg-blue-100 text-blue-800 border-blue-300">
                       <Brain className="h-3 w-3 mr-1" />
                       AI Optimized
                     </Badge>
@@ -564,18 +564,18 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                 <CardContent>
                   <div className="space-y-4">
                     {project.workstreams?.map((workstream: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between p-4 border border-purple-200 rounded-lg bg-gradient-to-r from-purple-50 to-blue-50">
+                      <div key={index} className="flex items-center justify-between p-4 border border-blue-200 rounded-lg bg-gradient-to-r from-blue-50 to-blue-50">
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-medium text-purple-900">{workstream.name}</h4>
+                            <h4 className="font-medium text-blue-900">{workstream.name}</h4>
                             <div className="flex items-center space-x-2">
-                              <span className="text-sm text-purple-700">{workstream.progress}%</span>
+                              <span className="text-sm text-blue-700">{workstream.progress}%</span>
                               <Badge className="bg-blue-100 text-blue-800 text-xs">AI Tracked</Badge>
                             </div>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                             <div 
-                              className="bg-purple-600 h-2 rounded-full"
+                              className="bg-blue-600 h-2 rounded-full"
                               style={{ width: `${workstream.progress}%` }}
                             />
                           </div>
@@ -606,11 +606,11 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                 <CardContent>
                   <div className="space-y-3">
                     {project.keyFindings?.map((finding: string, index: number) => (
-                      <div key={index} className="flex items-start space-x-3 p-3 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
-                        <Brain className="h-4 w-4 text-purple-600 mt-1 flex-shrink-0" />
+                      <div key={index} className="flex items-start space-x-3 p-3 bg-gradient-to-r from-blue-50 to-blue-50 rounded-lg border border-blue-200">
+                        <Brain className="h-4 w-4 text-blue-600 mt-1 flex-shrink-0" />
                         <div className="flex-1">
-                          <p className="text-sm text-purple-900 font-medium">{finding}</p>
-                          <p className="text-xs text-purple-600 mt-1">AI confidence: {90 + index}%</p>
+                          <p className="text-sm text-blue-900 font-medium">{finding}</p>
+                          <p className="text-xs text-blue-600 mt-1">AI confidence: {90 + index}%</p>
                         </div>
                       </div>
                     )) || []}
@@ -624,7 +624,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
               {/* AI Project Analysis */}
               <Card className={COMPONENTS.card.assisted.base}>
                 <CardHeader>
-                  <CardTitle className="text-lg text-purple-900">AI Project Analysis</CardTitle>
+                  <CardTitle className="text-lg text-blue-900">AI Project Analysis</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -633,7 +633,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                       score={100 - (project.aiRiskScore || 25)}
                       confidence={94}
                       insight="Based on 1,247 data points"
-                      className="border-none shadow-none bg-purple-50"
+                      className="border-none shadow-none bg-blue-50"
                     />
                     
                     <QuickAIInsights
@@ -642,16 +642,16 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                         "Customer concentration risk detected",
                         "Management strength: Above average"
                       ]}
-                      className="border-purple-200"
+                      className="border-blue-200"
                     />
                   </div>
                 </CardContent>
               </Card>
 
               {/* AI Performance Summary */}
-              <Card className={`${COMPONENTS.card.assisted.base} bg-gradient-to-r from-purple-50 to-blue-50`}>
+              <Card className={`${COMPONENTS.card.assisted.base} bg-gradient-to-r from-blue-50 to-blue-50`}>
                 <CardHeader>
-                  <CardTitle className="text-lg text-purple-900">AI Assistant Performance</CardTitle>
+                  <CardTitle className="text-lg text-blue-900">AI Assistant Performance</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -662,7 +662,7 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
                     
                     <div className="grid grid-cols-2 gap-3">
                       <div className="text-center p-2 bg-white/70 rounded border">
-                        <p className="text-lg font-bold text-purple-600">96%</p>
+                        <p className="text-lg font-bold text-blue-600">96%</p>
                         <p className="text-xs text-gray-600">Analysis Accuracy</p>
                       </div>
                       <div className="text-center p-2 bg-white/70 rounded border">
@@ -680,10 +680,10 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
         <TabsContent value="ai-analysis" className="mt-6">
           <Card className={COMPONENTS.card.assisted.base}>
             <CardHeader>
-              <CardTitle className="text-purple-900">Comprehensive AI Analysis</CardTitle>
+              <CardTitle className="text-blue-900">Comprehensive AI Analysis</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-purple-700">Detailed AI risk analysis and recommendations would go here...</p>
+              <p className="text-blue-700">Detailed AI risk analysis and recommendations would go here...</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -691,10 +691,10 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
         <TabsContent value="workstreams" className="mt-6">
           <Card className={COMPONENTS.card.assisted.base}>
             <CardHeader>
-              <CardTitle className="text-purple-900">AI-Optimized Workstreams</CardTitle>
+              <CardTitle className="text-blue-900">AI-Optimized Workstreams</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-purple-700">AI-enhanced workstream management interface would go here...</p>
+              <p className="text-blue-700">AI-enhanced workstream management interface would go here...</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -702,10 +702,10 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
         <TabsContent value="documents" className="mt-6">
           <Card className={COMPONENTS.card.assisted.base}>
             <CardHeader>
-              <CardTitle className="text-purple-900">Smart Document Analysis</CardTitle>
+              <CardTitle className="text-blue-900">Smart Document Analysis</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-purple-700">AI-powered document analysis interface would go here...</p>
+              <p className="text-blue-700">AI-powered document analysis interface would go here...</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -713,10 +713,10 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
         <TabsContent value="findings" className="mt-6">
           <Card className={COMPONENTS.card.assisted.base}>
             <CardHeader>
-              <CardTitle className="text-purple-900">AI-Generated Findings</CardTitle>
+              <CardTitle className="text-blue-900">AI-Generated Findings</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-purple-700">AI-generated findings and insights interface would go here...</p>
+              <p className="text-blue-700">AI-generated findings and insights interface would go here...</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -724,10 +724,10 @@ export const DueDiligenceAssistedStandardized: React.FC<DueDiligenceAssistedStan
         <TabsContent value="team" className="mt-6">
           <Card className={COMPONENTS.card.assisted.base}>
             <CardHeader>
-              <CardTitle className="text-purple-900">AI-Enhanced Team Collaboration</CardTitle>
+              <CardTitle className="text-blue-900">AI-Enhanced Team Collaboration</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-purple-700">AI-enhanced team management interface would go here...</p>
+              <p className="text-blue-700">AI-enhanced team management interface would go here...</p>
             </CardContent>
           </Card>
         </TabsContent>

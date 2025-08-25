@@ -430,11 +430,11 @@ const ScalableFinancialWorkspace: React.FC<ScalableFinancialWorkspaceProps> = ({
 
           {/* Cross-Model Insights for AI modes */}
           {viewMode !== 'traditional' && activeModels.length > 1 && (
-            <Card className="border-l-4 border-l-purple-500 bg-purple-50/50">
+            <Card className="border-l-4 border-l-blue-500 bg-blue-50/50">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-purple-600" />
-                  <h3 className="text-lg font-semibold text-purple-900">Cross-Model Analysis</h3>
+                  <Zap className="h-5 w-5 text-blue-600" />
+                  <h3 className="text-lg font-semibold text-blue-900">Cross-Model Analysis</h3>
                 </div>
               </CardHeader>
               <CardContent>

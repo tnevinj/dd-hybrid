@@ -122,7 +122,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   const getModeInputStyle = () => {
     switch (mode) {
       case 'autonomous':
-        return 'border-purple-200 focus:border-purple-500 focus:ring-purple-200';
+        return 'border-blue-200 focus:border-blue-500 focus:ring-blue-200';
       case 'assisted':
         return 'border-blue-200 focus:border-blue-500 focus:ring-blue-200';
       default:
@@ -133,7 +133,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   const getModeIcon = () => {
     switch (mode) {
       case 'autonomous':
-        return <Zap className="h-4 w-4 text-purple-600" />;
+        return <Zap className="h-4 w-4 text-blue-600" />;
       case 'assisted':
         return <Brain className="h-4 w-4 text-blue-600" />;
       default:
@@ -144,7 +144,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   const getSendButtonStyle = () => {
     switch (mode) {
       case 'autonomous':
-        return 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700';
+        return 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700';
       case 'assisted':
         return 'bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700';
       default:

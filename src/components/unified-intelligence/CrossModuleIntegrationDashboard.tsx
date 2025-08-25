@@ -90,7 +90,7 @@ export function CrossModuleIntegrationDashboard() {
             </div>
             <div>
               <span className="font-medium">AI Efficiency:</span> 
-              <span className="text-purple-600 ml-1">{formatPercentage(performance.aiEfficiency)}</span>
+              <span className="text-blue-600 ml-1">{formatPercentage(performance.aiEfficiency)}</span>
             </div>
           </div>
         </div>
@@ -159,14 +159,14 @@ export function CrossModuleIntegrationDashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
                 <CardContent className="p-6">
                   <div className="flex items-center">
-                    <Brain className="h-8 w-8 text-purple-600" />
+                    <Brain className="h-8 w-8 text-blue-600" />
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-purple-800">AI Efficiency</p>
-                      <p className="text-2xl font-bold text-purple-900">{formatPercentage(performance.aiEfficiency)}</p>
-                      <p className="text-xs text-purple-600">Intelligent automation</p>
+                      <p className="text-sm font-medium text-blue-800">AI Efficiency</p>
+                      <p className="text-2xl font-bold text-blue-900">{formatPercentage(performance.aiEfficiency)}</p>
+                      <p className="text-xs text-blue-600">Intelligent automation</p>
                     </div>
                   </div>
                 </CardContent>
@@ -273,15 +273,15 @@ export function CrossModuleIntegrationDashboard() {
                       </div>
                     </div>
 
-                    <div className="p-4 bg-purple-50 rounded-lg border-l-4 border-l-purple-500">
+                    <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-l-blue-500">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-purple-800">Market Intel → All Modules</span>
-                        <Badge className="bg-purple-100 text-purple-800">Active</Badge>
+                        <span className="font-medium text-blue-800">Market Intel → All Modules</span>
+                        <Badge className="bg-blue-100 text-blue-800">Active</Badge>
                       </div>
-                      <p className="text-sm text-purple-600">Real-time data streaming to 5 modules</p>
+                      <p className="text-sm text-blue-600">Real-time data streaming to 5 modules</p>
                       <div className="mt-2">
                         <Progress value={95} className="h-2" />
-                        <span className="text-xs text-purple-600 mt-1">95% uptime</span>
+                        <span className="text-xs text-blue-600 mt-1">95% uptime</span>
                       </div>
                     </div>
                   </div>
@@ -323,7 +323,7 @@ export function CrossModuleIntegrationDashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center">
-                  <Brain className="h-5 w-5 mr-2 text-purple-600" />
+                  <Brain className="h-5 w-5 mr-2 text-blue-600" />
                   AI-Generated Integration Recommendations ({recommendations.length})
                 </CardTitle>
                 <Button 
@@ -412,13 +412,13 @@ export function CrossModuleIntegrationDashboard() {
                       <span className="text-xs text-green-600">Stable connection health</span>
                     </div>
 
-                    <div className="p-4 bg-purple-50 rounded-lg">
+                    <div className="p-4 bg-blue-50 rounded-lg">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-purple-800">AI Response Time</span>
-                        <span className="text-purple-900 font-bold">1.2s average</span>
+                        <span className="font-medium text-blue-800">AI Response Time</span>
+                        <span className="text-blue-900 font-bold">1.2s average</span>
                       </div>
                       <Progress value={76} className="h-2 mb-1" />
-                      <span className="text-xs text-purple-600">Within target SLA</span>
+                      <span className="text-xs text-blue-600">Within target SLA</span>
                     </div>
                   </div>
                 </CardContent>

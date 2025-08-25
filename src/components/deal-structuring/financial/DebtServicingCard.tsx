@@ -501,8 +501,8 @@ const DebtServicingCard: React.FC<DebtServicingCardProps> = ({
                 <div className="text-2xl font-bold text-green-600">{formatPercentage(results.weightedAverageRate)}</div>
                 <div className="text-sm text-gray-600">Weighted Avg Rate</div>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">{results.debtServiceCoverageRatio.toFixed(2)}x</div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{results.debtServiceCoverageRatio.toFixed(2)}x</div>
                 <div className="text-sm text-gray-600">DSCR</div>
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">

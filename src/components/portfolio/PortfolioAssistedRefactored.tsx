@@ -42,7 +42,7 @@ export function PortfolioAssistedRefactored({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
         <h3 className="text-xl font-semibold text-gray-700">AI is analyzing portfolio data...</h3>
       </div>
     )
@@ -51,9 +51,9 @@ export function PortfolioAssistedRefactored({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* AI-Enhanced Mode Indicator */}
-      <div className="bg-white border-b border-purple-200 px-6 py-3">
+      <div className="bg-white border-b border-blue-200 px-6 py-3">
         <div className="flex items-center justify-between">
-          <Badge className="bg-purple-100 text-purple-800 border border-purple-300 flex items-center space-x-1">
+          <Badge className="bg-blue-100 text-blue-800 border border-blue-300 flex items-center space-x-1">
             <Brain className="h-3 w-3" />
             <span>AI-Assisted Mode</span>
           </Badge>
@@ -62,7 +62,7 @@ export function PortfolioAssistedRefactored({
           <div className="flex items-center space-x-6 text-sm">
             <div className="text-gray-600">
               <span className="font-medium">AI Efficiency:</span> 
-              <span className="text-purple-600 ml-1">{metrics.aiEfficiencyGains}%</span>
+              <span className="text-blue-600 ml-1">{metrics.aiEfficiencyGains}%</span>
             </div>
             <div className="text-gray-600">
               <span className="font-medium">Risk Score:</span> 
@@ -80,10 +80,10 @@ export function PortfolioAssistedRefactored({
         {/* AI Recommendations Panel */}
         {aiRecommendations && aiRecommendations.length > 0 && (
           <div className="mb-6">
-            <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+            <Card className="bg-gradient-to-r from-blue-50 to-blue-50 border-blue-200">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Brain className="h-5 w-5 mr-2 text-purple-600" />
+                  <Brain className="h-5 w-5 mr-2 text-blue-600" />
                   Portfolio AI Recommendations ({aiRecommendations.length})
                 </CardTitle>
               </CardHeader>
@@ -105,7 +105,7 @@ export function PortfolioAssistedRefactored({
                           {/* Recommendation Type Indicator */}
                           <div className="flex items-center space-x-2 mb-3">
                             {rec.type === 'suggestion' && <TrendingUp className="h-4 w-4 text-blue-500" />}
-                            {rec.type === 'automation' && <Zap className="h-4 w-4 text-purple-500" />}
+                            {rec.type === 'automation' && <Zap className="h-4 w-4 text-blue-500" />}
                             {rec.type === 'warning' && <Shield className="h-4 w-4 text-red-500" />}
                             {rec.type === 'insight' && <Sparkles className="h-4 w-4 text-green-500" />}
                             <span className="text-xs text-gray-500 capitalize">{rec.type}</span>
@@ -151,13 +151,13 @@ export function PortfolioAssistedRefactored({
 
         {/* AI-Enhanced Performance Summary */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
             <CardContent className="p-4">
               <div className="flex items-center space-x-2">
-                <Brain className="h-5 w-5 text-purple-600" />
+                <Brain className="h-5 w-5 text-blue-600" />
                 <div>
-                  <p className="text-sm font-medium text-purple-800">AI Optimization</p>
-                  <p className="text-lg font-bold text-purple-900">{metrics.aiOptimizationScore || 8.7}/10</p>
+                  <p className="text-sm font-medium text-blue-800">AI Optimization</p>
+                  <p className="text-lg font-bold text-blue-900">{metrics.aiOptimizationScore || 8.7}/10</p>
                 </div>
               </div>
             </CardContent>

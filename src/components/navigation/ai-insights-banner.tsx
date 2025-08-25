@@ -73,7 +73,7 @@ export function AIInsightsBanner() {
   }
 
   return (
-    <div className="border-b bg-gradient-to-r from-blue-50 to-purple-50">
+    <div className="border-b bg-gradient-to-r from-blue-50 to-blue-50">
       <div className="px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -122,10 +122,10 @@ export function AIInsightsBanner() {
               {recentInsights.map((insight) => (
                 <div
                   key={insight.id}
-                  className="flex items-center space-x-2 px-3 py-1 bg-purple-50 rounded-lg border border-purple-100 shadow-sm"
+                  className="flex items-center space-x-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 shadow-sm"
                 >
-                  <TrendingUp className="w-3 h-3 text-purple-600" />
-                  <span className="text-xs text-purple-700 max-w-32 truncate">
+                  <TrendingUp className="w-3 h-3 text-blue-600" />
+                  <span className="text-xs text-blue-700 max-w-32 truncate">
                     {insight.title}
                   </span>
                   <Badge variant="info" className="text-xs">

@@ -284,10 +284,10 @@ export const AdvancedScoringEngine: React.FC<AdvancedScoringEngineProps> = ({
               <Progress value={metrics.completionPercentage} className="mt-2 bg-green-100" />
             </div>
             
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-700">{scoringFunctions.length}</div>
-              <div className="text-sm text-purple-600">Scoring Functions</div>
-              <div className="text-xs text-purple-500 mt-1">Available</div>
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-700">{scoringFunctions.length}</div>
+              <div className="text-sm text-blue-600">Scoring Functions</div>
+              <div className="text-xs text-blue-500 mt-1">Available</div>
             </div>
             
             <div className="text-center p-4 bg-orange-50 rounded-lg">
@@ -387,11 +387,11 @@ export const AdvancedScoringEngine: React.FC<AdvancedScoringEngineProps> = ({
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {mlModels.map((model) => (
-                  <Card key={model.id} className="border-gray-200 hover:border-purple-300 transition-colors">
+                  <Card key={model.id} className="border-gray-200 hover:border-blue-300 transition-colors">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-sm font-medium">{model.name}</CardTitle>
-                        <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700">
+                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
                           {model.type}
                         </Badge>
                       </div>
@@ -413,7 +413,7 @@ export const AdvancedScoringEngine: React.FC<AdvancedScoringEngineProps> = ({
                         variant="outline"
                         onClick={() => applyMLModel(model.id)}
                         disabled={isProcessing}
-                        className="w-full border-purple-300 text-purple-700 hover:bg-purple-50"
+                        className="w-full border-blue-300 text-blue-700 hover:bg-blue-50"
                       >
                         {isProcessing && selectedModel === model.id ? (
                           <RefreshCw className="h-4 w-4 animate-spin mr-2" />

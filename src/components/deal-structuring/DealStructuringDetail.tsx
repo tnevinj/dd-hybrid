@@ -233,7 +233,7 @@ const DealStructuringDetail: React.FC<DealStructuringDetailProps> = ({ dealId })
                 <div className="text-sm text-gray-600">Next Milestone</div>
               </div>
               <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">{deal.team.length}</div>
+                <div className="text-2xl font-bold text-blue-600">{deal.team.length}</div>
                 <div className="text-sm text-gray-600">Team Members</div>
               </div>
             </div>

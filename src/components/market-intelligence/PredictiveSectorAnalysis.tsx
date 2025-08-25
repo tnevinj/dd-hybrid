@@ -431,11 +431,11 @@ export function PredictiveSectorAnalysis({
             </div>
             
             <div>
-              <div className="text-2xl font-bold text-purple-600 mb-2">
+              <div className="text-2xl font-bold text-blue-600 mb-2">
                 {Math.round(forecasts.reduce((sum, f) => sum + f.prediction.expectedReturn, 0) / forecasts.length)}%
               </div>
-              <p className="text-sm text-purple-700">Avg. Expected Return</p>
-              <p className="text-xs text-purple-600 mt-1">{timeHorizon} horizon</p>
+              <p className="text-sm text-blue-700">Avg. Expected Return</p>
+              <p className="text-xs text-blue-600 mt-1">{timeHorizon} horizon</p>
             </div>
           </div>
         </CardContent>
@@ -526,12 +526,12 @@ export function PredictiveSectorAnalysis({
 
                 <div>
                   <h4 className="font-medium mb-2 text-gray-700 flex items-center gap-2">
-                    <Target className="h-4 w-4 text-purple-500" />
+                    <Target className="h-4 w-4 text-blue-500" />
                     Top Opportunities
                   </h4>
                   <div className="space-y-3">
                     {forecast.investmentOpportunities.slice(0, 2).map((opp, idx) => (
-                      <div key={idx} className="p-2 bg-purple-50 rounded border">
+                      <div key={idx} className="p-2 bg-blue-50 rounded border">
                         <div className="flex items-center justify-between mb-1">
                           <span className="font-medium text-sm">{opp.company}</span>
                           <Badge variant="outline" className="text-xs">
@@ -628,9 +628,9 @@ export function PredictiveSectorAnalysis({
     return (
       <div className="space-y-6">
         {/* Macro Themes */}
-        <Card className="border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+        <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-pink-50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-xl text-purple-800">
+            <CardTitle className="flex items-center gap-3 text-xl text-blue-800">
               <Globe className="h-6 w-6" />
               Macro Investment Themes
             </CardTitle>

@@ -200,10 +200,10 @@ export function ExecutiveReportingDashboard({ mode = 'traditional' }: ExecutiveR
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Auto-Generated</CardTitle>
-            <Brain className="h-4 w-4 text-purple-600" />
+            <Brain className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{Math.floor(reports.length * 0.8)}</div>
+            <div className="text-2xl font-bold text-blue-600">{Math.floor(reports.length * 0.8)}</div>
             <p className="text-xs text-gray-600">AI automation rate</p>
           </CardContent>
         </Card>
@@ -470,7 +470,7 @@ export function ExecutiveReportingDashboard({ mode = 'traditional' }: ExecutiveR
                                     <div className="flex items-center justify-center h-32">
                                       {chart.type === 'LINE' && <LineChart className="h-16 w-16 text-blue-500" />}
                                       {chart.type === 'BAR' && <BarChart3 className="h-16 w-16 text-green-500" />}
-                                      {chart.type === 'PIE' && <PieChart className="h-16 w-16 text-purple-500" />}
+                                      {chart.type === 'PIE' && <PieChart className="h-16 w-16 text-blue-500" />}
                                       {!['LINE', 'BAR', 'PIE'].includes(chart.type) && <BarChart3 className="h-16 w-16 text-gray-500" />}
                                     </div>
                                     <h5 className="font-medium text-center mt-2">{chart.title}</h5>

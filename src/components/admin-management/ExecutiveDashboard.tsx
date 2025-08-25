@@ -533,8 +533,8 @@ export function ExecutiveDashboard({
                   </span>
                 </div>
               </div>
-              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Building2 className="h-6 w-6 text-purple-600" />
+              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Building2 className="h-6 w-6 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -956,7 +956,7 @@ export function ExecutiveDashboard({
             {/* Industry Trends */}
             <div>
               <h4 className="font-semibold mb-3 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-purple-500" />
+                <TrendingUp className="h-4 w-4 text-blue-500" />
                 Industry Trends
               </h4>
               <div className="space-y-2">

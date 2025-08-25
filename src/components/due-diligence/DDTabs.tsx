@@ -171,7 +171,7 @@ export function DDTabs({ activeTab, onTabChange, mode, aiEnhancements = false }:
               
               {hasAI && (
                 <div className="flex items-center space-x-1">
-                  <Brain className="w-3 h-3 text-purple-500" />
+                  <Brain className="w-3 h-3 text-blue-500" />
                   {tab.badge && (
                     <Badge variant={tab.badge === 'AI' || tab.badge === 'New' ? 'ai' : 'outline'} className="text-xs">
                       {tab.badge}
@@ -188,13 +188,13 @@ export function DDTabs({ activeTab, onTabChange, mode, aiEnhancements = false }:
 
               {/* AI Features Tooltip */}
               {hasAI && (
-                <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-purple-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap">
+                <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-blue-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap">
                   <div className="flex items-center space-x-1 mb-1">
                     <Lightbulb className="w-3 h-3" />
                     <span className="font-medium">AI Features:</span>
                   </div>
                   {tab.aiFeatures.map((feature, index) => (
-                    <div key={index} className="text-purple-200">• {feature}</div>
+                    <div key={index} className="text-blue-200">• {feature}</div>
                   ))}
                 </div>
               )}

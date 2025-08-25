@@ -207,7 +207,7 @@ export function AIAutomationHub({ projectId }: AIAutomationHubProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold flex items-center">
-            <Brain className="w-5 h-5 mr-2 text-purple-500" />
+            <Brain className="w-5 h-5 mr-2 text-blue-500" />
             AI Automation Hub
             <Badge variant="ai" className="ml-3">Enhanced</Badge>
           </h2>
@@ -262,14 +262,14 @@ export function AIAutomationHub({ projectId }: AIAutomationHubProps) {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-400">
+        <Card className="border-l-4 border-l-blue-400">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Zap className="w-4 h-4 text-purple-500 mr-1" />
+              <Zap className="w-4 h-4 text-blue-500 mr-1" />
               <span className="text-sm font-medium text-gray-600">Automation</span>
             </div>
-            <div className="text-2xl font-bold text-purple-600">{Math.round(aiMetrics.automationLevel * 100)}%</div>
-            <div className="text-xs text-purple-600">Tasks Automated</div>
+            <div className="text-2xl font-bold text-blue-600">{Math.round(aiMetrics.automationLevel * 100)}%</div>
+            <div className="text-xs text-blue-600">Tasks Automated</div>
           </CardContent>
         </Card>
 
@@ -286,16 +286,16 @@ export function AIAutomationHub({ projectId }: AIAutomationHubProps) {
       </div>
 
       {/* Real-time Status */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className={`w-3 h-3 rounded-full ${automationStatus === 'running' ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
               <div>
-                <h3 className="font-semibold text-purple-800">
+                <h3 className="font-semibold text-blue-800">
                   AI Engine Status: {automationStatus === 'running' ? 'Active' : 'Paused'}
                 </h3>
-                <p className="text-sm text-purple-600">
+                <p className="text-sm text-blue-600">
                   {automationStatus === 'running' 
                     ? `Processing documents and analyzing patterns - ${Math.round(analysisProgress)}% complete`
                     : 'AI automation paused - click resume to continue processing'
@@ -431,11 +431,11 @@ export function AIAutomationHub({ projectId }: AIAutomationHubProps) {
       <Card>
         <CardContent className="p-6">
           <div className="flex items-start space-x-4">
-            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-              <Brain className="w-4 h-4 text-purple-600" />
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <Brain className="w-4 h-4 text-blue-600" />
             </div>
             <div className="flex-1">
-              <div className="bg-purple-50 rounded-lg p-4 mb-4">
+              <div className="bg-blue-50 rounded-lg p-4 mb-4">
                 <p className="text-sm mb-2">
                   <strong>AI Automation Update:</strong> Running {workflows.filter(w => w.status === 'active').length} automated workflows with 91% accuracy.
                 </p>

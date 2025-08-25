@@ -257,7 +257,7 @@ export function LPGPRelationshipDashboard({ navigationMode, onModeChange }: LPGP
               <p className="text-sm text-muted-foreground">Upcoming Meetings</p>
               <p className="text-2xl font-bold">{data.stats.upcomingMeetings}</p>
             </div>
-            <Calendar className="h-8 w-8 text-purple-600" />
+            <Calendar className="h-8 w-8 text-blue-600" />
           </div>
         </CardContent>
       </Card>
@@ -390,7 +390,7 @@ export function LPGPRelationshipDashboard({ navigationMode, onModeChange }: LPGP
                   activity.type === 'MEETING' ? 'bg-blue-100 text-blue-600' :
                   activity.type === 'TASK' ? 'bg-orange-100 text-orange-600' :
                   activity.type === 'FOLLOW_UP' ? 'bg-green-100 text-green-600' :
-                  'bg-purple-100 text-purple-600'
+                  'bg-blue-100 text-blue-600'
                 }`}>
                   {activity.type === 'MEETING' ? <Video className="h-4 w-4" /> :
                    activity.type === 'TASK' ? <CheckSquare className="h-4 w-4" /> :
@@ -496,7 +496,7 @@ export function LPGPRelationshipDashboard({ navigationMode, onModeChange }: LPGP
                 activity.type === 'COMMUNICATION' ? 'bg-blue-600' :
                 activity.type === 'MEETING' ? 'bg-green-600' :
                 activity.type === 'TASK' ? 'bg-orange-600' :
-                'bg-purple-600'
+                'bg-blue-600'
               }`}></div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm">{activity.description}</p>
