@@ -5,35 +5,12 @@ import { ChatInterface, ProjectSelector, ContextPanel } from '@/components/auton
 import { AutonomousLayout } from '@/components/autonomous/AutonomousLayout';
 import { AutonomousNavMenu } from '@/components/autonomous/AutonomousNavMenu';
 import { AutonomousBreadcrumb } from '@/components/autonomous/AutonomousBreadcrumb';
-import { useAutonomousStore } from '@/stores/autonomous-store';
+import { useAutonomousStore, type Project } from '@/stores/autonomous-store';
 import { useAutonomousMode } from '@/hooks/useAutonomousMode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Settings, Menu, X } from 'lucide-react';
 import { useDealStructuring } from '@/hooks/use-deal-structuring';
-
-interface Project {
-  id: string;
-  name: string;
-  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis';
-  status: 'active' | 'completed' | 'draft' | 'review';
-  lastActivity: Date;
-  priority: 'high' | 'medium' | 'low';
-  unreadMessages?: number;
-  metadata?: {
-    value?: string;
-    progress?: number;
-    team?: string[];
-    dealValue?: number;
-    sector?: string;
-    geography?: string;
-    stage?: string;
-    riskRating?: 'low' | 'medium' | 'high';
-    confidenceScore?: number;
-    workProductId?: string;
-    workProductTitle?: string;
-  };
-}
 
 interface DealStructuringAutonomousProps {
   onSwitchMode?: (mode: 'traditional' | 'assisted' | 'autonomous') => void;
@@ -45,7 +22,7 @@ export function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAuton
     projects,
     selectProject,
     setActiveProjectType,
-    setDealStructuringProjects,
+    setProjectsForType,
     sidebarCollapsed,
     contextPanelCollapsed,
     toggleSidebar,
@@ -87,9 +64,9 @@ export function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAuton
         }
       }));
       
-      setDealStructuringProjects(projects);
+      setProjectsForType('deal-structuring', projects);
     }
-  }, [setActiveProjectType, setDealStructuringProjects, deals]);
+  }, [setActiveProjectType, setProjectsForType, deals]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
@@ -187,20 +164,11 @@ export function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAuton
       <div className="autonomous-content">
           {/* Project Selector - Left Panel */}
           <div className={`${sidebarCollapsed ? 'w-0' : 'w-80'} transition-all duration-300 overflow-hidden border-r border-gray-200 bg-white`}>
-            <ProjectSelector
-              projects={projects['deal-structuring'] || []}
-              selectedProject={selectedProject}
-              onProjectSelect={handleProjectSelect}
-              projectType="deal-structuring"
-              isLoading={isLoading}
-              showCreateButton={false}
-              customMetadata={(project) => ({
-                dealValue: project.metadata?.dealValue,
-                stage: project.metadata?.stage,
-                riskRating: project.metadata?.riskRating,
-                progress: project.metadata?.progress
-              })}
-            />
+          <ProjectSelector
+            selectedProjectId={selectedProject?.id}
+            onProjectSelect={handleProjectSelect}
+            projectType="deal-structuring"
+          />
           </div>
 
           {/* Chat Interface - Center Panel */}

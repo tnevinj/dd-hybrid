@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useAutonomousStore } from '@/stores/autonomous-store';
+import { useAutonomousStore, type Project } from '@/stores/autonomous-store';
 import { ZIndex, getZIndexStyle } from '@/styles/z-index';
 import { cn } from '@/lib/utils';
 import { 
@@ -23,23 +23,8 @@ import {
   MoreVertical
 } from 'lucide-react';
 
-interface Project {
-  id: string;
-  name: string;
-  type: 'portfolio' | 'deal' | 'company' | 'report' | 'analysis';
-  status: 'active' | 'completed' | 'draft' | 'review';
-  lastActivity: Date;
-  priority: 'high' | 'medium' | 'low';
-  unreadMessages?: number;
-  metadata?: {
-    value?: string;
-    progress?: number;
-    team?: string[];
-  };
-}
-
 interface ProjectSelectorProps {
-  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening';
+  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' | 'deal-structuring';
   selectedProjectId?: string;
   onProjectSelect: (project: Project) => void;
   className?: string;
