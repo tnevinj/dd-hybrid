@@ -729,7 +729,12 @@ class DealScoringEngine {
   private generateRecommendations(
     project: UnifiedWorkspaceProject, 
     overallScore: number, 
-    categoryScores: any
+    categoryScores: {
+      financialScore: DealScoreCategory;
+      operationalScore: DealScoreCategory;
+      strategicScore: DealScoreCategory;
+      riskScore: DealScoreCategory;
+    }
   ): string[] {
     const recommendations: string[] = [];
 
@@ -745,19 +750,19 @@ class DealScoringEngine {
     }
 
     // Category-specific recommendations
-    if (categoryScores.financial.score < 60) {
+    if (categoryScores.financialScore.score < 60) {
       recommendations.push('Consider renegotiating valuation terms or deal structure');
     }
 
-    if (categoryScores.operational.score < 60) {
+    if (categoryScores.operationalScore.score < 60) {
       recommendations.push('Increase team resources or extend timeline to improve execution probability');
     }
 
-    if (categoryScores.risk.score < 60) {
+    if (categoryScores.riskScore.score < 60) {
       recommendations.push('Implement additional risk mitigation measures before proceeding');
     }
 
-    if (categoryScores.strategic.score > 80) {
+    if (categoryScores.strategicScore.score > 80) {
       recommendations.push('High strategic value - consider fast-tracking through approval process');
     }
 

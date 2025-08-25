@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { ThandoContext, ClaudeRequest, ClaudeResponse, AIAction } from '@/types/thando-context';
-import { demoScenariosService } from '@/lib/services/demo-scenarios-service';
 import { UnifiedWorkspaceDataService } from '@/lib/data/unified-workspace-data';
 import { dealScoringEngine } from '@/lib/services/deal-scoring-engine';
 
@@ -404,7 +403,7 @@ const processClaudeResponse = (response: Anthropic.Message): ClaudeResponse => {
   const actions: AIAction[] = [];
   
   // Extract tool use blocks and convert to actions
-  response.content
+    response.content
     .filter((block): block is Anthropic.ToolUseBlock => block.type === 'tool_use')
     .forEach(toolBlock => {
       actions.push({
@@ -412,7 +411,7 @@ const processClaudeResponse = (response: Anthropic.Message): ClaudeResponse => {
         name: toolBlock.name,
         description: `Execute ${toolBlock.name}`,
         category: 'execution',
-        inputSchema: toolBlock.input,
+        inputSchema: toolBlock.input as Record<string, any>,
         estimatedDuration: '1-2 minutes',
         riskLevel: 'low',
         prerequisites: [],
@@ -433,22 +432,14 @@ const processClaudeResponse = (response: Anthropic.Message): ClaudeResponse => {
   };
 };
 
-// Enhanced demo fallback system using scenarios service
-const getDemoResponse = (message: string, context: ThandoContext): ClaudeResponse => {
-  // Try to find a matching scenario first
-  const matchingScenario = demoScenariosService.findMatchingScenario(message, context);
-  
-  if (matchingScenario) {
-    return demoScenariosService.generateScenarioResponse(matchingScenario, context);
-  }
-  
-  // Fall back to general response
-  return demoScenariosService.generateFallbackResponse(message, context);
-};
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, context, options = {} }: ClaudeRequest = await request.json();
+    const { message, context, options = {
+      includeActions: true,
+      maxTokens: parseInt(process.env.CLAUDE_MAX_TOKENS || '4096'),
+      temperature: 0.1
+    } }: ClaudeRequest = await request.json();
 
     // Validate required fields
     if (!message || !context) {
@@ -459,45 +450,38 @@ export async function POST(request: NextRequest) {
     }
 
     const startTime = Date.now();
-    const enableRealAI = process.env.ENABLE_REAL_AI === 'true';
-    const fallbackToMock = process.env.FALLBACK_TO_MOCK === 'true';
-    const hasApiKey = process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY.length > 0;
-
+    const hasValidApiKey = !!process.env.ANTHROPIC_API_KEY?.trim();
+    
     let response: ClaudeResponse;
 
-    // Prioritize real Claude API if we have API key (user said it's configured)
-    if (hasApiKey && (enableRealAI || enableRealAI !== false)) {
-      try {
-        // Real Claude API integration
-        const systemPrompt = options.systemPromptOverride || buildSystemPrompt(context);
-        const userPrompt = buildUserPrompt(message, context);
-        const tools = getAvailableTools(context);
+    if (!hasValidApiKey) {
+      return NextResponse.json(
+        { error: 'Anthropic API key not configured' },
+        { status: 500 }
+      );
+    }
 
-        const claudeResponse = await anthropic.messages.create({
-          model: process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022',
-          max_tokens: options.maxTokens || parseInt(process.env.CLAUDE_MAX_TOKENS || '4096'),
-          temperature: options.temperature || 0.1,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userPrompt }],
-          tools: options.includeActions !== false ? tools : undefined,
-        });
+    try {
+      // Real Claude API integration with proper model configuration
+      const systemPrompt = options.systemPromptOverride || buildSystemPrompt(context);
+      const userPrompt = buildUserPrompt(message, context);
+      const tools = getAvailableTools(context);
 
-        response = processClaudeResponse(claudeResponse);
-        response.processingTime = Date.now() - startTime;
+      const claudeResponse = await anthropic.messages.create({
+        model: process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022',
+        max_tokens: options.maxTokens || parseInt(process.env.CLAUDE_MAX_TOKENS || '4096'),
+        temperature: options.temperature || 0.1,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+        tools: options.includeActions !== false ? tools : [],
+      });
 
-      } catch (claudeError) {
-        console.error('Claude API error:', claudeError);
-        
-        if (fallbackToMock) {
-          console.log('Falling back to demo response');
-          response = getDemoResponse(message, context);
-        } else {
-          throw claudeError;
-        }
-      }
-    } else {
-      // Use enhanced demo system
-      response = getDemoResponse(message, context);
+      response = processClaudeResponse(claudeResponse);
+      response.processingTime = Date.now() - startTime;
+
+    } catch (claudeError) {
+      console.error('Claude API error:', claudeError);
+      throw claudeError;
     }
 
     // Add artificial delay if configured
