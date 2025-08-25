@@ -8,8 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useNavigationStoreRefactored } from '@/stores/navigation-store-refactored'
 import { useAIStore } from '@/stores/ai-store'
-import { useRoleStore, useCurrentRole } from '@/stores/role-store'
-import { RoleSwitcher } from './role-switcher'
+import { useNavigation } from '@/stores/role-store'
 import type { RoleBasedNavigationItem } from '@/types/roles'
 import {
   Home,
@@ -24,7 +23,8 @@ import {
   Users,
   Shield,
   TrendingUp,
-  Zap
+  Zap,
+  Layout
 } from 'lucide-react'
 
 interface SimpleRoleSidebarProps {
@@ -46,12 +46,12 @@ const iconMap = {
   Users,
   Shield,
   TrendingUp,
-  Zap
+  Zap,
+  Layout
 }
 
 export function SimpleRoleSidebar({ enhanced = false, collapsed = false, className }: SimpleRoleSidebarProps) {
-  const { currentRole, roleDefinition, navigationItems } = useCurrentRole()
-  const { setRole } = useRoleStore()
+  const { navigationItems } = useNavigation()
   const { currentMode } = useNavigationStoreRefactored()
   const {
     recommendations,
@@ -172,28 +172,6 @@ export function SimpleRoleSidebar({ enhanced = false, collapsed = false, classNa
           )}
         </div>
         
-        {/* Role Switcher */}
-        {!collapsed && (
-          <div className="mt-4">
-            <RoleSwitcher 
-              currentRole={currentRole}
-              onRoleChange={setRole}
-              collapsed={collapsed}
-            />
-          </div>
-        )}
-        
-        {/* Collapsed Role Switcher */}
-        {collapsed && (
-          <div className="mt-4">
-            <RoleSwitcher 
-              currentRole={currentRole}
-              onRoleChange={setRole}
-              collapsed={collapsed}
-            />
-          </div>
-        )}
-        
         {/* AI Panel Toggle */}
         {!collapsed && enhanced && currentMode.mode !== 'traditional' && (
           <Button
@@ -257,11 +235,11 @@ export function SimpleRoleSidebar({ enhanced = false, collapsed = false, classNa
             </div>
           )}
           
-          {/* Role-specific info */}
+          {/* Unified platform info */}
           <div className="mt-2 text-xs text-gray-500">
             <div className="flex items-center justify-between">
               <span>Access Level</span>
-              <span className="font-medium">{roleDefinition.category === 'internal' ? 'Internal' : 'External'}</span>
+              <span className="font-medium">Full Access</span>
             </div>
             <div className="flex items-center justify-between mt-1">
               <span>Modules</span>

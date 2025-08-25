@@ -1,95 +1,46 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { UserRole } from '@/types/roles';
-import { ROLE_DEFINITIONS, getRoleBasedNavigation } from '@/types/roles';
 import type { RoleBasedNavigationItem } from '@/types/roles';
+import { getAllNavigationItems } from '@/types/roles';
 
-interface RoleState {
-  currentRole: UserRole;
+interface NavigationState {
   navigationItems: RoleBasedNavigationItem[];
 }
 
-interface RoleActions {
-  setRole: (role: UserRole) => void;
+interface NavigationActions {
   updateNavigationItems: () => void;
 }
 
-type RoleStore = RoleState & RoleActions;
+type NavigationStore = NavigationState & NavigationActions;
 
-// Create a mock user object for the current role
-const createMockUser = (role: UserRole) => ({
-  id: 'demo-user',
-  email: 'demo@example.com',
-  name: 'Demo User',
-  role,
-  permissions: ROLE_DEFINITIONS[role].permissions,
-  preferences: {
-    defaultDashboard: ROLE_DEFINITIONS[role].defaultModules[0] || 'dashboard',
-    favoriteModules: ROLE_DEFINITIONS[role].defaultModules.slice(0, 3),
-    notificationSettings: {
-      email: true,
-      push: false,
-      dealUpdates: true,
-      portfolioAlerts: false,
-      complianceReminders: false
-    },
-    uiPreferences: {
-      density: 'comfortable' as const,
-      theme: 'light' as const,
-      sidebarCollapsed: false
-    }
-  },
-  lastLogin: new Date(),
-  isActive: true
-});
-
-export const useRoleStore = create<RoleStore>()(
+export const useNavigationStore = create<NavigationStore>()(
   persist(
     (set, get) => ({
-      // Initial state - default to investment director as a good demo role
-      currentRole: 'investment_director',
-      navigationItems: getRoleBasedNavigation(createMockUser('investment_director')),
+      // Initial state - all navigation items
+      navigationItems: getAllNavigationItems(),
 
       // Actions
-      setRole: (role: UserRole) => {
-        const mockUser = createMockUser(role);
-        const navigationItems = getRoleBasedNavigation(mockUser);
-        
-        set({ 
-          currentRole: role,
-          navigationItems
-        });
-      },
-
       updateNavigationItems: () => {
-        const { currentRole } = get();
-        const mockUser = createMockUser(currentRole);
-        const navigationItems = getRoleBasedNavigation(mockUser);
-        
+        const navigationItems = getAllNavigationItems();
         set({ navigationItems });
       }
     }),
     {
-      name: 'role-storage',
+      name: 'navigation-storage',
       partialize: (state) => ({
-        currentRole: state.currentRole
+        navigationItems: state.navigationItems
       })
     }
   )
 );
 
-// Utility hook for getting current role info
-export const useCurrentRole = () => {
-  const { currentRole, navigationItems } = useRoleStore();
-  const roleDefinition = ROLE_DEFINITIONS[currentRole];
-  const mockUser = createMockUser(currentRole);
+// Utility hook for getting navigation info
+export const useNavigation = () => {
+  const { navigationItems } = useNavigationStore();
   
   return {
-    currentRole,
-    roleDefinition,
     navigationItems,
-    user: mockUser,
-    hasPermission: (permission: string) => mockUser.permissions.includes(permission as any),
-    canAccessModule: (moduleId: string) => roleDefinition.defaultModules.includes(moduleId)
+    hasPermission: () => true, // All permissions granted
+    canAccessModule: () => true // All modules accessible
   };
 };

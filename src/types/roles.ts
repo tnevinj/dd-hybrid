@@ -308,18 +308,16 @@ export const canAccessModule = (user: User, moduleId: string): boolean => {
   return roleDefinition.defaultModules.includes(moduleId);
 };
 
-export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] => {
-  const roleDefinition = ROLE_DEFINITIONS[user.role];
-  
-  // Base navigation items with role-based filtering
-  const allNavigationItems: RoleBasedNavigationItem[] = [
+export const getAllNavigationItems = (): RoleBasedNavigationItem[] => {
+  // Unified navigation items - all modules accessible to everyone
+  return [
     {
       id: 'dashboard',
       label: 'Dashboard',
       icon: 'Home',
       href: '/dashboard',
       requiredPermissions: [],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst', 'fund_operations', 'portfolio_operations', 'legal_compliance', 'ir_lp_relations', 'admin'],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -327,8 +325,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Deal Screening',
       icon: 'Search',
       href: '/deal-screening',
-      requiredPermissions: ['view_all_deals'],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -336,8 +334,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Due Diligence',
       icon: 'FileText',
       href: '/due-diligence',
-      requiredPermissions: ['view_all_deals'],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst', 'legal_compliance'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -345,8 +343,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Deal Structuring',
       icon: 'PieChart',
       href: '/deal-structuring',
-      requiredPermissions: ['view_all_deals'],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -354,8 +352,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Investment Committee',
       icon: 'Users',
       href: '/investment-committee',
-      requiredPermissions: ['view_all_deals'],
-      allowedRoles: ['senior_partner', 'investment_director'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -363,8 +361,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Portfolio',
       icon: 'PieChart',
       href: '/portfolio',
-      requiredPermissions: ['view_portfolio'],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst', 'fund_operations', 'portfolio_operations', 'ir_lp_relations', 'limited_partner', 'portfolio_company'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -372,8 +370,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Fund Operations',
       icon: 'Building',
       href: '/fund-operations',
-      requiredPermissions: ['view_operations'],
-      allowedRoles: ['senior_partner', 'fund_operations', 'ir_lp_relations'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -381,8 +379,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Market Intelligence',
       icon: 'TrendingUp',
       href: '/market-intelligence',
-      requiredPermissions: ['view_all_deals'],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -390,8 +388,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'GP Portal',
       icon: 'Shield',
       href: '/gp-portal',
-      requiredPermissions: ['submit_deals'],
-      allowedRoles: ['general_partner'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -399,8 +397,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'LP Portal',
       icon: 'Users',
       href: '/lp-portal',
-      requiredPermissions: ['view_lp_data'],
-      allowedRoles: ['senior_partner', 'ir_lp_relations', 'limited_partner'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -408,8 +406,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Legal Management',
       icon: 'FileText',
       href: '/legal-management',
-      requiredPermissions: ['view_compliance'],
-      allowedRoles: ['senior_partner', 'legal_compliance', 'fund_operations'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'secondary'
     },
     {
@@ -418,7 +416,7 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       icon: 'Brain',
       href: '/knowledge-management',
       requiredPermissions: [],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst', 'portfolio_operations', 'general_partner', 'portfolio_company'],
+      allowedRoles: [],
       category: 'secondary'
     },
     {
@@ -426,8 +424,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Workflow Automation',
       icon: 'Zap',
       href: '/workflow-automation',
-      requiredPermissions: ['manage_operations'],
-      allowedRoles: ['senior_partner', 'fund_operations', 'portfolio_operations', 'legal_compliance', 'admin'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'secondary'
     },
     {
@@ -435,8 +433,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Advanced Analytics',
       icon: 'BarChart',
       href: '/advanced-analytics',
-      requiredPermissions: ['view_financials'],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'analyst', 'fund_operations'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'secondary'
     },
     {
@@ -444,8 +442,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'LP-GP Relationship',
       icon: 'Users',
       href: '/lpgp-relationship',
-      requiredPermissions: ['manage_lp_relations'],
-      allowedRoles: ['senior_partner', 'ir_lp_relations'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'secondary'
     },
     {
@@ -453,8 +451,8 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       label: 'Admin Management',
       icon: 'Settings',
       href: '/admin-management',
-      requiredPermissions: ['admin_access'],
-      allowedRoles: ['admin'],
+      requiredPermissions: [],
+      allowedRoles: [],
       category: 'admin'
     },
     {
@@ -464,7 +462,7 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       href: '/workspaces',
       description: 'Collaborative workspaces for deal analysis and documentation',
       requiredPermissions: [],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst', 'fund_operations', 'portfolio_operations'],
+      allowedRoles: [],
       category: 'primary'
     },
     {
@@ -474,17 +472,13 @@ export const getRoleBasedNavigation = (user: User): RoleBasedNavigationItem[] =>
       href: '/role-demo',
       description: 'Role-based access control and permissions overview',
       requiredPermissions: [],
-      allowedRoles: ['senior_partner', 'investment_director', 'principal', 'associate', 'analyst', 'fund_operations', 'portfolio_operations', 'legal_compliance', 'ir_lp_relations', 'general_partner', 'limited_partner', 'portfolio_company', 'admin'],
+      allowedRoles: [],
       category: 'secondary'
     }
   ];
+};
 
-  // Filter navigation items based on user role and permissions
-  return allNavigationItems.filter(item => {
-    const hasRoleAccess = item.allowedRoles.includes(user.role);
-    const hasRequiredPermissions = item.requiredPermissions.length === 0 || 
-      hasAllPermissions(user, item.requiredPermissions);
-    
-    return hasRoleAccess && hasRequiredPermissions;
-  });
+// Keep for backward compatibility, but return all items
+export const getRoleBasedNavigation = (): RoleBasedNavigationItem[] => {
+  return getAllNavigationItems();
 };
