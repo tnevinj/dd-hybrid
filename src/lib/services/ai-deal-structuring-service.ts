@@ -287,7 +287,7 @@ export class AIDealStructuringService {
       
       // Create thando context for the request
       const thandoContext: ThandoContext = {
-        currentModule: 'deal-structuring',
+        currentModule: 'deal-screening', // Using deal-screening as closest match
         currentPage: `/deal-structuring/${deal.id}`,
         navigationMode: mode,
         userId: 'system',
@@ -686,7 +686,7 @@ Format your response as structured recommendations with:
     if (recommendations.length === 0) {
       recommendations.push({
         id: `claude-general-${deal.id}`,
-        type: 'analysis',
+        type: 'optimization',
         priority: 'medium',
         title: 'AI Deal Analysis',
         description: 'Claude AI has analyzed this deal structure',

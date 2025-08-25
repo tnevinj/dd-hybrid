@@ -179,14 +179,39 @@ export function DealStructuringAutonomous({ onSwitchMode }: DealStructuringAuton
                 projectName={selectedProject.name}
                 projectType="deal-structuring"
                 contextData={{
-                  dealValue: selectedProject.metadata?.dealValue,
-                  stage: selectedProject.metadata?.stage,
-                  riskRating: selectedProject.metadata?.riskRating,
-                  progress: selectedProject.metadata?.progress,
-                  sector: selectedProject.metadata?.sector,
-                  team: selectedProject.metadata?.team
+                  // Pass comprehensive deal data to ensure AI has same context as UI
+                  deal: {
+                    id: selectedProject.id,
+                    name: selectedProject.name,
+                    type: selectedProject.type,
+                    stage: selectedProject.metadata?.stage,
+                    targetValue: selectedProject.metadata?.dealValue,
+                    progress: selectedProject.metadata?.progress,
+                    riskLevel: selectedProject.metadata?.riskRating,
+                    sector: selectedProject.metadata?.sector,
+                    team: selectedProject.metadata?.team,
+                    lastActivity: selectedProject.lastActivity,
+                    keyMetrics: selectedProject.metadata?.keyMetrics || {}
+                  },
+                  // Include additional context for AI analysis
+                  analysisContext: {
+                    currentModule: 'deal-structuring',
+                    userRole: 'analyst',
+                    navigationMode: 'autonomous'
+                  }
                 }}
                 systemPrompt={`You are an AI assistant specializing in deal structuring. You're working on ${selectedProject.name}, a ${selectedProject.metadata?.sector} deal worth ${selectedProject.metadata?.dealValue ? `$${(selectedProject.metadata.dealValue / 1000000).toFixed(1)}M` : 'TBD'} currently in ${selectedProject.metadata?.stage} stage.
+
+## Current Deal Context:
+- **Deal ID**: ${selectedProject.id}
+- **Name**: ${selectedProject.name}
+- **Type**: ${selectedProject.type}
+- **Stage**: ${selectedProject.metadata?.stage || 'structuring'}
+- **Target Value**: ${selectedProject.metadata?.dealValue ? `$${(selectedProject.metadata.dealValue / 1000000).toFixed(1)}M` : 'TBD'}
+- **Progress**: ${selectedProject.metadata?.progress || 0}%
+- **Risk Level**: ${selectedProject.metadata?.riskRating || 'medium'}
+- **Sector**: ${selectedProject.metadata?.sector || 'Unknown'}
+- **Team**: ${selectedProject.metadata?.team ? selectedProject.metadata.team.join(', ') : 'Unassigned'}
 
 Your capabilities include:
 - Financial modeling and structure optimization
@@ -201,7 +226,7 @@ You can execute tasks autonomously when confidence is high, but always ask for a
 - Timeline modifications
 - Team assignments
 
-Focus on being proactive and providing actionable insights while maintaining transparency about your reasoning and confidence levels.`}
+Focus on being proactive and providing actionable insights while maintaining transparency about your reasoning and confidence levels. Reference the specific deal details above in your responses.`}
                 availableActions={[
                   {
                     id: 'generate-financial-model',
@@ -303,7 +328,7 @@ Focus on being proactive and providing actionable insights while maintaining tra
                   title: 'Team Members',
                   content: (
                     <div className="space-y-2">
-                      {selectedProject.metadata?.team?.map((member, index) => (
+                      {selectedProject.metadata?.team?.map((member: string, index: number) => (
                         <div key={index} className="flex items-center space-x-2">
                           <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
                             <span className="text-xs text-gray-600">

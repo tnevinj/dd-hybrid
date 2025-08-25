@@ -27,8 +27,7 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
     contextPanelCollapsed,
     toggleSidebar,
     toggleContextPanel,
-    setPortfolioProjects,
-    loadPortfolioProjects
+    setPortfolioProjects
   } = useAutonomousStore();
 
   const [showSettings, setShowSettings] = useState(false);
@@ -42,7 +41,35 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
     // Load real portfolio projects from SQLite backend
     const loadRealPortfolioData = async () => {
       try {
-        await loadPortfolioProjects();
+        // Fetch portfolio data directly from API
+        const response = await fetch('/api/investments?module=portfolio');
+        if (response.ok) {
+          const investments = await response.json();
+          const projects: Project[] = investments.map((investment: any) => ({
+            id: investment.id,
+            name: investment.name,
+            type: 'portfolio',
+            status: investment.status || 'active',
+            lastActivity: new Date(investment.lastUpdated || new Date()),
+            priority: investment.riskRating === 'high' || investment.riskRating === 'critical' ? 'high' : 
+                     investment.riskRating === 'medium' ? 'medium' : 'low',
+            unreadMessages: 0,
+            metadata: {
+              value: investment.currentValue || investment.targetValue || 0,
+              progress: investment.status === 'active' ? 100 : 
+                       investment.status === 'due_diligence' ? 75 :
+                       investment.status === 'structuring' ? 50 : 25,
+              team: ['Portfolio Management'],
+              sector: investment.sector || 'Multi-Sector',
+              investmentType: investment.investmentType,
+              riskRating: investment.riskRating,
+              performance: investment.expectedReturn ? `${investment.expectedReturn}%` : 'N/A'
+            }
+          }));
+          setPortfolioProjects(projects);
+        } else {
+          throw new Error(`API failed with status: ${response.status}`);
+        }
       } catch (error) {
         console.error('Failed to load portfolio projects:', error);
         // Fallback to mock data if real data loading fails
@@ -72,7 +99,7 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
     };
     
     loadRealPortfolioData();
-  }, [setActiveProjectType, setPortfolioProjects, loadPortfolioProjects]);
+  }, [setActiveProjectType, setPortfolioProjects]);
 
   const handleProjectSelect = (project: Project) => {
     selectProject(project);
@@ -210,7 +237,7 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
           {!sidebarCollapsed && (
             <ProjectSelector
               projectType="portfolio"
-              selectedProjectId={selectedProject?.id}
+              selectedProjectId={selectedProject?.id || ''}
               onProjectSelect={handleProjectSelect}
             />
           )}
@@ -323,20 +350,21 @@ export function PortfolioAutonomous({ onSwitchMode }: PortfolioAutonomousProps) 
       <div className="autonomous-content">
         {/* Project Selector Sidebar */}
         {!sidebarCollapsed && (
-          <div className="w-80 border-r border-gray-200">
+          <div className="w-80 border-r border-gray-200 overflow-y-auto">
             <ProjectSelector
               projectType="portfolio"
-              selectedProjectId={selectedProject?.id}
+              selectedProjectId={selectedProject?.id || ''}
               onProjectSelect={handleProjectSelect}
             />
           </div>
         )}
 
-        {/* Chat Interface */}
-        <div className="flex-1">
+        {/* Chat Interface - Fixed height container to prevent pushing down */}
+        <div className="flex-1 flex flex-col">
           <ChatInterface
-            projectId={selectedProject?.id}
+            projectId={selectedProject?.id || ''}
             projectType="portfolio"
+            className="flex-1"
           />
         </div>
 

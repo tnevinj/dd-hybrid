@@ -41,17 +41,16 @@ interface UseAutonomousChatReturn {
 const buildThandoContext = (
   projectType: string,
   projectId?: string,
-  navigationStore?: any
+  navigationStore?: any,
+  contextData?: any
 ): ThandoContext => {
-  // Get all projects first
-  const allProjects = projectType === 'portfolio' 
+  // Use provided context data instead of mock data
+  const hasRealDealData = contextData?.deal;
+  
+  // For portfolio module, still use portfolio assets
+  const portfolioAssets = projectType === 'portfolio' 
     ? UnifiedWorkspaceDataService.getPortfolioAssetsAsProjects()
-    : UnifiedWorkspaceDataService.getThandoProjects();
-
-  // Filter to selected project if projectId is provided, otherwise use all projects
-  const contextProjects = projectId 
-    ? allProjects.filter(project => project.id === projectId)
-    : allProjects;
+    : [];
 
   return {
     currentModule: projectType as any,
@@ -68,35 +67,8 @@ const buildThandoContext = (
       preferredChartTypes: ['line', 'bar', 'pie'],
       riskTolerance: 'medium'
     },
-    activeProjects: contextProjects,
-    activeDeals: contextProjects.map(project => ({
-      id: project.id + '-deal',
-      name: project.name.replace('Due Diligence', 'Acquisition').replace('Investment Committee', 'Investment'),
-      status: project.status === 'active' ? 'due-diligence' : project.status === 'review' ? 'negotiation' : 'sourcing',
-      dealValue: project.metadata?.dealValue || 50000000,
-      equity: (project.metadata?.dealValue || 50000000) * 0.8,
-      debt: (project.metadata?.dealValue || 50000000) * 0.2,
-      sector: project.metadata?.sector || 'Technology',
-      geography: project.metadata?.geography || 'North America',
-      stage: project.metadata?.stage || 'growth',
-      targetReturns: { irr: 25, multiple: 3.2 },
-      timeline: {
-        sourceDate: new Date(project.lastActivity.getTime() - 30 * 24 * 60 * 60 * 1000),
-        ddStartDate: new Date(project.lastActivity.getTime() - 15 * 24 * 60 * 60 * 1000),
-        expectedCloseDate: project.deadline || new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
-      },
-      team: {
-        lead: project.teamMembers?.[0] || 'Team Lead',
-        analyst: project.teamMembers?.slice(1, 2) || [],
-        advisors: ['Industry Expert', 'Technical Consultant']
-      },
-      keyMetrics: {
-        revenue: (project.metadata?.dealValue || 50000000) * 0.3,
-        ebitda: (project.metadata?.dealValue || 50000000) * 0.09,
-        ebitdaMargin: 0.30,
-        growthRate: project.metadata?.stage === 'growth' ? 0.45 : 0.18
-      }
-    })),
+    activeProjects: portfolioAssets,
+    activeDeals: hasRealDealData ? [contextData.deal] : [],
     portfolioMetrics: {
       totalAUM: 3880000000,
       totalValue: 3880000000,
@@ -116,31 +88,20 @@ const buildThandoContext = (
         benchmarkComparison: 2.1
       }
     },
-    recentActivity: contextProjects.map((project, index) => ({
-      id: `act-${index + 1}`,
-      type: projectType === 'portfolio' ? 'portfolio_change' : 
-            project.type === 'due-diligence' ? 'deal_update' : 
-            project.type === 'ic-preparation' ? 'investment_update' : 
-            project.type === 'portfolio-monitoring' ? 'portfolio_change' : 'project_update',
-      title: projectType === 'portfolio' 
-        ? `${project.name} - Performance Update`
-        : `${project.name} - ${project.metadata?.progress || 50}% Complete`,
-      description: projectType === 'portfolio'
-        ? `Portfolio asset showing ${project.metadata?.irr ? (project.metadata.irr * 100).toFixed(1) + '% IRR' : 'strong performance'} with ${project.metadata?.riskRating || 'medium'} risk profile`
-        : project.type === 'due-diligence' ? 'Due diligence analysis in progress with latest findings' :
-          project.type === 'ic-preparation' ? 'Investment committee preparation materials being finalized' :
-          project.type === 'portfolio-monitoring' ? 'Portfolio performance review and optimization ongoing' :
-          'Project analysis and recommendations being developed',
-      timestamp: project.lastActivity,
-      userId: 'portfolio-manager',
-      entityId: project.id,
-      entityType: projectType === 'portfolio' ? 'asset' : 
-                  project.type === 'due-diligence' ? 'deal' : 
-                  project.type === 'portfolio-monitoring' ? 'portfolio' : 'project',
-      impact: project.priority === 'high' || project.priority === 'critical' ? 'high' : 
-              project.priority === 'low' ? 'low' : 'medium',
-      actionRequired: project.status === 'active' && (project.priority === 'high' || project.priority === 'critical')
-    })),
+    recentActivity: hasRealDealData ? [
+      {
+        id: 'current-deal-activity',
+        type: 'deal_update' as const,
+        title: `${contextData.deal.name} - Structuring Progress`,
+        description: `Deal structuring analysis in progress with latest findings for ${contextData.deal.name}`,
+        timestamp: new Date(),
+        userId: 'deal-analyst',
+        entityId: contextData.deal.id,
+        entityType: 'deal' as const,
+        impact: 'medium' as const,
+        actionRequired: true
+      }
+    ] : [],
     conversationHistory: [],
     availableActions: [], // Will be populated by API
     currentCapabilities: {
@@ -181,7 +142,8 @@ const buildThandoContext = (
 
 export function useAutonomousChat(
   projectId?: string,
-  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' | 'deal-structuring' = 'dashboard'
+  projectType: 'dashboard' | 'portfolio' | 'due-diligence' | 'workspace' | 'deal-screening' | 'deal-structuring' = 'dashboard',
+  contextData?: any
 ): UseAutonomousChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -211,7 +173,19 @@ export function useAutonomousChat(
 
     try {
       // Build comprehensive context for Claude
-      const context = buildThandoContext(projectType, projectId, { currentMode });
+      const context = buildThandoContext(projectType, projectId, { currentMode }, contextData);
+      
+      // Merge provided context data with the built context
+      if (contextData) {
+        if (contextData.deal) {
+          // Replace activeDeals with the provided deal data
+          context.activeDeals = [contextData.deal];
+        }
+        if (contextData.analysisContext) {
+          // Merge analysis context
+          Object.assign(context, contextData.analysisContext);
+        }
+      }
       
       // Prepare Claude request
       const claudeRequest: ClaudeRequest = {

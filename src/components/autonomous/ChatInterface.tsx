@@ -64,7 +64,7 @@ export function ChatInterface({
     sendMessage,
     executeAction,
     isLoading
-  } = useAutonomousChat(projectId, projectType);
+  } = useAutonomousChat(projectId, projectType, contextData);
 
   // Get the selected project for context
   const { selectedProject } = useAutonomousStore();

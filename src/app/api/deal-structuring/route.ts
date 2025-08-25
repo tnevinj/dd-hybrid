@@ -5,8 +5,17 @@ import { DealStructuringProject, DealStructuringMetrics } from '@/types/deal-str
 // Transform unified investment to deal structuring project format
 function transformInvestmentToDealProject(investment: any): DealStructuringProject {
   // Safely parse JSON fields with error handling
-  const safeJsonParse = (jsonString: string | null | undefined, defaultValue: any) => {
-    if (!jsonString) return defaultValue;
+  const safeJsonParse = (jsonString: any, defaultValue: any) => {
+    // Handle null, undefined, or non-string values
+    if (jsonString === null || jsonString === undefined || typeof jsonString !== 'string') {
+      return defaultValue;
+    }
+    
+    // Handle empty or whitespace-only strings
+    if (jsonString.trim() === '' || jsonString === '[]' || jsonString === '{}') {
+      return defaultValue;
+    }
+    
     try {
       return JSON.parse(jsonString);
     } catch (error) {
